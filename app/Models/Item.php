@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Item extends Model
@@ -45,6 +46,16 @@ class Item extends Model
         'updated_at' => 'datetime',
         'deleted_at' => 'datetime'
     ];
+
+    /**
+     * Method attachment
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\MorphOne
+     */
+    public function attachment(): MorphOne
+    {
+        return $this->morphOne(Attachment::class, 'attachmentable');
+    }
 
     /**
      * Get the item_type that owns the Item

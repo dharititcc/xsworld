@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class RestaurantItem extends Model
@@ -85,5 +86,15 @@ class RestaurantItem extends Model
     public function restaurant_items(): HasMany
     {
         return $this->hasMany(self::class, 'restaurant_item_id', 'id');
+    }
+
+    /**
+     * The restaurant_item_variations that belong to the RestaurantItem
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function restaurant_item_variations(): BelongsToMany
+    {
+        return $this->belongsToMany(Variation::class, 'restaurant_item_variations', 'restaurant_item_id', 'variation_id');
     }
 }

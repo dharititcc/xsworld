@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ItemType extends Model
@@ -33,6 +34,16 @@ class ItemType extends Model
         'updated_at' => 'datetime',
         'deleted_at' => 'datetime'
     ];
+
+    /**
+     * Method attachment
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\MorphOne
+     */
+    public function attachment(): MorphOne
+    {
+        return $this->morphOne(Attachment::class, 'attachmentable');
+    }
 
     /**
      * Get the drink_type that owns the DrinkType
