@@ -14,6 +14,16 @@ class User extends Authenticatable
 
     protected $table = 'users';
 
+    /** user types */
+    const CUSTOMER      = 1;
+    const RESTAURANT    = 2;
+    const ADMIN         = 3;
+
+    /** Registration types */
+    const EMAIL     = 0;
+    const GOOGLE    = 1;
+    const FACEBOOK  = 2;
+
     /**
      * The attributes that are mass assignable.
      *

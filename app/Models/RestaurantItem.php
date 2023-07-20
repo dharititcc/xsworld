@@ -12,6 +12,13 @@ class RestaurantItem extends Model
 
     protected $table = 'restaurant_items';
 
+    /** featured */
+    const FEATURED = 1;
+
+    /** item type */
+    const SIMPLE    = 0;
+    const VARIABLE  = 1;
+
     /**
      * The attributes that are mass assignable.
      *
