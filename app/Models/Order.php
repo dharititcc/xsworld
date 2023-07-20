@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -27,8 +28,16 @@ class Order extends Model
         'restaurant_id',
         'restaurant_pickup_point_id',
         'pickup_point_user_id',
-        'total',
+        'type',
         'status',
+        'payment_method_id',
+        'credit_point',
+        'amount',
+        'transaction_id',
+        'cancel_reason',
+        'apply_time',
+        'accepted_date',
+        'total',
         'cancel_reason'
     ];
 
@@ -38,8 +47,9 @@ class Order extends Model
      * @var array
      */
     protected $casts = [
-        'created_at' => 'datetime',
-        'updated_at' => 'datetime'
+        'created_at'    => 'datetime',
+        'updated_at'    => 'datetime',
+        'accepted_date' => 'datetime'
     ];
 
     /**
@@ -100,5 +110,29 @@ class Order extends Model
     public function items(): HasMany
     {
         return $this->hasMany(OrderItem::class, 'order_id', 'id');
+    }
+
+    /**
+     * Method scopeOrder
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query [explicite description]
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeOrder(Builder $query): Builder
+    {
+        return $query->where('type', self::ORDER);
+    }
+
+    /**
+     * Method scopeCart
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query [explicite description]
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeCart(Builder $query): Builder
+    {
+        return $query->where('type', self::CART);
     }
 }

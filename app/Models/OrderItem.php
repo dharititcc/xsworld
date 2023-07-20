@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -47,5 +48,41 @@ class OrderItem extends Model
     public function restaurant_item(): BelongsTo
     {
         return $this->belongsTo(RestaurantItem::class, 'restaurant_item_id', 'id');
+    }
+
+    /**
+     * Method scopeAddon
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query [explicite description]
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeAddon(Builder $query): Builder
+    {
+        return $query->where('type', self::ADDON);
+    }
+
+    /**
+     * Method scopeItem
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query [explicite description]
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeItem(Builder $query): Builder
+    {
+        return $query->where('type', self::ITEM);
+    }
+
+    /**
+     * Method scopeMixer
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query [explicite description]
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeMixer(Builder $query): Builder
+    {
+        return $query->where('type', self::Mixer);
     }
 }
