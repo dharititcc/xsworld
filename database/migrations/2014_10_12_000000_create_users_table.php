@@ -20,7 +20,7 @@ class CreateUsersTable extends Migration
             $table->string('password');
             $table->string('phone1')->unique();
             $table->string('phone2')->nullable();
-            $table->unsignedTinyInteger('registration_type')->default(0)->comment('0=EMAIL, 1=GOOGLE, 2=FACEBOOK');
+            $table->unsignedTinyInteger('registration_type')->default(0)->comment('0=EMAIL, 1=PHONE, 2=GOOGLE, 3=FACEBOOK');
             $table->unsignedTinyInteger('user_type')->default(1)->comment('1=CUSTOMER, 2=RESTAURANT, 3=ADMIN');
             $table->date('birth_date')->nullable();
             $table->decimal('credit_points', 14,2)->default(0);
