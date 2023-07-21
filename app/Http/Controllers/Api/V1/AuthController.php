@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Api\V1\Traits\Authenticate;
 use App\Http\Resources\UserResource;
-use App\Models\User;
 use Illuminate\Http\Request;
 
 /**
@@ -27,15 +26,9 @@ class AuthController extends APIController
      */
     public function postLogin(Request $request)
     {
-        $user = $this->authenticate($request);
-
-        if( $user === true )
+        if( $this->authenticate($request) )
         {
-            $user = User::where('email', $request->email)->first();
-        }
-
-        if( $user instanceof \App\Models\User && isset( $user->id ) )
-        {
+            $user = auth()->user();
             $token  = $user->createToken('xs_world')->plainTextToken;
             return $this->respond([
                 'status'    =>  true,

@@ -13,9 +13,9 @@ trait Authenticate
      *
      * @param Request $request [explicite description]
      *
-     * @return \App\Models\User | bool
+     * @return bool
      */
-    public function authenticate(Request $request)
+    public function authenticate(Request $request): bool
     {
         return $this->getLoginType($request);
     }
@@ -25,7 +25,7 @@ trait Authenticate
      *
      * @param Request $request [explicite description]
      *
-     * @return void
+     * @return bool
      */
     public function getLoginType(Request $request)
     {
@@ -41,7 +41,8 @@ trait Authenticate
 
                     if( $user instanceof \App\Models\User && isset( $user->id ) )
                     {
-                        return $user;
+                        auth()->login($user);
+                        return true;
                     }
                     break;
                 case User::PHONE:
