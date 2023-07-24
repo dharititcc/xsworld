@@ -4,6 +4,7 @@ use App\Exceptions\GeneralException;
 use App\Models\User;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 trait Authenticate
 {
@@ -56,7 +57,11 @@ trait Authenticate
                 default:
                     // validation
                     $this->validateLogin($request);
-                    return $this->attemptLogin($request);
+                    $credentials = $request->validate([
+                        'email' => ['required', 'email'],
+                        'password' => ['required'],
+                    ]);
+                    return Auth::attempt($credentials);
                     break;
             }
         }

@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Api\V1\Traits\Authenticate;
 use App\Http\Resources\UserResource;
 use Illuminate\Http\Request;
+use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
  * @group Authentication
