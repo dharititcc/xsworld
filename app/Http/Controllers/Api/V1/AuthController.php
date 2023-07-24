@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Api\V1\Traits\Authenticate;
 use App\Http\Resources\UserResource;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -82,5 +83,82 @@ class AuthController extends APIController
         }
 
         return $this->respondSuccess('Logged out successfully.');
+    }
+    /**
+     * Method postRegister
+     *
+     * @param Request $request [explicite description]
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function postRegister(Request $request)
+    {
+        if( isset( $request->registration_type ) )
+        {
+            $type = intval($request->registration_type);
+            switch( $type )
+            {
+                case User::GOOGLE:
+                    // validation
+                    $this->validateEmail($request);
+
+                    $user = User::find($request->email);
+
+                    if( $user instanceof \App\Models\User && isset( $user->id ) )
+                    {
+                        auth()->login($user);
+                        return true;
+                    }
+                    break;
+                case User::FACEBOOK:
+                    // validation
+                    $this->validateEmail($request);
+
+                    $user = User::find($request->email);
+
+                    if( $user instanceof \App\Models\User && isset( $user->id ) )
+                    {
+                        auth()->login($user);
+                        return true;
+                    }
+                    break;
+                default:
+                    // validation
+                   
+                    $this->validateRegister($request);
+                    $user = User::create($request->all());
+                    return $this->respond([
+                        'status'    =>  true,
+                        'message'   =>  'Registeration successful',
+                        'item'      =>  new UserResource($user),
+                    ]);
+                    break;
+            }
+        }
+        return $this->respondInternalError('Invalid Registration data.');
+    }
+    /**
+     * Validate the user login request.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return void
+     *
+     * @throws \Illuminate\Validation\ValidationException
+     */
+    protected function validateRegister(Request $request)
+    {
+       // dd($request->all());
+        $request->validate([
+            'name' => 'required|string',
+            'email' => 'required|unique:users,email',
+            'password' => 'required|string',
+            'phone' => 'required|unique:users,phone',
+            'registration_type' => 'required',
+            'birth_date' => 'required',
+            'platform' => 'required',
+            'os_version' => 'required',
+            'application_version' => 'required',
+            'model' => 'required'
+        ]);
     }
 }
