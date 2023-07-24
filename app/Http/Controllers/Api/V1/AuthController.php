@@ -22,13 +22,26 @@ class AuthController extends APIController
      *
      * @param Request $request [explicite description]
      *
-     * @return void
+     * @return \Illuminate\Http\JsonResponse
      */
     public function postLogin(Request $request)
     {
+        $input = $request->all();
         if( $this->authenticate($request) )
         {
             $user = auth()->user();
+
+            // update all other data
+            $dataArr = [
+                'name'                  => $input['name'],
+                'platform'              => $input['platform'],
+                'os_version'            => $input['os_version'],
+                'application_version'   => $input['application_version'],
+                'model'                 => $input['model'],
+            ];
+
+            $user->update($input);
+
             $token  = $user->createToken('xs_world')->plainTextToken;
             return $this->respond([
                 'status'    =>  true,

@@ -1,5 +1,6 @@
 <?php namespace App\Http\Controllers\Api\V1\Traits;
 
+use App\Exceptions\GeneralException;
 use App\Models\User;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
@@ -26,6 +27,7 @@ trait Authenticate
      * @param Request $request [explicite description]
      *
      * @return bool
+     * @throws \App\Exceptions\GeneralException
      */
     public function getLoginType(Request $request)
     {
@@ -58,6 +60,8 @@ trait Authenticate
                     break;
             }
         }
+
+        throw new GeneralException('Registration type field is required');
     }
 
     /**
