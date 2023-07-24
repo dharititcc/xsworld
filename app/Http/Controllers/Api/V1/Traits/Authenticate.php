@@ -34,9 +34,22 @@ trait Authenticate
     {
         if( isset( $request->registration_type ) )
         {
-            switch( $request->registration_type )
+            $type = intval($request->registration_type);
+            switch( $type )
             {
-                case User::FACEBOOK || User::GOOGLE:
+                case User::GOOGLE:
+                    // validation
+                    $this->validateEmail($request);
+
+                    $user = User::find($request->email);
+
+                    if( $user instanceof \App\Models\User && isset( $user->id ) )
+                    {
+                        auth()->login($user);
+                        return true;
+                    }
+                    break;
+                case User::FACEBOOK:
                     // validation
                     $this->validateEmail($request);
 
@@ -52,16 +65,17 @@ trait Authenticate
                     // validation
                     $this->validatePhone($request);
 
-                    return $this->attemptLogin($request);
+                    return Auth::attempt($this->credentials($request));
+                    break;
+                case User::EMAIL:
+                    // validation
+                    $this->validateLogin($request);
+                    return Auth::attempt($this->credentials($request));
                     break;
                 default:
                     // validation
                     $this->validateLogin($request);
-                    $credentials = $request->validate([
-                        'email' => ['required', 'email'],
-                        'password' => ['required'],
-                    ]);
-                    return Auth::attempt($credentials);
+                    return Auth::attempt($this->credentials($request));
                     break;
             }
         }
@@ -79,7 +93,7 @@ trait Authenticate
     public function validatePhone(Request $request)
     {
         $request->validate([
-            'phone1' => 'required|number',
+            'phone' => 'required|numeric',
             'password' => 'required|string',
         ]);
     }
@@ -96,5 +110,27 @@ trait Authenticate
         $request->validate([
             'email' => 'required|string'
         ]);
+    }
+
+    /**
+     * Method credentials
+     *
+     * @param Request $request [explicite description]
+     *
+     * @return array
+     */
+    public function credentials(Request $request):array
+    {
+        // the value in the 'email' field in the request
+        $username = $request->get($this->username());
+
+        // check if the value is a validate email address and assign the field name accordingly
+        $field = filter_var($username, FILTER_VALIDATE_EMAIL) ? $this->username()  : 'phone';
+
+        // return the credentials to be used to attempt login
+        return [
+            $field => $request->get($field),
+            'password' => $request->password,
+        ];
     }
 }

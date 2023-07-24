@@ -22,7 +22,7 @@ class AdminUserSeeder extends Seeder
             'name'                  => 'Vrushank Shah',
             'email'                 => 'vrushank@appmart.com.au',
             'password'              => Hash::make('password'),
-            'phone1'                => '61430147853',
+            'phone'                 => '61430147853',
             'user_type'             => 3,
             'created_at' 	        => Carbon::now()->toDateTimeString(),
             'updated_at' 	        => Carbon::now()->toDateTimeString(),

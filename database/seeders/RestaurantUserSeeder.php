@@ -21,7 +21,7 @@ class RestaurantUserSeeder extends Seeder
             'name'                  => 'Milan Soni',
             'email'                 => 'milan@itccdigital.com',
             'password'              => Hash::make('12345678'),
-            'phone1'                => '917600265925',
+            'phone'                 => '917600265925',
             'user_type'             => 2,
             'created_at' 	        => Carbon::now()->toDateTimeString(),
             'updated_at' 	        => Carbon::now()->toDateTimeString(),

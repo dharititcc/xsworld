@@ -21,7 +21,7 @@ class CustomerSeeder extends Seeder
             'name'                  => 'Milan Soni',
             'email'                 => 'milan@yopmail.com',
             'password'              => Hash::make('12345678'),
-            'phone1'                => '918000640987',
+            'phone'                 => '918000640987',
             'user_type'             => 1,
             'created_at' 	        => Carbon::now()->toDateTimeString(),
             'updated_at' 	        => Carbon::now()->toDateTimeString(),
