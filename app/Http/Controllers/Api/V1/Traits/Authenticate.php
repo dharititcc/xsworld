@@ -2,6 +2,7 @@
 
 use App\Exceptions\GeneralException;
 use App\Models\User;
+use Exception;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -67,11 +68,6 @@ trait Authenticate
 
                     return Auth::attempt($this->credentials($request));
                     break;
-                case User::EMAIL:
-                    // validation
-                    $this->validateLogin($request);
-                    return Auth::attempt($this->credentials($request));
-                    break;
                 default:
                     // validation
                     $this->validateLogin($request);
@@ -132,5 +128,16 @@ trait Authenticate
             $field => $request->get($field),
             'password' => $request->password,
         ];
+    }
+
+    /**
+     * Method username
+     *
+     * @return string
+     */
+    public function username(): string
+    {
+        $field = filter_var(request()->input('email'), FILTER_VALIDATE_EMAIL) ? 'email' : 'phone';
+        return $field;
     }
 }

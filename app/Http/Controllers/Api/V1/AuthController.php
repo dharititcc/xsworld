@@ -42,7 +42,7 @@ class AuthController extends APIController
                 'model'                 => $input['model'],
             ];
 
-            $user->update($input);
+            $user->update($dataArr);
 
             $token  = $user->createToken('xs_world')->plainTextToken;
             return $this->respond([
