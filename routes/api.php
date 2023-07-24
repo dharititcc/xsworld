@@ -26,4 +26,10 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'v1', 'as' => 'api.v1.'], fun
         // {api/v1/auth/register}
         Route::post('register', 'AuthController@register')->name('auth.register');
     });
+
+    Route::group(['prefix' => 'auth', 'middleware' => 'auth:api'], function ()
+    {
+        // {api/v1/auth/logout}
+        Route::post('logout', 'AuthController@logout')->name('auth.logout');
+    });
 });

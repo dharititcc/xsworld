@@ -55,4 +55,32 @@ class AuthController extends APIController
 
         return $this->respondInternalError('Invalid login credentials.');
     }
+
+    /**
+     * Attempt to logout the user.
+     *
+     * After successfull logut the token get invalidated and can not be used further.
+     *
+     * @responseFile status=401 scenario="api_key not provided" responses/unauthenticated.json
+     * @responseFile responses/auth/logout.json
+     *
+     * @param  \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function logout(Request $request)
+    {
+        try
+        {
+            // Get user who requested the logout
+            $user = auth()->user(); //or Auth::user()
+            // Revoke current user token
+            $user->tokens()->where('id', $user->currentAccessToken()->id)->delete();
+        }
+        catch (\Exception $e)
+        {
+            return $this->respondInternalError($e->getMessage());
+        }
+
+        return $this->respondSuccess('Logged out successfully.');
+    }
 }
