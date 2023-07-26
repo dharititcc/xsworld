@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Api\V1\Traits\Authenticate;
 use App\Http\Resources\UserResource;
 use App\Models\User;
+use App\Repositories\UserRepository;
 use Illuminate\Http\Request;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -19,6 +20,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class AuthController extends APIController
 {
     use Authenticate;
+
+    /** @var \App\Repositories\UserRepository $repository */
+    protected $repository;
+
+    public function __construct(UserRepository $repository)
+    {
+        $this->repository = $repository;
+    }
 
     /**
      * Method postLogin
@@ -123,13 +132,13 @@ class AuthController extends APIController
 
             // update all other data
             $dataArr = [
-                'platform'              => $input['platform'] ?? null,
-                'os_version'            => $input['os_version'] ?? null,
-                'application_version'   => $input['application_version'] ?? null,
-                'model'                 => $input['model'] ?? null,
+                'platform'              => $input['platform'],
+                'os_version'            => $input['os_version'],
+                'application_version'   => $input['application_version'],
+                'model'                 => $input['model'],
             ];
 
-            $user->update($dataArr);
+            $this->repository->update($dataArr, $user);
 
             $token  = $user->createToken('xs_world')->plainTextToken;
             return $this->respond([
