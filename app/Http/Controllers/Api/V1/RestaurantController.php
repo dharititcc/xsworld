@@ -4,11 +4,7 @@ namespace App\Http\Controllers\API\V1;
 
 use App\Http\Requests\RestaurantFilterApiRequest;
 use App\Http\Resources\RestaurantResource;
-use Illuminate\Http\Request;
-use App\Models\Restaurant;
 use App\Repositories\RestaurantRepository;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\DB;
 
 class RestaurantController extends APIController
 {
@@ -34,6 +30,77 @@ class RestaurantController extends APIController
      *
      * @return \Illuminate\Http\JsonResponse
      */
+    /**
+     * @OA\Post(
+     ** path="/api/v1/restaurants",
+     *   tags={"Restaurants"},
+     *   summary="Get Near by Restaurants. Distance by default is 2.5K",
+     *
+     *  @OA\Parameter(
+     *      name="restaurant_name",
+     *      in="query",
+     *      required=false,
+     *      @OA\Schema(
+     *           type="string"
+     *      )
+     *   ),
+     *   @OA\Parameter(
+     *       name="drink_name",
+     *      in="query",
+     *      required=false,
+     *      @OA\Schema(
+     *           type="string"
+     *      )
+     *   ),
+     *   @OA\Parameter(
+     *      name="distance",
+     *      in="query",
+     *      required=false,
+     *      @OA\Schema(
+     *           type="float"
+     *      )
+     *   ),
+     *      @OA\Parameter(
+     *      name="latitude",
+     *      in="query",
+     *      required=true,
+     *      @OA\Schema(
+     *           type="float"
+     *      )
+     *   ),
+     *      @OA\Parameter(
+     *      name="longitude",
+     *      in="query",
+     *      required=true,
+     *      @OA\Schema(
+     *           type="float"
+     *      )
+     *   ),
+     *   @OA\Response(
+     *      response=200,
+     *       description="Success",
+     *      @OA\MediaType(
+     *           mediaType="application/json",
+     *      )
+     *   ),
+     *   @OA\Response(
+     *      response=401,
+     *       description="Unauthenticated"
+     *   ),
+     *   @OA\Response(
+     *      response=400,
+     *      description="Bad Request"
+     *   ),
+     *   @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      )
+     *)
+     **/
     public function index(RestaurantFilterApiRequest $request)
     {
         $restaurants = $this->repository->getRestaurants($request->validated());

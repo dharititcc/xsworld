@@ -240,6 +240,77 @@
                 }
             }
         },
+        "/api/v1/restaurants": {
+            "post": {
+                "tags": [
+                    "Restaurants"
+                ],
+                "summary": "Get Near by Restaurants. Distance by default is 2.5K",
+                "operationId": "0ce0452a296351fc754693c1098208cc",
+                "parameters": [
+                    {
+                        "name": "restaurant_name",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "drink_name",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "distance",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "float"
+                        }
+                    },
+                    {
+                        "name": "latitude",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "float"
+                        }
+                    },
+                    {
+                        "name": "longitude",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "float"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "not found"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    }
+                }
+            }
+        },
         "/": {
             "get": {
                 "description": "Home page",
