@@ -76,4 +76,14 @@ class Restaurant extends Model
     {
         return $this->belongsToMany(Item::class, 'restaurant_items', 'restaurant_id', 'item_id');
     }
+
+    /**
+     * Method getImageAttribute
+     *
+     * @return string
+     */
+    public function getImageAttribute(): string
+    {
+        return isset($this->attachment) ? asset('storage/restaurants/'.$this->attachment->stored_name) : '';
+    }
 }

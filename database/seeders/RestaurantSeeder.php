@@ -136,7 +136,7 @@ class RestaurantSeeder extends Seeder
             {
                 $newRestaurant = Restaurant::create($restaurant);
 
-                //TODO: logic to upload photo of restaurant
+                // logic to upload photo of restaurant
                 $newRestaurant->attachment()->create([
                     'original_name' => $counter.'.jpg',
                     'stored_name'   => $counter.'.jpg'
