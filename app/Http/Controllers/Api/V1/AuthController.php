@@ -27,6 +27,93 @@ class AuthController extends APIController
      *
      * @return \Illuminate\Http\JsonResponse
      */
+    /**
+     * @OA\Post(
+     ** path="/api/v1/auth/login",
+     *   tags={"Login"},
+     *   summary="Login",
+     *
+     *  @OA\Parameter(
+     *      name="email",
+     *      in="query",
+     *      required=false,
+     *      @OA\Schema(
+     *           type="string"
+     *      )
+     *   ),
+     *   @OA\Parameter(
+     *       name="phone",
+     *      in="query",
+     *      required=false,
+     *      @OA\Schema(
+     *           type="integer"
+     *      )
+     *   ),
+     *   @OA\Parameter(
+     *      name="password",
+     *      in="query",
+     *      required=true,
+     *      @OA\Schema(
+     *           type="string"
+     *      )
+     *   ),
+     *      @OA\Parameter(
+     *      name="platform",
+     *      in="query",
+     *      required=true,
+     *      @OA\Schema(
+     *           type="string"
+     *      )
+     *   ),
+     *      @OA\Parameter(
+     *      name="os_version",
+     *      in="query",
+     *      required=true,
+     *      @OA\Schema(
+     *           type="string"
+     *      )
+     *   ),
+     *     @OA\Parameter(
+     *      name="model",
+     *      in="query",
+     *      required=true,
+     *      @OA\Schema(
+     *           type="string"
+     *      )
+     *   ),
+     *     @OA\Parameter(
+     *      name="registration_type",
+     *      in="query",
+     *      required=true,
+     *      @OA\Schema(
+     *           type="integer"
+     *      )
+     *   ),
+     *   @OA\Response(
+     *      response=200,
+     *       description="Success",
+     *      @OA\MediaType(
+     *           mediaType="application/json",
+     *      )
+     *   ),
+     *   @OA\Response(
+     *      response=401,
+     *       description="Unauthenticated"
+     *   ),
+     *   @OA\Response(
+     *      response=400,
+     *      description="Bad Request"
+     *   ),
+     *   @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      )
+     *)
+     **/
     public function postLogin(Request $request)
     {
         $input = $request->all();
@@ -36,11 +123,10 @@ class AuthController extends APIController
 
             // update all other data
             $dataArr = [
-                'name'                  => $input['name'],
-                'platform'              => $input['platform'],
-                'os_version'            => $input['os_version'],
-                'application_version'   => $input['application_version'],
-                'model'                 => $input['model'],
+                'platform'              => $input['platform'] ?? null,
+                'os_version'            => $input['os_version'] ?? null,
+                'application_version'   => $input['application_version'] ?? null,
+                'model'                 => $input['model'] ?? null,
             ];
 
             $user->update($dataArr);
@@ -68,6 +154,37 @@ class AuthController extends APIController
      * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\JsonResponse
      */
+    /**
+     * @OA\Post(
+     ** path="/api/v1/auth/logout",
+     *   tags={"logout"},
+     *   summary="logout",
+     *
+     *   @OA\Response(
+     *      response=200,
+     *       description="Success",
+     *      @OA\MediaType(
+     *           mediaType="application/json",
+     *      )
+     *   ),
+     *   @OA\Response(
+     *      response=401,
+     *       description="Unauthenticated"
+     *   ),
+     *   @OA\Response(
+     *      response=400,
+     *      description="Bad Request"
+     *   ),
+     *   @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      )
+     *)
+     **/
     public function logout(Request $request)
     {
         try
@@ -91,6 +208,118 @@ class AuthController extends APIController
      *
      * @return \Illuminate\Http\JsonResponse
      */
+    /**
+     * @OA\Post(
+     ** path="/api/v1/auth/register",
+     *   tags={"Register"},
+     *   summary="Register",
+     *   operationId="register",
+     *
+     *  @OA\Parameter(
+     *      name="name",
+     *      in="query",
+     *      required=true,
+     *      @OA\Schema(
+     *           type="string"
+     *      )
+     *   ),
+     *  @OA\Parameter(
+     *      name="email",
+     *      in="query",
+     *      required=true,
+     *      @OA\Schema(
+     *           type="string"
+     *      )
+     *   ),
+     *   @OA\Parameter(
+     *       name="phone",
+     *      in="query",
+     *      required=true,
+     *      @OA\Schema(
+     *           type="integer"
+     *      )
+     *   ),
+     *   @OA\Parameter(
+     *      name="password",
+     *      in="query",
+     *      required=true,
+     *      @OA\Schema(
+     *           type="string"
+     *      )
+     *   ),
+     *      @OA\Parameter(
+     *      name="password_confirmation",
+     *      in="query",
+     *      required=true,
+     *      @OA\Schema(
+     *           type="string"
+     *      )
+     *   ),
+     *      @OA\Parameter(
+     *      name="platform",
+     *      in="query",
+     *      required=true,
+     *      @OA\Schema(
+     *           type="string"
+     *      )
+     *   ),
+     *      @OA\Parameter(
+     *      name="os_version",
+     *      in="query",
+     *      required=true,
+     *      @OA\Schema(
+     *           type="string"
+     *      )
+     *   ),
+     *     @OA\Parameter(
+     *      name="model",
+     *      in="query",
+     *      required=true,
+     *      @OA\Schema(
+     *           type="string"
+     *      )
+     *   ),
+     *     @OA\Parameter(
+     *      name="registration_type",
+     *      in="query",
+     *      required=true,
+     *      @OA\Schema(
+     *           type="integer"
+     *      )
+     *   ),
+     *     @OA\Parameter(
+     *      name="birth_date",
+     *      in="query",
+     *      required=true,
+     *      @OA\Schema(
+     *           type="string"
+     *      )
+     *   ),
+     *   @OA\Response(
+     *      response=200,
+     *       description="Success",
+     *      @OA\MediaType(
+     *           mediaType="application/json",
+     *      )
+     *   ),
+     *   @OA\Response(
+     *      response=401,
+     *       description="Unauthenticated"
+     *   ),
+     *   @OA\Response(
+     *      response=400,
+     *      description="Bad Request"
+     *   ),
+     *   @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      )
+     *)
+     **/
     public function postRegister(Request $request)
     {
         if( isset( $request->registration_type ) )

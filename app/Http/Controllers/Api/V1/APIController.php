@@ -66,8 +66,8 @@ class APIController extends Controller
     {
         $data = array_merge($data, [
             'paginator' => [
-                'total_count' => $items->total(),
-                'total_pages' => ceil($items->total() / $items->perPage()),
+                'total_count' => $items->count(),
+                'total_pages' => ceil($items->count() / $items->perPage()),
                 'current_page' => $items->currentPage(),
                 'limit' => $items->perPage(),
             ],

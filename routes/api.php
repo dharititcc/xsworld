@@ -31,5 +31,8 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'v1', 'as' => 'api.v1.'], fun
     {
         // {api/v1/auth/logout}
         Route::post('logout', 'AuthController@logout')->name('auth.logout');
+
+        // vanue list{api/v1/vanue}
+        Route::post('searchvanue', 'RestaurantController@getVenueSearch')->name('vanue.get');
     });
 });
