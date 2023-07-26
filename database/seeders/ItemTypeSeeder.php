@@ -29,7 +29,7 @@ class ItemTypeSeeder extends Seeder
                 'name' => 'Beers'
             ],
             [
-                'name' => 'Wine'
+                'name' => 'Wines'
             ]
         ];
 
@@ -37,7 +37,13 @@ class ItemTypeSeeder extends Seeder
         {
             foreach( $itemTypeArr as $itemType )
             {
-                ItemType::create($itemType);
+                $newItemType = ItemType::create($itemType);
+
+                // logic to upload photo of item type
+                $newItemType->attachment()->create([
+                    'original_name' => strtolower($itemType['name']).'.jpg',
+                    'stored_name'   => strtolower($itemType['name']).'.jpg'
+                ]);
             }
         }
 

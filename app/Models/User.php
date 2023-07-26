@@ -8,10 +8,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, HasApiTokens;
 
     protected $table = 'users';
 
@@ -22,8 +23,9 @@ class User extends Authenticatable
 
     /** Registration types */
     const EMAIL     = 0;
-    const GOOGLE    = 1;
-    const FACEBOOK  = 2;
+    const PHONE     = 1;
+    const GOOGLE    = 2;
+    const FACEBOOK  = 3;
 
     /**
      * The attributes that are mass assignable.
@@ -31,7 +33,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password', 'phone1', 'phone2', 'registration_type', 'user_type'
+        'name', 'email', 'password', 'phone', 'phone2', 'registration_type', 'user_type'
     ];
 
     /**
@@ -50,6 +52,7 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'phone'             => 'integer',
     ];
 
     /**

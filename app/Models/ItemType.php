@@ -54,4 +54,14 @@ class ItemType extends Model
     {
         return $this->belongsTo(self::class, 'item_type_id', 'id');
     }
+
+    /**
+     * Method getImageAttribute
+     *
+     * @return string
+     */
+    public function getImageAttribute(): string
+    {
+        return isset($this->attachment) ? asset('storage/item_types/'.$this->attachment->stored_name) : '';
+    }
 }
