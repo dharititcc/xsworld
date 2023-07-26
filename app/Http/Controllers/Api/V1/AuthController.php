@@ -3,12 +3,15 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Api\V1\Traits\Authenticate;
+use App\Http\Requests\RegisterRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use App\Repositories\UserRepository;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Facades\Hash;
 
 /**
  * @group Authentication
@@ -213,7 +216,7 @@ class AuthController extends APIController
     /**
      * Method postRegister
      *
-     * @param Request $request [explicite description]
+     * @param \App\Http\Requests\RegisterRequest $request [explicite description]
      *
      * @return \Illuminate\Http\JsonResponse
      */
@@ -329,74 +332,32 @@ class AuthController extends APIController
      *      )
      *)
      **/
-    public function postRegister(Request $request)
+    public function postRegister(RegisterRequest $request)
     {
-        if( isset( $request->registration_type ) )
+        $dataArr = [
+            'name'                  => $request->name,
+            'email'                 => $request->email,
+            'password'              => Hash::make($request->password),
+            'phone'                 => $request->phone,
+            'registration_type'     => $request->registration_type,
+            'birth_date'            => Carbon::createFromFormat('Y-m-d', $request->birth_date),
+            'platform'              => $request->platform,
+            'os_version'            => $request->os_version,
+            'application_version'   => $request->application_version,
+            'model'                 => $request->model
+        ];
+
+        $user = $this->repository->create($dataArr);
+
+        if( isset($user->id) )
         {
-            $type = intval($request->registration_type);
-            switch( $type )
-            {
-                case User::GOOGLE:
-                    // validation
-                    $this->validateEmail($request);
-
-                    $user = User::find($request->email);
-
-                    if( $user instanceof \App\Models\User && isset( $user->id ) )
-                    {
-                        auth()->login($user);
-                        return true;
-                    }
-                    break;
-                case User::FACEBOOK:
-                    // validation
-                    $this->validateEmail($request);
-
-                    $user = User::find($request->email);
-
-                    if( $user instanceof \App\Models\User && isset( $user->id ) )
-                    {
-                        auth()->login($user);
-                        return true;
-                    }
-                    break;
-                default:
-                    // validation
-                   
-                    $this->validateRegister($request);
-                    $user = User::create($request->all());
-                    return $this->respond([
-                        'status'    =>  true,
-                        'message'   =>  'Registeration successful',
-                        'item'      =>  new UserResource($user),
-                    ]);
-                    break;
-            }
+            return $this->respond([
+                'status' => true,
+                'message'=> 'Registration successfully.',
+                'item'   => new UserResource($user)
+            ]);
         }
+
         return $this->respondInternalError('Invalid Registration data.');
-    }
-    /**
-     * Validate the user login request.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return void
-     *
-     * @throws \Illuminate\Validation\ValidationException
-     */
-    protected function validateRegister(Request $request)
-    {
-       // dd($request->all());
-        $request->validate([
-            'name' => 'required|string',
-            'email' => 'required|unique:users,email',
-            'password' => 'required|string',
-            'phone' => 'required|unique:users,phone',
-            'registration_type' => 'required',
-            'birth_date' => 'required',
-            'platform' => 'required',
-            'os_version' => 'required',
-            'application_version' => 'required',
-            'model' => 'required'
-        ]);
     }
 }

@@ -25,4 +25,16 @@ class UserRepository extends BaseRepository
     {
         return $user->update($data);
     }
+
+    /**
+     * Method create
+     *
+     * @param array $data [explicite description]
+     *
+     * @return \App\Models\User
+     */
+    public function create(array $data): User
+    {
+        return User::create($data);
+    }
 }
