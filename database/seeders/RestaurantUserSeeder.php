@@ -16,27 +16,37 @@ class RestaurantUserSeeder extends Seeder
      */
     public function run()
     {
-        User::create([
-            'id'                    => 4,
-            'name'                  => 'Sunny Gadani',
-            'email'                 => 'dhaval@yopmail.com',
-            'password'              => Hash::make('12345678'),
-            'phone'                 => '918000686995',
-            'user_type'             => 4,
-            'created_at' 	        => Carbon::now()->toDateTimeString(),
-            'updated_at' 	        => Carbon::now()->toDateTimeString(),
-            'email_verified_at'     => Carbon::now()->toDateTimeString()
-        ],
-        [
-            'id'                    => 5,
-            'name'                  => 'Dhaval Panchal',
-            'email'                 => 'dhaval@yopmail.com',
-            'password'              => Hash::make('12345678'),
-            'phone'                 => '918000686911',
-            'user_type'             => 4,
-            'created_at' 	        => Carbon::now()->toDateTimeString(),
-            'updated_at' 	        => Carbon::now()->toDateTimeString(),
-            'email_verified_at'     => Carbon::now()->toDateTimeString()
-        ]);
+        $userArr = [
+            [
+                'id'                    => 4,
+                'name'                  => 'Sunny Gadani',
+                'email'                 => 'dhaval@yopmail.com',
+                'password'              => Hash::make('12345678'),
+                'phone'                 => '918000686995',
+                'user_type'             => User::BARTENDER,
+                'created_at' 	        => Carbon::now()->toDateTimeString(),
+                'updated_at' 	        => Carbon::now()->toDateTimeString(),
+                'email_verified_at'     => Carbon::now()->toDateTimeString()
+            ],
+            [
+                'id'                    => 5,
+                'name'                  => 'Dhaval Panchal',
+                'email'                 => 'dhaval@xsworld.com',
+                'password'              => Hash::make('12345678'),
+                'phone'                 => '918000686911',
+                'user_type'             => User::BARTENDER,
+                'created_at' 	        => Carbon::now()->toDateTimeString(),
+                'updated_at' 	        => Carbon::now()->toDateTimeString(),
+                'email_verified_at'     => Carbon::now()->toDateTimeString()
+            ]
+        ];
+
+        if( !empty( $userArr ) )
+        {
+            foreach( $userArr as $user )
+            {
+                User::create($user);
+            }
+        }
     }
 }

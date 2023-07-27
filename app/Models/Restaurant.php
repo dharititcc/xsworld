@@ -48,13 +48,23 @@ class Restaurant extends Model
     }
 
     /**
-     * The user that belong to the Restaurant
+     * The owners that belong to the Restaurant
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function user(): BelongsToMany
+    public function owners(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'user_restaurants', 'restaurant_id', 'user_id');
+        return $this->belongsToMany(User::class, 'restaurant_owners', 'restaurant_id', 'user_id');
+    }
+
+    /**
+     * The bartenders that belong to the Restaurant
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function bartenders(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'restaurant_bartenders', 'restaurant_id', 'user_id')->withPivot(['created_at', 'updated_at']);
     }
 
     /**

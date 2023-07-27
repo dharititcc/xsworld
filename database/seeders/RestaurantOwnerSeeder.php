@@ -22,7 +22,7 @@ class RestaurantOwnerSeeder extends Seeder
             'email'                 => 'milan@itccdigital.com',
             'password'              => Hash::make('12345678'),
             'phone'                 => '917600265925',
-            'user_type'             => 2,
+            'user_type'             => User::RESTAURANT_OWNER,
             'created_at' 	        => Carbon::now()->toDateTimeString(),
             'updated_at' 	        => Carbon::now()->toDateTimeString(),
             'email_verified_at'     => Carbon::now()->toDateTimeString()

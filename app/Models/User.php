@@ -17,10 +17,10 @@ class User extends Authenticatable
     protected $table = 'users';
 
     /** user types */
-    const CUSTOMER      = 1;
-    const RESTAURANT    = 2;
-    const ADMIN         = 3;
-    const BARTENDER     = 4;
+    const CUSTOMER          = 1;
+    const RESTAURANT_OWNER  = 2;
+    const ADMIN             = 3;
+    const BARTENDER         = 4;
 
     /** Registration types */
     const EMAIL     = 0;
