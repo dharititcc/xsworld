@@ -142,19 +142,19 @@ class RestaurantSeeder extends Seeder
                     'stored_name'   => $counter.'.jpg'
                 ]);
 
-                // Logic create restaurant user
-                if( $newRestaurant->id == 1 )
-                {
-                    $newRestaurant->bartenders()->attach([4,5]);
-                }
-
                 // Logic related to link item types
                 $newRestaurant->item_types()->attach([1,2,3,4]);
 
                 // TODO: Logic related to link items
 
-                // TODO: Logic related to pickup points
-                //$newRestaurant->pickup_points()->attach([1,2]);
+                if( $newRestaurant->id == 1 )
+                {
+                    // Logic create restaurant user
+                    $newRestaurant->bartenders()->attach([4,5]);
+
+                    // Logic related to pickup points
+                    $newRestaurant->pickup_points()->attach([1 => ['user_id' => 4, 'name' => 'Front Bar'], 2 => ['user_id' => 5, 'name' => 'Back Bar']]);
+                }
 
                 $newRestaurant->owners()->attach(2);
 

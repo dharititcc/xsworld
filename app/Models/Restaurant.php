@@ -104,6 +104,6 @@ class Restaurant extends Model
      */
     public function pickup_points(): BelongsToMany
     {
-        return $this->belongsToMany(PickupPoint::class, 'restaurant_pickup_points', 'restaurant_id', 'pickup_point_id');
+        return $this->belongsToMany(PickupPoint::class, 'restaurant_pickup_points', 'restaurant_id', 'pickup_point_id')->withPivot(['user_id', 'created_at', 'updated_at', 'name']);
     }
 }

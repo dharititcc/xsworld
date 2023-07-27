@@ -21,9 +21,9 @@ class CreateRestaurantPickupPointsTable extends Migration
             $table->string('name');
             $table->timestamps();
 
-            $table->foreign('restaurant_id')->references('id')->on('restaurants');
-            $table->foreign('pickup_point_id')->references('id')->on('pickup_points');
-            $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('restaurant_id')->references('id')->on('restaurants')->onDelete('cascade');
+            $table->foreign('pickup_point_id')->references('id')->on('pickup_points')->onDelete('cascade');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 
