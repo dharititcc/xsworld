@@ -32,10 +32,19 @@ class RestaurantController extends APIController
      */
     /**
      * @OA\Post(
-     ** path="/api/v1/restaurants",
+     ** path="/api/v1/auth/restaurants",
      *   tags={"Restaurants"},
      *   summary="Get Near by Restaurants. Distance by default is 2.5K",
      *
+     * 
+     *  @OA\Parameter(
+     *      name="",
+     *      in="query",
+     *      required=false,
+     *      @OA\Schema(
+     *           type="string"
+     *      )
+     *   ),
      *  @OA\Parameter(
      *      name="restaurant_name",
      *      in="query",
@@ -65,7 +74,7 @@ class RestaurantController extends APIController
      *      in="query",
      *      required=true,
      *      @OA\Schema(
-     *           type="float"
+     *           type="string"
      *      )
      *   ),
      *      @OA\Parameter(
@@ -73,7 +82,7 @@ class RestaurantController extends APIController
      *      in="query",
      *      required=true,
      *      @OA\Schema(
-     *           type="float"
+     *           type="string"
      *      )
      *   ),
      *   @OA\Response(

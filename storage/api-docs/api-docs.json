@@ -240,14 +240,22 @@
                 }
             }
         },
-        "/api/v1/restaurants": {
+        "/api/v1/auth/restaurants": {
             "post": {
                 "tags": [
                     "Restaurants"
                 ],
                 "summary": "Get Near by Restaurants. Distance by default is 2.5K",
-                "operationId": "0ce0452a296351fc754693c1098208cc",
+                "operationId": "8a2dbd8f152c2d0c02916835c578f895",
                 "parameters": [
+                    {
+                        "name": "",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
                     {
                         "name": "restaurant_name",
                         "in": "query",
@@ -277,7 +285,7 @@
                         "in": "query",
                         "required": true,
                         "schema": {
-                            "type": "float"
+                            "type": "string"
                         }
                     },
                     {
@@ -285,7 +293,7 @@
                         "in": "query",
                         "required": true,
                         "schema": {
-                            "type": "float"
+                            "type": "string"
                         }
                     }
                 ],

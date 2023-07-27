@@ -31,8 +31,10 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'v1', 'as' => 'api.v1.'], fun
     {
         // {api/v1/auth/logout}
         Route::post('logout', 'AuthController@logout')->name('auth.logout');
-
+    });
+    Route::group(['middleware' => 'auth:api'], function ()
+    {
         // vanue list{api/v1/restaurants}
-        Route::post('restaurants', 'RestaurantController@index')->name('restaurant.index');
+        Route::post('/restaurants', 'restaurantcontroller@index')->name('restaurant.index');
     });
 });
