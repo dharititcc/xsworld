@@ -148,6 +148,7 @@ class RestaurantSeeder extends Seeder
                 // TODO: Logic related to link items
 
                 // TODO: Logic related to pickup points
+                //$newRestaurant->pickup_points()->attach([1,2]);
 
                 $newRestaurant->user()->attach(2);
 

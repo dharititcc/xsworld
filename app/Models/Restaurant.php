@@ -86,4 +86,14 @@ class Restaurant extends Model
     {
         return isset($this->attachment) ? asset('storage/restaurants/'.$this->attachment->stored_name) : '';
     }
+
+    /**
+     * The items that belong to the Restaurant
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function pickup_points(): BelongsToMany
+    {
+        return $this->belongsToMany(PickupPoint::class, 'restaurant_pickup_points', 'restaurant_id', 'pickup_point_id');
+    }
 }

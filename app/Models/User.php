@@ -20,6 +20,7 @@ class User extends Authenticatable
     const CUSTOMER      = 1;
     const RESTAURANT    = 2;
     const ADMIN         = 3;
+    const BARTENDER     = 4;
 
     /** Registration types */
     const EMAIL     = 0;
