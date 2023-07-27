@@ -66,7 +66,7 @@ class RestaurantRepository extends BaseRepository
         $lat        = isset( $data['latitude'] ) ? $data['latitude'] : null;
         $long       = isset( $data['longitude'] ) ? $data['longitude'] : null;
 
-        $query = $this->restaurantQuery()->with(['item_types'])->select([
+        $query = $this->restaurantQuery()->with(['item_types','pickup_points'])->select([
             'id',
             'name',
             'latitude',
