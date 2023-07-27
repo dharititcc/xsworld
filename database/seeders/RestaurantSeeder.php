@@ -147,7 +147,7 @@ class RestaurantSeeder extends Seeder
 
                 // TODO: Logic related to link items
 
-                if( $newRestaurant->id == 1 )
+                if( $newRestaurant->id == 4 )
                 {
                     // Logic create restaurant user
                     $newRestaurant->bartenders()->attach([4,5]);
