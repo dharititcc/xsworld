@@ -32,19 +32,14 @@ class RestaurantController extends APIController
      */
     /**
      * @OA\Post(
-     ** path="/api/v1/auth/restaurants",
+     ** path="/api/v1/restaurants",
      *   tags={"Restaurants"},
      *   summary="Get Near by Restaurants. Distance by default is 2.5K",
+     *     security={
+     *         {"bearer_token": {}}
+     *     },
      *
      * 
-     *  @OA\Parameter(
-     *      name="",
-     *      in="query",
-     *      required=false,
-     *      @OA\Schema(
-     *           type="string"
-     *      )
-     *   ),
      *  @OA\Parameter(
      *      name="restaurant_name",
      *      in="query",
@@ -72,7 +67,7 @@ class RestaurantController extends APIController
      *      @OA\Parameter(
      *      name="latitude",
      *      in="query",
-     *      required=true,
+     *      required=false,
      *      @OA\Schema(
      *           type="string"
      *      )
@@ -80,7 +75,7 @@ class RestaurantController extends APIController
      *      @OA\Parameter(
      *      name="longitude",
      *      in="query",
-     *      required=true,
+     *      required=false,
      *      @OA\Schema(
      *           type="string"
      *      )
@@ -107,7 +102,7 @@ class RestaurantController extends APIController
      *      @OA\Response(
      *          response=403,
      *          description="Forbidden"
-     *      )
+     *      ),
      *)
      **/
     public function index(RestaurantFilterApiRequest $request)
