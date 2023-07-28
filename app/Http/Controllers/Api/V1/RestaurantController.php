@@ -67,7 +67,7 @@ class RestaurantController extends APIController
      *      @OA\Parameter(
      *      name="latitude",
      *      in="query",
-     *      required=false,
+     *      required=true,
      *      @OA\Schema(
      *           type="string"
      *      )
@@ -75,7 +75,7 @@ class RestaurantController extends APIController
      *      @OA\Parameter(
      *      name="longitude",
      *      in="query",
-     *      required=false,
+     *      required=true,
      *      @OA\Schema(
      *           type="string"
      *      )
