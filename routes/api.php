@@ -38,8 +38,8 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'v1', 'as' => 'api.v1.'], fun
         Route::post('/restaurants', 'restaurantcontroller@index')->name('restaurant.index');
         // {api/v1/auth/get-profile}
         Route::get('get-profile', 'AuthController@me')->name('get-profile');
-        
     });
+
     Route::group(['prefix' => 'users','middleware' => 'auth:api'], function ()
     {
          // {api/v1/auth/get-profile}
@@ -48,6 +48,5 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'v1', 'as' => 'api.v1.'], fun
          Route::patch('password/reset', 'UserController@resetPassword')->name('user.resetPassword');
          // {api/v1/users/change-password}
          Route::patch('change-password', 'UserController@changePassword')->name('user.change-password');
- 
     });
 });
