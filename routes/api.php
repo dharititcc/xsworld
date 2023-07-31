@@ -25,6 +25,9 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'v1', 'as' => 'api.v1.'], fun
         Route::post('login', 'AuthController@postLogin')->name('auth.login');
         // {api/v1/auth/register}
         Route::post('register', 'AuthController@postRegister')->name('auth.register');
+        // {api/v1/users/password/reset}
+        Route::patch('password/reset', 'AuthController@resetPassword')->name('user.resetPassword');
+       
     });
 
     Route::group(['prefix' => 'auth', 'middleware' => 'auth:api'], function ()
@@ -44,8 +47,6 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'v1', 'as' => 'api.v1.'], fun
     {
          // {api/v1/auth/get-profile}
          Route::post('update-profile', 'UserController@updateProfile')->name('user.update-profile');
-         // {api/v1/users/password/reset}
-         Route::patch('password/reset', 'UserController@resetPassword')->name('user.resetPassword');
          // {api/v1/users/change-password}
          Route::patch('change-password', 'UserController@changePassword')->name('user.change-password');
     });

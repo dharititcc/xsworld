@@ -9,6 +9,7 @@ use App\Repositories\UserRepository;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Password;
 use Auth;
 
 /**
@@ -390,5 +391,55 @@ class AuthController extends APIController
             'message'=> 'Get Profile successfully.',
             'item'   => new UserResource($user)
         ]);
+    }
+    /**
+     * Method resetPassword
+     *
+     * @param \App\Http\Requests $request [explicite description]
+     *
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \App\Exceptions\GeneralException
+     */
+    /**
+     * @OA\PATCH(
+     ** path="/api/v1/auth/password/reset",
+     *   tags={"password/reset"},
+     *   summary="password/reset",
+     *
+     *     @OA\Parameter(
+     *      name="email",
+     *      in="query",
+     *      required=true,
+     *      @OA\Schema(
+     *           type="string"
+     *      )
+     * ),
+     *    @OA\Response(
+     *      response=200,
+     *       description="Success",
+     *      @OA\MediaType(
+     *           mediaType="application/json",
+     *      )
+     *   ),
+     *   @OA\Response(
+     *      response=401,
+     *       description="Unauthenticated"
+     *   ),
+     *)
+     **/
+    public function resetPassword(Request $request)
+    {
+        $request->validate(['email' => 'required|email']);
+ 
+        $status = Password::sendResetLink(
+            $request->only('email')
+        );
+                return $this->respond([
+                    'status' => true,
+                    'message'=> 'Mail send successfully Please check your mail.',
+                    'item'   => $status === Password::RESET_LINK_SENT
+                    ? back()->with(['status' => __($status)])
+                    : back()->withErrors(['email' => __($status)])
+                ]);
     }
 }
