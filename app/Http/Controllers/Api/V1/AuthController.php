@@ -9,6 +9,7 @@ use App\Repositories\UserRepository;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Auth;
 
 /**
  * @group Authentication
@@ -356,5 +357,38 @@ class AuthController extends APIController
         }
 
         return $this->respondInternalError('Invalid Registration data.');
+    }
+    /**
+     * @OA\Get(
+     ** path="/api/v1/get-profile",
+     *   tags={"get-profile"},
+     *   summary="get-profile",
+     *   operationId="get-profile",
+     *   security={
+     *         {"bearer_token": {}}
+     *     },
+     *   @OA\Response(
+     *      response=200,
+     *       description="Success",
+     *      @OA\MediaType(
+     *           mediaType="application/json",
+     *      )
+     *   ),
+     *   @OA\Response(
+     *      response=401,
+     *       description="Unauthenticated"
+     *   ),
+  
+     *)
+     **/
+    public function me(Request $request)
+    {
+        $user = Auth::user();
+       // dd($user);
+        return $this->respond([
+            'status' => true,
+            'message'=> 'Get Profile successfully.',
+            'item'   => new UserResource($user)
+        ]);
     }
 }
