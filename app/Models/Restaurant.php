@@ -84,7 +84,18 @@ class Restaurant extends Model
      */
     public function items(): BelongsToMany
     {
-        return $this->belongsToMany(Item::class, 'restaurant_items', 'restaurant_id', 'item_id');
+        return $this->belongsToMany(Item::class, 'restaurant_items', 'restaurant_id', 'item_id')
+        ->withPivot([
+            'price',
+            'is_featured',
+            'type',
+            'variation',
+            'restaurant_item_id',
+            'restaurant_item_type_id',
+            'created_at',
+            'updated_at',
+            'deleted_at'
+        ]);
     }
 
     /**

@@ -19,7 +19,7 @@ class CreateRestaurantItemTypesTable extends Migration
             $table->unsignedBigInteger('item_type_id');
 
             $table->foreign('restaurant_id')->references('id')->on('restaurants')->onDelete('cascade');
-            $table->foreign('item_type_id')->references('id')->on('items')->onDelete('cascade');
+            $table->foreign('item_type_id')->references('id')->on('item_types')->onDelete('cascade');
         });
     }
 

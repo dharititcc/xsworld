@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -63,5 +64,15 @@ class ItemType extends Model
     public function getImageAttribute(): string
     {
         return isset($this->attachment) ? asset('storage/item_types/'.$this->attachment->stored_name) : '';
+    }
+
+    /**
+     * Get all of the items for the ItemType
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function items(): HasMany
+    {
+        return $this->hasMany(Item::class, 'item_type_id', 'id');
     }
 }

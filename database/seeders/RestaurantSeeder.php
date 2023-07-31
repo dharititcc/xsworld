@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Item;
 use App\Models\Restaurant;
 use App\Models\User;
 use Illuminate\Database\Seeder;
@@ -146,6 +147,15 @@ class RestaurantSeeder extends Seeder
                 $newRestaurant->item_types()->attach([1,2,3,4]);
 
                 // TODO: Logic related to link items
+                $newRestaurant->items()->attach(
+                    [
+                        1 => ['price' => 10, 'is_featured' => true, 'variation_id' => 1, 'type' => Item::VARIABLE, 'restaurant_item_type_id' => 1],
+                        2 => ['price' => 10, 'is_featured' => true, 'variation_id' => 3, 'type' => Item::VARIABLE, 'restaurant_item_type_id' => 1],
+                        3 => ['price' => 10, 'is_featured' => true, 'variation_id' => 4, 'type' => Item::VARIABLE, 'restaurant_item_type_id' => 1],
+                        4 => ['price' => 10, 'is_featured' => true, 'variation_id' => 5, 'type' => Item::VARIABLE, 'restaurant_item_type_id' => 1],
+                        5 => ['price' => 10, 'is_featured' => true, 'variation_id' => 6, 'type' => Item::VARIABLE, 'restaurant_item_type_id' => 1]
+                    ]
+                );
 
                 if( $newRestaurant->id == 4 )
                 {
