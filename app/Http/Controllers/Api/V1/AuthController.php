@@ -212,6 +212,7 @@ class AuthController extends APIController
 
         return $this->respondSuccess('Logged out successfully.');
     }
+
     /**
      * Method postRegister
      *
@@ -359,6 +360,7 @@ class AuthController extends APIController
 
         return $this->respondInternalError('Invalid Registration data.');
     }
+
     /**
      * @OA\Get(
      ** path="/api/v1/get-profile",
@@ -379,7 +381,6 @@ class AuthController extends APIController
      *      response=401,
      *       description="Unauthenticated"
      *   ),
-  
      *)
      **/
     public function me(Request $request)
@@ -392,6 +393,7 @@ class AuthController extends APIController
             'item'   => new UserResource($user)
         ]);
     }
+
     /**
      * Method resetPassword
      *
@@ -430,7 +432,7 @@ class AuthController extends APIController
     public function resetPassword(Request $request)
     {
         $request->validate(['email' => 'required|email']);
- 
+
         $status = Password::sendResetLink(
             $request->only('email')
         );

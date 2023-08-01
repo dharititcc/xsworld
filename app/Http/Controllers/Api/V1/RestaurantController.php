@@ -39,7 +39,7 @@ class RestaurantController extends APIController
      *         {"bearer_token": {}}
      *     },
      *
-     * 
+     *
      *  @OA\Parameter(
      *      name="restaurant_name",
      *      in="query",
