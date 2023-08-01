@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Services\Access;
+use App\Services\Common;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -23,6 +25,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        $this->app->bind('access', function ($app) {
+            return new Access();
+        });
+
+        $this->app->singleton('common', function ($app) {
+            return new Common();
+        });
     }
 }
