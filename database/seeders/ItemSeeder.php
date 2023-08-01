@@ -24,160 +24,140 @@ class ItemSeeder extends Seeder
                 'item_type_id'  => 1,
                 'type'          => Item::ITEM,
                 'is_variable'   => 1,
-                'price'         => 10,
-                'image'         =>'1.jpg'
+                'price'         => 10
             ],
             [
                 'name'          => 'Gin',
                 'item_type_id'  => 1,
                 'type'          => Item::ITEM,
                 'is_variable'   => 1,
-                'price'         => 10,
-                'image'         =>'1.jpg'
+                'price'         => 10
             ],
             [
                 'name'          => 'Liquers',
                 'item_type_id'  => 1,
                 'type'          => Item::ITEM,
                 'is_variable'   => 1,
-                'price'         => 10,
-                'image'         =>'1.jpg'
+                'price'         => 10
             ],
             [
                 'name'          => 'Rum',
                 'item_type_id'  => 1,
                 'type'          => Item::ITEM,
                 'is_variable'   => 1,
-                'price'         => 10,
-                'image'         =>'1.jpg'
+                'price'         => 10
             ],
             [
                 'name'          => 'Vodka',
                 'item_type_id'  => 1,
                 'type'          => Item::ITEM,
                 'is_variable'   => 1,
-                'price'         => 10,
-                'image'         =>'1.jpg'
+                'price'         => 10
             ],
             [
                 'name'          => 'Old Fashioned',
                 'item_type_id'  => 2,
                 'type'          => Item::ITEM,
                 'is_variable'   => 1,
-                'price'         => 10,
-                'image'         =>'2.jpg'
+                'price'         => 10
             ],
             [
                 'name'          => 'Negroni',
                 'item_type_id'  => 2,
                 'type'          => Item::ITEM,
                 'is_variable'   => 1,
-                'price'         => 10,
-                'image'         =>'2.jpg'
+                'price'         => 10
             ],
             [
                 'name'          => 'Whisky Sour',
                 'item_type_id'  => 2,
                 'type'          => Item::ITEM,
                 'is_variable'   => 1,
-                'price'         => 10,
-                'image'         =>'2.jpg'
+                'price'         => 10
             ],
             [
                 'name'          => 'Dry Martini',
                 'item_type_id'  => 2,
                 'type'          => Item::ITEM,
                 'is_variable'   => 1,
-                'price'         => 10,
-                'image'         =>'3.jpg'
+                'price'         => 10
             ],
             [
                 'name'          => 'Manhattan',
                 'item_type_id'  => 2,
                 'type'          => Item::ITEM,
                 'is_variable'   => 1,
-                'price'         => 10,
-                'image'         =>'2.jpg'
+                'price'         => 10
             ],
             [
                 'name'          => 'Lager',
                 'item_type_id'  => 3,
                 'type'          => Item::ITEM,
                 'is_variable'   => 1,
-                'price'         => 10,
-                'image'         =>'3.jpg'
+                'price'         => 10
             ],
             [
                 'name'          => 'Ale',
                 'item_type_id'  => 3,
                 'type'          => Item::ITEM,
                 'is_variable'   => 1,
-                'price'         => 10,
-                'image'         =>'3.jpg'
+                'price'         => 10
             ],
             [
                 'name'          => 'Stout',
                 'item_type_id'  => 3,
                 'type'          => Item::ITEM,
                 'is_variable'   => 1,
-                'price'         => 10,
-                'image'         =>'3.jpg'
+                'price'         => 10
             ],
             [
                 'name'          => 'Porter',
                 'item_type_id'  => 3,
                 'type'          => Item::ITEM,
                 'is_variable'   => 1,
-                'price'         => 10,
-                'image'         =>'3.jpg'
+                'price'         => 10
             ],
             [
                 'name'          => 'Brown Ale',
                 'item_type_id'  => 3,
                 'type'          => Item::ITEM,
                 'is_variable'   => 1,
-                'price'         => 10,
-                'image'         =>'3.jpg'
+                'price'         => 10
             ],
             [
                 'name'          => 'Red Wine',
                 'item_type_id'  => 4,
                 'type'          => Item::ITEM,
                 'is_variable'   => 1,
-                'price'         => 10,
-                'image'         =>'4.jpg'
+                'price'         => 10
             ],
             [
                 'name'          => 'White Wine',
                 'item_type_id'  => 4,
                 'type'          => Item::ITEM,
                 'is_variable'   => 1,
-                'price'         => 10,
-                'image'         =>'4.jpg'
+                'price'         => 10
             ],
             [
                 'name'          => 'Rose Wine',
                 'item_type_id'  => 4,
                 'type'          => Item::ITEM,
                 'is_variable'   => 1,
-                'price'         => 10,
-                'image'         =>'4.jpg'
+                'price'         => 10
             ],
             [
                 'name'          => 'Sparkling Wine',
                 'item_type_id'  => 4,
                 'type'          => Item::ITEM,
                 'is_variable'   => 1,
-                'price'         => 10,
-                'image'         =>'4.jpg'
+                'price'         => 10
             ],
             [
                 'name'          => 'Dessert Wine',
                 'item_type_id'  => 4,
                 'type'          => Item::ITEM,
                 'is_variable'   => 1,
-                'price'         => 10,
-                'image'         =>'4.jpg'
+                'price'         => 10
             ]
         ];
 
@@ -185,7 +165,13 @@ class ItemSeeder extends Seeder
         {
             foreach( $itemArr as $item )
             {
-                Item::create($item);
+                $newItem = Item::create($item);
+
+                // TODO: Logic for the attachment
+                $newItem->attachment()->create([
+                    'stored_name'   => '1.jpg',
+                    'original_name' => '1.jpg'
+                ]);
             }
         }
 

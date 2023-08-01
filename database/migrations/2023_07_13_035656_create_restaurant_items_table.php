@@ -23,7 +23,6 @@ class CreateRestaurantItemsTable extends Migration
             $table->unsignedBigInteger('variation_id')->nullable();
             $table->unsignedTinyInteger('type')->default(0)->comment('0=Simple, 1=Variable');
             $table->unsignedBigInteger('restaurant_item_id')->nullable()->comment('Addon/Mixers of specific item / specific restaurant');
-            $table->string('image');
             $table->timestamps();
             $table->softDeletes();
 

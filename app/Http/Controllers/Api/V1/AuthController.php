@@ -232,7 +232,7 @@ class AuthController extends APIController
     /**
      * @OA\Post(
      ** path="/api/v1/auth/register",
-     *   tags={"Register"},
+     *   tags={"Authentication"},
      *   summary="Register",
      *   operationId="register",
      *

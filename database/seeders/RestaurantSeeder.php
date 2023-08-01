@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Item;
 use App\Models\Restaurant;
+use App\Models\RestaurantItem;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
@@ -146,16 +147,31 @@ class RestaurantSeeder extends Seeder
                 // Logic related to link item types
                 $newRestaurant->item_types()->attach([1,2,3,4]);
 
-                // TODO: Logic related to link items
-                $newRestaurant->items()->attach(
-                    [
-                        1 => ['price' => 10, 'is_featured' => true, 'variation_id' => 1, 'type' => Item::VARIABLE, 'restaurant_item_type_id' => 1, 'image'=>'1.jpg'],
-                        2 => ['price' => 10, 'is_featured' => true, 'variation_id' => 3, 'type' => Item::VARIABLE, 'restaurant_item_type_id' => 1, 'image'=>'2.jpg'],
-                        3 => ['price' => 10, 'is_featured' => true, 'variation_id' => 4, 'type' => Item::VARIABLE, 'restaurant_item_type_id' => 1, 'image'=>'3.jpg'],
-                        4 => ['price' => 10, 'is_featured' => true, 'variation_id' => 5, 'type' => Item::VARIABLE, 'restaurant_item_type_id' => 1, 'image'=>'4.jpg'],
-                        5 => ['price' => 10, 'is_featured' => true, 'variation_id' => 6, 'type' => Item::VARIABLE, 'restaurant_item_type_id' => 1, 'image'=>'1.jpg']
-                    ]
-                );
+                $itemArr = [1,2,3,4,5];
+
+                if( !empty($itemArr) )
+                {
+                    foreach( $itemArr as $k => $item )
+                    {
+                        $restaurantItemArr = [
+                            'price'                     => 10,
+                            'is_featured'               => true,
+                            'variation_id'              => 1,
+                            'type'                      => Item::VARIABLE,
+                            'restaurant_item_type_id'   => 1,
+                            'restaurant_id'             => $newRestaurant->id,
+                            'item_id'                   => $item
+                        ];
+
+                        $newRestaurantItem = RestaurantItem::create($restaurantItemArr);
+
+                        // logic to link attachment
+                        $newRestaurantItem->attachment()->create([
+                            'original_name' => ($k+1).'.jpg',
+                            'stored_name'   => ($k+1).'.jpg'
+                        ]);
+                    }
+                }
 
                 if( $newRestaurant->id == 4 )
                 {
