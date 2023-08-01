@@ -123,7 +123,7 @@ class UserController extends APIController
     /**
      * @OA\PATCH(
      ** path="/api/v1/users/change-password",
-     *   tags={"change-password"},
+     *   tags={"Authentication"},
      *   summary="change-password",
      *     security={
      *         {"bearer_token": {}}

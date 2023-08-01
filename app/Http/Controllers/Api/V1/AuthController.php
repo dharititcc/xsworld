@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Api\V1\Traits\Authenticate;
 use App\Http\Requests\RegisterRequest;
+use App\Http\Requests\LoginRequest;
 use App\Http\Resources\UserResource;
 use App\Repositories\UserRepository;
 use Carbon\Carbon;
@@ -41,13 +42,13 @@ class AuthController extends APIController
     /**
      * @OA\Post(
      ** path="/api/v1/auth/login",
-     *   tags={"Login"},
+     *   tags={"Authentication"},
      *   summary="Login",
      *
      *  @OA\Parameter(
      *      name="email",
      *      in="query",
-     *      required=false,
+     *      required=true,
      *      @OA\Schema(
      *           type="string"
      *      )
@@ -55,7 +56,7 @@ class AuthController extends APIController
      *   @OA\Parameter(
      *       name="phone",
      *      in="query",
-     *      required=false,
+     *      required=true,
      *      @OA\Schema(
      *           type="integer"
      *      )
@@ -78,6 +79,14 @@ class AuthController extends APIController
      *   ),
      *      @OA\Parameter(
      *      name="os_version",
+     *      in="query",
+     *      required=true,
+     *      @OA\Schema(
+     *           type="string"
+     *      )
+     *   ),
+     *     @OA\Parameter(
+     *      name="application_version",
      *      in="query",
      *      required=true,
      *      @OA\Schema(
@@ -125,7 +134,7 @@ class AuthController extends APIController
      *      )
      *)
      **/
-    public function postLogin(Request $request)
+    public function postLogin(LoginRequest $request)
     {
         $input = $request->all();
         if( $this->authenticate($request) )
@@ -168,7 +177,7 @@ class AuthController extends APIController
     /**
      * @OA\Post(
      ** path="/api/v1/auth/logout",
-     *   tags={"logout"},
+     *   tags={"Authentication"},
      *   summary="logout",
      *
      *   @OA\Response(
@@ -405,7 +414,7 @@ class AuthController extends APIController
     /**
      * @OA\PATCH(
      ** path="/api/v1/auth/password/reset",
-     *   tags={"password/reset"},
+     *   tags={"Authentication"},
      *   summary="password/reset",
      *
      *     @OA\Parameter(

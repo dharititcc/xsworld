@@ -149,11 +149,11 @@ class RestaurantSeeder extends Seeder
                 // TODO: Logic related to link items
                 $newRestaurant->items()->attach(
                     [
-                        1 => ['price' => 10, 'is_featured' => true, 'variation_id' => 1, 'type' => Item::VARIABLE, 'restaurant_item_type_id' => 1],
-                        2 => ['price' => 10, 'is_featured' => true, 'variation_id' => 3, 'type' => Item::VARIABLE, 'restaurant_item_type_id' => 1],
-                        3 => ['price' => 10, 'is_featured' => true, 'variation_id' => 4, 'type' => Item::VARIABLE, 'restaurant_item_type_id' => 1],
-                        4 => ['price' => 10, 'is_featured' => true, 'variation_id' => 5, 'type' => Item::VARIABLE, 'restaurant_item_type_id' => 1],
-                        5 => ['price' => 10, 'is_featured' => true, 'variation_id' => 6, 'type' => Item::VARIABLE, 'restaurant_item_type_id' => 1]
+                        1 => ['price' => 10, 'is_featured' => true, 'variation_id' => 1, 'type' => Item::VARIABLE, 'restaurant_item_type_id' => 1, 'image'=>'1.jpg'],
+                        2 => ['price' => 10, 'is_featured' => true, 'variation_id' => 3, 'type' => Item::VARIABLE, 'restaurant_item_type_id' => 1, 'image'=>'2.jpg'],
+                        3 => ['price' => 10, 'is_featured' => true, 'variation_id' => 4, 'type' => Item::VARIABLE, 'restaurant_item_type_id' => 1, 'image'=>'3.jpg'],
+                        4 => ['price' => 10, 'is_featured' => true, 'variation_id' => 5, 'type' => Item::VARIABLE, 'restaurant_item_type_id' => 1, 'image'=>'4.jpg'],
+                        5 => ['price' => 10, 'is_featured' => true, 'variation_id' => 6, 'type' => Item::VARIABLE, 'restaurant_item_type_id' => 1, 'image'=>'1.jpg']
                     ]
                 );
 
