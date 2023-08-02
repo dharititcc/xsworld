@@ -237,7 +237,15 @@ class AuthController extends APIController
      *   operationId="register",
      *
      *  @OA\Parameter(
-     *      name="name",
+     *      name="first_name",
+     *      in="query",
+     *      required=true,
+     *      @OA\Schema(
+     *           type="string"
+     *      )
+     *   ),
+     *  @OA\Parameter(
+     *      name="last_name",
      *      in="query",
      *      required=true,
      *      @OA\Schema(
@@ -352,7 +360,8 @@ class AuthController extends APIController
     public function postRegister(RegisterRequest $request)
     {
         $dataArr = [
-            'name'                  => $request->name,
+            'first_name'            => $request->first_name,
+            'last_name'             => $request->last_name,
             'email'                 => $request->email,
             'password'              => Hash::make($request->password),
             'phone'                 => $request->phone,
