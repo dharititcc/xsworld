@@ -20,6 +20,14 @@ use Illuminate\Routing\Controller as BaseController;
  *         url="https://www.apache.org/licenses/LICENSE-2.0.html"
  *     )
  * )
+ * @OA\Server(
+ *      url="http://127.0.0.1:8000/api/v1/",
+ *      description="Demo API Server"
+ * )
+ * @OA\Server(
+ *      url="https://express.itcc.net.au/api/v1/",
+ *      description="Staging API Server"
+ * )
  */
 class Controller extends BaseController
 {

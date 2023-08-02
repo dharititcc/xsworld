@@ -12,6 +12,16 @@
         },
         "version": "1.0.0"
     },
+    "servers": [
+        {
+            "url": "http://127.0.0.1:8000/api/v1/",
+            "description": "Demo API Server"
+        },
+        {
+            "url": "https://express.itcc.net.au/api/v1/",
+            "description": "Staging API Server"
+        }
+    ],
     "paths": {
         "/api/v1/auth/login": {
             "post": {
@@ -140,7 +150,7 @@
         "/api/v1/auth/register": {
             "post": {
                 "tags": [
-                    "Register"
+                    "Authentication"
                 ],
                 "summary": "Register",
                 "operationId": "register",
@@ -187,6 +197,14 @@
                     },
                     {
                         "name": "platform",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "application_version",
                         "in": "query",
                         "required": true,
                         "schema": {
@@ -251,7 +269,7 @@
         "/api/v1/get-profile": {
             "get": {
                 "tags": [
-                    "get-profile"
+                    "Profile"
                 ],
                 "summary": "get-profile",
                 "operationId": "get-profile",
@@ -309,7 +327,7 @@
                     "Restaurants"
                 ],
                 "summary": "Get Near by Restaurants. Distance by default is 2.5K",
-                "operationId": "0ce0452a296351fc754693c1098208cc",
+                "operationId": "7a5f538fde1a75fc3a20c2f68b330ba1",
                 "parameters": [
                     {
                         "name": "restaurant_name",
@@ -382,7 +400,7 @@
         "/api/v1/users/update-profile": {
             "post": {
                 "tags": [
-                    "update-profile"
+                    "Update Profile"
                 ],
                 "summary": "update-profile",
                 "operationId": "03078e874a13ef89d41c46ee4650e397",

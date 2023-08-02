@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
             VariationSeeder::class,
             ItemSeeder::class,
             PickupPointSeeder::class,
+            CurrencySeeder::class,
             RestaurantSeeder::class,
             RestaurantUserSeeder::class
         ]);

@@ -285,6 +285,14 @@ class AuthController extends APIController
      *      )
      *   ),
      *      @OA\Parameter(
+     *      name="application_version",
+     *      in="query",
+     *      required=true,
+     *      @OA\Schema(
+     *           type="string"
+     *      )
+     *   ),
+     *      @OA\Parameter(
      *      name="os_version",
      *      in="query",
      *      required=true,
@@ -371,9 +379,16 @@ class AuthController extends APIController
     }
 
     /**
+     * Method me
+     *
+     * @param \Illuminate\Http\Request $request [explicite description]
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    /**
      * @OA\Get(
      ** path="/api/v1/get-profile",
-     *   tags={"get-profile"},
+     *   tags={"Profile"},
      *   summary="get-profile",
      *   operationId="get-profile",
      *   security={

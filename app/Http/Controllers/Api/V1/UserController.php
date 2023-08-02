@@ -39,7 +39,7 @@ class UserController extends APIController
     /**
      * @OA\Post(
      ** path="/api/v1/users/update-profile",
-     *   tags={"update-profile"},
+     *   tags={"Update Profile"},
      *   summary="update-profile",
      *     security={
      *         {"bearer_token": {}}
