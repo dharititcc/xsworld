@@ -18,7 +18,8 @@ class CustomerSeeder extends Seeder
     {
         User::create([
             'id'                    => 3,
-            'name'                  => 'Milan Soni',
+            'first_name'            => 'Milan',
+            'last_name'             => 'Soni',
             'email'                 => 'milan@yopmail.com',
             'password'              => Hash::make('12345678'),
             'phone'                 => '918000640987',

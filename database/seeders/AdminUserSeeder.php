@@ -19,7 +19,8 @@ class AdminUserSeeder extends Seeder
         $adminUser = new User();
         $user = $adminUser->create([
             'id'                    => 1,
-            'name'                  => 'Vrushank Shah',
+            'first_name'            => 'Vrushank',
+            'last_name'             => 'Shah',
             'email'                 => 'vrushank@appmart.com.au',
             'password'              => Hash::make('password'),
             'phone'                 => '61430147853',

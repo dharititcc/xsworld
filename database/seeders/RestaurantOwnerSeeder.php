@@ -18,7 +18,8 @@ class RestaurantOwnerSeeder extends Seeder
     {
         User::create([
             'id'                    => 2,
-            'name'                  => 'Milan Soni',
+            'first_name'            => 'Milan',
+            'last_name'             => 'Soni',
             'email'                 => 'milan@itccdigital.com',
             'password'              => Hash::make('12345678'),
             'phone'                 => '917600265925',

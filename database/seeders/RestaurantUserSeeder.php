@@ -19,7 +19,8 @@ class RestaurantUserSeeder extends Seeder
         $userArr = [
             [
                 'id'                    => 4,
-                'name'                  => 'Sunny Gadani',
+                'first_name'            => 'Sunny',
+                'last_name'             => 'Gadani',
                 'email'                 => 'dhaval@yopmail.com',
                 'password'              => Hash::make('12345678'),
                 'phone'                 => '918000686995',
@@ -30,7 +31,8 @@ class RestaurantUserSeeder extends Seeder
             ],
             [
                 'id'                    => 5,
-                'name'                  => 'Dhaval Panchal',
+                'first_name'            => 'Dhaval',
+                'last_name'             => 'Panchal',
                 'email'                 => 'dhaval@xsworld.com',
                 'password'              => Hash::make('12345678'),
                 'phone'                 => '918000686911',
