@@ -25,7 +25,7 @@ use Illuminate\Routing\Controller as BaseController;
  *      description="Demo API Server"
  * )
  * @OA\Server(
- *      url="https://express.itcc.net.au/api/v1/",
+ *      url="https://express.itcc.net.au",
  *      description="Staging API Server"
  * )
  */
