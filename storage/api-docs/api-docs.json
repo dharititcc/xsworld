@@ -18,7 +18,7 @@
             "description": "Demo API Server"
         },
         {
-            "url": "https://express.itcc.net.au/api/v1/",
+            "url": "https://express.itcc.net.au",
             "description": "Staging API Server"
         }
     ],
@@ -49,6 +49,14 @@
                     },
                     {
                         "name": "password",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "fcm_token",
                         "in": "query",
                         "required": true,
                         "schema": {
@@ -375,6 +383,66 @@
                         "required": true,
                         "schema": {
                             "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "not found"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/restaurants/items": {
+            "post": {
+                "tags": [
+                    "Restaurants Items"
+                ],
+                "summary": "Get Restaurants Items.",
+                "operationId": "61030e6d25fa11111024fe1c846ed17a",
+                "parameters": [
+                    {
+                        "name": "restaurant_id",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "name": "item_type_id",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "name": "application_version",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "number"
                         }
                     }
                 ],
