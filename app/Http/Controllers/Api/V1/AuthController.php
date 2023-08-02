@@ -70,6 +70,14 @@ class AuthController extends APIController
      *      )
      *   ),
      *      @OA\Parameter(
+     *      name="fcm_token",
+     *      in="query",
+     *      required=true,
+     *      @OA\Schema(
+     *           type="string"
+     *      )
+     *   ),
+     *      @OA\Parameter(
      *      name="platform",
      *      in="query",
      *      required=true,
@@ -147,6 +155,7 @@ class AuthController extends APIController
                 'os_version'            => $input['os_version'],
                 'application_version'   => $input['application_version'],
                 'model'                 => $input['model'],
+                'fcm_token'             => $input['fcm_token'],
             ];
 
             $this->repository->update($dataArr, $user);
