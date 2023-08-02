@@ -75,4 +75,14 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Restaurant::class, 'user_restaurants', 'restaurant_id', 'user_id');
     }
+
+    /**
+     * Method getFullNameAttribute
+     *
+     * @return string
+     */
+    public function getFullNameAttribute(): string
+    {
+        return $this->first_name.' '.$this->last_name;
+    }
 }
