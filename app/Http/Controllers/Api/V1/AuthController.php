@@ -375,7 +375,7 @@ class AuthController extends APIController
             'password'              => Hash::make($request->password),
             'phone'                 => $request->phone,
             'registration_type'     => $request->registration_type,
-            'birth_date'            => Carbon::createFromFormat('Y-m-d', $request->birth_date),
+            'birth_date'            => $request->birth_date,
             'platform'              => $request->platform,
             'os_version'            => $request->os_version,
             'application_version'   => $request->application_version,
@@ -388,8 +388,7 @@ class AuthController extends APIController
         {
             return $this->respond([
                 'status' => true,
-                'message'=> 'Registration successfully.',
-                'item'   => new UserResource($user)
+                'message'=> 'Registration successfully. Now please check your email/phone to verify your account.'
             ]);
         }
 

@@ -29,8 +29,10 @@ class CreateOrdersTable extends Migration
             $table->unsignedTinyInteger('apply_time')->nullable();
             $table->timestamp('accepted_date')->nullable();
             $table->decimal('total', 14,2)->default(0);
+            $table->unsignedBigInteger('currency_id');
             $table->timestamps();
 
+            $table->foreign('currency_id')->references('id')->on('currencies');
             $table->foreign('restaurant_id')->references('id')->on('restaurants');
             $table->foreign('restaurant_pickup_point_id')->references('id')->on('restaurant_pickup_points');
             $table->foreign('user_id')->references('id')->on('users');
