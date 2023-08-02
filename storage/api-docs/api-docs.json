@@ -14,7 +14,7 @@
     },
     "servers": [
         {
-            "url": "http://127.0.0.1:8000/api/v1/",
+            "url": "http://127.0.0.1:8000",
             "description": "Demo API Server"
         },
         {
@@ -156,7 +156,15 @@
                 "operationId": "register",
                 "parameters": [
                     {
-                        "name": "name",
+                        "name": "first_name",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "last_name",
                         "in": "query",
                         "required": true,
                         "schema": {

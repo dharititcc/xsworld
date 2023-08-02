@@ -31,7 +31,7 @@ class RegisterRequest extends FormRequest
             'email'                 => 'required|unique:users,email',
             'password'              => 'required|string|min:6',
             'phone'                 => 'required|unique:users,phone',
-            'birth_date'            => 'required',
+            'birth_date'            => 'required|date_format:Y-m-d',
             'platform'              => 'required',
             'os_version'            => 'required',
             'application_version'   => 'required',

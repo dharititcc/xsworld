@@ -21,7 +21,7 @@ use Illuminate\Routing\Controller as BaseController;
  *     )
  * )
  * @OA\Server(
- *      url="http://127.0.0.1:8000/api/v1/",
+ *      url="http://127.0.0.1:8000",
  *      description="Demo API Server"
  * )
  * @OA\Server(
