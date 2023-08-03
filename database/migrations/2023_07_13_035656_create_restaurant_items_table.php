@@ -19,6 +19,7 @@ class CreateRestaurantItemsTable extends Migration
             $table->unsignedBigInteger('item_id');
             $table->unsignedBigInteger('restaurant_item_type_id')->nullable();
             $table->decimal('price', 14,2);
+            $table->bigInteger('quantity')->default(0)->comment('Available Stock');
             $table->unsignedTinyInteger('is_featured')->comment('0=Not Featured, 1=Featured');
             $table->unsignedBigInteger('variation_id')->nullable();
             $table->unsignedTinyInteger('type')->default(0)->comment('0=Simple, 1=Variable');

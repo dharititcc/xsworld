@@ -32,6 +32,7 @@ class RestaurantItem extends Model
         'restaurant_id',
         'item_id',
         'price',
+        'quantity',
         'is_featured',
         'variation',
         'type',
