@@ -427,7 +427,6 @@ class AuthController extends APIController
     public function me(Request $request)
     {
         $user = Auth::user();
-       // dd($user);
         return $this->respond([
             'status' => true,
             'message'=> 'Get Profile successfully.',

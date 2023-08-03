@@ -103,7 +103,6 @@ class Handler extends ExceptionHandler
             }
 
             if ($exception instanceof ErrorException) {
-                dd($exception->getMessage());
                 return $this->setStatusCode(500)->respondWithError("Internal Server Error, Please Try again.");
             }
 
