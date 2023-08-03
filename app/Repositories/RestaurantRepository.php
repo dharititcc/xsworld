@@ -53,7 +53,23 @@ class RestaurantRepository extends BaseRepository
      */
     public function filterRestautantName(Builder $query, string $restaurantName): Builder
     {
-        return $query->where('restaurants.name', 'LIKE', '%'.$restaurantName.'%');
+        return $query->where('name', 'LIKE', '%'.$restaurantName.'%');
+    }
+
+    /**
+     * Method filterItem
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query [explicite description]
+     * @param string $drinkName [explicite description]
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function filterItem(Builder $query, string $drinkName): Builder
+    {
+        return $query->whereHas('items', function( Builder $query ) use($drinkName)
+        {
+            return $query->where('name', 'LIKE', '%'.$drinkName.'%');
+        });
     }
 
     /**
@@ -65,9 +81,10 @@ class RestaurantRepository extends BaseRepository
      */
     public function getRestaurants(array $data):Collection
     {
-        $lat        = isset( $data['latitude'] ) ? $data['latitude'] : null;
-        $long       = isset( $data['longitude'] ) ? $data['longitude'] : null;
+        $lat            = isset( $data['latitude'] ) ? $data['latitude'] : null;
+        $long           = isset( $data['longitude'] ) ? $data['longitude'] : null;
         $restaurantName = isset( $data['restaurant_name'] ) ? $data['restaurant_name'] : null;
+        $drink_name     = isset( $data['drink_name'] ) ? $data['drink_name'] : null;
 
         $query = $this->restaurantQuery()->with(['item_types','pickup_points'])->select([
             'id',
@@ -90,6 +107,11 @@ class RestaurantRepository extends BaseRepository
         if( $restaurantName )
         {
             $query = $this->filterRestautantName($query, $restaurantName);
+        }
+
+        if( $drink_name )
+        {
+            $query = $this->filterItem($query, $drink_name);
         }
 
         return $query->get();
