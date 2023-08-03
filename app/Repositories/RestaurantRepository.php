@@ -44,16 +44,16 @@ class RestaurantRepository extends BaseRepository
     }
 
     /**
-     * Method filterItems
+     * Method filterRestautantName
      *
-     * @param string $drink_name [explicite description]
      * @param \Illuminate\Database\Eloquent\Builder $query [explicite description]
+     * @param string $restaurantName [explicite description]
      *
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    public function filterItems(string $drink_name, Builder $query): Builder
+    public function filterRestautantName(Builder $query, string $restaurantName): Builder
     {
-        return $query;
+        return $query->where('restaurants.name', 'LIKE', '%'.$restaurantName.'%');
     }
 
     /**
@@ -67,6 +67,7 @@ class RestaurantRepository extends BaseRepository
     {
         $lat        = isset( $data['latitude'] ) ? $data['latitude'] : null;
         $long       = isset( $data['longitude'] ) ? $data['longitude'] : null;
+        $restaurantName = isset( $data['restaurant_name'] ) ? $data['restaurant_name'] : null;
 
         $query = $this->restaurantQuery()->with(['item_types','pickup_points'])->select([
             'id',
@@ -81,7 +82,15 @@ class RestaurantRepository extends BaseRepository
                 + sin(radians(" .$lat. ")) * sin(radians(restaurants.latitude))) AS distance")
         ]);
 
-        $query = $this->filterRadius($query, $data);
+        if( !$restaurantName )
+        {
+            $query = $this->filterRadius($query, $data);
+        }
+
+        if( $restaurantName )
+        {
+            $query = $this->filterRestautantName($query, $restaurantName);
+        }
 
         return $query->get();
     }
