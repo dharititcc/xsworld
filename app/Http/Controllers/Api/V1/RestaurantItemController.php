@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Requests\RestaurantItemsRequest;
 use App\Http\Resources\RestaurantItemsResource;
+use App\Http\Resources\RestaurantItemTypesResources;
 use App\Repositories\RestaurantRepository;
 use Illuminate\Support\Arr;
 
@@ -94,12 +95,14 @@ class RestaurantItemController extends APIController
     {
         $restaurantsitems           = $this->repository->getRestaurantItems($request->validated());
         $restaurantsitemsfeatured   = $this->repository->getRestaurantItemsFeatured($request->validated());
+        $restaurantItemType         = $this->repository->getRestaurantItemTypes($request->validated());
 
         if( $restaurantsitems->count() )
         {
             $data = [
-                'items'             => $restaurantsitems->count() ? RestaurantItemsResource::collection($restaurantsitems) : [],
-                'featured_items'    => $restaurantsitemsfeatured->count() ?RestaurantItemsResource::collection($restaurantsitemsfeatured) : []
+                'items'             => RestaurantItemsResource::collection($restaurantsitems),
+                'featured_items'    => $restaurantsitemsfeatured->count() ? RestaurantItemsResource::collection($restaurantsitemsfeatured) : [],
+                'item_type'         => new RestaurantItemTypesResources($restaurantItemType->item_type)
             ];
 
             return $this->respondSuccess('Restaurant Items Found.', $data);
