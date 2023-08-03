@@ -1,7 +1,7 @@
 {
     "openapi": "3.0.0",
     "info": {
-        "title": "LARAVEL REST API DOCUMENTATION",
+        "title": "XS World Documentation",
         "description": "L5 Swagger OpenApi description",
         "contact": {
             "email": "harshad@devsinindia.com"
@@ -554,6 +554,41 @@
                         "required": true,
                         "schema": {
                             "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/users/favourite": {
+            "post": {
+                "tags": [
+                    "Favourite and unfavourite items"
+                ],
+                "summary": "favourite-and-unfavourite-items",
+                "operationId": "11780d8750066c7549b5d3c9c3aaf335",
+                "parameters": [
+                    {
+                        "name": "restaurant_item_id",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "number"
                         }
                     }
                 ],

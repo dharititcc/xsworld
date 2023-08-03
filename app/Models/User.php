@@ -85,4 +85,14 @@ class User extends Authenticatable
     {
         return $this->first_name.' '.$this->last_name;
     }
+
+    /**
+     * The favourite_items that belong to the User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function favourite_items(): BelongsToMany
+    {
+        return $this->belongsToMany(RestaurantItem::class, 'user_favourite_items', 'user_id', 'restaurant_item_id')->withPivot(['created_at', 'updated_at']);
+    }
 }
