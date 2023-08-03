@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers\Api\V1;
 
-use App\Http\Requests\RestaurantFilterApiRequest;
-use App\Http\Resources\RestaurantResource;
+use App\Http\Requests\RestaurantItemsRequest;
+use App\Http\Resources\RestaurantItemsResource;
 use App\Repositories\RestaurantRepository;
+use Illuminate\Support\Arr;
 
-class RestaurantController extends APIController
+class RestaurantItemController extends APIController
 {
     /** @var \App\Repositories\RestaurantRepository $repository */
     protected $repository;
@@ -32,52 +33,36 @@ class RestaurantController extends APIController
      */
     /**
      * @OA\Post(
-     ** path="/api/v1/restaurants",
-     *   tags={"Restaurants"},
-     *   summary="Get Near by Restaurants. Distance by default is 2.5K",
+     ** path="/api/v1/restaurants/items",
+     *   tags={"Restaurants Items"},
+     *   summary="Get Restaurants Items.",
      *     security={
      *         {"bearer_token": {}}
      *     },
      *
      *
      *  @OA\Parameter(
-     *      name="restaurant_name",
-     *      in="query",
-     *      required=false,
-     *      @OA\Schema(
-     *           type="string"
-     *      )
-     *   ),
-     *   @OA\Parameter(
-     *       name="drink_name",
-     *      in="query",
-     *      required=false,
-     *      @OA\Schema(
-     *           type="string"
-     *      )
-     *   ),
-     *   @OA\Parameter(
-     *      name="distance",
-     *      in="query",
-     *      required=false,
-     *      @OA\Schema(
-     *           type="float"
-     *      )
-     *   ),
-     *      @OA\Parameter(
-     *      name="latitude",
+     *      name="restaurant_id",
      *      in="query",
      *      required=true,
      *      @OA\Schema(
-     *           type="string"
+     *           type="number"
      *      )
      *   ),
-     *      @OA\Parameter(
-     *      name="longitude",
+     *   @OA\Parameter(
+     *       name="item_type_id",
      *      in="query",
      *      required=true,
      *      @OA\Schema(
-     *           type="string"
+     *           type="number"
+     *      )
+     *   ),
+     *   @OA\Parameter(
+     *      name="application_version",
+     *      in="query",
+     *      required=true,
+     *      @OA\Schema(
+     *           type="number"
      *      )
      *   ),
      *   @OA\Response(
@@ -105,15 +90,21 @@ class RestaurantController extends APIController
      *      ),
      *)
      **/
-    public function index(RestaurantFilterApiRequest $request)
+    public function index(RestaurantItemsRequest $request)
     {
-        $restaurants = $this->repository->getRestaurants($request->validated());
+        $restaurantsitems           = $this->repository->getRestaurantItems($request->validated());
+        $restaurantsitemsfeatured   = $this->repository->getRestaurantItemsFeatured($request->validated());
 
-        if( $restaurants->count() )
+        if( $restaurantsitems->count() )
         {
-            return $this->respondSuccess('Restaurant Found.', RestaurantResource::collection($restaurants));
+            $data = [
+                'items'             => $restaurantsitems->count() ? RestaurantItemsResource::collection($restaurantsitems) : [],
+                'featured_items'    => $restaurantsitemsfeatured->count() ?RestaurantItemsResource::collection($restaurantsitemsfeatured) : []
+            ];
+
+            return $this->respondSuccess('Restaurant Items Found.', $data);
         }
 
-        return $this->respondWithError('Restaurant not found.');
+        return $this->respondWithError('Restaurant Items not found.');
     }
 }

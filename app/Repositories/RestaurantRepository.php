@@ -1,6 +1,7 @@
 <?php namespace App\Repositories;
 
 use App\Models\Restaurant;
+use App\Models\RestaurantItem;
 use App\Repositories\BaseRepository;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -80,6 +81,36 @@ class RestaurantRepository extends BaseRepository
         ]);
 
         $query = $this->filterRadius($query, $data);
+
+        return $query->get();
+    }
+
+    /**
+     * Method getRestaurantItems
+     *
+     * @param array $data [explicite description]
+     *
+     * @return \Illuminate\Database\Eloquent\Collection
+     *
+     */
+    public function getRestaurantItems(array $data):Collection
+    {
+        $query = RestaurantItem::with(['restaurant_item_type', 'restaurant_item_type.item_type','item'])->where('restaurant_id', $data['restaurant_id'] )->where('restaurant_item_type_id', $data['item_type_id'] );
+
+        return $query->get();
+    }
+
+    /**
+     * Method getRestaurantItemsFeatured
+     *
+     * @param array $data [explicite description]
+     *
+     * @return \Illuminate\Database\Eloquent\Collection
+     *
+     */
+    public function getRestaurantItemsFeatured(array $data):Collection
+    {
+        $query = RestaurantItem::with(['restaurant_item_type', 'restaurant_item_type.item_type','item'])->where('restaurant_id', $data['restaurant_id'] )->where('restaurant_item_type_id', $data['item_type_id'] )->where('is_featured',1);
 
         return $query->get();
     }
