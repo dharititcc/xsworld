@@ -15,9 +15,12 @@ class RestaurantItemsResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'id'                    => $this->id,
-            'restaurant_item_type'  => $this->restaurant_item_type_id ,
-            // 'restaurant_item_type'  => isset($this->restaurant_item_type_id) ? RestaurantItemTypes::collection($this->restaurant_item_type_id) : [],
+            'id'                        => $this->id,
+            'restaurant_item_type_id'   => $this->restaurant_item_type->item_type_id,
+            'item_type_name'            => $this->restaurant_item_type->item_type->name,
+            'item_name'                 => $this->item->name,
+            'price'                     => $this->price,
+            'image'                     => $this->attachment_url
         ];
     }
 }

@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class RestaurantPickupPoint extends JsonResource
+class RestaurantPickupPointResources extends JsonResource
 {
     /**
      * Transform the resource into an array.

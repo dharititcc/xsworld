@@ -111,7 +111,6 @@ class RestaurantController extends APIController
 
         if( $restaurants->count() )
         {
-            // dd($restaurants);
             return $this->respondSuccess('Restaurant Found.', RestaurantResource::collection($restaurants));
         }
 
