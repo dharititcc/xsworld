@@ -136,4 +136,21 @@ class RestaurantItem extends Model
     {
         return $this->belongsTo(RestaurantItemType::class, 'restaurant_item_type_id', 'id');
     }
+
+    /**
+     * Method getCountUserFavouriteItemAttribute
+     *
+     * @return int
+     */
+    public function getCountUserFavouriteItemAttribute(): int
+    {
+        $user = auth()->check() ? auth()->user() : null;
+
+        if( isset( $user->id ) )
+        {
+            return $user->favourite_items()->where('user_favourite_items.restaurant_item_id', $this->id)->count();
+        }
+
+        return false;
+    }
 }

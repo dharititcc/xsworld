@@ -22,7 +22,8 @@ class RestaurantItemsResource extends JsonResource
             'price'                     => $this->price,
             'image'                     => $this->attachment_url,
             'quantity'                  => $this->quantity,
-            'currency'                  => $this->restaurant->currency->code
+            'currency'                  => $this->restaurant->currency->code,
+            'is_favourite'              => $this->count_user_favourite_item
         ];
     }
 }
