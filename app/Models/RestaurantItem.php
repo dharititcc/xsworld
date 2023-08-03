@@ -125,4 +125,14 @@ class RestaurantItem extends Model
             return asset('storage/restaurants/'.$this->item->attachment->stored_name);
         }
     }
+
+    /**
+     * Get the restaurant_item_type that owns the RestaurantItem
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function restaurant_item_type(): BelongsTo
+    {
+        return $this->belongsTo(RestaurantItemType::class, 'restaurant_item_type_id', 'id');
+    }
 }
