@@ -24,7 +24,8 @@ class Restaurant extends Model
         'longitude',
         'address',
         'phone',
-        'specialisation'
+        'specialisation',
+        'currency_id'
     ];
 
     /**

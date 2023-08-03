@@ -15,6 +15,7 @@ class CreateRestaurantsTable extends Migration
     {
         Schema::create('restaurants', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('currency_id');
             $table->string('name');
             $table->double('latitude');
             $table->double('longitude');
