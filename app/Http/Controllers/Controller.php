@@ -10,7 +10,7 @@ use Illuminate\Routing\Controller as BaseController;
 /**
  * @OA\Info(
  *      version="1.0.0",
- *      title="LARAVEL REST API DOCUMENTATION",
+ *      title="XS World Documentation",
  *      description="L5 Swagger OpenApi description",
  *      @OA\Contact(
  *          email="harshad@devsinindia.com"
