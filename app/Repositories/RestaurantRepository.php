@@ -99,4 +99,19 @@ class RestaurantRepository extends BaseRepository
 
         return $query->get();
     }
+
+    /**
+     * Method getRestaurantItemsFeatured
+     *
+     * @param array $data [explicite description]
+     *
+     * @return \Illuminate\Database\Eloquent\Collection
+     *
+     */
+    public function getRestaurantItemsFeatured(array $data):Collection
+    {
+        $query = RestaurantItem::with(['restaurant_item_type', 'restaurant_item_type.item_type','item'])->where('restaurant_id', $data['restaurant_id'] )->where('restaurant_item_type_id', $data['item_type_id'] )->where('is_featured',1);
+
+        return $query->get();
+    }
 }

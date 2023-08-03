@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Requests\RestaurantItemsRequest;
 use App\Http\Resources\RestaurantItemsResource;
 use App\Repositories\RestaurantRepository;
+use Illuminate\Support\Arr;
 
 class RestaurantItemController extends APIController
 {
@@ -91,11 +92,17 @@ class RestaurantItemController extends APIController
      **/
     public function index(RestaurantItemsRequest $request)
     {
-        $restaurantsitems = $this->repository->getRestaurantItems($request->validated());
+        $restaurantsitems           = $this->repository->getRestaurantItems($request->validated());
+        $restaurantsitemsfeatured   = $this->repository->getRestaurantItemsFeatured($request->validated());
 
         if( $restaurantsitems->count() )
         {
-            return $this->respondSuccess('Restaurant Items Found.', RestaurantItemsResource::collection($restaurantsitems));
+            $data = [
+                'items'             => $restaurantsitems->count() ? RestaurantItemsResource::collection($restaurantsitems) : [],
+                'featured_items'    => $restaurantsitemsfeatured->count() ?RestaurantItemsResource::collection($restaurantsitemsfeatured) : []
+            ];
+
+            return $this->respondSuccess('Restaurant Items Found.', $data);
         }
 
         return $this->respondWithError('Restaurant Items not found.');
