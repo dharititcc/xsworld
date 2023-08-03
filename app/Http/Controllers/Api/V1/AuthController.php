@@ -169,7 +169,7 @@ class AuthController extends APIController
             ]);
         }
 
-        return $this->respondInternalError('Invalid login credentials.');
+        return $this->respondWithError('Invalid login credentials.');
     }
 
     /**
@@ -225,7 +225,7 @@ class AuthController extends APIController
         }
         catch (\Exception $e)
         {
-            return $this->respondInternalError($e->getMessage());
+            return $this->respondWithError($e->getMessage());
         }
 
         return $this->respondSuccess('Logged out successfully.');
@@ -392,7 +392,7 @@ class AuthController extends APIController
             ]);
         }
 
-        return $this->respondInternalError('Invalid Registration data.');
+        return $this->respondWithError('Invalid Registration data.');
     }
 
     /**

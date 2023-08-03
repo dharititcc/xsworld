@@ -162,7 +162,7 @@ class UserController extends APIController
     {
         if(!Hash::check($request->get('old_password'), auth()->user()->password))
         {
-            return $this->respondInternalError('Current password does not match.');
+            return $this->respondWithError('Current password does not match.');
         }
 
         $user = auth()->user();
