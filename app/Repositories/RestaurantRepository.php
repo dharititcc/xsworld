@@ -183,4 +183,16 @@ class RestaurantRepository extends BaseRepository
         // echo common()->formatSql($query);die;
         return $query->first();
     }
+
+    /**
+     * Method getuserFavouriteItems
+     *
+     * @return Collection
+     */
+    public function getuserFavouriteItems() : Collection
+    {
+        $user = auth()->user();
+
+        return $user->favourite_items;
+    }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Requests\RestaurantFilterApiRequest;
+use App\Http\Resources\RestaurantItemsResource;
 use App\Http\Resources\RestaurantResource;
 use App\Repositories\RestaurantRepository;
 
@@ -107,11 +108,16 @@ class RestaurantController extends APIController
      **/
     public function index(RestaurantFilterApiRequest $request)
     {
-        $restaurants = $this->repository->getRestaurants($request->validated());
+        $restaurants        = $this->repository->getRestaurants($request->validated());
+        $userFavouriteItems = $this->repository->getuserFavouriteItems($request->validated());
 
         if( $restaurants->count() )
         {
-            return $this->respondSuccess('Restaurant Found.', RestaurantResource::collection($restaurants));
+            $data = [
+                'restaurants'            => RestaurantResource::collection($restaurants),
+                'user_favourite_items'   => $userFavouriteItems->count() ? RestaurantItemsResource::collection($userFavouriteItems) : [],
+            ];
+            return $this->respondSuccess('Restaurant Found.', $data);
         }
 
         return $this->respondWithError('Restaurant not found.');
