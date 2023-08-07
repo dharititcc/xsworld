@@ -3,10 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 
 class Restaurant extends Model
@@ -131,8 +133,23 @@ class Restaurant extends Model
         return $this->belongsToMany(PickupPoint::class, 'restaurant_pickup_points', 'restaurant_id', 'pickup_point_id')->withPivot(['user_id', 'created_at', 'updated_at', 'name']);
     }
 
-    public function scopeFeatured(Builder $query)
+    /**
+     * Get all of the restaurant_items for the Restaurant
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function restaurant_items(): HasMany
     {
-        return $query->where('is_featured', 1);
+        return $this->hasMany(RestaurantItem::class, 'restaurant_id', 'id');
+    }
+
+    /**
+     * Method getFeaturedItemsAttribute
+     *
+     * @return Collection
+     */
+    public function getFeaturedItemsAttribute(): Collection
+    {
+        return $this->restaurant_items()->where('is_featured', 1)->get();
     }
 }

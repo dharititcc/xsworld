@@ -26,7 +26,8 @@ class RestaurantResource extends JsonResource
             'image'         => $this->image,
             'rating'        => 4.5,
             'item_types'    => isset($this->item_types) ? RestaurantItemTypesResources::collection($this->item_types) : [],
-            'pickup_points' => isset($this->pickup_points) ? RestaurantPickupPointResources::collection($this->pickup_points) : []
+            'pickup_points' => isset($this->pickup_points) ? RestaurantPickupPointResources::collection($this->pickup_points) : [],
+            'featured_items'=> RestaurantItemsResource::collection($this->featured_items)
         ];
     }
 }
