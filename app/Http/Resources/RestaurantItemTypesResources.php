@@ -15,9 +15,11 @@ class RestaurantItemTypesResources extends JsonResource
     public function toArray($request)
     {
         return [
-            'id'    => $this->id,
-            'name'  => $this->name,
-            'image' => $this->image,
+            'id'            => $this->id,
+            'name'          => $this->name,
+            'image'         => $this->image,
+            'featured'      => $this->restaurant()->featured()->get(),
+            // 'my_favourites' => $this->restaurant->count_user_favourite_item
         ];
     }
 }

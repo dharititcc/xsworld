@@ -168,9 +168,9 @@ class RestaurantSeeder extends Seeder
                     foreach( $itemArr as $k => $item )
                     {
                         $restaurantItemArr = [
-                            'price'                     => 10,
+                            // 'price'                     => 10,
                             'is_featured'               => true,
-                            'variation_id'              => 1,
+                            // 'variation_id'              => rand(1,6),
                             'type'                      => Item::VARIABLE,
                             'restaurant_item_type_id'   => 1,
                             'restaurant_id'             => $newRestaurant->id,
@@ -183,6 +183,12 @@ class RestaurantSeeder extends Seeder
                         $newRestaurantItem->attachment()->create([
                             'original_name' => ($k+1).'.jpg',
                             'stored_name'   => ($k+1).'.jpg'
+                        ]);
+
+                        // restaurant item variations
+                        $newRestaurantItem->restaurant_item_variations()->attach([
+                            1 => ['price' => 25, 'quantity' => 50],
+                            2 => ['price' => 50, 'quantity' => 50]
                         ]);
                     }
                 }

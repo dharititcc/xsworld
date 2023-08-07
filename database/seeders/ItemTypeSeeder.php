@@ -20,16 +20,32 @@ class ItemTypeSeeder extends Seeder
 
         $itemTypeArr = [
             [
-                'name' => 'Spirits'
+                'id'            => 1,
+                'name'          => 'Food'
             ],
             [
-                'name' => 'Cocktails'
+                'id'            => 2,
+                'name'          => 'Drinks'
             ],
             [
-                'name' => 'Beers'
+                'id'            => 3,
+                'name'          => 'Spirits',
+                'item_type_id'  => 2
             ],
             [
-                'name' => 'Wines'
+                'id'            => 4,
+                'name'          => 'Cocktails',
+                'item_type_id'  => 2
+            ],
+            [
+                'id'            => 5,
+                'name'          => 'Beers',
+                'item_type_id'  => 2
+            ],
+            [
+                'id'            => 6,
+                'name'          => 'Wines',
+                'item_type_id'  => 2
             ]
         ];
 

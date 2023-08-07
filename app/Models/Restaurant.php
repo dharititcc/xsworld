@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -98,10 +99,10 @@ class Restaurant extends Model
     {
         return $this->belongsToMany(Item::class, 'restaurant_items', 'restaurant_id', 'item_id')
         ->withPivot([
-            'price',
+            // 'price',
             'is_featured',
             'type',
-            'variation',
+            // 'variation',
             'restaurant_item_id',
             'restaurant_item_type_id',
             'created_at',
@@ -128,5 +129,10 @@ class Restaurant extends Model
     public function pickup_points(): BelongsToMany
     {
         return $this->belongsToMany(PickupPoint::class, 'restaurant_pickup_points', 'restaurant_id', 'pickup_point_id')->withPivot(['user_id', 'created_at', 'updated_at', 'name']);
+    }
+
+    public function scopeFeatured(Builder $query)
+    {
+        return $query->where('is_featured', 1);
     }
 }

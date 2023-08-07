@@ -63,7 +63,7 @@ class RestaurantItemController extends APIController
      *      in="query",
      *      required=true,
      *      @OA\Schema(
-     *           type="number"
+     *           type="string"
      *      )
      *   ),
      *   @OA\Response(

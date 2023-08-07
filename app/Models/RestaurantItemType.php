@@ -32,4 +32,14 @@ class RestaurantItemType extends Model
     {
         return $this->belongsTo(ItemType::class, 'item_type_id', 'id');
     }
+
+    /**
+     * Get the restaurant that owns the RestaurantItemType
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function restaurant(): BelongsTo
+    {
+        return $this->belongsTo(Restaurant::class, 'restaurant_id', 'id');
+    }
 }

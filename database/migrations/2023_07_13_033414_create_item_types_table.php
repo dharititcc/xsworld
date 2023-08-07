@@ -17,6 +17,9 @@ class CreateItemTypesTable extends Migration
             $table->id();
             $table->string('name');
             $table->unsignedBigInteger('item_type_id')->nullable();
+            $table->unsignedBigInteger('lft')->nullable();
+            $table->unsignedBigInteger('rgt')->nullable();
+            $table->unsignedBigInteger('depth')->nullable();
             $table->softDeletes();
             $table->timestamps();
 
