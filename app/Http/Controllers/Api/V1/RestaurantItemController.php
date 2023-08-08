@@ -35,7 +35,7 @@ class RestaurantItemController extends APIController
     /**
      * @OA\Post(
      ** path="/api/v1/restaurants/items",
-     *   tags={"Restaurants Items"},
+     *   tags={"Restaurants"},
      *   summary="Get Restaurants Items.",
      *     security={
      *         {"bearer_token": {}}

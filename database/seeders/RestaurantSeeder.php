@@ -23,7 +23,7 @@ class RestaurantSeeder extends Seeder
 
         $restaurantArr = [
             [
-                'name'              => 'Blackbird Bar',
+                'name'              => 'Magnet House',
                 'latitude'          => '-27.462734875149664',
                 'longitude'         => '153.0303873486703',
                 'address'           => 'Riverside Centre, 123 Eagle St, Brisbane City QLD 4000, Australia',
@@ -32,7 +32,7 @@ class RestaurantSeeder extends Seeder
                 'currency_id'       => 3
             ],
             [
-                'name'              => '2KW Bar & Restaurant',
+                'name'              => 'The Court Hotel',
                 'latitude'          => '-34.91748061090115',
                 'longitude'         => '138.59970174021134',
                 'address'           => '2 King William St, Adelaide SA 5000, Australia',
@@ -41,7 +41,7 @@ class RestaurantSeeder extends Seeder
                 'currency_id'       => 3
             ],
             [
-                'name'              => 'The Austral',
+                'name'              => 'Metro City',
                 'latitude'          => '-34.918293353901326',
                 'longitude'         => '138.60736934023438',
                 'address'           => '205 Rundle St, Adelaide SA 5000, Australia',
@@ -50,7 +50,7 @@ class RestaurantSeeder extends Seeder
                 'currency_id'       => 3
             ],
             [
-                'name'              => 'Shady Pines Saloon',
+                'name'              => 'Butterfly 73',
                 'latitude'          => '-33.8789136',
                 'longitude'         => '151.145561',
                 'address'           => '4/256 Crown St, Darlinghurst NSW 2010, Australia',

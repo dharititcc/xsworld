@@ -150,6 +150,6 @@ class Restaurant extends Model
      */
     public function getFeaturedItemsAttribute(): Collection
     {
-        return $this->restaurant_items()->where('is_featured', 1)->get();
+        return $this->restaurant_items()->where('is_featured', RestaurantItem::FEATURED)->get();
     }
 }

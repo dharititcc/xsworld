@@ -8,6 +8,7 @@ use App\Repositories\UserRepository;
 use Illuminate\Http\Request;
 use App\Http\Requests\UpdateProfileRequest;
 use App\Http\Requests\ChangePasswordRequest;
+use App\Http\Requests\UserFavouriteItemsRequest;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends APIController
@@ -29,6 +30,179 @@ class UserController extends APIController
     }
 
     /**
+     * Method changePassword
+     *
+     * @param \App\Http\Requests\ChangePasswordRequest $request [explicite description]
+     *
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \App\Exceptions\GeneralException
+     */
+    /**
+     * @OA\PATCH(
+     ** path="/api/v1/users/change-password",
+     *   tags={"Users"},
+     *   summary="change-password",
+     *     security={
+     *         {"bearer_token": {}}
+     *     },
+     *
+     *     @OA\Parameter(
+     *      name="old_password",
+     *      in="query",
+     *      required=true,
+     *      @OA\Schema(
+     *           type="string"
+     *      )
+     * ),
+     *     @OA\Parameter(
+     *      name="new_password",
+     *      in="query",
+     *      required=true,
+     *      @OA\Schema(
+     *           type="string"
+     *      )
+     * ),
+     *    @OA\Response(
+     *      response=200,
+     *       description="Success",
+     *      @OA\MediaType(
+     *           mediaType="application/json",
+     *      )
+     *   ),
+     *   @OA\Response(
+     *      response=401,
+     *       description="Unauthenticated"
+     *   ),
+     *)
+     **/
+    public function changePassword(ChangePasswordRequest $request)
+    {
+        if(!Hash::check($request->get('old_password'), auth()->user()->password))
+        {
+            return $this->respondWithError('Current password does not match.');
+        }
+
+        $user = auth()->user();
+        // update password other data
+        $dataArr = [
+            'password'              =>Hash::make($request->new_password)
+        ];
+
+        if( $this->repository->update($dataArr, $user) )
+        {
+            return $this->respond([
+                'status'    =>  true,
+                'message'   =>  'Update Password successful',
+            ]);
+        }
+
+        throw new GeneralException('Password is failed to update.');
+    }
+
+    /**
+     * Method favourite and unfavourite items
+     *
+     * @param \App\Http\Requests\UserFavouriteItemsRequest $request [explicite description]
+     *
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \App\Exceptions\GeneralException
+     */
+    /**
+     * @OA\Post(
+     ** path="/api/v1/users/favourite",
+     *   tags={"Users"},
+     *   summary="User's Favourite Items",
+     *     security={
+     *         {"bearer_token": {}}
+     *     },
+     *
+     *     @OA\Parameter(
+     *      name="restaurant_item_id",
+     *      in="query",
+     *      required=true,
+     *      @OA\Schema(
+     *           type="number"
+     *      )
+     * ),
+     *    @OA\Response(
+     *      response=200,
+     *       description="Success",
+     *      @OA\MediaType(
+     *           mediaType="application/json",
+     *      )
+     *   ),
+     *   @OA\Response(
+     *      response=401,
+     *       description="Unauthenticated"
+     *   ),
+     *)
+     **/
+    public function favorite(UserFavouriteItemsRequest $request)
+    {
+        /** @var \App\Models\User */
+        $user = auth()->user();
+        $data = $request->validated();
+
+        $this->repository->addFavourite($data, $user);
+
+        $count = $this->repository->checkFavouriteItemExist($data['restaurant_item_id'], $user);
+
+        if( $count > 0 )
+        {
+            return $this->respond([
+                'status' => true,
+                'message'=> 'Favourite Items added successfully.'
+            ]);
+        }
+        else
+        {
+            return $this->respond([
+                'status' => true,
+                'message'=> 'Favourite Items removed successfully.'
+            ]);
+        }
+    }
+
+    /**
+     * Method me
+     *
+     * @param \Illuminate\Http\Request $request [explicite description]
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    /**
+     * @OA\Get(
+     ** path="/api/v1/users/get-profile",
+     *   tags={"Users"},
+     *   summary="get-profile",
+     *   operationId="get-profile",
+     *   security={
+     *         {"bearer_token": {}}
+     *     },
+     *   @OA\Response(
+     *      response=200,
+     *       description="Success",
+     *      @OA\MediaType(
+     *           mediaType="application/json",
+     *      )
+     *   ),
+     *   @OA\Response(
+     *      response=401,
+     *       description="Unauthenticated"
+     *   ),
+     *)
+     **/
+    public function me(Request $request)
+    {
+        $user = auth()->user();
+        return $this->respond([
+            'status' => true,
+            'message'=> 'Get Profile successfully.',
+            'item'   => new UserResource($user)
+        ]);
+    }
+
+    /**
      * Method updateProfile
      *
      * @param \App\Http\Requests\UpdateProfileRequest $request [explicite description]
@@ -39,7 +213,7 @@ class UserController extends APIController
     /**
      * @OA\Post(
      ** path="/api/v1/users/update-profile",
-     *   tags={"Update Profile"},
+     *   tags={"Users"},
      *   summary="update-profile",
      *     security={
      *         {"bearer_token": {}}
@@ -110,76 +284,6 @@ class UserController extends APIController
         }
 
         throw new GeneralException('Profile is failed to update.');
-    }
-
-    /**
-     * Method changePassword
-     *
-     * @param \App\Http\Requests\ChangePasswordRequest $request [explicite description]
-     *
-     * @return \Illuminate\Http\JsonResponse
-     * @throws \App\Exceptions\GeneralException
-     */
-    /**
-     * @OA\PATCH(
-     ** path="/api/v1/users/change-password",
-     *   tags={"Authentication"},
-     *   summary="change-password",
-     *     security={
-     *         {"bearer_token": {}}
-     *     },
-     *
-     *     @OA\Parameter(
-     *      name="old_password",
-     *      in="query",
-     *      required=true,
-     *      @OA\Schema(
-     *           type="string"
-     *      )
-     * ),
-     *     @OA\Parameter(
-     *      name="new_password",
-     *      in="query",
-     *      required=true,
-     *      @OA\Schema(
-     *           type="string"
-     *      )
-     * ),
-     *    @OA\Response(
-     *      response=200,
-     *       description="Success",
-     *      @OA\MediaType(
-     *           mediaType="application/json",
-     *      )
-     *   ),
-     *   @OA\Response(
-     *      response=401,
-     *       description="Unauthenticated"
-     *   ),
-     *)
-     **/
-    public function changePassword(ChangePasswordRequest $request)
-    {
-        if(!Hash::check($request->get('old_password'), auth()->user()->password))
-        {
-            return $this->respondWithError('Current password does not match.');
-        }
-
-        $user = auth()->user();
-        // update password other data
-        $dataArr = [
-            'password'              =>Hash::make($request->new_password)
-        ];
-
-        if( $this->repository->update($dataArr, $user) )
-        {
-            return $this->respond([
-                'status'    =>  true,
-                'message'   =>  'Update Password successful',
-            ]);
-        }
-
-        throw new GeneralException('Password is failed to update.');
     }
 
     public function resetPassword(Request $request)

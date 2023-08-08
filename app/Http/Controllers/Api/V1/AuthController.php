@@ -232,6 +232,57 @@ class AuthController extends APIController
     }
 
     /**
+     * Method resetPassword
+     *
+     * @param \App\Http\Requests $request [explicite description]
+     *
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \App\Exceptions\GeneralException
+     */
+    /**
+     * @OA\PATCH(
+     ** path="/api/v1/auth/password/reset",
+     *   tags={"Authentication"},
+     *   summary="password/reset",
+     *
+     *     @OA\Parameter(
+     *      name="email",
+     *      in="query",
+     *      required=true,
+     *      @OA\Schema(
+     *           type="string"
+     *      )
+     * ),
+     *    @OA\Response(
+     *      response=200,
+     *       description="Success",
+     *      @OA\MediaType(
+     *           mediaType="application/json",
+     *      )
+     *   ),
+     *   @OA\Response(
+     *      response=401,
+     *       description="Unauthenticated"
+     *   ),
+     *)
+     **/
+    public function resetPassword(Request $request)
+    {
+        $request->validate(['email' => 'required|email|exists:users,email']);
+
+        $status = Password::sendResetLink(
+            $request->only('email')
+        );
+                return $this->respond([
+                    'status' => true,
+                    'message'=> 'Mail send successfully Please check your mail.',
+                    'item'   => $status === Password::RESET_LINK_SENT
+                    ? back()->with(['status' => __($status)])
+                    : back()->withErrors(['email' => __($status)])
+                ]);
+    }
+
+    /**
      * Method postRegister
      *
      * @param \App\Http\Requests\RegisterRequest $request [explicite description]
@@ -393,95 +444,5 @@ class AuthController extends APIController
         }
 
         return $this->respondWithError('Invalid Registration data.');
-    }
-
-    /**
-     * Method me
-     *
-     * @param \Illuminate\Http\Request $request [explicite description]
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    /**
-     * @OA\Get(
-     ** path="/api/v1/get-profile",
-     *   tags={"Profile"},
-     *   summary="get-profile",
-     *   operationId="get-profile",
-     *   security={
-     *         {"bearer_token": {}}
-     *     },
-     *   @OA\Response(
-     *      response=200,
-     *       description="Success",
-     *      @OA\MediaType(
-     *           mediaType="application/json",
-     *      )
-     *   ),
-     *   @OA\Response(
-     *      response=401,
-     *       description="Unauthenticated"
-     *   ),
-     *)
-     **/
-    public function me(Request $request)
-    {
-        $user = Auth::user();
-        return $this->respond([
-            'status' => true,
-            'message'=> 'Get Profile successfully.',
-            'item'   => new UserResource($user)
-        ]);
-    }
-
-    /**
-     * Method resetPassword
-     *
-     * @param \App\Http\Requests $request [explicite description]
-     *
-     * @return \Illuminate\Http\JsonResponse
-     * @throws \App\Exceptions\GeneralException
-     */
-    /**
-     * @OA\PATCH(
-     ** path="/api/v1/auth/password/reset",
-     *   tags={"Authentication"},
-     *   summary="password/reset",
-     *
-     *     @OA\Parameter(
-     *      name="email",
-     *      in="query",
-     *      required=true,
-     *      @OA\Schema(
-     *           type="string"
-     *      )
-     * ),
-     *    @OA\Response(
-     *      response=200,
-     *       description="Success",
-     *      @OA\MediaType(
-     *           mediaType="application/json",
-     *      )
-     *   ),
-     *   @OA\Response(
-     *      response=401,
-     *       description="Unauthenticated"
-     *   ),
-     *)
-     **/
-    public function resetPassword(Request $request)
-    {
-        $request->validate(['email' => 'required|email|exists:users,email']);
-
-        $status = Password::sendResetLink(
-            $request->only('email')
-        );
-                return $this->respond([
-                    'status' => true,
-                    'message'=> 'Mail send successfully Please check your mail.',
-                    'item'   => $status === Password::RESET_LINK_SENT
-                    ? back()->with(['status' => __($status)])
-                    : back()->withErrors(['email' => __($status)])
-                ]);
     }
 }

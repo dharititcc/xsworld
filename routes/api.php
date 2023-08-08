@@ -43,17 +43,17 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'v1', 'as' => 'api.v1.'], fun
         Route::post('/restaurants/featured', 'RestaurantController@featured')->name('restaurant.featured');
         // vanue item list{api/v1/restaurants/items}
         Route::post('/restaurants/items', 'RestaurantItemController@index')->name('restaurant.items.index');
-        // {api/v1/auth/get-profile}
-        Route::get('get-profile', 'AuthController@me')->name('get-profile');
     });
 
     Route::group(['prefix' => 'users','middleware' => 'auth:api'], function ()
     {
-        // {api/v1/auth/get-profile}
+        // {api/v1/users/get-profile}
         Route::post('update-profile', 'UserController@updateProfile')->name('user.update-profile');
         // {api/v1/users/change-password}
         Route::patch('change-password', 'UserController@changePassword')->name('user.change-password');
+        // {api/v1/users/get-profile}
+        Route::get('get-profile', 'UserController@me')->name('get-profile');
         // {api/v1/users/favourite}
-        Route::post('favourite', 'UserFavouriteItemsController@favorite')->name('user.favorite');
+        Route::post('favourite', 'UserController@favorite')->name('user.favorite');
     });
 });
