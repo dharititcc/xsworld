@@ -7,11 +7,9 @@ use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\LoginRequest;
 use App\Http\Resources\UserResource;
 use App\Repositories\UserRepository;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
-use Auth;
 
 /**
  * @group Authentication

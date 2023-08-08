@@ -134,7 +134,7 @@ class RestaurantController extends APIController
     /**
      * @OA\Post(
      ** path="/api/v1/restaurants/featured",
-     *   tags={"Restaurants Featured"},
+     *   tags={"Restaurants"},
      *   summary="Get Restaurants Featured and user favourite items",
      *     security={
      *         {"bearer_token": {}}

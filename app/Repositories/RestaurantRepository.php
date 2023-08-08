@@ -168,8 +168,7 @@ class RestaurantRepository extends BaseRepository
     {
         $restaurantItemType = isset( $data['item_type_id'] ) ? $data['item_type_id'] : null;
         $restaurantId       = isset( $data['restaurant_id'] ) ? $data['restaurant_id'] : null;
-
-        $query = RestaurantItemType::query()->with(['item_type']);
+        $query              = RestaurantItemType::query()->with(['item_type']);
 
         if( $restaurantItemType )
         {
@@ -187,15 +186,17 @@ class RestaurantRepository extends BaseRepository
     /**
      * Method getuserFavouriteItems
      *
-     * @return Collection
+     * @param array $data [explicite description]
+     *
+     * @return \Illuminate\Database\Eloquent\Collection
      */
     public function getuserFavouriteItems(array $data) : Collection
     {
         $user = auth()->user();
 
-        return $user->favourite_items()->whereHas('restaurant', function($query) use($data){
+        return $user->favourite_items()->with(['restaurant' => function($query) use($data){
             $query->where('id', $data['restaurant_id']);
-        })->get();
+        }])->get();
     }
 
     /**
@@ -203,13 +204,12 @@ class RestaurantRepository extends BaseRepository
      *
      * @param array $data [explicite description]
      *
-     * @return Collection
+     * @return \Illuminate\Database\Eloquent\Collection
      */
     public function getFeaturedItems(array $data) : Collection
     {
-
         $restaurantId       = isset( $data['restaurant_id'] ) ? $data['restaurant_id'] : null;
-        $query = RestaurantItem::query();
+        $query              = RestaurantItem::query();
 
         if( $restaurantId )
         {
@@ -217,6 +217,5 @@ class RestaurantRepository extends BaseRepository
         }
 
         return $query->get();
-
     }
 }
