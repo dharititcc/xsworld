@@ -23,7 +23,8 @@ class DatabaseSeeder extends Seeder
             PickupPointSeeder::class,
             CurrencySeeder::class,
             RestaurantSeeder::class,
-            RestaurantUserSeeder::class
+            RestaurantUserSeeder::class,
+            CountrySeeder::class
         ]);
     }
 }

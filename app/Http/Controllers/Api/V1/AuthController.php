@@ -329,6 +329,22 @@ class AuthController extends APIController
      *      )
      *   ),
      *   @OA\Parameter(
+     *       name="country_code",
+     *      in="query",
+     *      required=true,
+     *      @OA\Schema(
+     *           type="string"
+     *      )
+     *   ),
+     *   @OA\Parameter(
+     *       name="country_id",
+     *      in="query",
+     *      required=true,
+     *      @OA\Schema(
+     *           type="integer"
+     *      )
+     *   ),
+     *   @OA\Parameter(
      *      name="password",
      *      in="query",
      *      required=true,
@@ -425,6 +441,8 @@ class AuthController extends APIController
             'email'                 => $request->email,
             'password'              => Hash::make($request->password),
             'phone'                 => $request->phone,
+            'country_code'          => $request->country_code,
+            'country_id'            => $request->country_id,
             'registration_type'     => $request->registration_type,
             'birth_date'            => $request->birth_date,
             'platform'              => $request->platform,
