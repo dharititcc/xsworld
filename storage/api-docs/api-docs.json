@@ -328,6 +328,35 @@
                 }
             }
         },
+        "/api/v1/countries/get-countries": {
+            "get": {
+                "tags": [
+                    "Country"
+                ],
+                "summary": "Get Countries",
+                "operationId": "a37fca4b36469b8eb6930cd2c950547d",
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "not found"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    }
+                }
+            }
+        },
         "/api/v1/restaurants": {
             "post": {
                 "tags": [
@@ -407,7 +436,7 @@
         "/api/v1/restaurants/featured": {
             "post": {
                 "tags": [
-                    "Restaurants Featured"
+                    "Restaurants"
                 ],
                 "summary": "Get Restaurants Featured and user favourite items",
                 "operationId": "2ad16fa5cd862114ba25b4cdb061318e",

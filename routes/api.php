@@ -56,4 +56,10 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'v1', 'as' => 'api.v1.'], fun
         // {api/v1/users/favourite}
         Route::post('favourite', 'UserController@favorite')->name('user.favorite');
     });
+
+    Route::group(['prefix' => 'countries','middleware' => 'auth:api'], function ()
+    {
+        // {api/v1/countries/}
+        Route::get('get-countries', 'CountryController@index')->name('countries.index');
+    });
 });
