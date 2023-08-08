@@ -189,10 +189,34 @@ class RestaurantRepository extends BaseRepository
      *
      * @return Collection
      */
-    public function getuserFavouriteItems() : Collection
+    public function getuserFavouriteItems(array $data) : Collection
     {
         $user = auth()->user();
 
-        return $user->favourite_items;
+        return $user->favourite_items()->whereHas('restaurant', function($query) use($data){
+            $query->where('id', $data['restaurant_id']);
+        })->get();
+    }
+
+    /**
+     * Method getFeaturedItems
+     *
+     * @param array $data [explicite description]
+     *
+     * @return Collection
+     */
+    public function getFeaturedItems(array $data) : Collection
+    {
+
+        $restaurantId       = isset( $data['restaurant_id'] ) ? $data['restaurant_id'] : null;
+        $query = RestaurantItem::query();
+
+        if( $restaurantId )
+        {
+            $query->where('restaurant_id', $restaurantId)->where('is_featured', 1);
+        }
+
+        return $query->get();
+
     }
 }

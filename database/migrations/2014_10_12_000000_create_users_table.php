@@ -23,6 +23,7 @@ class CreateUsersTable extends Migration
             $table->string('phone2')->nullable();
             $table->unsignedTinyInteger('registration_type')->default(0)->comment('0=EMAIL, 1=PHONE, 2=GOOGLE, 3=FACEBOOK');
             $table->unsignedTinyInteger('user_type')->default(1)->comment('1=CUSTOMER, 2=RESTAURANT_OWNER, 3=ADMIN, 4=BARTENDER');
+            $table->unsignedBigInteger('country_id');
             $table->date('birth_date')->nullable();
             $table->decimal('credit_points', 14,2)->default(0);
             $table->string('platform')->nullable();
@@ -33,6 +34,8 @@ class CreateUsersTable extends Migration
             $table->string('fcm_token')->nullable();
             $table->rememberToken();
             $table->timestamps();
+
+            $table->foreign('country_id')->references('id')->on('countries')->onDelete('cascade');
         });
     }
 
