@@ -110,15 +110,10 @@ class RestaurantController extends APIController
     public function index(RestaurantFilterApiRequest $request)
     {
         $restaurants        = $this->repository->getRestaurants($request->validated());
-        // $userFavouriteItems = $this->repository->getuserFavouriteItems($request->validated());
 
         if( $restaurants->count() )
         {
-            $data = [
-                'restaurants'            => RestaurantResource::collection($restaurants),
-                // 'user_favourite_items'   => $userFavouriteItems->count() ? RestaurantItemsResource::collection($userFavouriteItems) : [],
-            ];
-            return $this->respondSuccess('Restaurant Found.', $data);
+            return $this->respondSuccess('Restaurant Found.', RestaurantResource::collection($restaurants));
         }
 
         return $this->respondWithError('Restaurant not found.');
