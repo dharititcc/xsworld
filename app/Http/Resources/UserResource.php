@@ -20,9 +20,9 @@ class UserResource extends JsonResource
             'email'         => $this->email,
             'phone'         => $this->phone ?? '',
             'phone2'        => $this->phone2 ?? '',
-            'country_id'    => $this->country_id,
-            'country_name'  => $this->country->name,
-            'country_code'  => $this->country_code,
+            'country_id'    => $this->country_id ?? '',
+            'country_name'  => $this->country->name ?? '',
+            'country_code'  => $this->country_code ?? '',
             'created_at'    => $this->created_at->format('Y-m-d H:i:s')
         ];
     }

@@ -34,7 +34,8 @@
                     {
                         "name": "email",
                         "in": "query",
-                        "required": true,
+                        "description": "Email field is required when user tried to login with registration_type = 0/2/3",
+                        "required": false,
                         "schema": {
                             "type": "string"
                         }
@@ -42,7 +43,8 @@
                     {
                         "name": "phone",
                         "in": "query",
-                        "required": true,
+                        "description": "Phone field is required when user tried to login with registration_type = 1",
+                        "required": false,
                         "schema": {
                             "type": "integer"
                         }

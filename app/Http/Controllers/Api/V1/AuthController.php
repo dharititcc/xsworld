@@ -46,18 +46,20 @@ class AuthController extends APIController
      *  @OA\Parameter(
      *      name="email",
      *      in="query",
-     *      required=true,
+     *      required=false,
      *      @OA\Schema(
      *           type="string"
-     *      )
+     *      ),
+     *      description="Email field is required when user tried to login with registration_type = 0/2/3"
      *   ),
      *   @OA\Parameter(
      *       name="phone",
      *      in="query",
-     *      required=true,
+     *      required=false,
      *      @OA\Schema(
      *           type="integer"
-     *      )
+     *      ),
+     *      description="Phone field is required when user tried to login with registration_type = 1"
      *   ),
      *   @OA\Parameter(
      *      name="password",

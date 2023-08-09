@@ -25,8 +25,7 @@ class loginRequest extends FormRequest
      */
     public function rules()
     {
-        return [
-            'email'                 => 'required|email',
+        $rules = [
             'password'              => 'required|string|min:6',
             'fcm_token'             => 'required|string',
             'platform'              => 'required',
@@ -38,5 +37,15 @@ class loginRequest extends FormRequest
                                             Rule::in(User::EMAIL, User::PHONE, User::GOOGLE, User::FACEBOOK)
                                         ]
         ];
+
+        if( request()->registration_type == User::EMAIL )
+        {
+            $rules['email'] = 'required|email';
+        }
+
+        if( request()->registration_type == User::PHONE )
+        {
+            $rules['phone'] = 'required';
+        }
     }
 }

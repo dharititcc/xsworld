@@ -84,7 +84,7 @@ class User extends Authenticatable
      */
     public function getFullNameAttribute(): string
     {
-        return $this->first_name.' '.$this->last_name;
+        return isset($this->first_name) ? $this->first_name : ''.' '.$this->last_name;
     }
 
     /**
