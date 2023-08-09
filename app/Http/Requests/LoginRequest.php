@@ -47,5 +47,7 @@ class loginRequest extends FormRequest
         {
             $rules['phone'] = 'required';
         }
+
+        return $rules;
     }
 }

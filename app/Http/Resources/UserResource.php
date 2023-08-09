@@ -23,6 +23,9 @@ class UserResource extends JsonResource
             'country_id'    => $this->country_id ?? '',
             'country_name'  => $this->country->name ?? '',
             'country_code'  => $this->country_code ?? '',
+            'birth_date'    => $this->birth_date ?? '',
+            'profile_img'   => $this->image,
+            'member_id'     => $this->id,
             'created_at'    => $this->created_at->format('Y-m-d H:i:s')
         ];
     }

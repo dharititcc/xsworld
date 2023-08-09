@@ -106,4 +106,14 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Country::class, 'country_id', 'id');
     }
+
+    /**
+     * Method getImageAttribute
+     *
+     * @return string
+     */
+    public function getImageAttribute(): string
+    {
+        return isset($this->attachment) ? asset('storage/profile/'.$this->attachment->stored_name) : '';
+    }
 }

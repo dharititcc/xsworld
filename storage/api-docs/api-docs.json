@@ -651,7 +651,15 @@
                 "operationId": "03078e874a13ef89d41c46ee4650e397",
                 "parameters": [
                     {
-                        "name": "name",
+                        "name": "first_name",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "last_name",
                         "in": "query",
                         "required": true,
                         "schema": {
@@ -681,8 +689,21 @@
                         "schema": {
                             "type": "string"
                         }
+                    },
+                    {
+                        "name": "profile_image",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "file"
+                        }
                     }
                 ],
+                "requestBody": {
+                    "content": {
+                        "multipart/form-data": {}
+                    }
+                },
                 "responses": {
                     "200": {
                         "description": "Success",

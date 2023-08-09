@@ -214,13 +214,26 @@ class UserController extends APIController
      * @OA\Post(
      ** path="/api/v1/users/update-profile",
      *   tags={"Users"},
+     *
      *   summary="update-profile",
      *     security={
      *         {"bearer_token": {}}
      *     },
-     *
+     *  @OA\RequestBody(
+     *  @OA\MediaType(
+     *           mediaType="multipart/form-data",
+     *      )
+     * ),
      *     @OA\Parameter(
-     *      name="name",
+     *      name="first_name",
+     *      in="query",
+     *      required=true,
+     *      @OA\Schema(
+     *           type="string"
+     *      )
+     * ),
+     *   @OA\Parameter(
+     *      name="last_name",
      *      in="query",
      *      required=true,
      *      @OA\Schema(
@@ -251,6 +264,15 @@ class UserController extends APIController
      *           type="string"
      *      )
      *   ),
+     *   @OA\Parameter(
+     *      name="profile_image",
+     *      in="query",
+     *      required=false,
+     *      @OA\Schema(
+     *           type="file"
+     *      )
+
+     *   ),
      *    @OA\Response(
      *      response=200,
      *       description="Success",
@@ -268,10 +290,12 @@ class UserController extends APIController
     {
         $user       = auth()->user();
         $dataArr    = [
-            'name'      => $request->get('name') ?? null,
-            'phone'     => $request->get('phone') ?? null,
-            'phone2'    => $request->get('phone2') ?? null,
-            'birth_date'=> $request->get('birth_date') ?? null,
+            'first_name'    => $request->get('first_name') ?? null,
+            'last_name'     => $request->get('last_name') ?? null,
+            'phone'         => $request->get('phone') ?? null,
+            'phone2'        => $request->get('phone2') ?? null,
+            'birth_date'    => $request->get('birth_date') ?? null,
+            'profile_image' => $request->file('profile_image') ?? null,
         ];
 
         if( $this->repository->update($dataArr, $user) )
