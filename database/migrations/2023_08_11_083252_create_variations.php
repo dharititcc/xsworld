@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreatePaymentMethodsTable extends Migration
+class CreateVariations extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,15 @@ class CreatePaymentMethodsTable extends Migration
      */
     public function up()
     {
-        Schema::create('payment_methods', function (Blueprint $table) {
+        Schema::create('variations', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->tinyText('description');
+            $table->decimal('price', 14,2)->default(0);
+            $table->unsignedBigInteger('item_id');
             $table->timestamps();
+            $table->softDeletes();
+
+            $table->foreign('item_id')->references('id')->on('items')->onDelete('cascade');
         });
     }
 
@@ -28,6 +32,6 @@ class CreatePaymentMethodsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('payment_methods');
+        Schema::dropIfExists('variations');
     }
 }

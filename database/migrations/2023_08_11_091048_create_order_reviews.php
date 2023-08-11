@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateAttachmentsTable extends Migration
+class CreateOrderReviews extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,13 @@ class CreateAttachmentsTable extends Migration
      */
     public function up()
     {
-        Schema::create('attachments', function (Blueprint $table) {
+        Schema::create('order_reviews', function (Blueprint $table) {
             $table->id();
-            $table->string('original_name');
-            $table->string('stored_name');
-            $table->string('attachmentable_type');
-            $table->unsignedBigInteger('attachmentable_id');
+            $table->unsignedBigInteger('order_id');
+            $table->tinyInteger('rating')->default(1)->comment('1-5 Rating');
             $table->timestamps();
+
+            $table->foreign('order_id')->references('id')->on('orders')->onDelete('cascade');
         });
     }
 
@@ -30,6 +30,6 @@ class CreateAttachmentsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('attachments');
+        Schema::dropIfExists('order_reviews');
     }
 }

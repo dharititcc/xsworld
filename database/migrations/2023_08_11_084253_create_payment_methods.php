@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateOrderReviewsTable extends Migration
+class CreatePaymentMethods extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,12 @@ class CreateOrderReviewsTable extends Migration
      */
     public function up()
     {
-        Schema::create('order_reviews', function (Blueprint $table) {
+        Schema::create('payment_methods', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('order_id');
-            $table->tinyInteger('rating')->default(1)->comment('1-5 Rating');
+            $table->string('name');
+            $table->tinyText('description');
             $table->timestamps();
-
-            $table->foreign('order_id')->references('id')->on('orders')->onDelete('cascade');
+            $table->softDeletes();
         });
     }
 
@@ -30,6 +29,6 @@ class CreateOrderReviewsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('order_reviews');
+        Schema::dropIfExists('payment_methods');
     }
 }

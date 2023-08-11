@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateOrdersTable extends Migration
+class CreateOrders extends Migration
 {
     /**
      * Run the migrations.
@@ -17,7 +17,7 @@ class CreateOrdersTable extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id')->comment('Actual customer who order');
             $table->unsignedBigInteger('restaurant_id');
-            $table->unsignedBigInteger('restaurant_pickup_point_id');
+            $table->unsignedBigInteger('pickup_point_id');
             $table->unsignedBigInteger('pickup_point_user_id')->comment('Bar user who take order');
             $table->unsignedTinyInteger('type')->default(1)->comment('1=CART, 2=ORDER');
             $table->unsignedTinyInteger('status')->default(0)->comment('0=Pending, 1=Accepted, 2=Ready, 3=Completed, 4=Canceled');
@@ -34,7 +34,7 @@ class CreateOrdersTable extends Migration
 
             $table->foreign('currency_id')->references('id')->on('currencies');
             $table->foreign('restaurant_id')->references('id')->on('restaurants');
-            $table->foreign('restaurant_pickup_point_id')->references('id')->on('restaurant_pickup_points');
+            $table->foreign('pickup_point_id')->references('id')->on('pickup_points');
             $table->foreign('user_id')->references('id')->on('users');
             $table->foreign('pickup_point_user_id')->references('id')->on('users');
             $table->foreign('payment_method_id')->references('id')->on('payment_methods');

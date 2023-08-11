@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateRestaurantPickupPointsTable extends Migration
+class CreateUserPaymentMethods extends Migration
 {
     /**
      * Run the migrations.
@@ -13,16 +13,14 @@ class CreateRestaurantPickupPointsTable extends Migration
      */
     public function up()
     {
-        Schema::create('restaurant_pickup_points', function (Blueprint $table) {
+        Schema::create('user_payment_methods', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('restaurant_id');
-            $table->unsignedBigInteger('pickup_point_id');
             $table->unsignedBigInteger('user_id');
             $table->string('name');
+            $table->tinyText('description');
             $table->timestamps();
+            $table->softDeletes();
 
-            $table->foreign('restaurant_id')->references('id')->on('restaurants')->onDelete('cascade');
-            $table->foreign('pickup_point_id')->references('id')->on('pickup_points')->onDelete('cascade');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
@@ -34,6 +32,6 @@ class CreateRestaurantPickupPointsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('restaurant_pickup_points');
+        Schema::dropIfExists('user_payment_methods');
     }
 }
