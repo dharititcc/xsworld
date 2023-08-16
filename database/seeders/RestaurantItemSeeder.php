@@ -177,28 +177,28 @@ class RestaurantItemSeeder extends Seeder
                 {
                     foreach( $categories as $category )
                     {
-
-                        if( !empty( $restaurantitemArr ) )
+                        if( $category->name == 'Drinks' )
                         {
-                            foreach( $restaurantitemArr as $item )
+                            if( !empty( $restaurantitemArr ) )
                             {
-                                $item['restaurant_id'] = $restaurant->id;
-                                $item['category_id'] = $category->id;
-                                $newItem = RestaurantItem::create($item);
-
-                                // Logic for the attachment
-                                $newItem->attachment()->create([
-                                    'stored_name'   => '1.jpg',
-                                    'original_name' => '1.jpg'
-                                ]);
+                                foreach( $restaurantitemArr as $item )
+                                {
+                                    $item['restaurant_id'] = $restaurant->id;
+                                    $item['category_id'] = $category->id;
+                                    $newItem = RestaurantItem::create($item);
+    
+                                    // Logic for the attachment
+                                    $newItem->attachment()->create([
+                                        'stored_name'   => '1.jpg',
+                                        'original_name' => '1.jpg'
+                                    ]);
+                                }
                             }
                         }
                     }
                 }
             }
         }
-
-       
 
         // enable foreign key checks for this connection after running seeders
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
