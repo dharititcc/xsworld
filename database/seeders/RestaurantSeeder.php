@@ -182,7 +182,12 @@ class RestaurantSeeder extends Seeder
                 // restaurant owner
                 $newRestaurant->owners()->attach(2);
 
-                // TODO: Restaurant bartenders
+                // Restaurant bartenders
+                if( $newRestaurant->id == 4 )
+                {
+                    // Logic create restaurant user
+                    $newRestaurant->bartenders()->attach([4,5]);
+                }
 
                 $counter++;
             }
