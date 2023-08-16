@@ -126,11 +126,11 @@ class Restaurant extends Model
     /**
      * The items that belong to the Restaurant
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function pickup_points(): BelongsToMany
+    public function pickup_points(): HasMany
     {
-        return $this->belongsToMany(PickupPoint::class, 'restaurant_pickup_points', 'restaurant_id', 'pickup_point_id')->withPivot(['user_id', 'created_at', 'updated_at', 'name']);
+        return $this->hasMany(PickupPoint::class, 'restaurant_id', 'id');
     }
 
     /**
