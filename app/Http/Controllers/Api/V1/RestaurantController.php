@@ -199,7 +199,7 @@ class RestaurantController extends APIController
      * @OA\Post(
      ** path="/api/v1/restaurants/sub-categories",
      *   tags={"Restaurants"},
-     *   summary="Get Item types by Restaurants.",
+     *   summary="Get Sub categories by Restaurant and Category.",
      *     security={
      *         {"bearer_token": {}}
      *     },
@@ -252,9 +252,9 @@ class RestaurantController extends APIController
 
         if( $restaurants->count() )
         {
-            return $this->respondSuccess('Restaurant Found.', RestaurantsSubCategoryResource::collection($restaurants));
+            return $this->respondSuccess('Sub Categories Found.', RestaurantsSubCategoryResource::collection($restaurants));
         }
 
-        return $this->respondWithError('Restaurant not found.');
+        return $this->respondWithError('Sub Categories not found.');
     }
 }
