@@ -33,26 +33,6 @@ class RestaurantCategorySeeder extends Seeder
             ]
         ];
 
-
-        $childCategories = [
-            [
-                'name'      => 'Spirits',
-                'status'    => 1
-            ],
-            [
-                'name'      => 'Cocktails',
-                'status'    => 1
-            ],
-            [
-                'name'      => 'Beers',
-                'status'    => 1
-            ],
-            [
-                'name'      => 'Wine',
-                'status'    => 1
-            ]
-        ];
-
         if( $restaurants->count() )
         {
             foreach( $restaurants as $restaurant )

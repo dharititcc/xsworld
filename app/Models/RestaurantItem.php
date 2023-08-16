@@ -66,43 +66,13 @@ class RestaurantItem extends Model
     }
 
     /**
-     * Get the item that owns the RestaurantItem
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function item(): BelongsTo
-    {
-        return $this->belongsTo(Item::class, 'restaurant_item_id', 'id');
-    }
-
-    /**
-     * Get the restaurant_item that owns the RestaurantItem
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function restaurant_item(): BelongsTo
-    {
-        return $this->belongsTo(self::class, 'restaurant_item_id', 'id');
-    }
-
-    /**
-     * Get all of the restaurant_items for the RestaurantItem
+     * The variations that belong to the RestaurantItem
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function restaurant_items(): HasMany
+    public function variations(): HasMany
     {
-        return $this->hasMany(self::class, 'restaurant_item_id', 'id');
-    }
-
-    /**
-     * The restaurant_item_variations that belong to the RestaurantItem
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-     */
-    public function restaurant_item_variations(): BelongsToMany
-    {
-        return $this->belongsToMany(Variation::class, 'restaurant_item_variations', 'restaurant_item_id', 'variation_id')->withPivot(['price', 'quantity']);
+        return $this->hasMany(RestaurantVariation::class, 'restaurant_item_id', 'id');
     }
 
     /**
@@ -130,16 +100,6 @@ class RestaurantItem extends Model
         {
             return asset('storage/restaurants/'.$this->item->attachment->stored_name);
         }
-    }
-
-    /**
-     * Get the restaurant_item_type that owns the RestaurantItem
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function restaurant_item_type(): BelongsTo
-    {
-        return $this->belongsTo(RestaurantItemType::class, 'restaurant_item_type_id', 'id');
     }
 
     /**

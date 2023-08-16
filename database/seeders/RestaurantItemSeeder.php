@@ -181,17 +181,53 @@ class RestaurantItemSeeder extends Seeder
                         {
                             if( !empty( $restaurantitemArr ) )
                             {
+                                $counter = 1;
                                 foreach( $restaurantitemArr as $item )
                                 {
                                     $item['restaurant_id'] = $restaurant->id;
                                     $item['category_id'] = $category->id;
                                     $newItem = RestaurantItem::create($item);
-    
+
                                     // Logic for the attachment
                                     $newItem->attachment()->create([
-                                        'stored_name'   => '1.jpg',
-                                        'original_name' => '1.jpg'
+                                        'stored_name'   => $counter.'.jpg',
+                                        'original_name' => $counter.'.jpg'
                                     ]);
+
+                                    // Item variations
+                                    $variationArr = [
+                                        [
+                                            'name'  => 'Single Shot',
+                                            'price' => '20',
+                                        ],
+                                        [
+                                            'name'  => 'Double Shot',
+                                            'price' => '40',
+                                        ],
+                                        [
+                                            'name'  => 'Bottle',
+                                            'price' => '100',
+                                        ],
+                                        [
+                                            'name'  => 'Glass',
+                                            'price' => '10',
+                                        ],
+                                        [
+                                            'name'  => 'Jug',
+                                            'price' => '120',
+                                        ],
+                                        [
+                                            'name'  => 'Pint',
+                                            'price' => '150',
+                                        ]
+                                    ];
+
+                                    foreach( $variationArr as $variation )
+                                    {
+                                        $newItem->variations()->create($variation);
+                                    }
+
+                                    $counter++;
                                 }
                             }
                         }

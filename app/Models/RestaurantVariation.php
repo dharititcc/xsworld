@@ -4,14 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Variation extends Model
+class RestaurantVariation extends Model
 {
     use HasFactory;
 
-    protected $table = 'variations';
+    protected $table = 'restaurant_item_variations';
 
     /**
      * The attributes that are mass assignable.
@@ -19,7 +19,9 @@ class Variation extends Model
      * @var array
      */
     protected $fillable = [
-        'name'
+        'name',
+        'price',
+        'restaurant_item_id'
     ];
 
     /**
@@ -33,12 +35,12 @@ class Variation extends Model
     ];
 
     /**
-     * Get all of the restaurant_items for the Variation
+     * Get the restaurant_item that owns the RestaurantVariation
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function restaurant_items(): BelongsToMany
+    public function restaurant_item(): BelongsTo
     {
-        return $this->belongsToMany(RestaurantItem::class, 'restaurant_item_variations', 'restaurant_item_id', 'variation_id');
+        return $this->belongsTo(RestaurantItem::class, 'restaurant_item_id', 'id');
     }
 }
