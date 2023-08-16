@@ -57,7 +57,6 @@ class RestaurantPickupPointSeeder extends Seeder
                                         ]);
 
                                     }
-                                    continue;
                                 }
                             }
                         }

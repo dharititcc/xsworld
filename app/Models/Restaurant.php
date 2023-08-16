@@ -93,6 +93,26 @@ class Restaurant extends Model
     }
 
     /**
+     * Get all of the main_categories for the Restaurant
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function main_categories(): HasMany
+    {
+        return $this->hasMany(Category::class, 'restaurant_id', 'id')->whereNull('parent_id');
+    }
+
+    /**
+     * Get all of the sub_categories for the Restaurant
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function sub_categories(): HasMany
+    {
+        return $this->hasMany(Category::class, 'restaurant_id', 'id')->whereNotNull('parent_id');
+    }
+
+    /**
      * The items that belong to the Restaurant
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
