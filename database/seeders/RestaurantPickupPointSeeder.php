@@ -20,15 +20,6 @@ class RestaurantPickupPointSeeder extends Seeder
 
         $restaurants = Restaurant::with(['bartenders'])->get();
 
-        $pickupPointArr = [
-            [
-                'name'  => 'Front Bar'
-            ],
-            [
-                'name'  => 'Back Bar'
-            ],
-        ];
-
         if( $restaurants->count() )
         {
             foreach( $restaurants as $restaurant )
@@ -39,6 +30,14 @@ class RestaurantPickupPointSeeder extends Seeder
                     {
                         foreach( $restaurant->bartenders as $bartender )
                         {
+                            $pickupPointArr = [
+                                [
+                                    'name'  => 'Front Bar'
+                                ],
+                                [
+                                    'name'  => 'Back Bar'
+                                ],
+                            ];
                             if( !empty($pickupPointArr) )
                             {
                                 foreach( $pickupPointArr as $pickupPoint )
@@ -48,9 +47,17 @@ class RestaurantPickupPointSeeder extends Seeder
 
                                     if( !isset( $checkExist->id ) )
                                     {
+                                        // TODO: same name of the pickup points for the different bartenders. Remove duplication please.
                                         $pickupPoint['user_id'] = $bartender->id;
-                                        $restaurant->pickup_points()->create($pickupPoint);
+                                        $newPickupPoint = $restaurant->pickup_points()->create($pickupPoint);
+
+                                        $newPickupPoint->attachment()->create([
+                                            'original_name' => str_replace(' ', '_', strtolower($pickupPoint['name'])).'.png',
+                                            'stored_name'   => str_replace(' ', '_', strtolower($pickupPoint['name'])).'.png'
+                                        ]);
+
                                     }
+                                    continue;
                                 }
                             }
                         }
