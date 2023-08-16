@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateItems extends Migration
+class CreateRestaurantItems extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,12 @@ class CreateItems extends Migration
      */
     public function up()
     {
-        Schema::create('items', function (Blueprint $table) {
+        Schema::create('restaurant_items', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->unsignedBigInteger('restaurant_id');
             $table->unsignedBigInteger('category_id');
-            $table->unsignedBigInteger('parent_id');
+            $table->unsignedBigInteger('parent_id')->nullable()->comment('For Addons/Mixers');
             $table->unsignedTinyInteger('type')->comment('1=Addon, 2=Item, 3=Mixers');
             $table->unsignedTinyInteger('is_variable')->default(0)->comment('0=Simple Product, 1=Variable Product');
             $table->decimal('price', 14,2)->default(0);
@@ -27,6 +27,7 @@ class CreateItems extends Migration
             $table->softDeletes();
 
             $table->foreign('restaurant_id')->references('id')->on('restaurants')->onDelete('cascade');
+            $table->foreign('parent_id')->references('id')->on('restaurant_items')->onDelete('cascade');
             $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');
         });
     }
@@ -38,6 +39,6 @@ class CreateItems extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('items');
+        Schema::dropIfExists('restaurant_items');
     }
 }

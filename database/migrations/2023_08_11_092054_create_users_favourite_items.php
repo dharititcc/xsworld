@@ -17,11 +17,11 @@ class CreateUsersFavouriteItems extends Migration
         Schema::create('users_favourite_items', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('item_id');
+            $table->unsignedBigInteger('restaurant_item_id');
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('item_id')->references('id')->on('items')->onDelete('cascade');
+            $table->foreign('restaurant_item_id')->references('id')->on('restaurant_items')->onDelete('cascade');
         });
     }
 

@@ -36,7 +36,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'first_name', 'last_name', 'email', 'password', 'phone', 'phone2', 'registration_type', 'user_type', 'fcm_token','country' ,'country_code'
+        'first_name', 'last_name', 'email', 'password', 'phone', 'phone2', 'registration_type', 'user_type', 'fcm_token','country' ,'country_code','birth_date','address'
     ];
 
     /**
@@ -76,16 +76,6 @@ class User extends Authenticatable
     public function restaurants(): BelongsToMany
     {
         return $this->belongsToMany(Restaurant::class, 'user_restaurants', 'restaurant_id', 'user_id');
-    }
-
-    /**
-     * Method getFullNameAttribute
-     *
-     * @return string
-     */
-    public function getFullNameAttribute(): string
-    {
-        return isset($this->first_name) ? $this->first_name : ''.' '.$this->last_name;
     }
 
     /**

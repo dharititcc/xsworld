@@ -30,13 +30,13 @@ class RestaurantItem extends Model
     protected $fillable = [
         'name',
         'restaurant_id',
-        'item_id',
+        'restaurant_item_id',
         'price',
         'quantity',
         'is_featured',
         'variation',
         'type',
-        'restaurant_item_id'    // FK (Addon/Mixers of specific item / specific restaurant)
+        'parent_id'    // FK (Addon/Mixers of specific item / specific restaurant)
     ];
 
     /**
@@ -67,7 +67,7 @@ class RestaurantItem extends Model
      */
     public function item(): BelongsTo
     {
-        return $this->belongsTo(Item::class, 'item_id', 'id');
+        return $this->belongsTo(Item::class, 'restaurant_item_id', 'id');
     }
 
     /**

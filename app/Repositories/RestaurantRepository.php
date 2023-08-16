@@ -86,7 +86,7 @@ class RestaurantRepository extends BaseRepository
         $restaurantName = isset( $data['restaurant_name'] ) ? $data['restaurant_name'] : null;
         $drink_name     = isset( $data['drink_name'] ) ? $data['drink_name'] : null;
 
-        $query = $this->restaurantQuery()->with(['item_types','pickup_points'])->select([
+        $query = $this->restaurantQuery()->with(['categories','pickup_points'])->select([
             'id',
             'name',
             'latitude',

@@ -408,6 +408,14 @@ class AuthController extends APIController
      *           type="string"
      *      )
      *   ),
+     *    @OA\Parameter(
+     *      name="address",
+     *      in="query",
+     *      required=true,
+     *      @OA\Schema(
+     *           type="string"
+     *      )
+     *   ),
      *   @OA\Response(
      *      response=200,
      *       description="Success",
@@ -443,6 +451,7 @@ class AuthController extends APIController
             'phone'                 => $request->phone,
             'country_code'          => $request->country_code,
             'country'               => $request->country,
+            'address'               => $request->address,
             'registration_type'     => $request->registration_type,
             'birth_date'            => $request->birth_date,
             'platform'              => $request->platform,

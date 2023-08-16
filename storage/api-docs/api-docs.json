@@ -743,6 +743,14 @@
                         }
                     },
                     {
+                        "name": "address",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
                         "name": "profile_image",
                         "in": "query",
                         "required": false,

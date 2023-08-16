@@ -264,6 +264,14 @@ class UserController extends APIController
      *           type="string"
      *      )
      *   ),
+     *      @OA\Parameter(
+     *      name="address",
+     *      in="query",
+     *      required=false,
+     *      @OA\Schema(
+     *           type="string"
+     *      )
+     *   ),
      *   @OA\Parameter(
      *      name="profile_image",
      *      in="query",
@@ -295,6 +303,7 @@ class UserController extends APIController
             'phone'         => $request->get('phone') ?? null,
             'phone2'        => $request->get('phone2') ?? null,
             'birth_date'    => $request->get('birth_date') ?? null,
+            'address'       => $request->get('address') ?? null,
             'profile_image' => $request->file('profile_image') ?? null,
         ];
 

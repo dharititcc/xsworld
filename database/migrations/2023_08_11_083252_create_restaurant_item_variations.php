@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateVariations extends Migration
+class CreateRestaurantItemVariations extends Migration
 {
     /**
      * Run the migrations.
@@ -13,15 +13,15 @@ class CreateVariations extends Migration
      */
     public function up()
     {
-        Schema::create('variations', function (Blueprint $table) {
+        Schema::create('restaurant_item_variations', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->decimal('price', 14,2)->default(0);
-            $table->unsignedBigInteger('item_id');
+            $table->unsignedBigInteger('restaurant_item_id');
             $table->timestamps();
             $table->softDeletes();
 
-            $table->foreign('item_id')->references('id')->on('items')->onDelete('cascade');
+            $table->foreign('restaurant_item_id')->references('id')->on('restaurant_items')->onDelete('cascade');
         });
     }
 
@@ -32,6 +32,6 @@ class CreateVariations extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('variations');
+        Schema::dropIfExists('restaurant_item_variations');
     }
 }

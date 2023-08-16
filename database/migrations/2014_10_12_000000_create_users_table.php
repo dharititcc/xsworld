@@ -29,6 +29,7 @@ class CreateUsersTable extends Migration
             $table->decimal('credit_points', 14,2)->default(0);
             $table->string('platform')->nullable();
             $table->string('os_version')->nullable();
+            $table->string('address')->nullable();
             $table->string('application_version')->nullable();
             $table->string('model')->nullable();
             $table->timestamp('email_verified_at')->nullable();

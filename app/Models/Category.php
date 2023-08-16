@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 
 class Category extends Model
 {
@@ -38,6 +39,16 @@ class Category extends Model
     ];
 
     /**
+     * Method attachment
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\MorphOne
+     */
+    public function attachment(): MorphOne
+    {
+        return $this->morphOne(Attachment::class, 'attachmentable');
+    }
+
+    /**
      * Get the restaurant that owns the Category
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
@@ -55,5 +66,15 @@ class Category extends Model
     public function children(): HasMany
     {
         return $this->hasMany(self::class, 'parent_id', 'id');
+    }
+
+    /**
+     * Method getImageAttribute
+     *
+     * @return string
+     */
+    public function getImageAttribute(): string
+    {
+        return isset($this->attachment) ? asset('storage/profile/'.$this->attachment->stored_name) : '';
     }
 }

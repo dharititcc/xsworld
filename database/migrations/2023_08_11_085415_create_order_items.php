@@ -16,7 +16,7 @@ class CreateOrderItems extends Migration
         Schema::create('order_items', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('order_id');
-            $table->unsignedBigInteger('item_id');
+            $table->unsignedBigInteger('restaurant_item_id');
             $table->unsignedBigInteger('variation_id')->nullable();
             $table->unsignedBigInteger('parent_item_id')->nullable();
             $table->integer('quantity');
@@ -26,8 +26,8 @@ class CreateOrderItems extends Migration
             $table->timestamps();
 
             $table->foreign('order_id')->references('id')->on('orders')->onDelete('cascade');
-            $table->foreign('item_id')->references('id')->on('items');
-            $table->foreign('parent_item_id')->references('id')->on('items');
+            $table->foreign('restaurant_item_id')->references('id')->on('restaurant_items');
+            $table->foreign('parent_item_id')->references('id')->on('restaurant_items');
         });
     }
 
