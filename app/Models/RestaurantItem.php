@@ -18,6 +18,11 @@ class RestaurantItem extends Model
     /** featured */
     const FEATURED = 1;
 
+    /** item types */
+    const ADDON     = 1;
+    const ITEM      = 2;
+    const MIXER     = 3;
+
     /** item type */
     const SIMPLE    = 0;
     const VARIABLE  = 1;

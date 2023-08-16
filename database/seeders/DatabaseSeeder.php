@@ -24,6 +24,7 @@ class DatabaseSeeder extends Seeder
             RestaurantCategorySeeder::class,
             RestaurantSubCategorySeeder::class,
             RestaurantPickupPointSeeder::class,
+            RestaurantItemSeeder::class
         ]);
     }
 }
