@@ -1,5 +1,6 @@
 <?php namespace App\Repositories;
 
+use App\Models\Category;
 use App\Models\Restaurant;
 use App\Models\RestaurantItem;
 use App\Models\RestaurantItemType;
@@ -220,36 +221,27 @@ class RestaurantRepository extends BaseRepository
     }
 
     /**
-     * Method getRestaurantsItemType
+     * Method getRestaurantSubCategories
      *
      * @param array $data [explicite description]
      *
      * @return Collection
      */
-    public function getRestaurantsItemType(array $data) : Collection
+    public function getRestaurantSubCategories(array $data) : Collection
     {
         $restaurantId           = isset( $data['restaurant_id'] ) ? $data['restaurant_id'] : null;
-        $restaurantItemTypeId   = isset( $data['item_type_id'] ) ? $data['item_type_id'] : null;
-        // $query                  = Restaurant::query();
-        // $query->where('id', $restaurantId);
-
-        // if( $restaurantItemTypeId )
-        // {
-        //     //dd($restaurantItemTypeId );
-        //     $query->with(['item_types']);
-        // }
-        $query              = RestaurantItemType::query()->with(['item_type']);
-
-        if( $restaurantItemTypeId )
-        {
-            $query->where('parent_id', $restaurantItemTypeId);
-        }
+        $restaurantCategoryId   = isset( $data['category_id'] ) ? $data['category_id'] : null;
 
         if( $restaurantId )
         {
-            $query->where('restaurant_id', $restaurantId);
+            $restaurant = Restaurant::with(['sub_categories'])->findOrFail($restaurantId);
         }
 
-        return $query->get();
+        if( $restaurantCategoryId )
+        {
+            return $restaurant->sub_categories->where('parent_id', $restaurantCategoryId);
+        }
+
+        return $restaurant;
     }
 }

@@ -306,6 +306,14 @@
                         "schema": {
                             "type": "string"
                         }
+                    },
+                    {
+                        "name": "address",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "responses": {
@@ -479,13 +487,13 @@
                 ]
             }
         },
-        "/api/v1/restaurants/item-type": {
+        "/api/v1/restaurants/sub-categories": {
             "post": {
                 "tags": [
                     "Restaurants"
                 ],
                 "summary": "Get Item types by Restaurants.",
-                "operationId": "88a494132d93c2bd8575bb2874c9097f",
+                "operationId": "12f20077a84970c302998bee1e468f87",
                 "parameters": [
                     {
                         "name": "restaurant_id",
@@ -496,7 +504,7 @@
                         }
                     },
                     {
-                        "name": "item_type_id",
+                        "name": "category_id",
                         "in": "query",
                         "required": false,
                         "schema": {

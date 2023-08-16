@@ -4,10 +4,10 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Requests\RestaurantFeaturedRequest;
 use App\Http\Requests\RestaurantFilterApiRequest;
-use App\Http\Requests\RestaurantItemTypeReuest;
+use App\Http\Requests\RestaurantSubCategoryReuest;
 use App\Http\Resources\RestaurantItemsResource;
 use App\Http\Resources\RestaurantResource;
-use App\Http\Resources\RestaurantsItemTypeResource;
+use App\Http\Resources\RestaurantsSubCategoryResource;
 use App\Repositories\RestaurantRepository;
 
 class RestaurantController extends APIController
@@ -191,13 +191,13 @@ class RestaurantController extends APIController
     /**
      * Method index
      *
-     * @param \App\Http\Requests\RestaurantFilterApiRequest $request [explicite description]
+     * @param \App\Http\Requests\RestaurantSubCategoryReuest $request [explicite description]
      *
      * @return \Illuminate\Http\JsonResponse
      */
     /**
      * @OA\Post(
-     ** path="/api/v1/restaurants/item-type",
+     ** path="/api/v1/restaurants/sub-categories",
      *   tags={"Restaurants"},
      *   summary="Get Item types by Restaurants.",
      *     security={
@@ -214,7 +214,7 @@ class RestaurantController extends APIController
      *      )
      *   ),
      *   @OA\Parameter(
-     *       name="item_type_id",
+     *       name="category_id",
      *      in="query",
      *      required=false,
      *      @OA\Schema(
@@ -246,13 +246,13 @@ class RestaurantController extends APIController
      *      ),
      *)
      **/
-    public function itemtype(RestaurantItemTypeReuest $request)
+    public function subCategories(RestaurantSubCategoryReuest $request)
     {
-        $restaurants        = $this->repository->getRestaurantsItemType($request->validated());
+        $restaurants        = $this->repository->getRestaurantSubCategories($request->validated());
 
         if( $restaurants->count() )
         {
-            return $this->respondSuccess('Restaurant Found.', RestaurantsItemTypeResource::collection($restaurants));
+            return $this->respondSuccess('Restaurant Found.', RestaurantsSubCategoryResource::collection($restaurants));
         }
 
         return $this->respondWithError('Restaurant not found.');

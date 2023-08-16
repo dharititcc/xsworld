@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class RestaurantItemTypeReuest extends FormRequest
+class RestaurantSubCategoryReuest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,8 +24,8 @@ class RestaurantItemTypeReuest extends FormRequest
     public function rules()
     {
         return [
-            'restaurant_id'        => 'required|numeric',
-            'item_type_id'         => 'numeric',
+            'restaurant_id'     => 'required|numeric',
+            'category_id'       => 'numeric',
         ];
     }
 }
