@@ -236,11 +236,11 @@
                         }
                     },
                     {
-                        "name": "country_id",
+                        "name": "country",
                         "in": "query",
                         "required": true,
                         "schema": {
-                            "type": "integer"
+                            "type": "string"
                         }
                     },
                     {
@@ -445,6 +445,58 @@
                 "parameters": [
                     {
                         "name": "restaurant_id",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "number"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "not found"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/restaurants/item-type": {
+            "post": {
+                "tags": [
+                    "Restaurants"
+                ],
+                "summary": "Get Item types by Restaurants.",
+                "operationId": "88a494132d93c2bd8575bb2874c9097f",
+                "parameters": [
+                    {
+                        "name": "restaurant_id",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "name": "item_type_id",
                         "in": "query",
                         "required": false,
                         "schema": {

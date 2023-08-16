@@ -218,4 +218,38 @@ class RestaurantRepository extends BaseRepository
 
         return $query->get();
     }
+
+    /**
+     * Method getRestaurantsItemType
+     *
+     * @param array $data [explicite description]
+     *
+     * @return Collection
+     */
+    public function getRestaurantsItemType(array $data) : Collection
+    {
+        $restaurantId           = isset( $data['restaurant_id'] ) ? $data['restaurant_id'] : null;
+        $restaurantItemTypeId   = isset( $data['item_type_id'] ) ? $data['item_type_id'] : null;
+        // $query                  = Restaurant::query();
+        // $query->where('id', $restaurantId);
+
+        // if( $restaurantItemTypeId )
+        // {
+        //     //dd($restaurantItemTypeId );
+        //     $query->with(['item_types']);
+        // }
+        $query              = RestaurantItemType::query()->with(['item_type']);
+
+        if( $restaurantItemTypeId )
+        {
+            $query->where('parent_id', $restaurantItemTypeId);
+        }
+
+        if( $restaurantId )
+        {
+            $query->where('restaurant_id', $restaurantId);
+        }
+
+        return $query->get();
+    }
 }

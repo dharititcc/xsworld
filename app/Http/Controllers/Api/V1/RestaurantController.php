@@ -4,8 +4,10 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Requests\RestaurantFeaturedRequest;
 use App\Http\Requests\RestaurantFilterApiRequest;
+use App\Http\Requests\RestaurantItemTypeReuest;
 use App\Http\Resources\RestaurantItemsResource;
 use App\Http\Resources\RestaurantResource;
+use App\Http\Resources\RestaurantsItemTypeResource;
 use App\Repositories\RestaurantRepository;
 
 class RestaurantController extends APIController
@@ -122,7 +124,7 @@ class RestaurantController extends APIController
     /**
      * Method index
      *
-     * @param \App\Http\Requests\RestaurantFilterApiRequest $request [explicite description]
+     * @param \App\Http\Requests\RestaurantFeaturedRequest $request [explicite description]
      *
      * @return \Illuminate\Http\JsonResponse
      */
@@ -181,6 +183,76 @@ class RestaurantController extends APIController
                 'featured_items'         => $featuredItems->count() ? RestaurantItemsResource::collection($featuredItems) : []
             ];
             return $this->respondSuccess('Restaurant Found.', $data);
+        }
+
+        return $this->respondWithError('Restaurant not found.');
+    }
+
+    /**
+     * Method index
+     *
+     * @param \App\Http\Requests\RestaurantFilterApiRequest $request [explicite description]
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    /**
+     * @OA\Post(
+     ** path="/api/v1/restaurants/item-type",
+     *   tags={"Restaurants"},
+     *   summary="Get Item types by Restaurants.",
+     *     security={
+     *         {"bearer_token": {}}
+     *     },
+     *
+     *
+     *  @OA\Parameter(
+     *      name="restaurant_id",
+     *      in="query",
+     *      required=true,
+     *      @OA\Schema(
+     *           type="number"
+     *      )
+     *   ),
+     *   @OA\Parameter(
+     *       name="item_type_id",
+     *      in="query",
+     *      required=false,
+     *      @OA\Schema(
+     *           type="number"
+     *      )
+     *   ),
+     *   @OA\Response(
+     *      response=200,
+     *       description="Success",
+     *      @OA\MediaType(
+     *           mediaType="application/json",
+     *      )
+     *   ),
+     *   @OA\Response(
+     *      response=401,
+     *       description="Unauthenticated"
+     *   ),
+     *   @OA\Response(
+     *      response=400,
+     *      description="Bad Request"
+     *   ),
+     *   @OA\Response(
+     *      response=404,
+     *      description="not found"
+     *   ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     *)
+     **/
+    public function itemtype(RestaurantItemTypeReuest $request)
+    {
+        $restaurants        = $this->repository->getRestaurantsItemType($request->validated());
+
+        if( $restaurants->count() )
+        {
+            return $this->respondSuccess('Restaurant Found.', RestaurantsItemTypeResource::collection($restaurants));
         }
 
         return $this->respondWithError('Restaurant not found.');
