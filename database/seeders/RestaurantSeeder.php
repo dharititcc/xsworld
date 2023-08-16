@@ -2,10 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\Item;
 use App\Models\Restaurant;
-use App\Models\RestaurantItem;
-use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -29,7 +26,8 @@ class RestaurantSeeder extends Seeder
                 'address'           => 'Riverside Centre, 123 Eagle St, Brisbane City QLD 4000, Australia',
                 'phone'             => '61732291200',
                 'specialisation'    => 'Bar',
-                'currency_id'       => 3
+                'currency_id'       => 3,
+                'country_id'        => 3
             ],
             [
                 'name'              => 'The Court Hotel',
@@ -38,7 +36,8 @@ class RestaurantSeeder extends Seeder
                 'address'           => '2 King William St, Adelaide SA 5000, Australia',
                 'phone'             => '61882125511',
                 'specialisation'    => 'Bar',
-                'currency_id'       => 3
+                'currency_id'       => 3,
+                'country_id'        => 3
             ],
             [
                 'name'              => 'Metro City',
@@ -47,7 +46,8 @@ class RestaurantSeeder extends Seeder
                 'address'           => '205 Rundle St, Adelaide SA 5000, Australia',
                 'phone'             => '61883100210',
                 'specialisation'    => 'Bar',
-                'currency_id'       => 3
+                'currency_id'       => 3,
+                'country_id'        => 3
             ],
             [
                 'name'              => 'Butterfly 73',
@@ -55,7 +55,8 @@ class RestaurantSeeder extends Seeder
                 'longitude'         => '151.145561',
                 'address'           => '4/256 Crown St, Darlinghurst NSW 2010, Australia',
                 'specialisation'    => 'Bar',
-                'currency_id'       => 3
+                'currency_id'       => 3,
+                'country_id'        => 3
             ],
             [
                 'name'              => 'Employees Only Bar',
@@ -64,7 +65,18 @@ class RestaurantSeeder extends Seeder
                 'address'           => '9a Barrack St, Sydney NSW 2000, Australia',
                 'phone'             => '61280847490',
                 'specialisation'    => 'Bar',
-                'currency_id'       => 3
+                'currency_id'       => 3,
+                'country_id'        => 3
+            ],
+            [
+                'name'              => 'Employees Only Bar',
+                'latitude'          => '-33.8677238',
+                'longitude'         => '151.1360824',
+                'address'           => '9a Barrack St, Sydney NSW 2000, Australia',
+                'phone'             => '61280847490',
+                'specialisation'    => 'Bar',
+                'currency_id'       => 3,
+                'country_id'        => 3
             ],
             [
                 'name'              => "Grandma's Bar",
@@ -73,7 +85,8 @@ class RestaurantSeeder extends Seeder
                 'address'           => 'Basement/275 Clarence St, Sydney NSW 2000, Australia',
                 'phone'             => '61292643004',
                 'specialisation'    => 'Bar',
-                'currency_id'       => 3
+                'currency_id'       => 3,
+                'country_id'        => 3
             ],
             [
                 'name'              => "Boilermaker House",
@@ -82,7 +95,8 @@ class RestaurantSeeder extends Seeder
                 'address'           => '209-211 Lonsdale St, Melbourne VIC 3000, Australia',
                 'phone'             => '61383939367',
                 'specialisation'    => 'Bar',
-                'currency_id'       => 3
+                'currency_id'       => 3,
+                'country_id'        => 3
             ],
             [
                 'name'              => "Earl's Juke Joint",
@@ -90,7 +104,8 @@ class RestaurantSeeder extends Seeder
                 'longitude'         => '151.1077377',
                 'address'           => '407 King St, Newtown NSW 2042, Australia',
                 'specialisation'    => 'Bar',
-                'currency_id'       => 3
+                'currency_id'       => 3,
+                'country_id'        => 3
             ],
             [
                 'name'              => "Cantina OK!",
@@ -98,7 +113,8 @@ class RestaurantSeeder extends Seeder
                 'longitude'         => '151.2047850911538',
                 'address'           => 'Council Pl, Sydney NSW 2000, Australia',
                 'specialisation'    => 'Bar',
-                'currency_id'       => 3
+                'currency_id'       => 3,
+                'country_id'        => 3
             ],
             [
                 'name'              => "Cabana Bar",
@@ -107,7 +123,8 @@ class RestaurantSeeder extends Seeder
                 'address'           => '25 Martin Pl, Sydney NSW 2000, Australia',
                 'phone'             => '61292156000',
                 'specialisation'    => 'Bar',
-                'currency_id'       => 3
+                'currency_id'       => 3,
+                'country_id'        => 3
             ],
             [
                 'name'              => "Establishment Bar",
@@ -116,7 +133,8 @@ class RestaurantSeeder extends Seeder
                 'address'           => 'Ground Floor, 252 George St, Sydney NSW 2000, Australia',
                 'phone'             => '61291147310',
                 'specialisation'    => 'Bar',
-                'currency_id'       => 3
+                'currency_id'       => 3,
+                'country_id'        => 3
             ],
             [
                 'name'              => "Old Mates Place",
@@ -124,7 +142,8 @@ class RestaurantSeeder extends Seeder
                 'longitude'         => '151.20480739113526',
                 'address'           => 'level 4/199 Clarence St, Sydney NSW 2000, Australia',
                 'specialisation'    => 'Bar',
-                'currency_id'       => 3
+                'currency_id'       => 3,
+                'country_id'        => 3
             ],
             [
                 'name'              => "Molly",
@@ -133,7 +152,8 @@ class RestaurantSeeder extends Seeder
                 'address'           => 'Wooden Door, Odgers Ln, Canberra ACT 2601, Australia',
                 'phone'             => '61261798973',
                 'specialisation'    => 'Bar',
-                'currency_id'       => 3
+                'currency_id'       => 3,
+                'country_id'        => 3
             ],
             [
                 'name'              => "The Lobo",
@@ -141,7 +161,8 @@ class RestaurantSeeder extends Seeder
                 'longitude'         => '151.20568435944492',
                 'address'           => 'basement lot 1/209 Clarence St, Sydney NSW 2000, Australia',
                 'specialisation'    => 'Bar',
-                'currency_id'       => 3
+                'currency_id'       => 3,
+                'country_id'        => 3
             ],
         ];
 
@@ -158,51 +179,10 @@ class RestaurantSeeder extends Seeder
                     'stored_name'   => $counter.'.jpg'
                 ]);
 
-                // Logic related to link item types
-                $newRestaurant->item_types()->attach([1,2,3,4]);
-
-                $itemArr = [1,2,3,4,5];
-
-                if( !empty($itemArr) )
-                {
-                    foreach( $itemArr as $k => $item )
-                    {
-                        $restaurantItemArr = [
-                            // 'price'                     => 10,
-                            'is_featured'               => true,
-                            // 'variation_id'              => rand(1,6),
-                            'type'                      => Item::VARIABLE,
-                            'restaurant_item_type_id'   => 1,
-                            'restaurant_id'             => $newRestaurant->id,
-                            'item_id'                   => $item
-                        ];
-
-                        $newRestaurantItem = RestaurantItem::create($restaurantItemArr);
-
-                        // logic to link attachment
-                        $newRestaurantItem->attachment()->create([
-                            'original_name' => ($k+1).'.jpg',
-                            'stored_name'   => ($k+1).'.jpg'
-                        ]);
-
-                        // restaurant item variations
-                        $newRestaurantItem->restaurant_item_variations()->attach([
-                            1 => ['price' => 25, 'quantity' => 50],
-                            2 => ['price' => 50, 'quantity' => 50]
-                        ]);
-                    }
-                }
-
-                if( $newRestaurant->id == 4 )
-                {
-                    // Logic create restaurant user
-                    $newRestaurant->bartenders()->attach([4,5]);
-
-                    // Logic related to pickup points
-                    $newRestaurant->pickup_points()->attach([1 => ['user_id' => 4, 'name' => 'Front Bar'], 2 => ['user_id' => 5, 'name' => 'Back Bar']]);
-                }
-
+                // restaurant owner
                 $newRestaurant->owners()->attach(2);
+
+                // TODO: Restaurant bartenders
 
                 $counter++;
             }

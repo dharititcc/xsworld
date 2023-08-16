@@ -16,11 +16,14 @@ class CreateCategories extends Migration
         Schema::create('categories', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->integer('parent_id');
-            $table->integer('restaurant_id');
-            $table->integer('status')->comment('0=Inactive, 1=Active');
+            $table->unsignedBigInteger('parent_id')->nullable();
+            $table->unsignedBigInteger('restaurant_id')->nullable();
+            $table->tinyInteger('status')->default(1)->comment('0=Inactive, 1=Active');
             $table->timestamps();
             $table->softDeletes();
+
+            $table->foreign('restaurant_id')->references('id')->on('restaurants')->onDelete('cascade');
+            $table->foreign('parent_id')->references('id')->on('categories')->onDelete('cascade');
         });
     }
 

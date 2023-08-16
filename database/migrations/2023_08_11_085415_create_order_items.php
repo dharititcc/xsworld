@@ -19,7 +19,7 @@ class CreateOrderItems extends Migration
             $table->unsignedBigInteger('item_id');
             $table->unsignedBigInteger('variation_id')->nullable();
             $table->unsignedBigInteger('parent_item_id')->nullable();
-            $table->unsignedBigInteger('quantity');
+            $table->integer('quantity');
             $table->decimal('price', 14,2)->default(0);
             $table->unsignedTinyInteger('type')->default(1)->comment('0=Addon, 1=Item, 2=Mixers');
             $table->decimal('total', 14,2);

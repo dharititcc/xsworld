@@ -19,11 +19,11 @@ class CreateUsersTable extends Migration
             $table->string('last_name')->nullable();
             $table->string('email')->unique();
             $table->string('password');
-            $table->string('phone')->unique();
-            $table->string('phone2')->nullable();
+            $table->bigInteger('phone')->unique();
+            $table->bigInteger('phone2')->nullable();
             $table->unsignedTinyInteger('registration_type')->default(0)->comment('0=EMAIL, 1=PHONE, 2=GOOGLE, 3=FACEBOOK');
             $table->unsignedTinyInteger('user_type')->default(1)->comment('1=CUSTOMER, 2=RESTAURANT_OWNER, 3=ADMIN, 4=BARTENDER');
-            $table->string('country')->nullable();
+            $table->unsignedBigInteger('country_id')->nullable();
             $table->string('country_code',5)->nullable();
             $table->date('birth_date')->nullable();
             $table->decimal('credit_points', 14,2)->default(0);
@@ -33,10 +33,11 @@ class CreateUsersTable extends Migration
             $table->string('model')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('fcm_token')->nullable();
+            $table->unsignedBigInteger('points')->default(0);
             $table->rememberToken();
             $table->timestamps();
 
-            // $table->foreign('country_id')->references('id')->on('countries')->onDelete('cascade');
+            $table->foreign('country_id')->references('id')->on('countries')->onDelete('cascade');
         });
     }
 

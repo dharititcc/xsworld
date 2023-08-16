@@ -16,7 +16,9 @@ class CreateUserPoints extends Migration
         Schema::create('user_points', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
-            $table->tinyInteger('rating')->default(1)->comment('1-5 Rating');
+            $table->unsignedBigInteger('points')->default(0);
+            $table->string('user_pointable_type');
+            $table->unsignedBigInteger('user_pointable_id');
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');

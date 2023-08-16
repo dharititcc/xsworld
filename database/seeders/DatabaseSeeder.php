@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Restaurant;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -17,14 +18,10 @@ class DatabaseSeeder extends Seeder
             AdminUserSeeder::class,
             RestaurantOwnerSeeder::class,
             CustomerSeeder::class,
-            ItemTypeSeeder::class,
-            VariationSeeder::class,
-            ItemSeeder::class,
-            PickupPointSeeder::class,
-            CurrencySeeder::class,
+            CountrySeeder::class,
             RestaurantSeeder::class,
-            RestaurantUserSeeder::class,
-            CountrySeeder::class
+            RestaurantCategorySeeder::class,
+            RestaurantSubCategorySeeder::class,
         ]);
     }
 }

@@ -22,7 +22,7 @@ class CreateItems extends Migration
             $table->unsignedTinyInteger('type')->comment('1=Addon, 2=Item, 3=Mixers');
             $table->unsignedTinyInteger('is_variable')->default(0)->comment('0=Simple Product, 1=Variable Product');
             $table->decimal('price', 14,2)->default(0);
-            $table->unsignedBigInteger('is_featured');
+            $table->tinyInteger('is_featured')->default(0)->comment('0=Not Featured, 1=Featured');
             $table->timestamps();
             $table->softDeletes();
 

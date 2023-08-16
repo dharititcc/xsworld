@@ -83,13 +83,13 @@ class Restaurant extends Model
     }
 
     /**
-     * The item_types that belong to the Restaurant
+     * Get all of the categories for the Restaurant
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function item_types(): BelongsToMany
+    public function categories(): HasMany
     {
-        return $this->belongsToMany(ItemType::class, 'restaurant_item_types', 'restaurant_id', 'item_type_id');
+        return $this->hasMany(Category::class, 'restaurant_id', 'id');
     }
 
     /**

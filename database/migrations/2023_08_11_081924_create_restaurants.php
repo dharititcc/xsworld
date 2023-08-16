@@ -23,7 +23,7 @@ class CreateRestaurants extends Migration
             $table->text('address')->nullable();
             $table->unsignedBigInteger('phone')->nullable();
             $table->string('specialisation')->nullable();
-            $table->integer('status')->comment('0=Inactive, 1=Active');
+            $table->tinyInteger('status')->default(1)->comment('0=Inactive, 1=Active');
             $table->timestamps();
 
             $table->foreign('currency_id')->references('id')->on('currencies')->onDelete('cascade');
