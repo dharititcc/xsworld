@@ -27,7 +27,6 @@ class UpdateProfileRequest extends FormRequest
             'first_name'            => 'required|string',
             'last_name'             => 'required|string',
             'phone'                 => 'required|unique:users,phone',
-            'phone2'                => 'required',
             'email'                 => 'required|unique:users,email',
             'country_code'          => 'required',
             'birth_date'            => 'required|date_format:Y-m-d',

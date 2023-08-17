@@ -251,7 +251,7 @@ class UserController extends APIController
      *     @OA\Parameter(
      *      name="phone2",
      *      in="query",
-     *      required=true,
+     *      required=false,
      *      @OA\Schema(
      *           type="string"
      *      )
