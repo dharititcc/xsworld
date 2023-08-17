@@ -326,6 +326,7 @@ class UserController extends APIController
 
         if( $this->repository->update($dataArr, $user) )
         {
+            $user->refresh();
             return $this->respond([
                 'status' => true,
                 'message'=> 'Update Profile successfully.',

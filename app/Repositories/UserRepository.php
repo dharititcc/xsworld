@@ -3,7 +3,6 @@
 use App\Models\User;
 use App\Repositories\BaseRepository;
 use File;
-use Symfony\Component\Console\Helper\Helper;
 
 /**
  * Class UserRepository.
@@ -25,7 +24,24 @@ class UserRepository extends BaseRepository
      */
     public function update(array $data, User $user): bool
     {
-        if(isset($data['profile_image'])){
+        // upload profile image
+        $this->upload($data, $user);
+
+        return $user->update($data);
+    }
+
+    /**
+     * Method upload
+     *
+     * @param array $data [explicite description]
+     * @param User $user [explicite description]
+     *
+     * @return void
+     */
+    private function upload(array $data, User $user)
+    {
+        if(isset($data['profile_image']))
+        {
             $image = $data['profile_image'];
             // original file name
             $originalFileName = $image->getClientOriginalName();
@@ -38,8 +54,8 @@ class UserRepository extends BaseRepository
             // Remove special chars.
             $fileNameStr = preg_replace('/[^A-Za-z0-9\-\_]/', '', $fileNameStr);
 
-            $path = 'storage/profile';
-            $counter = 1;
+            $path        = public_path('storage/profile');
+            $counter     = 1;
 
             // remove old file
             if (File::exists($user->image)){
@@ -75,8 +91,6 @@ class UserRepository extends BaseRepository
                 'stored_name'   => $fileNameStr
             ]);
         }
-
-        return $user->update($data);
     }
 
     /**

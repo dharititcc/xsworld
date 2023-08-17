@@ -28,11 +28,11 @@ class UpdateProfileRequest extends FormRequest
         return [
             'first_name'            => 'required|string',
             'last_name'             => 'required|string',
-            'phone'                 => 'required|unique:users,phone'.$user->id,
-            'email'                 => 'required|unique:users,email'.$user->id,
+            'phone'                 => 'required|unique:users,phone,'.$user->id,
+            'email'                 => 'required|unique:users,email,'.$user->id,
             'country_code'          => 'required',
             'birth_date'            => 'required|date_format:Y-m-d',
-            'profile_image'         => 'image|mimes:jpeg,png,jpg|max:2048'
+            'profile_image'         => 'image|mimes:jpeg,png,jpg|max:10240'
         ];
     }
 }
