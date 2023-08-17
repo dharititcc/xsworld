@@ -23,11 +23,13 @@ class UpdateProfileRequest extends FormRequest
      */
     public function rules()
     {
+        $user = auth()->user();
+
         return [
             'first_name'            => 'required|string',
             'last_name'             => 'required|string',
-            'phone'                 => 'required|unique:users,phone',
-            'email'                 => 'required|unique:users,email',
+            'phone'                 => 'required|unique:users,phone'.$user->id,
+            'email'                 => 'required|unique:users,email'.$user->id,
             'country_code'          => 'required',
             'birth_date'            => 'required|date_format:Y-m-d',
             'profile_image'         => 'image|mimes:jpeg,png,jpg|max:2048'
