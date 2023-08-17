@@ -492,7 +492,7 @@
                 "tags": [
                     "Restaurants"
                 ],
-                "summary": "Get Item types by Restaurants.",
+                "summary": "Get Sub categories by Restaurant and Category.",
                 "operationId": "12f20077a84970c302998bee1e468f87",
                 "parameters": [
                     {
@@ -736,6 +736,22 @@
                     },
                     {
                         "name": "phone2",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "email",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "country_code",
                         "in": "query",
                         "required": true,
                         "schema": {

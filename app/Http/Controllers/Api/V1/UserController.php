@@ -256,6 +256,22 @@ class UserController extends APIController
      *           type="string"
      *      )
      *   ),
+     *    @OA\Parameter(
+     *      name="email",
+     *      in="query",
+     *      required=true,
+     *      @OA\Schema(
+     *           type="string"
+     *      )
+     *   ),
+     *    @OA\Parameter(
+     *      name="country_code",
+     *      in="query",
+     *      required=true,
+     *      @OA\Schema(
+     *           type="string"
+     *      )
+     *   ),
      *     @OA\Parameter(
      *      name="birth_date",
      *      in="query",
@@ -279,7 +295,6 @@ class UserController extends APIController
      *      @OA\Schema(
      *           type="file"
      *      )
-
      *   ),
      *    @OA\Response(
      *      response=200,
@@ -304,6 +319,8 @@ class UserController extends APIController
             'phone2'        => $request->get('phone2') ?? null,
             'birth_date'    => $request->get('birth_date') ?? null,
             'address'       => $request->get('address') ?? null,
+            'email'         => $request->get('email') ?? null,
+            'country_code'  => $request->get('country_code') ?? null,
             'profile_image' => $request->file('profile_image') ?? null,
         ];
 

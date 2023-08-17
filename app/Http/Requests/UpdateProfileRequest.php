@@ -28,6 +28,8 @@ class UpdateProfileRequest extends FormRequest
             'last_name'             => 'required|string',
             'phone'                 => 'required|unique:users,phone',
             'phone2'                => 'required',
+            'email'                 => 'required|unique:users,email',
+            'country_code'          => 'required',
             'birth_date'            => 'required|date_format:Y-m-d',
             'profile_image'         => 'image|mimes:jpeg,png,jpg|max:2048'
         ];
