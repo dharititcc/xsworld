@@ -75,6 +75,6 @@ class Category extends Model
      */
     public function getImageAttribute(): string
     {
-        return isset($this->attachment) ? asset('storage/profile/'.$this->attachment->stored_name) : '';
+        return isset($this->attachment) ? asset('storage/categories/'.$this->attachment->stored_name) : '';
     }
 }

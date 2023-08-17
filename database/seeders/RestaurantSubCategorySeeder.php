@@ -21,7 +21,7 @@ class RestaurantSubCategorySeeder extends Seeder
         // get restaurants
         $restaurants = Restaurant::with(['categories'])->get();
 
-        $subcategories = [
+        $drinksCategories = [
             [
                 'name'  => 'Spirits',
                 'status'=> 1
@@ -40,6 +40,25 @@ class RestaurantSubCategorySeeder extends Seeder
             ]
         ];
 
+        $foodCategories = [
+            [
+                'name'  => 'Entree',
+                'status'=> 1
+            ],
+            [
+                'name'  => 'Mains',
+                'status'=> 1
+            ],
+            [
+                'name'  => "Chefs Special",
+                'status'=> 1
+            ],
+            [
+                'name'  => 'Sides',
+                'status'=> 1
+            ]
+        ];
+
 
         if( $restaurants->count() )
         {
@@ -53,12 +72,36 @@ class RestaurantSubCategorySeeder extends Seeder
                     {
                         if( $category->name === 'Drinks' )
                         {
-                            if( !empty( $subcategories ) )
+                            if( !empty( $drinksCategories ) )
                             {
-                                foreach( $subcategories as $subcategory )
+                                foreach( $drinksCategories as $subcategory )
                                 {
-                                    $subcategory['parent_id'] = $category->id;
-                                    $restaurant->categories()->create($subcategory);
+                                    $subcategory['parent_id']   = $category->id;
+                                    $newCategory                = $restaurant->categories()->create($subcategory);
+
+                                    // attachment
+                                    $newCategory->attachment()->create([
+                                        'stored_name'   => str_replace(' ', '_', strtolower($subcategory['name'])).'.png',
+                                        'original_name' => str_replace(' ', '_', strtolower($subcategory['name'])).'.png',
+                                    ]);
+                                }
+                            }
+                        }
+
+                        if( $category->name === 'Food' )
+                        {
+                            if( !empty( $foodCategories ) )
+                            {
+                                foreach( $foodCategories as $foodSubCategory )
+                                {
+                                    $foodSubCategory['parent_id']   = $category->id;
+                                    $newCategory                    = $restaurant->categories()->create($foodSubCategory);
+
+                                    // attachment
+                                    $newCategory->attachment()->create([
+                                        'stored_name'   => str_replace(' ', '_', strtolower($foodSubCategory['name'])).'.png',
+                                        'original_name' => str_replace(' ', '_', strtolower($foodSubCategory['name'])).'.png',
+                                    ]);
                                 }
                             }
                         }
