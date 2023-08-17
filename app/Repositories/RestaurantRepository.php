@@ -128,7 +128,7 @@ class RestaurantRepository extends BaseRepository
      */
     public function getRestaurantItems(array $data):Collection
     {
-        $query = RestaurantItem::with(['restaurant_item_type', 'restaurant_item_type.item_type','item'])->where('restaurant_id', $data['restaurant_id'] )->where('restaurant_item_type_id', $data['item_type_id'] );
+        $query = RestaurantItem::where('restaurant_id', $data['restaurant_id'] )->where('category_id', $data['category_id'] );
 
         return $query->get();
     }
@@ -144,44 +144,17 @@ class RestaurantRepository extends BaseRepository
     public function getRestaurantItemsFeatured(array $data):Collection
     {
         $query = RestaurantItem::query()
-                    ->with([
-                            'restaurant_item_type',
-                            'restaurant_item_type.item_type',
-                            'item',
-                            'restaurant.currency'
-                        ])
+                    // ->with([
+                    //         'restaurant_item_type',
+                    //         'restaurant_item_type.item_type',
+                    //         'item',
+                    //         'restaurant.currency'
+                    //     ])
                     ->where('restaurant_id', $data['restaurant_id'] )
-                    ->where('restaurant_item_type_id', $data['item_type_id'] )
+                    ->where('category_id', $data['category_id'] )
                     ->where('is_featured',1);
 
         return $query->get();
-    }
-
-    /**
-     * Method getRestaurantCategories
-     *
-     * @param array $data [explicite description]
-     *
-     * @return \App\Model\RestaurantItemType
-     *
-     */
-    public function getRestaurantItemTypes(array $data): RestaurantItemType
-    {
-        $restaurantItemType = isset( $data['item_type_id'] ) ? $data['item_type_id'] : null;
-        $restaurantId       = isset( $data['restaurant_id'] ) ? $data['restaurant_id'] : null;
-        $query              = RestaurantItemType::query()->with(['item_type']);
-
-        if( $restaurantItemType )
-        {
-            $query->where('item_type_id', $restaurantItemType);
-        }
-
-        if( $restaurantId )
-        {
-            $query->where('restaurant_id', $restaurantId);
-        }
-        // echo common()->formatSql($query);die;
-        return $query->first();
     }
 
     /**

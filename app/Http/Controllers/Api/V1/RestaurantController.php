@@ -176,16 +176,12 @@ class RestaurantController extends APIController
         $featuredItems      = $this->repository->getFeaturedItems($request->validated());
         $userFavouriteItems = $this->repository->getuserFavouriteItems($request->validated());
 
-        if( $featuredItems->count() )
-        {
-            $data = [
-                'user_favourite_items'   => $userFavouriteItems->count() ? RestaurantItemsResource::collection($userFavouriteItems) : [],
-                'featured_items'         => $featuredItems->count() ? RestaurantItemsResource::collection($featuredItems) : []
-            ];
-            return $this->respondSuccess('Restaurant Found.', $data);
-        }
+        $data = [
+            'user_favourite_items'   => $userFavouriteItems->count() ? RestaurantItemsResource::collection($userFavouriteItems) : [],
+            'featured_items'         => $featuredItems->count() ? RestaurantItemsResource::collection($featuredItems) : []
+        ];
 
-        return $this->respondWithError('Restaurant not found.');
+        return $this->respondSuccess('Restaurant featured items found.', $data);
     }
 
     /**

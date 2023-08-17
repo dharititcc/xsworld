@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateUsersFavouriteItems extends Migration
+class CreateUserFavouriteItems extends Migration
 {
     /**
      * Run the migrations.
@@ -14,7 +14,7 @@ class CreateUsersFavouriteItems extends Migration
     public function up()
     {
 
-        Schema::create('users_favourite_items', function (Blueprint $table) {
+        Schema::create('user_favourite_items', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('restaurant_item_id');
@@ -32,6 +32,6 @@ class CreateUsersFavouriteItems extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('users_favourite_items');
+        Schema::dropIfExists('user_favourite_items');
     }
 }

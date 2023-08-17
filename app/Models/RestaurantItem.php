@@ -56,6 +56,16 @@ class RestaurantItem extends Model
     ];
 
     /**
+     * Get the category that owns the RestaurantItem
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(Category::class, 'category_id', 'id');
+    }
+
+    /**
      * Get the restaurant that owns the RestaurantItem
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo

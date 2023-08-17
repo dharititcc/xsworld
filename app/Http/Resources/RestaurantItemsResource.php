@@ -16,14 +16,15 @@ class RestaurantItemsResource extends JsonResource
     {
         return [
             'id'                        => $this->id,
-            'restaurant_item_type_id'   => $this->restaurant_item_type->item_type_id,
-            'item_type_name'            => $this->restaurant_item_type->item_type->name,
-            'item_name'                 => $this->item->name,
-            // 'price'                     => $this->price,
-            'image'                     => $this->attachment_url,
-            // 'quantity'                  => $this->quantity,
-            'currency'                  => $this->restaurant->currency->code,
-            'is_favourite'              => $this->count_user_favourite_item
+            'name'                      => $this->name,
+            'category_id'               => $this->category_id,
+            'category_name'             => $this->category->name,
+            'restaurant_id'             => $this->restaurant_id,
+            'restaurant_name'           => $this->restaurant->name,
+            'type'                      => $this->type,
+            'is_variable'               => $this->is_variable,
+            'price'                     => $this->price,
+            'is_featured'               => $this->is_featured
         ];
     }
 }

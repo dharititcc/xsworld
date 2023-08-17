@@ -25,7 +25,7 @@ class RestaurantItemsRequest extends FormRequest
     {
         return [
             'restaurant_id'        => 'required|numeric',
-            'item_type_id'         => 'required|numeric',
+            'category_id'          => 'required|numeric',
             'application_version'  => 'required',
         ];
     }
