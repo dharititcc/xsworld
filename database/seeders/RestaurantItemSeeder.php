@@ -20,7 +20,7 @@ class RestaurantItemSeeder extends Seeder
         DB::statement('SET FOREIGN_KEY_CHECKS=0;');
 
         // get restaurants
-        $restaurants = Restaurant::with(['categories'])->get();
+        $restaurants = Restaurant::with(['categories', 'categories.children'])->get();
 
         $drinksArr = [
             [
@@ -165,6 +165,7 @@ class RestaurantItemSeeder extends Seeder
                 {
                     foreach( $categories as $category )
                     {
+                        $subcategories = $category->children;
                         // drink items
                         if( $category->name == 'Drinks' )
                         {
@@ -174,7 +175,7 @@ class RestaurantItemSeeder extends Seeder
                                 foreach( $drinksArr as $item )
                                 {
                                     $item['restaurant_id'] = $restaurant->id;
-                                    $item['category_id'] = $category->id;
+                                    $item['category_id'] = $subcategories->random()->id;
                                     $newItem = RestaurantItem::create($item);
 
                                     // Logic for the attachment
