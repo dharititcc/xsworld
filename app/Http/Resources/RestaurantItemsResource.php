@@ -14,7 +14,6 @@ class RestaurantItemsResource extends JsonResource
      */
     public function toArray($request)
     {
-        // dd($this->attachment_url);
         return [
             'id'                        => $this->id,
             'name'                      => $this->name,
@@ -22,7 +21,7 @@ class RestaurantItemsResource extends JsonResource
             'category_name'             => $this->category->name,
             'restaurant_id'             => $this->restaurant->id,
             'restaurant_name'           => $this->restaurant->name,
-            'type'                      => $this->type,
+            'item_type'                 => $this->item_type,
             'is_variable'               => $this->is_variable,
             'price'                     => $this->price,
             'currency'                  => $this->restaurant->currency->code,

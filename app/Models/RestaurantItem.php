@@ -5,7 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 
@@ -22,6 +21,12 @@ class RestaurantItem extends Model
     const ADDON     = 1;
     const ITEM      = 2;
     const MIXER     = 3;
+
+    const ITEM_TYPES = [
+        self::ADDON => 'Addon',
+        self::ITEM  => 'Item',
+        self::MIXER => 'Mixer',
+    ];
 
     /** item type */
     const SIMPLE    = 0;
@@ -54,6 +59,26 @@ class RestaurantItem extends Model
         'updated_at' => 'datetime',
         'deleted_at' => 'datetime'
     ];
+
+    /**
+     * Method getItemTypeAttribute
+     *
+     * @return string
+     */
+    public function getItemTypeAttribute(): string
+    {
+        switch( $this->type )
+        {
+            case self::ADDON;
+                return self::ITEM_TYPES[$this->type];
+                break;
+            case self::MIXER;
+                return self::ITEM_TYPES[$this->type];
+                break;
+            default:
+                return self::ITEM_TYPES[$this->type];
+        }
+    }
 
     /**
      * Get the category that owns the RestaurantItem
