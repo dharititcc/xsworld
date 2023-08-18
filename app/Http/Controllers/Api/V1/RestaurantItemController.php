@@ -51,7 +51,7 @@ class RestaurantItemController extends APIController
      *      )
      *   ),
      *   @OA\Parameter(
-     *       name="item_type_id",
+     *       name="category_id",
      *      in="query",
      *      required=true,
      *      @OA\Schema(
@@ -94,16 +94,10 @@ class RestaurantItemController extends APIController
     public function index(RestaurantItemsRequest $request)
     {
         $restaurantsitems           = $this->repository->getRestaurantItems($request->validated());
-        $restaurantsitemsfeatured   = $this->repository->getRestaurantItemsFeatured($request->validated());
 
         if( $restaurantsitems->count() )
         {
-            $data = [
-                'items'             => RestaurantItemsResource::collection($restaurantsitems),
-                'featured_items'    => $restaurantsitemsfeatured->count() ? RestaurantItemsResource::collection($restaurantsitemsfeatured) : []
-            ];
-
-            return $this->respondSuccess('Restaurant Items Found.', $data);
+            return $this->respondSuccess('Restaurant Items Found.', RestaurantItemsResource::collection($restaurantsitems));
         }
 
         return $this->respondWithError('Restaurant Items not found.');

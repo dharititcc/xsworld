@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Currency;
 use App\Models\Restaurant;
 use Illuminate\Database\Seeder;
 
@@ -20,6 +21,7 @@ class DatabaseSeeder extends Seeder
             CustomerSeeder::class,
             RestaurantBarTenderSeeder::class,
             CountrySeeder::class,
+            CurrencySeeder::class,
             RestaurantSeeder::class,
             RestaurantCategorySeeder::class,
             RestaurantSubCategorySeeder::class,
