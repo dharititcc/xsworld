@@ -67,17 +67,7 @@ class RestaurantItem extends Model
      */
     public function getItemTypeAttribute(): string
     {
-        switch( $this->type )
-        {
-            case self::ADDON;
-                return self::ITEM_TYPES[$this->type];
-                break;
-            case self::MIXER;
-                return self::ITEM_TYPES[$this->type];
-                break;
-            default:
-                return self::ITEM_TYPES[$this->type];
-        }
+        return self::ITEM_TYPES[$this->type];
     }
 
     /**
