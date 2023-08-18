@@ -41,7 +41,13 @@ class RestaurantCategorySeeder extends Seeder
                 {
                     foreach( $categories as $category )
                     {
-                        $restaurant->categories()->create($category);
+                        $newCategory = $restaurant->categories()->create($category);
+
+                        // attachments
+                        $newCategory->attachment()->create([
+                            'stored_name'   => str_replace(' ', '_', strtolower($category['name'])).'.jpg',
+                            'original_name' => str_replace(' ', '_', strtolower($category['name'])).'.jpg'
+                        ]);
                     }
                 }
             }

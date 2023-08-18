@@ -5,9 +5,9 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Requests\RestaurantFeaturedRequest;
 use App\Http\Requests\RestaurantFilterApiRequest;
 use App\Http\Requests\RestaurantSubCategoryReuest;
+use App\Http\Resources\CategoryResource;
 use App\Http\Resources\RestaurantItemsResource;
 use App\Http\Resources\RestaurantResource;
-use App\Http\Resources\RestaurantsSubCategoryResource;
 use App\Repositories\RestaurantRepository;
 
 class RestaurantController extends APIController
@@ -248,7 +248,7 @@ class RestaurantController extends APIController
 
         if( $restaurants->count() )
         {
-            return $this->respondSuccess('Sub Categories Found.', RestaurantsSubCategoryResource::collection($restaurants));
+            return $this->respondSuccess('Sub Categories Found.', CategoryResource::collection($restaurants));
         }
 
         return $this->respondWithError('Sub Categories not found.');

@@ -81,8 +81,8 @@ class RestaurantSubCategorySeeder extends Seeder
 
                                     // attachment
                                     $newCategory->attachment()->create([
-                                        'stored_name'   => str_replace(' ', '_', strtolower($subcategory['name'])).'.png',
-                                        'original_name' => str_replace(' ', '_', strtolower($subcategory['name'])).'.png',
+                                        'stored_name'   => str_replace(' ', '_', strtolower($subcategory['name'])).'.jpg',
+                                        'original_name' => str_replace(' ', '_', strtolower($subcategory['name'])).'.jpg',
                                     ]);
                                 }
                             }
@@ -99,8 +99,8 @@ class RestaurantSubCategorySeeder extends Seeder
 
                                     // attachment
                                     $newCategory->attachment()->create([
-                                        'stored_name'   => str_replace(' ', '_', strtolower($foodSubCategory['name'])).'.png',
-                                        'original_name' => str_replace(' ', '_', strtolower($foodSubCategory['name'])).'.png',
+                                        'stored_name'   => str_replace(' ', '_', strtolower($foodSubCategory['name'])).'.jpg',
+                                        'original_name' => str_replace(' ', '_', strtolower($foodSubCategory['name'])).'.jpg',
                                     ]);
                                 }
                             }

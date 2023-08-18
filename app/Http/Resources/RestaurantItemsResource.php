@@ -14,17 +14,19 @@ class RestaurantItemsResource extends JsonResource
      */
     public function toArray($request)
     {
+        // dd($this->attachment_url);
         return [
             'id'                        => $this->id,
             'name'                      => $this->name,
-            'category_id'               => $this->category_id,
+            'category_id'               => $this->category->id,
             'category_name'             => $this->category->name,
-            'restaurant_id'             => $this->restaurant_id,
+            'restaurant_id'             => $this->restaurant->id,
             'restaurant_name'           => $this->restaurant->name,
             'type'                      => $this->type,
             'is_variable'               => $this->is_variable,
             'price'                     => $this->price,
-            'is_featured'               => $this->is_featured
+            'is_featured'               => $this->is_featured,
+            'image'                     => $this->attachment_url ?? ''
         ];
     }
 }

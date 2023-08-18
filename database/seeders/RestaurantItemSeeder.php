@@ -22,7 +22,7 @@ class RestaurantItemSeeder extends Seeder
         // get restaurants
         $restaurants = Restaurant::with(['categories'])->get();
 
-        $restaurantitemArr = [
+        $drinksArr = [
             [
                 'name'          => 'Brandy & Weinbrand',
                 'type'          => RestaurantItem::ITEM,
@@ -145,6 +145,15 @@ class RestaurantItemSeeder extends Seeder
             ]
         ];
 
+        $foodArr = [
+            [
+                'name'          => 'Portuguese Chiken',
+                'type'          => RestaurantItem::ITEM,
+                'is_variable'   => 1,
+                'price'         => 35
+            ],
+        ];
+
         if( $restaurants->count() )
         {
             foreach( $restaurants as $restaurant )
@@ -156,12 +165,13 @@ class RestaurantItemSeeder extends Seeder
                 {
                     foreach( $categories as $category )
                     {
+                        // drink items
                         if( $category->name == 'Drinks' )
                         {
-                            if( !empty( $restaurantitemArr ) )
+                            if( !empty( $drinksArr ) )
                             {
                                 $counter = 1;
-                                foreach( $restaurantitemArr as $item )
+                                foreach( $drinksArr as $item )
                                 {
                                     $item['restaurant_id'] = $restaurant->id;
                                     $item['category_id'] = $category->id;
@@ -209,6 +219,11 @@ class RestaurantItemSeeder extends Seeder
                                     $counter++;
                                 }
                             }
+                        }
+
+                        // food items
+                        if( $category->name == 'Food' )
+                        {
                         }
                     }
                 }

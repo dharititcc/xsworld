@@ -35,11 +35,11 @@ class RestaurantItem extends Model
     protected $fillable = [
         'name',
         'restaurant_id',
-        'restaurant_item_id',
+        'category_id',
         'price',
         'quantity',
         'is_featured',
-        'variation',
+        'is_variable',
         'type',
         'parent_id'    // FK (Addon/Mixers of specific item / specific restaurant)
     ];
@@ -102,14 +102,13 @@ class RestaurantItem extends Model
      */
     public function getAttachmentUrlAttribute(): string
     {
+        $url = '';
         if( $this->attachment )
         {
-            return asset('storage/items/'.$this->attachment->stored_name);
+            $url = asset('storage/items/'.$this->attachment->stored_name);
         }
-        else
-        {
-            return asset('storage/restaurants/'.$this->item->attachment->stored_name);
-        }
+
+        return $url;
     }
 
     /**
