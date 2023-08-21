@@ -25,32 +25,27 @@ class MixtureSeeder extends Seeder
         $restaurantitemArr = [
             [
                 'name'          => 'Coke No Sugar',
-                'type'          => RestaurantItem::ADDON,
-                'is_variable'   => 1,
+                'type'          => RestaurantItem::MIXER,
                 'price'         => 10
             ],
             [
                 'name'          => 'Diet Coke',
-                'type'          => RestaurantItem::ADDON,
-                'is_variable'   => 1,
+                'type'          => RestaurantItem::MIXER,
                 'price'         => 10
             ],
             [
                 'name'          => 'Soda Water',
-                'type'          => RestaurantItem::ADDON,
-                'is_variable'   => 1,
+                'type'          => RestaurantItem::MIXER,
                 'price'         => 10
             ],
             [
                 'name'          => 'Tonic Water',
-                'type'          => RestaurantItem::ADDON,
-                'is_variable'   => 1,
+                'type'          => RestaurantItem::MIXER,
                 'price'         => 10
             ],
             [
                 'name'          => 'No Mixer(Ice)',
-                'type'          => RestaurantItem::ADDON,
-                'is_variable'   => 1,
+                'type'          => RestaurantItem::MIXER,
                 'price'         => 10
             ],
         ];
