@@ -29,6 +29,8 @@ class RestaurantItemsResource extends JsonResource
             'image'                     => $this->attachment_url ?? '',
             'is_favourite'              => $this->count_user_favourite_item,
             'variations'                => isset($this->variations) ? VariationResource::collection($this->variations) : [],
+            'mixers'                    => $this->category->mixers,
+            'addons'                    => $this->category->addons
         ];
     }
 }

@@ -69,6 +69,36 @@ class Category extends Model
     }
 
     /**
+     * Get all of the items for the Category
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function items(): HasMany
+    {
+        return $this->hasMany(RestaurantItem::class, 'category_id', 'id')->where('type', RestaurantItem::ITEM);
+    }
+
+    /**
+     * Get all of the mixers for the Category
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function mixers(): HasMany
+    {
+        return $this->hasMany(RestaurantItem::class, 'category_id', 'id')->where('type', RestaurantItem::MIXER);
+    }
+
+    /**
+     * Get all of the addons for the Category
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function addons(): HasMany
+    {
+        return $this->hasMany(RestaurantItem::class, 'category_id', 'id')->where('type', RestaurantItem::ADDON);
+    }
+
+    /**
      * Method getImageAttribute
      *
      * @return string
