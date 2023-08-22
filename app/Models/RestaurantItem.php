@@ -39,6 +39,7 @@ class RestaurantItem extends Model
      */
     protected $fillable = [
         'name',
+        'description',
         'restaurant_id',
         'category_id',
         'price',
