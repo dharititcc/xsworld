@@ -67,7 +67,7 @@ class RestaurantRepository extends BaseRepository
      */
     public function filterItem(Builder $query, string $drinkName): Builder
     {
-        return $query->whereHas('items', function( Builder $query ) use($drinkName)
+        return $query->whereHas('restaurant_items', function( Builder $query ) use($drinkName)
         {
             return $query->where('name', 'LIKE', '%'.$drinkName.'%');
         });
