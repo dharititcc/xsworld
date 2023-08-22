@@ -17,6 +17,7 @@ class RestaurantItemsResource extends JsonResource
         return [
             'id'                        => $this->id,
             'name'                      => $this->name,
+            'description'               => $this->description ?? '',
             'category_id'               => $this->category->id,
             'category_name'             => $this->category->name,
             'restaurant_id'             => $this->restaurant->id,
