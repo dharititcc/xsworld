@@ -23,6 +23,12 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('restaurant/dashboard');
+        if( access()->isRestaurantOwner() )
+        {
+            return view('restaurant.dashboard');
+        }
+
+        // 404
+        abort(404);
     }
 }

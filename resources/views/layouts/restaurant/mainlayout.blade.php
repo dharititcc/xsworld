@@ -10,7 +10,7 @@
             <!-- Page content wrapper-->
             <div id="page-content-wrapper">
                 <!-- Top navigation-->
-                @include('layouts.restaurant.topbar')
+                @yield('topbar')
                 <!-- Page content-->
                 <div class="container-fluid">
                     <main>
@@ -21,5 +21,6 @@
         </div>
         <!-- Bootstrap core JS-->
         @include('layouts.restaurant.footer')
+        @yield('pagescript')
     </body>
 </html>
