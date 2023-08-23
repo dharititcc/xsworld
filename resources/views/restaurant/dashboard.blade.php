@@ -1,7 +1,10 @@
 @extends('layouts.restaurant.mainlayout')
+@section('topbar')
+@include('restaurant.partials.topbar')
+@endsection
 @section('content')
             <div class="hero">
-                <img src="img/static-banner.jpg" alt="">
+                <img src="{{ session('restaurant')->image }}" alt="{{ session('restaurant')->name }}">
             </div>
             <div class="outrbox">
                 <div class="row">

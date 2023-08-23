@@ -20,3 +20,11 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+Route::group(['prefix' => 'restaurants', 'as' => 'restaurants.', 'middleware' => ['auth']], function ()
+{
+    Route::group(['namespace' => 'Categories'], function()
+    {
+        Route::resource('categories', 'CategoryController');
+    });
+});
