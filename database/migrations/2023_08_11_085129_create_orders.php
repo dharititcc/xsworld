@@ -17,8 +17,8 @@ class CreateOrders extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id')->comment('Actual customer who order');
             $table->unsignedBigInteger('restaurant_id');
-            $table->unsignedBigInteger('pickup_point_id');
-            $table->unsignedBigInteger('pickup_point_user_id')->comment('Bar user who take order');
+            $table->unsignedBigInteger('pickup_point_id')->nullable();
+            $table->unsignedBigInteger('pickup_point_user_id')->nullable()->comment('Bar user who take order');
             $table->unsignedTinyInteger('type')->default(1)->comment('1=CART, 2=ORDER');
             $table->unsignedTinyInteger('status')->default(0)->comment('0=Pending, 1=Accepted, 2=Ready, 3=Completed, 4=Canceled');
             $table->unsignedBigInteger('payment_method_id')->nullable();
