@@ -62,13 +62,41 @@ class AddonsSeeder extends Seeder
                     {
                         if( $category->name == 'Drinks' )
                         {
-                            if( !empty( $restaurantitemArr ) )
+                            $subcategories = $category->children;
+
+                            if( $subcategories->count() )
                             {
-                                foreach( $restaurantitemArr as $item )
+                                foreach( $subcategories as $subcategory )
                                 {
-                                    $item['restaurant_id'] = $restaurant->id;
-                                    $item['category_id'] = $category->id;
-                                    $newItem = RestaurantItem::create($item);
+                                    if( $subcategory->name == 'Wines' )
+                                    {
+                                        foreach( $restaurantitemArr as $item )
+                                        {
+                                            $item['restaurant_id'] = $restaurant->id;
+                                            $item['category_id'] = $subcategory->id;
+                                            $newItem = RestaurantItem::create($item);
+                                        }
+                                    }
+
+                                    if( $subcategory->name == 'Spirits' )
+                                    {
+                                        foreach( $restaurantitemArr as $item )
+                                        {
+                                            $item['restaurant_id'] = $restaurant->id;
+                                            $item['category_id'] = $subcategory->id;
+                                            $newItem = RestaurantItem::create($item);
+                                        }
+                                    }
+
+                                    if( $subcategory->name == 'Cocktails' )
+                                    {
+                                        foreach( $restaurantitemArr as $item )
+                                        {
+                                            $item['restaurant_id'] = $restaurant->id;
+                                            $item['category_id'] = $subcategory->id;
+                                            $newItem = RestaurantItem::create($item);
+                                        }
+                                    }
                                 }
                             }
                         }

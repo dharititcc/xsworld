@@ -85,10 +85,10 @@ class RestaurantSeeder extends Seeder
                 'country_id'        => 3
             ],
             [
-                'name'              => 'Employees Only Bar',
-                'latitude'          => '-33.8677238',
-                'longitude'         => '151.1360824',
-                'street1'           => '9a Barrack St',
+                'name'              => 'Royal Lounge',
+                'latitude'          => '-33.8678589',
+                'longitude'         => '151.1159335',
+                'street1'           => 'Enmore',
                 'city'              => 'Sydney',
                 'state'             => 'NSW',
                 'postcode'          => '2000',
