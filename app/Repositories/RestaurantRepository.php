@@ -103,11 +103,6 @@ class RestaurantRepository extends BaseRepository
                 + sin(radians(" .$lat. ")) * sin(radians(restaurants.latitude))) AS distance")
         ]);
 
-        if( !$restaurantName )
-        {
-            $query = $this->filterRadius($query, $data);
-        }
-
         if( $restaurantName )
         {
             $query = $this->filterRestautantName($query, $restaurantName);
@@ -117,6 +112,7 @@ class RestaurantRepository extends BaseRepository
         {
             $query = $this->filterItem($query, $drink_name);
         }
+        $query = $this->filterRadius($query, $data);
 
         return $query->get();
     }
