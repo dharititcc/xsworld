@@ -26,7 +26,12 @@ class Restaurant extends Model
         'name',
         'latitude',
         'longitude',
-        'address',
+        // 'address',
+        'street1',
+        'street2',
+        'city',
+        'state',
+        'postcode',
         'phone',
         'specialisation',
         'currency_id'
@@ -80,6 +85,16 @@ class Restaurant extends Model
     public function currency(): BelongsTo
     {
         return $this->belongsTo(Currency::class, 'currency_id', 'id');
+    }
+
+    /**
+     * Get the country that owns the Restaurant
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function country(): BelongsTo
+    {
+        return $this->belongsTo(Country::class, 'country_id', 'id');
     }
 
     /**
@@ -171,5 +186,48 @@ class Restaurant extends Model
     public function getFeaturedItemsAttribute(): Collection
     {
         return $this->restaurant_items()->where('is_featured', RestaurantItem::FEATURED)->get();
+    }
+
+    /**
+     * Method getAddressAttribute
+     *
+     * @return string
+     */
+    public function getAddressAttribute(): string
+    {
+        $address = '';
+        // return $this->street1.', '.$this->street2.' '.$this->city.' '.$this->state.', '.$this->country->name;
+
+        if( $this->street1 )
+        {
+            $address = $this->street1;
+        }
+
+        if( $this->street2 )
+        {
+            $address .= ", ".$this->street2;
+        }
+
+        if( $this->city )
+        {
+            $address .= ", ".$this->city;
+        }
+
+        if( $this->state )
+        {
+            $address .= ", ".$this->state;
+        }
+
+        if( $this->postcode )
+        {
+            $address .= " ".$this->postcode;
+        }
+
+        if( $this->country )
+        {
+            $address .= ", ".$this->country->name;
+        }
+
+        return $address;
     }
 }

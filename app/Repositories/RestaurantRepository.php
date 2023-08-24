@@ -1,9 +1,7 @@
 <?php namespace App\Repositories;
 
-use App\Models\Category;
 use App\Models\Restaurant;
 use App\Models\RestaurantItem;
-use App\Models\RestaurantItemType;
 use App\Repositories\BaseRepository;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -92,7 +90,12 @@ class RestaurantRepository extends BaseRepository
             'name',
             'latitude',
             'longitude',
-            'address',
+            'street1',
+            'street2',
+            'state',
+            'city',
+            'postcode',
+            'country_id',
             'phone',
             'specialisation',
             DB::raw("6371 * acos(cos(radians(" . $lat . "))

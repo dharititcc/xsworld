@@ -20,6 +20,11 @@ class CreateRestaurants extends Migration
             $table->string('name');
             $table->double('latitude');
             $table->double('longitude');
+            $table->string('street1')->nullable();
+            $table->string('street2')->nullable();
+            $table->string('city')->nullable();
+            $table->string('state')->nullable();
+            $table->string('postcode')->nullable();
             $table->text('address')->nullable();
             $table->unsignedBigInteger('phone')->nullable();
             $table->string('specialisation')->nullable();
