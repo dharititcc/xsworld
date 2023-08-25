@@ -1,5 +1,6 @@
 <?php namespace App\Repositories;
 
+use App\Models\Category;
 use App\Models\Restaurant;
 use App\Models\RestaurantItem;
 use App\Repositories\BaseRepository;
@@ -166,7 +167,8 @@ class RestaurantRepository extends BaseRepository
      */
     public function getuserFavouriteItems(array $data) : Collection
     {
-        $user = auth()->user();
+        $user       = auth()->user();
+        $category   = isset($data['category_id']) ? Category::with(['children'])->find($data['category_id']) : new Category();
 
         $query = $user->favourite_items()
             ->with(['category', 'category.mixers', 'category.addons'])
@@ -175,12 +177,25 @@ class RestaurantRepository extends BaseRepository
                 return $query->where('id', $data['restaurant_id']);
             });
 
-            if( isset($data['category_id']) )
+            if( isset($category->id) )
             {
-                $query->whereHas('category', function($query) use($data)
+                if( $category->children->count() )
                 {
-                    return $query->where('id', $data['category_id']);
-                });
+                    // get all the child categories ids
+                    $subcategories = $category->children->pluck('id');
+
+                    $query->whereHas('category', function($query) use($subcategories)
+                    {
+                        return $query->whereIn('id', $subcategories);
+                    });
+                }
+                else
+                {
+                    $query->whereHas('category', function($query) use($category)
+                    {
+                        return $query->where('id', $category->id);
+                    });
+                }
             }
 
         return $query->get();
@@ -196,7 +211,7 @@ class RestaurantRepository extends BaseRepository
     public function getFeaturedItems(array $data) : Collection
     {
         $restaurantId       = isset( $data['restaurant_id'] ) ? $data['restaurant_id'] : null;
-        $categoryId         = isset( $data['category_id'] ) ? $data['category_id'] : null;
+        $category           = isset($data['category_id']) ? Category::with(['children'])->find($data['category_id']) : new Category();
         $query              = RestaurantItem::query()->with(['category', 'category.mixers', 'category.addons', 'restaurant']);
 
         if( $restaurantId )
@@ -204,9 +219,19 @@ class RestaurantRepository extends BaseRepository
             $query->where('restaurant_id', $restaurantId)->where('is_featured', 1);
         }
 
-        if( $categoryId )
+        if( isset($category->id) )
         {
-            $query->where('category_id', $categoryId);
+            if( $category->children->count() )
+            {
+                // get all the child categories ids
+                $subcategories = $category->children->pluck('id');
+
+                $query->whereIn('category_id', $subcategories);
+            }
+            else
+            {
+                $query->where('category_id', $category->id);
+            }
         }
 
         return $query->get();
