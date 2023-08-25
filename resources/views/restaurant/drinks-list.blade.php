@@ -1,4 +1,9 @@
-<div class="outrbox"> 
+@extends('layouts.restaurant.mainlayout')
+@section('topbar')
+@include('restaurant.partials.drinktopbar')
+@endsection
+@section('content')
+<div class="outrbox">
                             <h2 class="yellow mb-4">Category Preview Tiles</h2>
                             <div class="grid colmn-6 mb-3">
                                 <a href="#" class="catg-box"><figure><img src="https://www.foodandwine.com/thmb/9oNf0Ece0Jv1PeFalXXO1A0PDzo=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/Liquor-vs-Liqueur-vs-Spirit-FT-BLOG1122-88b33026a97d4554b0bf811c0ee0455b.jpg" alt=""></figure>
@@ -32,15 +37,14 @@
                                             <button class="bor-btn ms-3">Enable Drink</button>
                                             </div>
                             <div class="data-table drinks scroll-y h-600">
-                                <table width="100%">
+                                <table width="100%" class="drink_datatable">
                                     <thead>
                                     <tr valign="middle">
                                         <th><label class="cst-check"><input type="checkbox" value=""><span class="checkmark"></span></label></th>
-                                        <th colspan="2">
+                                        <th>
                                             Name
                                             <a href="#" class="sort-icon ms-1"><i class="icon-sort"></i></a>
                                         </th>
-                                        
                                         <th class="type">Type</th>
                                         <th class="price">Price</th>
                                         <th class="popularity">Popularity</th>
@@ -49,127 +53,85 @@
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    <tr>
-                                        <td><label class="cst-check"><input type="checkbox" value=""><span class="checkmark"></span></label></td>
-                                        <td> <div class="prdname green"> Moet Champagne </div><a href="" class="edit">Edit</a>  <div class="add-date">Added 06/07/23</div></td>
-                                        <td>&nbsp;</td>
-                                        <td><div class="prd-type">Wine</div> <label> Glass</label><label> Bottle</label></td>
-                                        <td><label>&nbsp;</label><label class="price">$18.50</label><label class="price"> $65.50</label></td>
-                                        <td>1231 Units Sold This Month <strong style="display: block;"> Very High</strong></td>
-                                        <td class="text-center"><a href="javascript:void(0)" class="favorite"></a></td>
-                                        <td><div class="green"><strong>Featured Drink</strong> </div> <div class="green"><strong> In-Stock</strong></div></td>
-                                    </tr>
-                                    <tr>
-                                        <td><label class="cst-check"><input type="checkbox" value=""><span class="checkmark"></span></label></td>
-                                        <td> <div class="prdname red"> Moet Champagne </div><a href="" class="edit">Edit</a>  <div class="add-date">Added 06/07/23</div></td>
-                                        <td>&nbsp;</td>
-                                        <td><div class="prd-type">Wine</div> <label> Glass</label><label> Bottle</label></td>
-                                        <td><label>&nbsp;</label><label class="price">$18.50</label><label class="price"> $65.50</label></td>
-                                        <td>1231 Units Sold This Month <strong style="display: block;"> Very High</strong></td>
-                                        <td class="text-center"><a href="javascript:void(0)" class="favorite null"></a></td>
-                                        <td> <div class="red"><strong> Out Of Stock</strong></div></td>
-                                    </tr>
-                                    <tr>
-                                        <td><label class="cst-check"><input type="checkbox" value=""><span class="checkmark"></span></label></td>
-                                        <td> <div class="prdname green"> Moet Champagne </div><a href="" class="edit">Edit</a>  <div class="add-date">Added 06/07/23</div></td>
-                                        <td>&nbsp;</td>
-                                        <td><div class="prd-type">Wine</div> <label> Glass</label><label> Bottle</label></td>
-                                        <td><label>&nbsp;</label><label class="price">$18.50</label><label class="price"> $65.50</label></td>
-                                        <td>1231 Units Sold This Month <strong style="display: block;"> Very High</strong></td>
-                                        <td class="text-center"><a href="javascript:void(0)" class="favorite"></a></td>
-                                        <td><div class="green"><strong>Featured Drink</strong> </div> <div class="green"><strong> In-Stock</strong></div></td>
-                                    </tr>
-                                    <tr>
-                                        <td><label class="cst-check"><input type="checkbox" value=""><span class="checkmark"></span></label></td>
-                                        <td> <div class="prdname red"> Moet Champagne </div><a href="" class="edit">Edit</a>  <div class="add-date">Added 06/07/23</div></td>
-                                        <td>&nbsp;</td>
-                                        <td><div class="prd-type">Wine</div> <label> Glass</label><label> Bottle</label></td>
-                                        <td><label>&nbsp;</label><label class="price">$18.50</label><label class="price"> $65.50</label></td>
-                                        <td>1231 Units Sold This Month <strong style="display: block;"> Very High</strong></td>
-                                        <td class="text-center"><a href="javascript:void(0)" class="favorite null"></a></td>
-                                        <td> <div class="red"><strong> Out Of Stock</strong></div></td>
-                                    </tr>
-                                    <tr>
-                                        <td><label class="cst-check"><input type="checkbox" value=""><span class="checkmark"></span></label></td>
-                                        <td> <div class="prdname green"> Moet Champagne </div><a href="" class="edit">Edit</a>  <div class="add-date">Added 06/07/23</div></td>
-                                        <td>&nbsp;</td>
-                                        <td><div class="prd-type">Wine</div> <label> Glass</label><label> Bottle</label></td>
-                                        <td><label>&nbsp;</label><label class="price">$18.50</label><label class="price"> $65.50</label></td>
-                                        <td>1231 Units Sold This Month <strong style="display: block;"> Very High</strong></td>
-                                        <td class="text-center"><a href="javascript:void(0)" class="favorite"></a></td>
-                                        <td><div class="green"><strong>Featured Drink</strong> </div> <div class="green"><strong> In-Stock</strong></div></td>
-                                    </tr>
-                                    <tr>
-                                        <td><label class="cst-check"><input type="checkbox" value=""><span class="checkmark"></span></label></td>
-                                        <td> <div class="prdname red"> Moet Champagne </div><a href="" class="edit">Edit</a>  <div class="add-date">Added 06/07/23</div></td>
-                                        <td>&nbsp;</td>
-                                        <td><div class="prd-type">Wine</div> <label> Glass</label><label> Bottle</label></td>
-                                        <td><label>&nbsp;</label><label class="price">$18.50</label><label class="price"> $65.50</label></td>
-                                        <td>1231 Units Sold This Month <strong style="display: block;"> Very High</strong></td>
-                                        <td class="text-center"><a href="javascript:void(0)" class="favorite null"></a></td>
-                                        <td> <div class="red"><strong> Out Of Stock</strong></div></td>
-                                    </tr>
-                                    <tr>
-                                        <td><label class="cst-check"><input type="checkbox" value=""><span class="checkmark"></span></label></td>
-                                        <td> <div class="prdname green"> Moet Champagne </div><a href="" class="edit">Edit</a>  <div class="add-date">Added 06/07/23</div></td>
-                                        <td>&nbsp;</td>
-                                        <td><div class="prd-type">Wine</div> <label> Glass</label><label> Bottle</label></td>
-                                        <td><label>&nbsp;</label><label class="price">$18.50</label><label class="price"> $65.50</label></td>
-                                        <td>1231 Units Sold This Month <strong style="display: block;"> Very High</strong></td>
-                                        <td class="text-center"><a href="javascript:void(0)" class="favorite"></a></td>
-                                        <td><div class="green"><strong>Featured Drink</strong> </div> <div class="green"><strong> In-Stock</strong></div></td>
-                                    </tr>
-                                    <tr>
-                                        <td><label class="cst-check"><input type="checkbox" value=""><span class="checkmark"></span></label></td>
-                                        <td> <div class="prdname red"> Moet Champagne </div><a href="" class="edit">Edit</a>  <div class="add-date">Added 06/07/23</div></td>
-                                        <td>&nbsp;</td>
-                                        <td><div class="prd-type">Wine</div> <label> Glass</label><label> Bottle</label></td>
-                                        <td><label>&nbsp;</label><label class="price">$18.50</label><label class="price"> $65.50</label></td>
-                                        <td>1231 Units Sold This Month <strong style="display: block;"> Very High</strong></td>
-                                        <td class="text-center"><a href="javascript:void(0)" class="favorite null"></a></td>
-                                        <td> <div class="red"><strong> Out Of Stock</strong></div></td>
-                                    </tr>
-                                    <tr>
-                                        <td><label class="cst-check"><input type="checkbox" value=""><span class="checkmark"></span></label></td>
-                                        <td> <div class="prdname green"> Moet Champagne </div><a href="" class="edit">Edit</a>  <div class="add-date">Added 06/07/23</div></td>
-                                        <td>&nbsp;</td>
-                                        <td><div class="prd-type">Wine</div> <label> Glass</label><label> Bottle</label></td>
-                                        <td><label>&nbsp;</label><label class="price">$18.50</label><label class="price"> $65.50</label></td>
-                                        <td>1231 Units Sold This Month <strong style="display: block;"> Very High</strong></td>
-                                        <td class="text-center"><a href="javascript:void(0)" class="favorite"></a></td>
-                                        <td><div class="green"><strong>Featured Drink</strong> </div> <div class="green"><strong> In-Stock</strong></div></td>
-                                    </tr>
-                                    <tr>
-                                        <td><label class="cst-check"><input type="checkbox" value=""><span class="checkmark"></span></label></td>
-                                        <td> <div class="prdname red"> Moet Champagne </div><a href="" class="edit">Edit</a>  <div class="add-date">Added 06/07/23</div></td>
-                                        <td>&nbsp;</td>
-                                        <td><div class="prd-type">Wine</div> <label> Glass</label><label> Bottle</label></td>
-                                        <td><label>&nbsp;</label><label class="price">$18.50</label><label class="price"> $65.50</label></td>
-                                        <td>1231 Units Sold This Month <strong style="display: block;"> Very High</strong></td>
-                                        <td class="text-center"><a href="javascript:void(0)" class="favorite null"></a></td>
-                                        <td> <div class="red"><strong> Out Of Stock</strong></div></td>
-                                    </tr>
-                                    <tr>
-                                        <td><label class="cst-check"><input type="checkbox" value=""><span class="checkmark"></span></label></td>
-                                        <td> <div class="prdname green"> Moet Champagne </div><a href="" class="edit">Edit</a>  <div class="add-date">Added 06/07/23</div></td>
-                                        <td>&nbsp;</td>
-                                        <td><div class="prd-type">Wine</div> <label> Glass</label><label> Bottle</label></td>
-                                        <td><label>&nbsp;</label><label class="price">$18.50</label><label class="price"> $65.50</label></td>
-                                        <td>1231 Units Sold This Month <strong style="display: block;"> Very High</strong></td>
-                                        <td class="text-center"><a href="javascript:void(0)" class="favorite"></a></td>
-                                        <td><div class="green"><strong>Featured Drink</strong> </div> <div class="green"><strong> In-Stock</strong></div></td>
-                                    </tr>
-                                    <tr>
-                                        <td><label class="cst-check"><input type="checkbox" value=""><span class="checkmark"></span></label></td>
-                                        <td> <div class="prdname red"> Moet Champagne </div><a href="" class="edit">Edit</a>  <div class="add-date">Added 06/07/23</div></td>
-                                        <td>&nbsp;</td>
-                                        <td><div class="prd-type">Wine</div> <label> Glass</label><label> Bottle</label></td>
-                                        <td><label>&nbsp;</label><label class="price">$18.50</label><label class="price"> $65.50</label></td>
-                                        <td>1231 Units Sold This Month <strong style="display: block;"> Very High</strong></td>
-                                        <td class="text-center"><a href="javascript:void(0)" class="favorite null"></a></td>
-                                        <td> <div class="red"><strong> Out Of Stock</strong></div></td>
-                                    </tr>
                                     </tbody>
                                 </table>
                             </div>
                         </div>
+                        {{-- // 
+                        // <td>&nbsp;</td>
+                        // <td><div class="prd-type">Wine</div> <label> Glass</label><label> Bottle</label></td>
+                        // <td><label>&nbsp;</label><label class="price">$18.50</label><label class="price"> $65.50</label></td>
+                        // <td>1231 Units Sold This Month <strong style="display: block;"> Very High</strong></td>
+                        // <td class="text-center"><a href="javascript:void(0)" class="favorite"></a></td>
+                        // <td><div class="green"><strong>Featured Drink</strong> </div> <div class="green"><strong> In-Stock</strong></div></td>
+                         --}}
+                        @endsection
+@section('pagescript')
+@parent
+<script type="text/javascript">
+    $(function () {
+        var table = $('.drink_datatable').DataTable({
+            processing: true,
+            serverSide: true,
+            ajax: "{{ route('restaurants.drinks.index') }}",
+            columns: [
+                   {
+                     "data"           : "id", // can be null or undefined
+                     "defaultContent" : "",
+                     "bSortable"      : false,
+                      render:function(data, type, row){
+                        return '<label class="cst-check"><input name="id" type="checkbox" value="'+row.id+'"><span class="checkmark"></span></label>'
+                      }
+                   },
+                   {
+                     "data"           : "name", // can be null or undefined ->type
+                     "defaultContent" : "",
+                      render:function(data, type, row){
+                        return '<div class="prdname green"> '+row.name+' </div><a href="#" class="edit">Edit</a>  <div class="add-date">Added '+row.created_at+'</div>'
+                      }
+                   },
+                   {
+                     "data"           : "type", // can be null or undefined
+                     "defaultContent" : "",
+                     "bSortable"      : false,
+                      render:function(data, type, row){
+                        return '<div class="prd-type">Wine</div> <label> Glass</label><label> Bottle</label>'
+                      }
+                   },
+                   {
+                     "data"           : "price", // can be null or undefined
+                     "defaultContent" : "",
+                     "bSortable"      : false,
+                      render:function(data, type, row){
+                        return '<label>&nbsp;</label><label class="price">$'+row.price+'</label><label class="price"> $'+row.price+'</label>'
+                      }
+                   },
+                   {
+                     "data"           : "description", // can be null or undefined
+                     "defaultContent" : "",
+                     "bSortable"      : false,
+                      render:function(data, type, row){
+                        return 'test'
+                      }
+                   },
+                   {
+                     "data"           : "favorite", // can be null or undefined
+                     "defaultContent" : "",
+                     "bSortable"      : false,
+                      render:function(data, type, row){
+                        return '<a href="javascript:void(0)" class="favorite"></a>'
+                      }
+                   },
+                   {
+                     "data"           : "status", // can be null or undefined
+                     "defaultContent" : "",
+                     "bSortable"      : false,
+                      render:function(data, type, row){
+                        return '<div class="green"><strong>Featured Drink</strong> </div> <div class="green"><strong> In-Stock</strong></div></td>'
+                      }
+                   },
+            ]
+        });
+    });
+    </script>
+@endsection

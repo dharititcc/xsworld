@@ -7,7 +7,7 @@
         <a href="{{ route('home') }}">Dashboard</a>
         <a href="{{ route('restaurants.categories.index') }}">Categories Management</a>
         <a href="add-drinks.html">Add Drinks</a>
-        <a href="drinks-list.html">Drinks List</a>
+        <a href="{{ route('restaurants.drinks.index') }}">Drinks List</a>
         <a href="#">Mixer Management</a>
         <a href="#">Analytics</a>
         <a href="#">Pick-up Zones</a>
