@@ -25,6 +25,7 @@ class RestaurantFeaturedRequest extends FormRequest
     {
         return [
             'restaurant_id' => 'required',
+            'category_id'   => 'nullable',
         ];
     }
 }
