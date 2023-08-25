@@ -37,7 +37,7 @@ class RestaurantRepository extends BaseRepository
      */
     public function filterRadius(Builder $query, array $data): Builder
     {
-        $distance   = isset( $data['distance'] ) ? $data['distance'] : 2.5;
+        $distance   = isset( $data['distance'] ) ? $data['distance'] : 10;
 
         return $query->having('distance', '<=', $distance);
     }
@@ -113,6 +113,7 @@ class RestaurantRepository extends BaseRepository
             $query = $this->filterItem($query, $drink_name);
         }
         $query = $this->filterRadius($query, $data);
+        $query = $query->orderBy('distance');
 
         return $query->get();
     }
