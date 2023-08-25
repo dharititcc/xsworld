@@ -168,9 +168,13 @@ class RestaurantRepository extends BaseRepository
     {
         $user = auth()->user();
 
-        return $user->favourite_items()->with(['category', 'category.mixers', 'category.addons', 'restaurant' => function($query) use($data){
-            $query->where('id', $data['restaurant_id']);
-        }])->get();
+        return $user->favourite_items()
+            ->with(['category', 'category.mixers', 'category.addons'])
+            ->whereHas('restaurant', function($query) use($data)
+            {
+                return $query->where('id', $data['restaurant_id']);
+            })
+            ->get();
     }
 
     /**
@@ -183,7 +187,7 @@ class RestaurantRepository extends BaseRepository
     public function getFeaturedItems(array $data) : Collection
     {
         $restaurantId       = isset( $data['restaurant_id'] ) ? $data['restaurant_id'] : null;
-        $query              = RestaurantItem::query()->with(['category', 'category.mixers', 'category.addons']);
+        $query              = RestaurantItem::query()->with(['category', 'category.mixers', 'category.addons', 'restaurant']);
 
         if( $restaurantId )
         {

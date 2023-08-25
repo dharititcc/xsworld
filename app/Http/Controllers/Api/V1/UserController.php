@@ -329,7 +329,7 @@ class UserController extends APIController
             $user->refresh();
             return $this->respond([
                 'status' => true,
-                'message'=> 'Update Profile successfully.',
+                'message'=> 'Profile updated successfully.',
                 'item'   => new UserResource($user)
             ]);
         }
