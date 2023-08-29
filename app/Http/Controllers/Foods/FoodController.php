@@ -1,14 +1,13 @@
 <?php
 
-namespace App\Http\Controllers\Drinks;
+namespace App\Http\Controllers\Foods;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\RestaurantItem;
-use App\Models\Category;
 use DataTables;
 
-class DrinkController extends Controller
+class FoodController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -20,7 +19,7 @@ class DrinkController extends Controller
         $subcategory = array();
         $categories = array();
         $restaurant = session('restaurant')->loadMissing(['main_categories']);
-        $category = $restaurant->main_categories()->with(['children'])->where('name', 'Drinks')->first();
+        $category = $restaurant->main_categories()->with(['children'])->where('name', 'Food')->first();
         if($category)
         {
             $categories = $category->children;
@@ -29,7 +28,7 @@ class DrinkController extends Controller
         if ($request->ajax())
         {
             $data = RestaurantItem::query()
-                    ->with(['category', 'restaurant','variations'])
+                    ->with(['category', 'restaurant'])
                     ->whereHas('restaurant', function($query) use($restaurant)
                     {
                         return $query->where('id', $restaurant->id);
@@ -55,12 +54,12 @@ class DrinkController extends Controller
 
                     }
                     $data = $data->get();
-                    //dd($data);
             return Datatables::of($data)
                 ->make(true);
         }
 
-        return view('restaurant.drinks-list')->with('categories',$categories);
+        return view('restaurant.foods-list')->with('categories',$categories);
+
     }
 
     /**

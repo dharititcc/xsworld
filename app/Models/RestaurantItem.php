@@ -143,4 +143,35 @@ class RestaurantItem extends Model
 
         return false;
     }
+     /**
+     * Query builder scope to search on text
+     *
+     * @param  Illuminate\Database\Query\Builder  $query  Query builder instance
+     * @param  text                              $search      Search term
+     *
+     * @return Illuminate\Database\Query\Builder          Modified query builder
+     */
+    public function scopeTextsearch($query, $search, $type)
+    {
+        if($type == "filter")
+        {
+            $filterArray = json_decode($search,true);
+            return $query->where(function ($query) use ($filterArray)
+            {
+            });
+        }
+        else
+        {
+            $search = explode('+', $search);
+            return $query->where(function ($query) use ($search)
+            {
+                foreach ($search as $search)
+                {
+                $query->where('restaurant_items.name', 'like', "%" . $search . "%")
+                    ->orWhere('restaurant_items.description', 'like', "%" . $search . "%")
+                    ->orWhere('restaurant_items.price', 'like', "%" . $search . "%");
+                }
+            });
+        }
+    }
 }

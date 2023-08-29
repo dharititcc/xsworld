@@ -1,6 +1,6 @@
 @extends('layouts.restaurant.mainlayout')
 @section('topbar')
-@include('restaurant.partials.drinktopbar')
+@include('restaurant.partials.foodtopbar')
 @endsection
 @section('content')
 <style>
@@ -23,8 +23,8 @@
                             <div class="filter-box  mb-4">
                               <button class="bor-btn category" onclick="getCategory(null)">All <span class="stock"></span></button>
                               @foreach ($categories as $category)
-                                <button class="bor-btn category" onclick="getCategory({{$category->id}})">{{$category->name}} <span class="stock">({{$category->items->count()}})</span></button>
-                                @endforeach
+                                <button class="bor-btn category" onclick="getCategory({{$category->id}})">{{$category->name}} <span class="stock">({{count($category->items)}})</span></button>
+                              @endforeach
                             </div>
                             <div class="mb-4">
                             <button class="bor-btn">Disable Drink</button>
@@ -76,7 +76,7 @@ function load_data(data = null) {
             serverSide: true,
             searching: false,
             ajax:{
-              url :"{{ route('restaurants.drinks.index') }}",
+              url :"{{ route('restaurants.foods.index') }}",
               data :data,
             },
             columns: [
