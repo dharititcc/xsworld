@@ -43,5 +43,7 @@ class OrderController extends APIController
         ];
 
         $add_to_cart   = $this->repository->addTocart($dataArr);
+
+        dd($add_to_cart->count());
     }
 }

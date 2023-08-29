@@ -34,6 +34,7 @@ class Order extends Model
         'credit_point',
         'amount',
         'transaction_id',
+        'currency_id',
         'cancel_reason',
         'apply_time',
         'accepted_date',

@@ -46,7 +46,7 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'v1', 'as' => 'api.v1.'], fun
         // vanue item list{api/v1/restaurants/items}
         Route::post('/restaurants/items', 'RestaurantItemController@index')->name('restaurant.items.index');
         // {api/v1/users/addtocart}
-        Route::post('addtocart', 'OrderController@addToCart')->name('addtocart');
+        Route::post('/addtocart', 'OrderController@addToCart')->name('addtocart');
     });
 
     Route::group(['prefix' => 'users','middleware' => 'auth:api'], function ()
