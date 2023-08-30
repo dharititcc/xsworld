@@ -4,12 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class PaymentMethod extends Model
+class UserPaymentMethod extends Model
 {
     use HasFactory;
 
-    protected $table = 'payment_methods';
+    protected $table = 'user_payment_methods';
 
     /**
      * The attributes that are mass assignable.
@@ -18,6 +19,7 @@ class PaymentMethod extends Model
      */
     protected $fillable = [
         'name',
+        'user_id',
         'description'
     ];
 
@@ -30,4 +32,14 @@ class PaymentMethod extends Model
         'created_at' => 'datetime',
         'updated_at' => 'datetime'
     ];
+
+    /**
+     * Get the user that owns the UserPaymentMethod
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'user_id', 'id');
+    }
 }

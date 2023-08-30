@@ -18,6 +18,12 @@ class Order extends Model
     const CART  = 1;
     const ORDER = 2;
 
+    const PENDNIG   = 0;
+    const ACCEPTED  = 1;
+    const READY     = 2;
+    const COMPLETED = 3;
+    const CANCELED  = 4;
+
     /**
      * The attributes that are mass assignable.
      *

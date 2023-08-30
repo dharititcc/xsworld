@@ -17,7 +17,7 @@ class CreateUserPaymentMethods extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->string('name');
-            $table->tinyText('description');
+            $table->tinyText('description')->nullable();
             $table->timestamps();
             $table->softDeletes();
 

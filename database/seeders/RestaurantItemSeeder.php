@@ -137,21 +137,21 @@ class RestaurantItemSeeder extends Seeder
             [
                 'name'          => 'Rockmelon Brucheta',
                 'type'          => RestaurantItem::ITEM,
-                'is_variable'   => 1,
+                'is_variable'   => 0,
                 'price'         => 35,
                 'image'         => 'rockmelon-brucheta.jpg'
             ],
             [
                 'name'          => 'Antipasto Platter',
                 'type'          => RestaurantItem::ITEM,
-                'is_variable'   => 1,
+                'is_variable'   => 0,
                 'price'         => 35,
                 'image'         => 'antipasto-platter.jpg'
             ],
             [
                 'name'          => 'Candied tomatoes on basil leaves',
                 'type'          => RestaurantItem::ITEM,
-                'is_variable'   => 1,
+                'is_variable'   => 0,
                 'price'         => 35,
                 'image'         => 'candied-tomatoes.jpg'
             ]
@@ -161,28 +161,28 @@ class RestaurantItemSeeder extends Seeder
             [
                 'name'          => 'Portuguese Chicken',
                 'type'          => RestaurantItem::ITEM,
-                'is_variable'   => 1,
+                'is_variable'   => 0,
                 'price'         => 35,
                 'image'         => 'portuguese-chicken.jpg'
             ],
             [
                 'name'          => 'Lamington',
                 'type'          => RestaurantItem::ITEM,
-                'is_variable'   => 1,
+                'is_variable'   => 0,
                 'price'         => 35,
                 'image'         => 'lamington.jpg'
             ],
             [
                 'name'          => 'Meat Pie',
                 'type'          => RestaurantItem::ITEM,
-                'is_variable'   => 1,
+                'is_variable'   => 0,
                 'price'         => 35,
                 'image'         => 'meat-pie.jpg'
             ],
             [
                 'name'          => 'Spaghetti Bolongnese',
                 'type'          => RestaurantItem::ITEM,
-                'is_variable'   => 1,
+                'is_variable'   => 0,
                 'price'         => 35,
                 'image'         => 'spaghetti.jpg'
             ],
@@ -192,28 +192,28 @@ class RestaurantItemSeeder extends Seeder
             [
                 'name'          => 'Broccolini salad with roasted garlic dressing',
                 'type'          => RestaurantItem::ITEM,
-                'is_variable'   => 1,
+                'is_variable'   => 0,
                 'price'         => 35,
                 'image'         => 'broccolini-salad.jpg'
             ],
             [
                 'name'          => 'Cos salad with buttermilk dressing and jalapeno crumb',
                 'type'          => RestaurantItem::ITEM,
-                'is_variable'   => 1,
+                'is_variable'   => 0,
                 'price'         => 35,
                 'image'         => 'cos-salad.jpg'
             ],
             [
                 'name'          => 'Chorizo and sweet potato salad',
                 'type'          => RestaurantItem::ITEM,
-                'is_variable'   => 1,
+                'is_variable'   => 0,
                 'price'         => 35,
                 'image'         => 'chorizo-sweet-potato.jpg'
             ],
             [
                 'name'          => 'Green bean, fig and feta salad',
                 'type'          => RestaurantItem::ITEM,
-                'is_variable'   => 1,
+                'is_variable'   => 0,
                 'price'         => 35,
                 'image'         => 'green-bean.jpg'
             ]
@@ -223,21 +223,21 @@ class RestaurantItemSeeder extends Seeder
             [
                 'name'          => 'Spring green risotto',
                 'type'          => RestaurantItem::ITEM,
-                'is_variable'   => 1,
+                'is_variable'   => 0,
                 'price'         => 35,
                 'image'         => 'spring-green-risotto.jpg'
             ],
             [
                 'name'          => 'Roasted beetroot tart with whipped ricotta',
                 'type'          => RestaurantItem::ITEM,
-                'is_variable'   => 1,
+                'is_variable'   => 0,
                 'price'         => 35,
                 'image'         => 'beetroot-tart.jpg'
             ],
             [
                 'name'          => 'Egg, bacon and tomato tart',
                 'type'          => RestaurantItem::ITEM,
-                'is_variable'   => 1,
+                'is_variable'   => 0,
                 'price'         => 35,
                 'image'         => 'egg-becon-tomato-tart.jpg'
             ]
@@ -274,6 +274,23 @@ class RestaurantItemSeeder extends Seeder
                                                 $spirit['category_id'] = $subcategory->id;
                                                 $newItem = RestaurantItem::create($spirit);
 
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Single Shot',
+                                                        'price'=> 10
+                                                    ],
+                                                    [
+                                                        'name' => 'Double Shot',
+                                                        'price'=> 20
+                                                    ]
+                                                ];
+
+                                                foreach( $variationsArr as $variation )
+                                                {
+                                                    $newItem->variations()->create($variation);
+                                                }
+
                                                 // attachment
                                                 $newItem->attachment()->create([
                                                     'original_name' => $image,
@@ -292,6 +309,27 @@ class RestaurantItemSeeder extends Seeder
                                                 $cocktail['is_featured'] = 1;
                                                 $cocktail['category_id'] = $subcategory->id;
                                                 $newItem = RestaurantItem::create($cocktail);
+
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Single Shot',
+                                                        'price'=> 10
+                                                    ],
+                                                    [
+                                                        'name' => 'Double Shot',
+                                                        'price'=> 20
+                                                    ],
+                                                    [
+                                                        'name' => 'Glass',
+                                                        'price'=> 30
+                                                    ]
+                                                ];
+
+                                                foreach( $variationsArr as $variation )
+                                                {
+                                                    $newItem->variations()->create($variation);
+                                                }
 
                                                 // attachment
                                                 $newItem->attachment()->create([
@@ -312,6 +350,31 @@ class RestaurantItemSeeder extends Seeder
                                                 $beer['category_id'] = $subcategory->id;
                                                 $newItem = RestaurantItem::create($beer);
 
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Glass',
+                                                        'price'=> 10
+                                                    ],
+                                                    [
+                                                        'name' => 'Bottle',
+                                                        'price'=> 35
+                                                    ],
+                                                    [
+                                                        'name' => 'Jug',
+                                                        'price'=> 50
+                                                    ],
+                                                    [
+                                                        'name' => 'Pint',
+                                                        'price'=> 75
+                                                    ]
+                                                ];
+
+                                                foreach( $variationsArr as $variation )
+                                                {
+                                                    $newItem->variations()->create($variation);
+                                                }
+
                                                 // attachment
                                                 $newItem->attachment()->create([
                                                     'original_name' => $image,
@@ -331,6 +394,26 @@ class RestaurantItemSeeder extends Seeder
                                                 $wine['category_id'] = $subcategory->id;
                                                 $newItem = RestaurantItem::create($wine);
 
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Single Shot',
+                                                        'price'=> 10
+                                                    ],
+                                                    [
+                                                        'name' => 'Double Shot',
+                                                        'price'=> 20
+                                                    ],
+                                                    [
+                                                        'name' => 'Glass',
+                                                        'price'=> 30
+                                                    ],
+                                                    [
+                                                        'name' => 'Bottle',
+                                                        'price'=> 50
+                                                    ]
+                                                ];
+
                                                 // attachment
                                                 $newItem->attachment()->create([
                                                     'original_name' => $image,
@@ -349,6 +432,18 @@ class RestaurantItemSeeder extends Seeder
                                                 $champagne['is_featured'] = 1;
                                                 $champagne['category_id'] = $subcategory->id;
                                                 $newItem = RestaurantItem::create($champagne);
+
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Glass',
+                                                        'price'=> 30
+                                                    ],
+                                                    [
+                                                        'name' => 'Bottle',
+                                                        'price'=> 50
+                                                    ]
+                                                ];
 
                                                 // attachment
                                                 $newItem->attachment()->create([
@@ -474,6 +569,23 @@ class RestaurantItemSeeder extends Seeder
                                                 $spirit['category_id'] = $subcategory->id;
                                                 $newItem = RestaurantItem::create($spirit);
 
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Single Shot',
+                                                        'price'=> 10
+                                                    ],
+                                                    [
+                                                        'name' => 'Double Shot',
+                                                        'price'=> 20
+                                                    ]
+                                                ];
+
+                                                foreach( $variationsArr as $variation )
+                                                {
+                                                    $newItem->variations()->create($variation);
+                                                }
+
                                                 // attachment
                                                 $newItem->attachment()->create([
                                                     'original_name' => $image,
@@ -492,6 +604,27 @@ class RestaurantItemSeeder extends Seeder
                                                 $cocktail['is_featured'] = 1;
                                                 $cocktail['category_id'] = $subcategory->id;
                                                 $newItem = RestaurantItem::create($cocktail);
+
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Single Shot',
+                                                        'price'=> 10
+                                                    ],
+                                                    [
+                                                        'name' => 'Double Shot',
+                                                        'price'=> 20
+                                                    ],
+                                                    [
+                                                        'name' => 'Glass',
+                                                        'price'=> 30
+                                                    ]
+                                                ];
+
+                                                foreach( $variationsArr as $variation )
+                                                {
+                                                    $newItem->variations()->create($variation);
+                                                }
 
                                                 // attachment
                                                 $newItem->attachment()->create([
@@ -512,6 +645,31 @@ class RestaurantItemSeeder extends Seeder
                                                 $beer['category_id'] = $subcategory->id;
                                                 $newItem = RestaurantItem::create($beer);
 
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Glass',
+                                                        'price'=> 10
+                                                    ],
+                                                    [
+                                                        'name' => 'Bottle',
+                                                        'price'=> 35
+                                                    ],
+                                                    [
+                                                        'name' => 'Jug',
+                                                        'price'=> 50
+                                                    ],
+                                                    [
+                                                        'name' => 'Pint',
+                                                        'price'=> 75
+                                                    ]
+                                                ];
+
+                                                foreach( $variationsArr as $variation )
+                                                {
+                                                    $newItem->variations()->create($variation);
+                                                }
+
                                                 // attachment
                                                 $newItem->attachment()->create([
                                                     'original_name' => $image,
@@ -531,6 +689,26 @@ class RestaurantItemSeeder extends Seeder
                                                 $wine['category_id'] = $subcategory->id;
                                                 $newItem = RestaurantItem::create($wine);
 
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Single Shot',
+                                                        'price'=> 10
+                                                    ],
+                                                    [
+                                                        'name' => 'Double Shot',
+                                                        'price'=> 20
+                                                    ],
+                                                    [
+                                                        'name' => 'Glass',
+                                                        'price'=> 30
+                                                    ],
+                                                    [
+                                                        'name' => 'Bottle',
+                                                        'price'=> 50
+                                                    ]
+                                                ];
+
                                                 // attachment
                                                 $newItem->attachment()->create([
                                                     'original_name' => $image,
@@ -549,6 +727,18 @@ class RestaurantItemSeeder extends Seeder
                                                 $champagne['is_featured'] = 1;
                                                 $champagne['category_id'] = $subcategory->id;
                                                 $newItem = RestaurantItem::create($champagne);
+
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Glass',
+                                                        'price'=> 30
+                                                    ],
+                                                    [
+                                                        'name' => 'Bottle',
+                                                        'price'=> 50
+                                                    ]
+                                                ];
 
                                                 // attachment
                                                 $newItem->attachment()->create([
@@ -674,6 +864,23 @@ class RestaurantItemSeeder extends Seeder
                                                 $spirit['category_id'] = $subcategory->id;
                                                 $newItem = RestaurantItem::create($spirit);
 
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Single Shot',
+                                                        'price'=> 10
+                                                    ],
+                                                    [
+                                                        'name' => 'Double Shot',
+                                                        'price'=> 20
+                                                    ]
+                                                ];
+
+                                                foreach( $variationsArr as $variation )
+                                                {
+                                                    $newItem->variations()->create($variation);
+                                                }
+
                                                 // attachment
                                                 $newItem->attachment()->create([
                                                     'original_name' => $image,
@@ -692,6 +899,27 @@ class RestaurantItemSeeder extends Seeder
                                                 $cocktail['is_featured'] = 1;
                                                 $cocktail['category_id'] = $subcategory->id;
                                                 $newItem = RestaurantItem::create($cocktail);
+
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Single Shot',
+                                                        'price'=> 10
+                                                    ],
+                                                    [
+                                                        'name' => 'Double Shot',
+                                                        'price'=> 20
+                                                    ],
+                                                    [
+                                                        'name' => 'Glass',
+                                                        'price'=> 30
+                                                    ]
+                                                ];
+
+                                                foreach( $variationsArr as $variation )
+                                                {
+                                                    $newItem->variations()->create($variation);
+                                                }
 
                                                 // attachment
                                                 $newItem->attachment()->create([
@@ -712,6 +940,31 @@ class RestaurantItemSeeder extends Seeder
                                                 $beer['category_id'] = $subcategory->id;
                                                 $newItem = RestaurantItem::create($beer);
 
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Glass',
+                                                        'price'=> 10
+                                                    ],
+                                                    [
+                                                        'name' => 'Bottle',
+                                                        'price'=> 35
+                                                    ],
+                                                    [
+                                                        'name' => 'Jug',
+                                                        'price'=> 50
+                                                    ],
+                                                    [
+                                                        'name' => 'Pint',
+                                                        'price'=> 75
+                                                    ]
+                                                ];
+
+                                                foreach( $variationsArr as $variation )
+                                                {
+                                                    $newItem->variations()->create($variation);
+                                                }
+
                                                 // attachment
                                                 $newItem->attachment()->create([
                                                     'original_name' => $image,
@@ -731,6 +984,26 @@ class RestaurantItemSeeder extends Seeder
                                                 $wine['category_id'] = $subcategory->id;
                                                 $newItem = RestaurantItem::create($wine);
 
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Single Shot',
+                                                        'price'=> 10
+                                                    ],
+                                                    [
+                                                        'name' => 'Double Shot',
+                                                        'price'=> 20
+                                                    ],
+                                                    [
+                                                        'name' => 'Glass',
+                                                        'price'=> 30
+                                                    ],
+                                                    [
+                                                        'name' => 'Bottle',
+                                                        'price'=> 50
+                                                    ]
+                                                ];
+
                                                 // attachment
                                                 $newItem->attachment()->create([
                                                     'original_name' => $image,
@@ -749,6 +1022,18 @@ class RestaurantItemSeeder extends Seeder
                                                 $champagne['is_featured'] = 1;
                                                 $champagne['category_id'] = $subcategory->id;
                                                 $newItem = RestaurantItem::create($champagne);
+
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Glass',
+                                                        'price'=> 30
+                                                    ],
+                                                    [
+                                                        'name' => 'Bottle',
+                                                        'price'=> 50
+                                                    ]
+                                                ];
 
                                                 // attachment
                                                 $newItem->attachment()->create([
@@ -874,6 +1159,23 @@ class RestaurantItemSeeder extends Seeder
                                                 $spirit['category_id'] = $subcategory->id;
                                                 $newItem = RestaurantItem::create($spirit);
 
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Single Shot',
+                                                        'price'=> 10
+                                                    ],
+                                                    [
+                                                        'name' => 'Double Shot',
+                                                        'price'=> 20
+                                                    ]
+                                                ];
+
+                                                foreach( $variationsArr as $variation )
+                                                {
+                                                    $newItem->variations()->create($variation);
+                                                }
+
                                                 // attachment
                                                 $newItem->attachment()->create([
                                                     'original_name' => $image,
@@ -892,6 +1194,27 @@ class RestaurantItemSeeder extends Seeder
                                                 $cocktail['is_featured'] = 1;
                                                 $cocktail['category_id'] = $subcategory->id;
                                                 $newItem = RestaurantItem::create($cocktail);
+
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Single Shot',
+                                                        'price'=> 10
+                                                    ],
+                                                    [
+                                                        'name' => 'Double Shot',
+                                                        'price'=> 20
+                                                    ],
+                                                    [
+                                                        'name' => 'Glass',
+                                                        'price'=> 30
+                                                    ]
+                                                ];
+
+                                                foreach( $variationsArr as $variation )
+                                                {
+                                                    $newItem->variations()->create($variation);
+                                                }
 
                                                 // attachment
                                                 $newItem->attachment()->create([
@@ -912,6 +1235,31 @@ class RestaurantItemSeeder extends Seeder
                                                 $beer['category_id'] = $subcategory->id;
                                                 $newItem = RestaurantItem::create($beer);
 
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Glass',
+                                                        'price'=> 10
+                                                    ],
+                                                    [
+                                                        'name' => 'Bottle',
+                                                        'price'=> 35
+                                                    ],
+                                                    [
+                                                        'name' => 'Jug',
+                                                        'price'=> 50
+                                                    ],
+                                                    [
+                                                        'name' => 'Pint',
+                                                        'price'=> 75
+                                                    ]
+                                                ];
+
+                                                foreach( $variationsArr as $variation )
+                                                {
+                                                    $newItem->variations()->create($variation);
+                                                }
+
                                                 // attachment
                                                 $newItem->attachment()->create([
                                                     'original_name' => $image,
@@ -931,6 +1279,26 @@ class RestaurantItemSeeder extends Seeder
                                                 $wine['category_id'] = $subcategory->id;
                                                 $newItem = RestaurantItem::create($wine);
 
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Single Shot',
+                                                        'price'=> 10
+                                                    ],
+                                                    [
+                                                        'name' => 'Double Shot',
+                                                        'price'=> 20
+                                                    ],
+                                                    [
+                                                        'name' => 'Glass',
+                                                        'price'=> 30
+                                                    ],
+                                                    [
+                                                        'name' => 'Bottle',
+                                                        'price'=> 50
+                                                    ]
+                                                ];
+
                                                 // attachment
                                                 $newItem->attachment()->create([
                                                     'original_name' => $image,
@@ -949,6 +1317,18 @@ class RestaurantItemSeeder extends Seeder
                                                 $champagne['is_featured'] = 1;
                                                 $champagne['category_id'] = $subcategory->id;
                                                 $newItem = RestaurantItem::create($champagne);
+
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Glass',
+                                                        'price'=> 30
+                                                    ],
+                                                    [
+                                                        'name' => 'Bottle',
+                                                        'price'=> 50
+                                                    ]
+                                                ];
 
                                                 // attachment
                                                 $newItem->attachment()->create([
@@ -1074,6 +1454,23 @@ class RestaurantItemSeeder extends Seeder
                                                 $spirit['category_id'] = $subcategory->id;
                                                 $newItem = RestaurantItem::create($spirit);
 
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Single Shot',
+                                                        'price'=> 10
+                                                    ],
+                                                    [
+                                                        'name' => 'Double Shot',
+                                                        'price'=> 20
+                                                    ]
+                                                ];
+
+                                                foreach( $variationsArr as $variation )
+                                                {
+                                                    $newItem->variations()->create($variation);
+                                                }
+
                                                 // attachment
                                                 $newItem->attachment()->create([
                                                     'original_name' => $image,
@@ -1092,6 +1489,27 @@ class RestaurantItemSeeder extends Seeder
                                                 $cocktail['is_featured'] = 1;
                                                 $cocktail['category_id'] = $subcategory->id;
                                                 $newItem = RestaurantItem::create($cocktail);
+
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Single Shot',
+                                                        'price'=> 10
+                                                    ],
+                                                    [
+                                                        'name' => 'Double Shot',
+                                                        'price'=> 20
+                                                    ],
+                                                    [
+                                                        'name' => 'Glass',
+                                                        'price'=> 30
+                                                    ]
+                                                ];
+
+                                                foreach( $variationsArr as $variation )
+                                                {
+                                                    $newItem->variations()->create($variation);
+                                                }
 
                                                 // attachment
                                                 $newItem->attachment()->create([
@@ -1112,6 +1530,31 @@ class RestaurantItemSeeder extends Seeder
                                                 $beer['category_id'] = $subcategory->id;
                                                 $newItem = RestaurantItem::create($beer);
 
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Glass',
+                                                        'price'=> 10
+                                                    ],
+                                                    [
+                                                        'name' => 'Bottle',
+                                                        'price'=> 35
+                                                    ],
+                                                    [
+                                                        'name' => 'Jug',
+                                                        'price'=> 50
+                                                    ],
+                                                    [
+                                                        'name' => 'Pint',
+                                                        'price'=> 75
+                                                    ]
+                                                ];
+
+                                                foreach( $variationsArr as $variation )
+                                                {
+                                                    $newItem->variations()->create($variation);
+                                                }
+
                                                 // attachment
                                                 $newItem->attachment()->create([
                                                     'original_name' => $image,
@@ -1131,6 +1574,26 @@ class RestaurantItemSeeder extends Seeder
                                                 $wine['category_id'] = $subcategory->id;
                                                 $newItem = RestaurantItem::create($wine);
 
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Single Shot',
+                                                        'price'=> 10
+                                                    ],
+                                                    [
+                                                        'name' => 'Double Shot',
+                                                        'price'=> 20
+                                                    ],
+                                                    [
+                                                        'name' => 'Glass',
+                                                        'price'=> 30
+                                                    ],
+                                                    [
+                                                        'name' => 'Bottle',
+                                                        'price'=> 50
+                                                    ]
+                                                ];
+
                                                 // attachment
                                                 $newItem->attachment()->create([
                                                     'original_name' => $image,
@@ -1149,6 +1612,18 @@ class RestaurantItemSeeder extends Seeder
                                                 $champagne['is_featured'] = 1;
                                                 $champagne['category_id'] = $subcategory->id;
                                                 $newItem = RestaurantItem::create($champagne);
+
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Glass',
+                                                        'price'=> 30
+                                                    ],
+                                                    [
+                                                        'name' => 'Bottle',
+                                                        'price'=> 50
+                                                    ]
+                                                ];
 
                                                 // attachment
                                                 $newItem->attachment()->create([
@@ -1274,6 +1749,23 @@ class RestaurantItemSeeder extends Seeder
                                                 $spirit['category_id'] = $subcategory->id;
                                                 $newItem = RestaurantItem::create($spirit);
 
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Single Shot',
+                                                        'price'=> 10
+                                                    ],
+                                                    [
+                                                        'name' => 'Double Shot',
+                                                        'price'=> 20
+                                                    ]
+                                                ];
+
+                                                foreach( $variationsArr as $variation )
+                                                {
+                                                    $newItem->variations()->create($variation);
+                                                }
+
                                                 // attachment
                                                 $newItem->attachment()->create([
                                                     'original_name' => $image,
@@ -1292,6 +1784,27 @@ class RestaurantItemSeeder extends Seeder
                                                 $cocktail['is_featured'] = 1;
                                                 $cocktail['category_id'] = $subcategory->id;
                                                 $newItem = RestaurantItem::create($cocktail);
+
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Single Shot',
+                                                        'price'=> 10
+                                                    ],
+                                                    [
+                                                        'name' => 'Double Shot',
+                                                        'price'=> 20
+                                                    ],
+                                                    [
+                                                        'name' => 'Glass',
+                                                        'price'=> 30
+                                                    ]
+                                                ];
+
+                                                foreach( $variationsArr as $variation )
+                                                {
+                                                    $newItem->variations()->create($variation);
+                                                }
 
                                                 // attachment
                                                 $newItem->attachment()->create([
@@ -1312,6 +1825,31 @@ class RestaurantItemSeeder extends Seeder
                                                 $beer['category_id'] = $subcategory->id;
                                                 $newItem = RestaurantItem::create($beer);
 
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Glass',
+                                                        'price'=> 10
+                                                    ],
+                                                    [
+                                                        'name' => 'Bottle',
+                                                        'price'=> 35
+                                                    ],
+                                                    [
+                                                        'name' => 'Jug',
+                                                        'price'=> 50
+                                                    ],
+                                                    [
+                                                        'name' => 'Pint',
+                                                        'price'=> 75
+                                                    ]
+                                                ];
+
+                                                foreach( $variationsArr as $variation )
+                                                {
+                                                    $newItem->variations()->create($variation);
+                                                }
+
                                                 // attachment
                                                 $newItem->attachment()->create([
                                                     'original_name' => $image,
@@ -1331,6 +1869,26 @@ class RestaurantItemSeeder extends Seeder
                                                 $wine['category_id'] = $subcategory->id;
                                                 $newItem = RestaurantItem::create($wine);
 
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Single Shot',
+                                                        'price'=> 10
+                                                    ],
+                                                    [
+                                                        'name' => 'Double Shot',
+                                                        'price'=> 20
+                                                    ],
+                                                    [
+                                                        'name' => 'Glass',
+                                                        'price'=> 30
+                                                    ],
+                                                    [
+                                                        'name' => 'Bottle',
+                                                        'price'=> 50
+                                                    ]
+                                                ];
+
                                                 // attachment
                                                 $newItem->attachment()->create([
                                                     'original_name' => $image,
@@ -1349,6 +1907,18 @@ class RestaurantItemSeeder extends Seeder
                                                 $champagne['is_featured'] = 1;
                                                 $champagne['category_id'] = $subcategory->id;
                                                 $newItem = RestaurantItem::create($champagne);
+
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Glass',
+                                                        'price'=> 30
+                                                    ],
+                                                    [
+                                                        'name' => 'Bottle',
+                                                        'price'=> 50
+                                                    ]
+                                                ];
 
                                                 // attachment
                                                 $newItem->attachment()->create([
@@ -1474,6 +2044,23 @@ class RestaurantItemSeeder extends Seeder
                                                 $spirit['category_id'] = $subcategory->id;
                                                 $newItem = RestaurantItem::create($spirit);
 
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Single Shot',
+                                                        'price'=> 10
+                                                    ],
+                                                    [
+                                                        'name' => 'Double Shot',
+                                                        'price'=> 20
+                                                    ]
+                                                ];
+
+                                                foreach( $variationsArr as $variation )
+                                                {
+                                                    $newItem->variations()->create($variation);
+                                                }
+
                                                 // attachment
                                                 $newItem->attachment()->create([
                                                     'original_name' => $image,
@@ -1492,6 +2079,27 @@ class RestaurantItemSeeder extends Seeder
                                                 $cocktail['is_featured'] = 1;
                                                 $cocktail['category_id'] = $subcategory->id;
                                                 $newItem = RestaurantItem::create($cocktail);
+
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Single Shot',
+                                                        'price'=> 10
+                                                    ],
+                                                    [
+                                                        'name' => 'Double Shot',
+                                                        'price'=> 20
+                                                    ],
+                                                    [
+                                                        'name' => 'Glass',
+                                                        'price'=> 30
+                                                    ]
+                                                ];
+
+                                                foreach( $variationsArr as $variation )
+                                                {
+                                                    $newItem->variations()->create($variation);
+                                                }
 
                                                 // attachment
                                                 $newItem->attachment()->create([
@@ -1512,6 +2120,31 @@ class RestaurantItemSeeder extends Seeder
                                                 $beer['category_id'] = $subcategory->id;
                                                 $newItem = RestaurantItem::create($beer);
 
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Glass',
+                                                        'price'=> 10
+                                                    ],
+                                                    [
+                                                        'name' => 'Bottle',
+                                                        'price'=> 35
+                                                    ],
+                                                    [
+                                                        'name' => 'Jug',
+                                                        'price'=> 50
+                                                    ],
+                                                    [
+                                                        'name' => 'Pint',
+                                                        'price'=> 75
+                                                    ]
+                                                ];
+
+                                                foreach( $variationsArr as $variation )
+                                                {
+                                                    $newItem->variations()->create($variation);
+                                                }
+
                                                 // attachment
                                                 $newItem->attachment()->create([
                                                     'original_name' => $image,
@@ -1531,6 +2164,26 @@ class RestaurantItemSeeder extends Seeder
                                                 $wine['category_id'] = $subcategory->id;
                                                 $newItem = RestaurantItem::create($wine);
 
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Single Shot',
+                                                        'price'=> 10
+                                                    ],
+                                                    [
+                                                        'name' => 'Double Shot',
+                                                        'price'=> 20
+                                                    ],
+                                                    [
+                                                        'name' => 'Glass',
+                                                        'price'=> 30
+                                                    ],
+                                                    [
+                                                        'name' => 'Bottle',
+                                                        'price'=> 50
+                                                    ]
+                                                ];
+
                                                 // attachment
                                                 $newItem->attachment()->create([
                                                     'original_name' => $image,
@@ -1549,6 +2202,18 @@ class RestaurantItemSeeder extends Seeder
                                                 $champagne['is_featured'] = 1;
                                                 $champagne['category_id'] = $subcategory->id;
                                                 $newItem = RestaurantItem::create($champagne);
+
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Glass',
+                                                        'price'=> 30
+                                                    ],
+                                                    [
+                                                        'name' => 'Bottle',
+                                                        'price'=> 50
+                                                    ]
+                                                ];
 
                                                 // attachment
                                                 $newItem->attachment()->create([
@@ -1674,6 +2339,23 @@ class RestaurantItemSeeder extends Seeder
                                                 $spirit['category_id'] = $subcategory->id;
                                                 $newItem = RestaurantItem::create($spirit);
 
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Single Shot',
+                                                        'price'=> 10
+                                                    ],
+                                                    [
+                                                        'name' => 'Double Shot',
+                                                        'price'=> 20
+                                                    ]
+                                                ];
+
+                                                foreach( $variationsArr as $variation )
+                                                {
+                                                    $newItem->variations()->create($variation);
+                                                }
+
                                                 // attachment
                                                 $newItem->attachment()->create([
                                                     'original_name' => $image,
@@ -1692,6 +2374,27 @@ class RestaurantItemSeeder extends Seeder
                                                 $cocktail['is_featured'] = 1;
                                                 $cocktail['category_id'] = $subcategory->id;
                                                 $newItem = RestaurantItem::create($cocktail);
+
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Single Shot',
+                                                        'price'=> 10
+                                                    ],
+                                                    [
+                                                        'name' => 'Double Shot',
+                                                        'price'=> 20
+                                                    ],
+                                                    [
+                                                        'name' => 'Glass',
+                                                        'price'=> 30
+                                                    ]
+                                                ];
+
+                                                foreach( $variationsArr as $variation )
+                                                {
+                                                    $newItem->variations()->create($variation);
+                                                }
 
                                                 // attachment
                                                 $newItem->attachment()->create([
@@ -1712,6 +2415,31 @@ class RestaurantItemSeeder extends Seeder
                                                 $beer['category_id'] = $subcategory->id;
                                                 $newItem = RestaurantItem::create($beer);
 
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Glass',
+                                                        'price'=> 10
+                                                    ],
+                                                    [
+                                                        'name' => 'Bottle',
+                                                        'price'=> 35
+                                                    ],
+                                                    [
+                                                        'name' => 'Jug',
+                                                        'price'=> 50
+                                                    ],
+                                                    [
+                                                        'name' => 'Pint',
+                                                        'price'=> 75
+                                                    ]
+                                                ];
+
+                                                foreach( $variationsArr as $variation )
+                                                {
+                                                    $newItem->variations()->create($variation);
+                                                }
+
                                                 // attachment
                                                 $newItem->attachment()->create([
                                                     'original_name' => $image,
@@ -1731,6 +2459,26 @@ class RestaurantItemSeeder extends Seeder
                                                 $wine['category_id'] = $subcategory->id;
                                                 $newItem = RestaurantItem::create($wine);
 
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Single Shot',
+                                                        'price'=> 10
+                                                    ],
+                                                    [
+                                                        'name' => 'Double Shot',
+                                                        'price'=> 20
+                                                    ],
+                                                    [
+                                                        'name' => 'Glass',
+                                                        'price'=> 30
+                                                    ],
+                                                    [
+                                                        'name' => 'Bottle',
+                                                        'price'=> 50
+                                                    ]
+                                                ];
+
                                                 // attachment
                                                 $newItem->attachment()->create([
                                                     'original_name' => $image,
@@ -1749,6 +2497,18 @@ class RestaurantItemSeeder extends Seeder
                                                 $champagne['is_featured'] = 1;
                                                 $champagne['category_id'] = $subcategory->id;
                                                 $newItem = RestaurantItem::create($champagne);
+
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Glass',
+                                                        'price'=> 30
+                                                    ],
+                                                    [
+                                                        'name' => 'Bottle',
+                                                        'price'=> 50
+                                                    ]
+                                                ];
 
                                                 // attachment
                                                 $newItem->attachment()->create([
@@ -1874,6 +2634,23 @@ class RestaurantItemSeeder extends Seeder
                                                 $spirit['category_id'] = $subcategory->id;
                                                 $newItem = RestaurantItem::create($spirit);
 
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Single Shot',
+                                                        'price'=> 10
+                                                    ],
+                                                    [
+                                                        'name' => 'Double Shot',
+                                                        'price'=> 20
+                                                    ]
+                                                ];
+
+                                                foreach( $variationsArr as $variation )
+                                                {
+                                                    $newItem->variations()->create($variation);
+                                                }
+
                                                 // attachment
                                                 $newItem->attachment()->create([
                                                     'original_name' => $image,
@@ -1892,6 +2669,27 @@ class RestaurantItemSeeder extends Seeder
                                                 $cocktail['is_featured'] = 1;
                                                 $cocktail['category_id'] = $subcategory->id;
                                                 $newItem = RestaurantItem::create($cocktail);
+
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Single Shot',
+                                                        'price'=> 10
+                                                    ],
+                                                    [
+                                                        'name' => 'Double Shot',
+                                                        'price'=> 20
+                                                    ],
+                                                    [
+                                                        'name' => 'Glass',
+                                                        'price'=> 30
+                                                    ]
+                                                ];
+
+                                                foreach( $variationsArr as $variation )
+                                                {
+                                                    $newItem->variations()->create($variation);
+                                                }
 
                                                 // attachment
                                                 $newItem->attachment()->create([
@@ -1912,6 +2710,31 @@ class RestaurantItemSeeder extends Seeder
                                                 $beer['category_id'] = $subcategory->id;
                                                 $newItem = RestaurantItem::create($beer);
 
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Glass',
+                                                        'price'=> 10
+                                                    ],
+                                                    [
+                                                        'name' => 'Bottle',
+                                                        'price'=> 35
+                                                    ],
+                                                    [
+                                                        'name' => 'Jug',
+                                                        'price'=> 50
+                                                    ],
+                                                    [
+                                                        'name' => 'Pint',
+                                                        'price'=> 75
+                                                    ]
+                                                ];
+
+                                                foreach( $variationsArr as $variation )
+                                                {
+                                                    $newItem->variations()->create($variation);
+                                                }
+
                                                 // attachment
                                                 $newItem->attachment()->create([
                                                     'original_name' => $image,
@@ -1931,6 +2754,26 @@ class RestaurantItemSeeder extends Seeder
                                                 $wine['category_id'] = $subcategory->id;
                                                 $newItem = RestaurantItem::create($wine);
 
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Single Shot',
+                                                        'price'=> 10
+                                                    ],
+                                                    [
+                                                        'name' => 'Double Shot',
+                                                        'price'=> 20
+                                                    ],
+                                                    [
+                                                        'name' => 'Glass',
+                                                        'price'=> 30
+                                                    ],
+                                                    [
+                                                        'name' => 'Bottle',
+                                                        'price'=> 50
+                                                    ]
+                                                ];
+
                                                 // attachment
                                                 $newItem->attachment()->create([
                                                     'original_name' => $image,
@@ -1949,6 +2792,18 @@ class RestaurantItemSeeder extends Seeder
                                                 $champagne['is_featured'] = 1;
                                                 $champagne['category_id'] = $subcategory->id;
                                                 $newItem = RestaurantItem::create($champagne);
+
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Glass',
+                                                        'price'=> 30
+                                                    ],
+                                                    [
+                                                        'name' => 'Bottle',
+                                                        'price'=> 50
+                                                    ]
+                                                ];
 
                                                 // attachment
                                                 $newItem->attachment()->create([
@@ -2074,6 +2929,23 @@ class RestaurantItemSeeder extends Seeder
                                                 $spirit['category_id'] = $subcategory->id;
                                                 $newItem = RestaurantItem::create($spirit);
 
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Single Shot',
+                                                        'price'=> 10
+                                                    ],
+                                                    [
+                                                        'name' => 'Double Shot',
+                                                        'price'=> 20
+                                                    ]
+                                                ];
+
+                                                foreach( $variationsArr as $variation )
+                                                {
+                                                    $newItem->variations()->create($variation);
+                                                }
+
                                                 // attachment
                                                 $newItem->attachment()->create([
                                                     'original_name' => $image,
@@ -2092,6 +2964,27 @@ class RestaurantItemSeeder extends Seeder
                                                 $cocktail['is_featured'] = 1;
                                                 $cocktail['category_id'] = $subcategory->id;
                                                 $newItem = RestaurantItem::create($cocktail);
+
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Single Shot',
+                                                        'price'=> 10
+                                                    ],
+                                                    [
+                                                        'name' => 'Double Shot',
+                                                        'price'=> 20
+                                                    ],
+                                                    [
+                                                        'name' => 'Glass',
+                                                        'price'=> 30
+                                                    ]
+                                                ];
+
+                                                foreach( $variationsArr as $variation )
+                                                {
+                                                    $newItem->variations()->create($variation);
+                                                }
 
                                                 // attachment
                                                 $newItem->attachment()->create([
@@ -2112,6 +3005,31 @@ class RestaurantItemSeeder extends Seeder
                                                 $beer['category_id'] = $subcategory->id;
                                                 $newItem = RestaurantItem::create($beer);
 
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Glass',
+                                                        'price'=> 10
+                                                    ],
+                                                    [
+                                                        'name' => 'Bottle',
+                                                        'price'=> 35
+                                                    ],
+                                                    [
+                                                        'name' => 'Jug',
+                                                        'price'=> 50
+                                                    ],
+                                                    [
+                                                        'name' => 'Pint',
+                                                        'price'=> 75
+                                                    ]
+                                                ];
+
+                                                foreach( $variationsArr as $variation )
+                                                {
+                                                    $newItem->variations()->create($variation);
+                                                }
+
                                                 // attachment
                                                 $newItem->attachment()->create([
                                                     'original_name' => $image,
@@ -2131,6 +3049,26 @@ class RestaurantItemSeeder extends Seeder
                                                 $wine['category_id'] = $subcategory->id;
                                                 $newItem = RestaurantItem::create($wine);
 
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Single Shot',
+                                                        'price'=> 10
+                                                    ],
+                                                    [
+                                                        'name' => 'Double Shot',
+                                                        'price'=> 20
+                                                    ],
+                                                    [
+                                                        'name' => 'Glass',
+                                                        'price'=> 30
+                                                    ],
+                                                    [
+                                                        'name' => 'Bottle',
+                                                        'price'=> 50
+                                                    ]
+                                                ];
+
                                                 // attachment
                                                 $newItem->attachment()->create([
                                                     'original_name' => $image,
@@ -2149,6 +3087,18 @@ class RestaurantItemSeeder extends Seeder
                                                 $champagne['is_featured'] = 1;
                                                 $champagne['category_id'] = $subcategory->id;
                                                 $newItem = RestaurantItem::create($champagne);
+
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Glass',
+                                                        'price'=> 30
+                                                    ],
+                                                    [
+                                                        'name' => 'Bottle',
+                                                        'price'=> 50
+                                                    ]
+                                                ];
 
                                                 // attachment
                                                 $newItem->attachment()->create([
@@ -2274,6 +3224,23 @@ class RestaurantItemSeeder extends Seeder
                                                 $spirit['category_id'] = $subcategory->id;
                                                 $newItem = RestaurantItem::create($spirit);
 
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Single Shot',
+                                                        'price'=> 10
+                                                    ],
+                                                    [
+                                                        'name' => 'Double Shot',
+                                                        'price'=> 20
+                                                    ]
+                                                ];
+
+                                                foreach( $variationsArr as $variation )
+                                                {
+                                                    $newItem->variations()->create($variation);
+                                                }
+
                                                 // attachment
                                                 $newItem->attachment()->create([
                                                     'original_name' => $image,
@@ -2292,6 +3259,27 @@ class RestaurantItemSeeder extends Seeder
                                                 $cocktail['is_featured'] = 1;
                                                 $cocktail['category_id'] = $subcategory->id;
                                                 $newItem = RestaurantItem::create($cocktail);
+
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Single Shot',
+                                                        'price'=> 10
+                                                    ],
+                                                    [
+                                                        'name' => 'Double Shot',
+                                                        'price'=> 20
+                                                    ],
+                                                    [
+                                                        'name' => 'Glass',
+                                                        'price'=> 30
+                                                    ]
+                                                ];
+
+                                                foreach( $variationsArr as $variation )
+                                                {
+                                                    $newItem->variations()->create($variation);
+                                                }
 
                                                 // attachment
                                                 $newItem->attachment()->create([
@@ -2312,6 +3300,31 @@ class RestaurantItemSeeder extends Seeder
                                                 $beer['category_id'] = $subcategory->id;
                                                 $newItem = RestaurantItem::create($beer);
 
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Glass',
+                                                        'price'=> 10
+                                                    ],
+                                                    [
+                                                        'name' => 'Bottle',
+                                                        'price'=> 35
+                                                    ],
+                                                    [
+                                                        'name' => 'Jug',
+                                                        'price'=> 50
+                                                    ],
+                                                    [
+                                                        'name' => 'Pint',
+                                                        'price'=> 75
+                                                    ]
+                                                ];
+
+                                                foreach( $variationsArr as $variation )
+                                                {
+                                                    $newItem->variations()->create($variation);
+                                                }
+
                                                 // attachment
                                                 $newItem->attachment()->create([
                                                     'original_name' => $image,
@@ -2331,6 +3344,26 @@ class RestaurantItemSeeder extends Seeder
                                                 $wine['category_id'] = $subcategory->id;
                                                 $newItem = RestaurantItem::create($wine);
 
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Single Shot',
+                                                        'price'=> 10
+                                                    ],
+                                                    [
+                                                        'name' => 'Double Shot',
+                                                        'price'=> 20
+                                                    ],
+                                                    [
+                                                        'name' => 'Glass',
+                                                        'price'=> 30
+                                                    ],
+                                                    [
+                                                        'name' => 'Bottle',
+                                                        'price'=> 50
+                                                    ]
+                                                ];
+
                                                 // attachment
                                                 $newItem->attachment()->create([
                                                     'original_name' => $image,
@@ -2349,6 +3382,18 @@ class RestaurantItemSeeder extends Seeder
                                                 $champagne['is_featured'] = 1;
                                                 $champagne['category_id'] = $subcategory->id;
                                                 $newItem = RestaurantItem::create($champagne);
+
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Glass',
+                                                        'price'=> 30
+                                                    ],
+                                                    [
+                                                        'name' => 'Bottle',
+                                                        'price'=> 50
+                                                    ]
+                                                ];
 
                                                 // attachment
                                                 $newItem->attachment()->create([
@@ -2474,6 +3519,23 @@ class RestaurantItemSeeder extends Seeder
                                                 $spirit['category_id'] = $subcategory->id;
                                                 $newItem = RestaurantItem::create($spirit);
 
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Single Shot',
+                                                        'price'=> 10
+                                                    ],
+                                                    [
+                                                        'name' => 'Double Shot',
+                                                        'price'=> 20
+                                                    ]
+                                                ];
+
+                                                foreach( $variationsArr as $variation )
+                                                {
+                                                    $newItem->variations()->create($variation);
+                                                }
+
                                                 // attachment
                                                 $newItem->attachment()->create([
                                                     'original_name' => $image,
@@ -2492,6 +3554,27 @@ class RestaurantItemSeeder extends Seeder
                                                 $cocktail['is_featured'] = 1;
                                                 $cocktail['category_id'] = $subcategory->id;
                                                 $newItem = RestaurantItem::create($cocktail);
+
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Single Shot',
+                                                        'price'=> 10
+                                                    ],
+                                                    [
+                                                        'name' => 'Double Shot',
+                                                        'price'=> 20
+                                                    ],
+                                                    [
+                                                        'name' => 'Glass',
+                                                        'price'=> 30
+                                                    ]
+                                                ];
+
+                                                foreach( $variationsArr as $variation )
+                                                {
+                                                    $newItem->variations()->create($variation);
+                                                }
 
                                                 // attachment
                                                 $newItem->attachment()->create([
@@ -2512,6 +3595,31 @@ class RestaurantItemSeeder extends Seeder
                                                 $beer['category_id'] = $subcategory->id;
                                                 $newItem = RestaurantItem::create($beer);
 
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Glass',
+                                                        'price'=> 10
+                                                    ],
+                                                    [
+                                                        'name' => 'Bottle',
+                                                        'price'=> 35
+                                                    ],
+                                                    [
+                                                        'name' => 'Jug',
+                                                        'price'=> 50
+                                                    ],
+                                                    [
+                                                        'name' => 'Pint',
+                                                        'price'=> 75
+                                                    ]
+                                                ];
+
+                                                foreach( $variationsArr as $variation )
+                                                {
+                                                    $newItem->variations()->create($variation);
+                                                }
+
                                                 // attachment
                                                 $newItem->attachment()->create([
                                                     'original_name' => $image,
@@ -2531,6 +3639,26 @@ class RestaurantItemSeeder extends Seeder
                                                 $wine['category_id'] = $subcategory->id;
                                                 $newItem = RestaurantItem::create($wine);
 
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Single Shot',
+                                                        'price'=> 10
+                                                    ],
+                                                    [
+                                                        'name' => 'Double Shot',
+                                                        'price'=> 20
+                                                    ],
+                                                    [
+                                                        'name' => 'Glass',
+                                                        'price'=> 30
+                                                    ],
+                                                    [
+                                                        'name' => 'Bottle',
+                                                        'price'=> 50
+                                                    ]
+                                                ];
+
                                                 // attachment
                                                 $newItem->attachment()->create([
                                                     'original_name' => $image,
@@ -2549,6 +3677,18 @@ class RestaurantItemSeeder extends Seeder
                                                 $champagne['is_featured'] = 1;
                                                 $champagne['category_id'] = $subcategory->id;
                                                 $newItem = RestaurantItem::create($champagne);
+
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Glass',
+                                                        'price'=> 30
+                                                    ],
+                                                    [
+                                                        'name' => 'Bottle',
+                                                        'price'=> 50
+                                                    ]
+                                                ];
 
                                                 // attachment
                                                 $newItem->attachment()->create([
@@ -2674,6 +3814,23 @@ class RestaurantItemSeeder extends Seeder
                                                 $spirit['category_id'] = $subcategory->id;
                                                 $newItem = RestaurantItem::create($spirit);
 
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Single Shot',
+                                                        'price'=> 10
+                                                    ],
+                                                    [
+                                                        'name' => 'Double Shot',
+                                                        'price'=> 20
+                                                    ]
+                                                ];
+
+                                                foreach( $variationsArr as $variation )
+                                                {
+                                                    $newItem->variations()->create($variation);
+                                                }
+
                                                 // attachment
                                                 $newItem->attachment()->create([
                                                     'original_name' => $image,
@@ -2692,6 +3849,27 @@ class RestaurantItemSeeder extends Seeder
                                                 $cocktail['is_featured'] = 1;
                                                 $cocktail['category_id'] = $subcategory->id;
                                                 $newItem = RestaurantItem::create($cocktail);
+
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Single Shot',
+                                                        'price'=> 10
+                                                    ],
+                                                    [
+                                                        'name' => 'Double Shot',
+                                                        'price'=> 20
+                                                    ],
+                                                    [
+                                                        'name' => 'Glass',
+                                                        'price'=> 30
+                                                    ]
+                                                ];
+
+                                                foreach( $variationsArr as $variation )
+                                                {
+                                                    $newItem->variations()->create($variation);
+                                                }
 
                                                 // attachment
                                                 $newItem->attachment()->create([
@@ -2712,6 +3890,31 @@ class RestaurantItemSeeder extends Seeder
                                                 $beer['category_id'] = $subcategory->id;
                                                 $newItem = RestaurantItem::create($beer);
 
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Glass',
+                                                        'price'=> 10
+                                                    ],
+                                                    [
+                                                        'name' => 'Bottle',
+                                                        'price'=> 35
+                                                    ],
+                                                    [
+                                                        'name' => 'Jug',
+                                                        'price'=> 50
+                                                    ],
+                                                    [
+                                                        'name' => 'Pint',
+                                                        'price'=> 75
+                                                    ]
+                                                ];
+
+                                                foreach( $variationsArr as $variation )
+                                                {
+                                                    $newItem->variations()->create($variation);
+                                                }
+
                                                 // attachment
                                                 $newItem->attachment()->create([
                                                     'original_name' => $image,
@@ -2731,6 +3934,26 @@ class RestaurantItemSeeder extends Seeder
                                                 $wine['category_id'] = $subcategory->id;
                                                 $newItem = RestaurantItem::create($wine);
 
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Single Shot',
+                                                        'price'=> 10
+                                                    ],
+                                                    [
+                                                        'name' => 'Double Shot',
+                                                        'price'=> 20
+                                                    ],
+                                                    [
+                                                        'name' => 'Glass',
+                                                        'price'=> 30
+                                                    ],
+                                                    [
+                                                        'name' => 'Bottle',
+                                                        'price'=> 50
+                                                    ]
+                                                ];
+
                                                 // attachment
                                                 $newItem->attachment()->create([
                                                     'original_name' => $image,
@@ -2749,6 +3972,18 @@ class RestaurantItemSeeder extends Seeder
                                                 $champagne['is_featured'] = 1;
                                                 $champagne['category_id'] = $subcategory->id;
                                                 $newItem = RestaurantItem::create($champagne);
+
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Glass',
+                                                        'price'=> 30
+                                                    ],
+                                                    [
+                                                        'name' => 'Bottle',
+                                                        'price'=> 50
+                                                    ]
+                                                ];
 
                                                 // attachment
                                                 $newItem->attachment()->create([
@@ -2874,6 +4109,23 @@ class RestaurantItemSeeder extends Seeder
                                                 $spirit['category_id'] = $subcategory->id;
                                                 $newItem = RestaurantItem::create($spirit);
 
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Single Shot',
+                                                        'price'=> 10
+                                                    ],
+                                                    [
+                                                        'name' => 'Double Shot',
+                                                        'price'=> 20
+                                                    ]
+                                                ];
+
+                                                foreach( $variationsArr as $variation )
+                                                {
+                                                    $newItem->variations()->create($variation);
+                                                }
+
                                                 // attachment
                                                 $newItem->attachment()->create([
                                                     'original_name' => $image,
@@ -2892,6 +4144,27 @@ class RestaurantItemSeeder extends Seeder
                                                 $cocktail['is_featured'] = 1;
                                                 $cocktail['category_id'] = $subcategory->id;
                                                 $newItem = RestaurantItem::create($cocktail);
+
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Single Shot',
+                                                        'price'=> 10
+                                                    ],
+                                                    [
+                                                        'name' => 'Double Shot',
+                                                        'price'=> 20
+                                                    ],
+                                                    [
+                                                        'name' => 'Glass',
+                                                        'price'=> 30
+                                                    ]
+                                                ];
+
+                                                foreach( $variationsArr as $variation )
+                                                {
+                                                    $newItem->variations()->create($variation);
+                                                }
 
                                                 // attachment
                                                 $newItem->attachment()->create([
@@ -2912,6 +4185,31 @@ class RestaurantItemSeeder extends Seeder
                                                 $beer['category_id'] = $subcategory->id;
                                                 $newItem = RestaurantItem::create($beer);
 
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Glass',
+                                                        'price'=> 10
+                                                    ],
+                                                    [
+                                                        'name' => 'Bottle',
+                                                        'price'=> 35
+                                                    ],
+                                                    [
+                                                        'name' => 'Jug',
+                                                        'price'=> 50
+                                                    ],
+                                                    [
+                                                        'name' => 'Pint',
+                                                        'price'=> 75
+                                                    ]
+                                                ];
+
+                                                foreach( $variationsArr as $variation )
+                                                {
+                                                    $newItem->variations()->create($variation);
+                                                }
+
                                                 // attachment
                                                 $newItem->attachment()->create([
                                                     'original_name' => $image,
@@ -2931,6 +4229,26 @@ class RestaurantItemSeeder extends Seeder
                                                 $wine['category_id'] = $subcategory->id;
                                                 $newItem = RestaurantItem::create($wine);
 
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Single Shot',
+                                                        'price'=> 10
+                                                    ],
+                                                    [
+                                                        'name' => 'Double Shot',
+                                                        'price'=> 20
+                                                    ],
+                                                    [
+                                                        'name' => 'Glass',
+                                                        'price'=> 30
+                                                    ],
+                                                    [
+                                                        'name' => 'Bottle',
+                                                        'price'=> 50
+                                                    ]
+                                                ];
+
                                                 // attachment
                                                 $newItem->attachment()->create([
                                                     'original_name' => $image,
@@ -2949,6 +4267,18 @@ class RestaurantItemSeeder extends Seeder
                                                 $champagne['is_featured'] = 1;
                                                 $champagne['category_id'] = $subcategory->id;
                                                 $newItem = RestaurantItem::create($champagne);
+
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Glass',
+                                                        'price'=> 30
+                                                    ],
+                                                    [
+                                                        'name' => 'Bottle',
+                                                        'price'=> 50
+                                                    ]
+                                                ];
 
                                                 // attachment
                                                 $newItem->attachment()->create([
@@ -3074,6 +4404,23 @@ class RestaurantItemSeeder extends Seeder
                                                 $spirit['category_id'] = $subcategory->id;
                                                 $newItem = RestaurantItem::create($spirit);
 
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Single Shot',
+                                                        'price'=> 10
+                                                    ],
+                                                    [
+                                                        'name' => 'Double Shot',
+                                                        'price'=> 20
+                                                    ]
+                                                ];
+
+                                                foreach( $variationsArr as $variation )
+                                                {
+                                                    $newItem->variations()->create($variation);
+                                                }
+
                                                 // attachment
                                                 $newItem->attachment()->create([
                                                     'original_name' => $image,
@@ -3092,6 +4439,27 @@ class RestaurantItemSeeder extends Seeder
                                                 $cocktail['is_featured'] = 1;
                                                 $cocktail['category_id'] = $subcategory->id;
                                                 $newItem = RestaurantItem::create($cocktail);
+
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Single Shot',
+                                                        'price'=> 10
+                                                    ],
+                                                    [
+                                                        'name' => 'Double Shot',
+                                                        'price'=> 20
+                                                    ],
+                                                    [
+                                                        'name' => 'Glass',
+                                                        'price'=> 30
+                                                    ]
+                                                ];
+
+                                                foreach( $variationsArr as $variation )
+                                                {
+                                                    $newItem->variations()->create($variation);
+                                                }
 
                                                 // attachment
                                                 $newItem->attachment()->create([
@@ -3112,6 +4480,31 @@ class RestaurantItemSeeder extends Seeder
                                                 $beer['category_id'] = $subcategory->id;
                                                 $newItem = RestaurantItem::create($beer);
 
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Glass',
+                                                        'price'=> 10
+                                                    ],
+                                                    [
+                                                        'name' => 'Bottle',
+                                                        'price'=> 35
+                                                    ],
+                                                    [
+                                                        'name' => 'Jug',
+                                                        'price'=> 50
+                                                    ],
+                                                    [
+                                                        'name' => 'Pint',
+                                                        'price'=> 75
+                                                    ]
+                                                ];
+
+                                                foreach( $variationsArr as $variation )
+                                                {
+                                                    $newItem->variations()->create($variation);
+                                                }
+
                                                 // attachment
                                                 $newItem->attachment()->create([
                                                     'original_name' => $image,
@@ -3131,6 +4524,26 @@ class RestaurantItemSeeder extends Seeder
                                                 $wine['category_id'] = $subcategory->id;
                                                 $newItem = RestaurantItem::create($wine);
 
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Single Shot',
+                                                        'price'=> 10
+                                                    ],
+                                                    [
+                                                        'name' => 'Double Shot',
+                                                        'price'=> 20
+                                                    ],
+                                                    [
+                                                        'name' => 'Glass',
+                                                        'price'=> 30
+                                                    ],
+                                                    [
+                                                        'name' => 'Bottle',
+                                                        'price'=> 50
+                                                    ]
+                                                ];
+
                                                 // attachment
                                                 $newItem->attachment()->create([
                                                     'original_name' => $image,
@@ -3149,6 +4562,18 @@ class RestaurantItemSeeder extends Seeder
                                                 $champagne['is_featured'] = 1;
                                                 $champagne['category_id'] = $subcategory->id;
                                                 $newItem = RestaurantItem::create($champagne);
+
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Glass',
+                                                        'price'=> 30
+                                                    ],
+                                                    [
+                                                        'name' => 'Bottle',
+                                                        'price'=> 50
+                                                    ]
+                                                ];
 
                                                 // attachment
                                                 $newItem->attachment()->create([

@@ -28,7 +28,8 @@ class DatabaseSeeder extends Seeder
             RestaurantPickupPointSeeder::class,
             RestaurantItemSeeder::class,
             AddonsSeeder::class,
-            MixtureSeeder::class
+            MixtureSeeder::class,
+            OrderSeeder::class
         ]);
     }
 }

@@ -16,7 +16,7 @@ class CustomerSeeder extends Seeder
      */
     public function run()
     {
-        User::create([
+        $newUser = User::create([
             'id'                    => 3,
             'first_name'            => 'Milan',
             'last_name'             => 'Soni',
@@ -27,6 +27,16 @@ class CustomerSeeder extends Seeder
             'created_at' 	        => Carbon::now()->toDateTimeString(),
             'updated_at' 	        => Carbon::now()->toDateTimeString(),
             'email_verified_at'     => Carbon::now()->toDateTimeString()
+        ]);
+
+        // add user payment methods
+        $newUser->payment_methods()->create([
+            'name'  => 'Cash'
+        ]);
+
+        // add user payment methods
+        $newUser->payment_methods()->create([
+            'name'  => 'Credit Card'
         ]);
     }
 }
