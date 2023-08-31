@@ -3,6 +3,8 @@
 use App\Models\Category;
 use App\Models\Restaurant;
 use App\Models\RestaurantItem;
+use App\Models\User;
+use App\Models\UserFavouriteItem;
 use App\Repositories\BaseRepository;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -177,34 +179,64 @@ class RestaurantRepository extends BaseRepository
         $user       = auth()->user();
         $category   = isset($data['category_id']) ? Category::with(['children'])->find($data['category_id']) : new Category();
 
-        $query = $user->favourite_items()
-            ->with(['category', 'category.mixers', 'category.addons'])
-            ->whereHas('restaurant', function($query) use($data)
-            {
-                return $query->where('id', $data['restaurant_id']);
-            });
+        // $query = $user->favourite_items()
+        //     ->with(['category', 'category.mixers', 'category.addons'])
+        //     ->whereHas('restaurant', function($query) use($data)
+        //     {
+        //         return $query->where('id', $data['restaurant_id']);
+        //     });
 
-            if( isset($category->id) )
-            {
-                if( $category->children->count() )
-                {
-                    // get all the child categories ids
-                    $subcategories = $category->children->pluck('id');
+        //     if( isset($category->id) )
+        //     {
+        //         if( $category->children->count() )
+        //         {
+        //             // get all the child categories ids
+        //             $subcategories = $category->children->pluck('id');
 
-                    $query->whereHas('category', function($query) use($subcategories)
+        //             $query->whereHas('category', function($query) use($subcategories)
+        //             {
+        //                 return $query->whereIn('id', $subcategories);
+        //             });
+        //         }
+        //         else
+        //         {
+        //             $query->whereHas('category', function($query) use($category)
+        //             {
+        //                 return $query->where('id', $category->id);
+        //             });
+        //         }
+        //     }
+
+        $query = UserFavouriteItem::query()->with(['item'])->where('user_id', $user->id)
+                    ->whereHas('item', function($query) use($data, $category)
                     {
-                        return $query->whereIn('id', $subcategories);
-                    });
-                }
-                else
-                {
-                    $query->whereHas('category', function($query) use($category)
-                    {
-                        return $query->where('id', $category->id);
-                    });
-                }
-            }
+                        return $query->whereHas('restaurant', function($query) use($data)
+                        {
+                            $query->where('id', $data['restaurant_id']);
+                        });
 
+                        if( isset( $category->id ) )
+                        {
+                            if( $category->children->count() )
+                            {
+                                // get all the child categories ids
+                                $subcategories = $category->children->pluck('id');
+
+                                $query->whereHas('category', function($query) use($subcategories)
+                                {
+                                    return $query->whereIn('id', $subcategories);
+                                });
+                            }
+                            else
+                            {
+                                $query->whereHas('category', function($query) use($category)
+                                {
+                                    return $query->where('id', $category->id);
+                                });
+                            }
+                        }
+                    });
+        // echo common()->formatSql($query);die;
         return $query->get();
     }
 
@@ -219,7 +251,7 @@ class RestaurantRepository extends BaseRepository
     {
         $restaurantId       = isset( $data['restaurant_id'] ) ? $data['restaurant_id'] : null;
         $category           = isset($data['category_id']) ? Category::with(['children'])->find($data['category_id']) : new Category();
-        $query              = RestaurantItem::query()->with(['category', 'category.mixers', 'category.addons', 'restaurant']);
+        $query              = RestaurantItem::query()->with(['category', 'category.mixers', 'category.addons', 'restaurant','variations']);
 
         if( $restaurantId )
         {
@@ -267,5 +299,27 @@ class RestaurantRepository extends BaseRepository
         }
 
         return $restaurant;
+    }
+
+    /**
+     * Method getItembyName
+     *
+     * @param array $data [explicite description]
+     *
+     * @return Collection
+     */
+    public function getItembyName(array $data) : Collection
+    {
+        // $restaurantId     = isset( $data['restaurant_id'] ) ? $data['restaurant_id'] : null;
+        $item_name        = isset( $data['item_name'] ) ? $data['item_name'] : null;
+
+        $query  = RestaurantItem::query()->with(['category', 'category.mixers', 'category.addons', 'restaurant','variations'])->where('restaurant_id', $data['restaurant_id']);
+
+        if($item_name)
+        {
+            $query =  $query->where('name', 'LIKE', '%'.$item_name.'%');
+        }
+
+        return $query->get();
     }
 }
