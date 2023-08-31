@@ -21,13 +21,14 @@ class CreateOrderItems extends Migration
             $table->unsignedBigInteger('parent_item_id')->nullable();
             $table->integer('quantity');
             $table->decimal('price', 14,2)->default(0);
-            $table->unsignedTinyInteger('type')->default(1)->comment('0=Addon, 1=Item, 2=Mixers');
+            $table->unsignedTinyInteger('type')->default(1)->comment('1=Addon, 2=Item, 3=Mixers');
             $table->decimal('total', 14,2);
             $table->timestamps();
 
             $table->foreign('order_id')->references('id')->on('orders')->onDelete('cascade');
             $table->foreign('restaurant_item_id')->references('id')->on('restaurant_items');
             $table->foreign('parent_item_id')->references('id')->on('restaurant_items');
+            $table->foreign('variation_id')->references('id')->on('restaurant_item_variations');
         });
     }
 
