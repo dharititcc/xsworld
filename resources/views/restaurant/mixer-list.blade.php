@@ -1,6 +1,6 @@
 @extends('layouts.restaurant.mainlayout')
 @section('topbar')
-@include('restaurant.partials.foodtopbar')
+@include('restaurant.partials.mixertopbar')
 @endsection
 @section('content')
 <style>
@@ -8,23 +8,9 @@
     background-color: #0f0e0e !important;
   }
 </style>
-<div class="outrbox">
-                            <h2 class="yellow mb-4">Category Preview Tiles</h2>
-                            <div class="grid colmn-6 mb-3">
-                            @foreach ($categories as $category)
-                              <a href="#" class="catg-box"><figure><img src="{{$category->image}}" alt=""></figure>
-                                <figcaption>{{$category->name}} </figcaption></a>
-                            @endforeach
-                            </a>
-                            </div>
+        <div class="outrbox">
                             <div class="sort-by d-flex mb-4">
                                 <h2 class="yellow">Sort By</h2><div class="searchbox"><input type="text" name="search" id="search" class="searchbar" placeholder="Find a Drink"></div>
-                            </div>
-                            <div class="filter-box  mb-4">
-                              <button class="bor-btn category" onclick="getCategory(null)">All <span class="stock"></span></button>
-                              @foreach ($categories as $category)
-                                <button class="bor-btn category" onclick="getCategory({{$category->id}})">{{$category->name}} <span class="stock">({{count($category->items)}})</span></button>
-                              @endforeach
                             </div>
                             <div class="mb-4">
                             <button class="bor-btn">Disable Drink</button>
@@ -39,10 +25,8 @@
                                             Name
                                             <a href="#" class="sort-icon ms-1"><i class="icon-sort"></i></a>
                                         </th>
-                                        <th class="type">Type</th>
                                         <th class="price">Price</th>
                                         <th class="popularity">Popularity</th>
-                                        <th class="my-fav"></th>
                                         <th>Status</th>
                                     </tr>
                                     </thead>
@@ -76,7 +60,7 @@ function load_data(data = null) {
             serverSide: true,
             searching: false,
             ajax:{
-              url :"{{ route('restaurants.foods.index') }}",
+              url :"{{ route('restaurants.mixers.index') }}",
               data :data,
             },
             columns: [
@@ -93,22 +77,6 @@ function load_data(data = null) {
                      "defaultContent" : "",
                       render:function(data, type, row){
                         return '<div class="prdname green"> '+row.name+' </div><a href="#" class="edit">Edit</a>  <div class="add-date">Added '+formatDate(row.created_at)+'</div>'
-                      }
-                   },
-                   {
-                     "data"           : "type", // can be null or undefined
-                     "defaultContent" : "",
-                     "bSortable"      : false,
-                      render:function(data, type, row){
-                        var text="";
-                        if(row.variations.length > 0){
-                          for (let i = 0; i < row.variations.length; i++)
-                          {
-                                  text += '<label class="">'+row.variations[i]['name'] + "</label><br>";
-                          }
-                          return text
-                        }
-                        return ""
                       }
                    },
                    {
@@ -133,17 +101,6 @@ function load_data(data = null) {
                      "bSortable"      : false,
                       render:function(data, type, row){
                         return row.description
-                      }
-                   },
-                   {
-                     "data"           : "favorite", // can be null or undefined
-                     "defaultContent" : "",
-                     "bSortable"      : false,
-                      render:function(data, type, row){
-                        if(row.is_featured == 1){
-                          return '<a href="javascript:void(0)" class="favorite"></a>'
-                        }
-                        return '<a href="javascript:void(0)" class="favorite null"></a>'
                       }
                    },
                    {

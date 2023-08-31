@@ -100,7 +100,15 @@ function load_data(data = null) {
                      "defaultContent" : "",
                      "bSortable"      : false,
                       render:function(data, type, row){
-                        return '<div class="prd-type">Wine</div> <label> Glass</label><label> Bottle</label>'
+                        var text="";
+                        if(row.variations.length > 0){
+                          for (let i = 0; i < row.variations.length; i++)
+                          {
+                                  text += '<label class="">'+row.variations[i]['name'] + "</label><br>";
+                          }
+                          return text
+                        }
+                        return ""
                       }
                    },
                    {
@@ -108,7 +116,15 @@ function load_data(data = null) {
                      "defaultContent" : "",
                      "bSortable"      : false,
                       render:function(data, type, row){
-                        return '<label>&nbsp;</label><label class="price">$'+row.price+'</label><label class="price"> $'+row.price+'</label>'
+                        var text="";
+                        if(row.variations.length > 0){
+                          for (let i = 0; i < row.variations.length; i++)
+                          {
+                                  text += '<label class="price">$'+row.variations[i]['price'] + "</label><br>";
+                          }
+                          return text
+                        }
+                        return row.price
                       }
                    },
                    {
@@ -124,7 +140,10 @@ function load_data(data = null) {
                      "defaultContent" : "",
                      "bSortable"      : false,
                       render:function(data, type, row){
-                        return '<a href="javascript:void(0)" class="favorite"></a>'
+                        if(row.is_featured == 1){
+                          return '<a href="javascript:void(0)" class="favorite"></a>'
+                        }
+                        return '<a href="javascript:void(0)" class="favorite null"></a>'
                       }
                    },
                    {
@@ -132,8 +151,13 @@ function load_data(data = null) {
                      "defaultContent" : "",
                      "bSortable"      : false,
                       render:function(data, type, row){
-                        return '<div class="green"><strong>Featured Drink</strong> </div> <div class="green"><strong> In-Stock</strong></div></td>'
+                        var html;
+                        if(row.is_featured == 1){
+                          html ='<div class="green"><strong>Featured Drink</strong> </div><div class="green"><strong> In-Stock</strong></div></td>'
+                         return html
                       }
+                      return '<div class="green"><strong> In-Stock</strong></div></td>'
+                    }
                    },
             ]
         });
