@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
+use PhpParser\ErrorHandler\Collecting;
 
 class RestaurantItem extends Model
 {
@@ -60,6 +62,13 @@ class RestaurantItem extends Model
         'updated_at' => 'datetime',
         'deleted_at' => 'datetime'
     ];
+
+    /**
+     * The relations to eager load on every query.
+     *
+     * @var array
+     */
+    protected $with = ['attachment'];
 
     /**
      * Method getItemTypeAttribute
@@ -132,13 +141,13 @@ class RestaurantItem extends Model
      *
      * @return int
      */
-    public function getCountUserFavouriteItemAttribute(): int
+    public function getCountUserFavouriteItemAttribute(): Collection
     {
         $user = auth()->check() ? auth()->user() : null;
 
         if( isset( $user->id ) )
         {
-            return $user->favourite_items()->where('user_favourite_items.restaurant_item_id', $this->id)->count();
+            return $user->favourite_items()->where('user_favourite_items.restaurant_item_id', $this->id)->get();
         }
 
         return false;

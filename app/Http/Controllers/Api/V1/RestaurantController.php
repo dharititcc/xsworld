@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Requests\RestaurantFeaturedRequest;
 use App\Http\Requests\RestaurantFilterApiRequest;
+use App\Http\Requests\RestaurantItemSearchRequest;
 use App\Http\Requests\RestaurantSubCategoryReuest;
 use App\Http\Resources\CategoryResource;
 use App\Http\Resources\RestaurantItemsResource;
@@ -252,5 +253,24 @@ class RestaurantController extends APIController
         }
 
         return $this->respondWithError('Sub Categories not found.');
+    }
+
+    /**
+     * Method itemSearchByName
+     *
+     *  @return \Illuminate\Http\JsonResponse
+     *
+     * @return void
+     */
+    public function itemSearchByName(RestaurantItemSearchRequest $request)
+    {
+        $restaurantsItems        = $this->repository->getItembyName($request->validated());
+
+        if( $restaurantsItems->count() )
+        {
+            return $this->respondSuccess('Items Found.', RestaurantItemsResource::collection($restaurantsItems));
+        }
+
+        return $this->respondWithError('Items not found.');
     }
 }
