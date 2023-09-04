@@ -135,8 +135,8 @@ class OrderRepository extends BaseRepository
         $user        = auth()->user();
         $order       = Order::with([
             'order_items',
-            'order_addons',
-            'order_mixer'
+            'order_items.addons',
+            'order_items.mixer'
         ])->where('user_id',$user->id)->get();
 
         return $order;

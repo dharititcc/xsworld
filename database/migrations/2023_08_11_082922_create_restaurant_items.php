@@ -24,6 +24,7 @@ class CreateRestaurantItems extends Migration
             $table->unsignedTinyInteger('is_variable')->default(0)->comment('0=Simple Product, 1=Variable Product');
             $table->decimal('price', 14,2)->default(0);
             $table->tinyInteger('is_featured')->default(0)->comment('0=Not Featured, 1=Featured');
+            $table->tinyInteger('is_available')->default(0)->comment('1=available,0=Not available');
             $table->timestamps();
             $table->softDeletes();
 

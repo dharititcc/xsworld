@@ -28,7 +28,7 @@ class RestaurantItemsResource extends JsonResource
             'currency'                  => $this->restaurant->currency->code,
             'is_featured'               => $this->is_featured,
             'image'                     => $this->attachment_url ?? '',
-            'is_favourite'              => $this->count_user_favourite_item,
+            'is_favourite'              => $this->count_user_favourite_item->count() ? 1 : 0,
             'variations'                => isset($this->variations) ? VariationResource::collection($this->variations) : [],
             'mixers'                    => isset($this->category->mixers) ? AddonMixerResource::collection($this->category->mixers) : [],
             'addons'                    => isset($this->category->addons) ? AddonMixerResource::collection($this->category->addons) : [],

@@ -28,9 +28,9 @@ class UserFavouriteItem extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function restaurant(): BelongsTo
+    public function item(): BelongsTo
     {
-        return $this->belongsTo(Restaurant::class, 'restaurant_id', 'id');
+        return $this->belongsTo(RestaurantItem::class, 'restaurant_item_id', 'id');
     }
 
 }

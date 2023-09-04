@@ -31,8 +31,8 @@ class OrderItemResource extends JsonResource
                     'price'     => $this->price,
                     'quantity'  => $this->quantity
                 ] : [],
-                'addons'            => $this->addons,
-                'mixer'             => $this->mixer
+                'addons'            => isset($this->addons) ? OrderItemAddonResource::collection($this->addons) : [],
+                'mixer'             => isset($this->mixer) ? new OrderItemMixerResource($this->mixer) : []
             ];
         }
 

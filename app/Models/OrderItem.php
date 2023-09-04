@@ -84,6 +84,6 @@ class OrderItem extends Model
      */
     public function mixer(): HasOne
     {
-        return $this->hasOne(self::class, 'parent_item_id', 'id')->where('type', RestaurantItem::ADDON);
+        return $this->hasOne(self::class, 'parent_item_id', 'id')->where('type', RestaurantItem::MIXER);
     }
 }
