@@ -96,7 +96,7 @@ class RestaurantItemSeeder extends Seeder
                 'type'          => RestaurantItem::ITEM,
                 'is_variable'   => 0,
                 'price'         => 22,
-                'description'   => '',
+                'description'   => 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.',
                 'image'         => 'buckle-bunny-sour.jpg'
             ],
             [
@@ -104,7 +104,7 @@ class RestaurantItemSeeder extends Seeder
                 'type'          => RestaurantItem::ITEM,
                 'is_variable'   => 0,
                 'price'         => 22,
-                'description'   => '',
+                'description'   => 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.',
                 'image'         => '805-draft.jpg'
             ],
             [
@@ -112,7 +112,7 @@ class RestaurantItemSeeder extends Seeder
                 'type'          => RestaurantItem::ITEM,
                 'is_variable'   => 0,
                 'price'         => 22,
-                'description'   => '',
+                'description'   => 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.',
                 'image'         => 'kailis-sunset.jpg'
             ],
             [
@@ -120,7 +120,7 @@ class RestaurantItemSeeder extends Seeder
                 'type'          => RestaurantItem::ITEM,
                 'is_variable'   => 0,
                 'price'         => 20,
-                'description'   => '',
+                'description'   => 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.',
                 'image'         => 'the-loop-mania.jpg'
             ],
             [
@@ -128,7 +128,7 @@ class RestaurantItemSeeder extends Seeder
                 'type'          => RestaurantItem::ITEM,
                 'is_variable'   => 0,
                 'price'         => 20,
-                'description'   => '',
+                'description'   => 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.',
                 'image'         => 'heineken.jpg'
             ]
         ];
