@@ -138,6 +138,16 @@ class UserRepository extends BaseRepository
      */
     public function create(array $data): User
     {
-        return User::create($data);
+        if( isset( $data['user_type'] ) )
+        {
+            $user = User::create($data);
+            if( $data['user_type'] == User::CUSTOMER )
+            {
+                $user->payment_methods()->create([
+                    'name' => 'Cash'
+                ]);
+            }
+        }
+        return $user;
     }
 }
