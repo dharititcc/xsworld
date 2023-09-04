@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Requests\AddtocartRequest;
+use App\Http\Resources\OrderResource;
 use App\Repositories\OrderRepository;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -44,6 +45,29 @@ class OrderController extends APIController
 
         $add_to_cart   = $this->repository->addTocart($dataArr);
 
-        dd($add_to_cart->count());
+        if($add_to_cart)
+        {
+            return $this->respondSuccess('Item added');
+        }
+
+        return $this->respondWithError('Item not added.');
+    }
+
+    /**
+     * Method viewCart
+     *
+     * @return void
+     */
+    public function viewCart()
+    {
+        $cart_data      = $this->repository->getCartdata();
+        // dd($cart_data);
+
+        if($cart_data)
+        {
+            return $this->respondSuccess('Cart data found', OrderResource::collection($cart_data));
+        }
+
+
     }
 }

@@ -49,6 +49,8 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'v1', 'as' => 'api.v1.'], fun
         Route::post('/restaurants/items', 'RestaurantItemController@index')->name('restaurant.items.index');
         // {api/v1/users/addtocart}
         Route::post('/addtocart', 'OrderController@addToCart')->name('addtocart');
+        // {api/v1/users/viewcart}
+        Route::post('/viewcart', 'OrderController@viewCart')->name('viewcart');
     });
 
     Route::group(['prefix' => 'users','middleware' => 'auth:api'], function ()
