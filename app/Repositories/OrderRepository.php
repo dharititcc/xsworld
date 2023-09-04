@@ -54,14 +54,14 @@ class OrderRepository extends BaseRepository
                         'total'                 => $item['quantity'] * $item['price']
                     ];
                     // add item in the order items table
-                    $newOrder->items()->create($itemArr);
+                    $newOrderItem = $newOrder->items()->create($itemArr);
 
                     // make proper mixer data for the table
                     if( isset( $item['mixer'] ) )
                     {
                         $mixerArr = [
                             'restaurant_item_id'=> $item['mixer']['id'],
-                            'parent_item_id'    => $item['item_id'],
+                            'parent_item_id'    => $newOrderItem->id,
                             'price'             => $item['mixer']['price'],
                             'type'              => RestaurantItem::MIXER,
                             'quantity'          => $item['mixer']['quantity'],
@@ -83,7 +83,7 @@ class OrderRepository extends BaseRepository
                             {
                                 $addonData = [
                                     'restaurant_item_id'    => $addon['id'],
-                                    'parent_item_id'        => $item['item_id'],
+                                    'parent_item_id'        => $newOrderItem->id,
                                     'price'                 => $addon['price'],
                                     'type'                  => RestaurantItem::ADDON,
                                     'quantity'              => $addon['quantity'],
