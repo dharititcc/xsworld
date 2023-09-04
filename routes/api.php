@@ -51,6 +51,7 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'v1', 'as' => 'api.v1.'], fun
         Route::post('/addtocart', 'OrderController@addToCart')->name('addtocart');
         // {api/v1/users/viewcart}
         Route::post('/viewcart', 'OrderController@viewCart')->name('viewcart');
+        Route::get('/show/{order}', 'OrderController@show')->name('order.show');
     });
 
     Route::group(['prefix' => 'users','middleware' => 'auth:api'], function ()
@@ -69,5 +70,22 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'v1', 'as' => 'api.v1.'], fun
     {
         // {api/v1/countries/}
         Route::get('get-countries', 'CountryController@index')->name('countries.index');
+    });
+
+    Route::group(['namespace' => 'Bartender', 'prefix' => 'bartender'], function()
+    {
+        Route::group(['middleware' => ['guest']], function()
+        {
+            // {api/v1/bartender/login}
+            Route::post('login', 'AuthController@postLogin')->name('bartender.login');
+        });
+
+        Route::group(['middleware' => 'auth:api'], function ()
+        {
+            // {api/v1/bartender/logout}
+            Route::post('logout', 'AuthController@logout')->name('bartender.logout');
+
+            // orders
+        });
     });
 });

@@ -16,7 +16,7 @@ class CreateRestaurantItems extends Migration
         Schema::create('restaurant_items', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('description')->nullable();
+            $table->text('description')->nullable();
             $table->unsignedBigInteger('restaurant_id');
             $table->unsignedBigInteger('category_id');
             $table->unsignedBigInteger('parent_id')->nullable()->comment('For Addons/Mixers');

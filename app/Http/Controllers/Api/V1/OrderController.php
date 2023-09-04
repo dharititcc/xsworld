@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Exceptions\GeneralException;
 use App\Http\Requests\AddtocartRequest;
 use App\Http\Resources\OrderResource;
+use App\Models\Order;
 use App\Repositories\OrderRepository;
+use Illuminate\Http\Request;
 
 class OrderController extends APIController
 {
@@ -24,6 +27,24 @@ class OrderController extends APIController
     }
 
     /**
+     * Method show
+     *
+     * @param Request $request [explicite description]
+     * @param Order $order [explicite description]
+     *
+     * @return void
+     */
+    public function show(Request $request, Order $order)
+    {
+        if( isset( $order->id ) )
+        {
+            return $this->respondSuccess('Order detail found.', new OrderResource($order));
+        }
+
+        throw new GeneralException('Order not found.');
+    }
+
+    /**
      * Method addToCart
      *
      * @param AddtocartRequest $request [explicite description]
@@ -36,7 +57,7 @@ class OrderController extends APIController
         {
             "order": {
                 "pickup_point_id": 2,
-                "type": 0,              // 0=CART, 1=ORDER
+                "type": 1,              // 1=CART, 2=ORDER
                 "total": 50,
                 "currency_id": 1,
                 "restaurant_id": 4

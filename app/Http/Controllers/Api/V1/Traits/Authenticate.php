@@ -67,6 +67,12 @@ trait Authenticate
 
                     return Auth::attempt($this->credentials($request));
                     break;
+                case User::USERNAME:
+                    // validation
+                    $this->validateUsername($request);
+
+                    return Auth::attempt($this->credentials($request));
+                    break;
                 default:
                     // validation
                     $this->validateLogin($request);
@@ -89,6 +95,21 @@ trait Authenticate
     {
         $request->validate([
             'phone' => 'required|numeric',
+            'password' => 'required|string',
+        ]);
+    }
+
+    /**
+     * Method validateUsername
+     *
+     * @param Request $request [explicite description]
+     *
+     * @return void
+     */
+    public function validateUsername(Request $request)
+    {
+        $request->validate([
+            'username' => 'required|string',
             'password' => 'required|string',
         ]);
     }
@@ -117,10 +138,10 @@ trait Authenticate
     public function credentials(Request $request):array
     {
         // the value in the 'email' field in the request
-        $username = $request->get($this->username());
+        // $username = $request->get($this->username($request));
 
         // check if the value is a validate email address and assign the field name accordingly
-        $field = filter_var($username, FILTER_VALIDATE_EMAIL) ? $this->username()  : 'phone';
+        $field = $this->username($request);//filter_var($username, FILTER_VALIDATE_EMAIL) ? $this->username($request)  : 'phone';
 
         // return the credentials to be used to attempt login
         return [
@@ -134,9 +155,28 @@ trait Authenticate
      *
      * @return string
      */
-    public function username(): string
+    public function username(Request $request): string
     {
-        $field = filter_var(request()->input('email'), FILTER_VALIDATE_EMAIL) ? 'email' : 'phone';
-        return $field;
+        // $field = filter_var(request()->input('email'), FILTER_VALIDATE_EMAIL) ? 'email' : 'phone';
+        // return $field;
+        $type = intval($request->registration_type);
+        switch( $type )
+        {
+            case User::GOOGLE:
+                return 'email';
+                break;
+            case User::FACEBOOK:
+                return 'email';
+                break;
+            case User::PHONE:
+                return 'phone';
+                break;
+            case User::USERNAME:
+                return 'username';
+                break;
+            default:
+                return 'email';
+                break;
+        }
     }
 }
