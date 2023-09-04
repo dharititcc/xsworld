@@ -14,14 +14,30 @@ class OrderItemResource extends JsonResource
      */
     public function toArray($request)
     {
-        // dd($this);
-        return [
+
+        $response = [
             'id'               => $this->id,
             'name'             => $this->restaurant_item->name,
             'quantity'         => $this->quantity,
             'price'            => $this->price,
             'total'            => $this->total,
-            'type'             => $this->restaurant_item->item_type
+            'type'             => $this->restaurant_item->item_type,
+            // 'variation'        => isset($this->variations) ? VariationResource::collection($this->variations) : []
         ];
+
+        if($this->variation_id)
+        {
+            $response += [
+                'variation'        => $this->variations->name
+            ];
+        }
+        else
+        {
+            $response += [
+                'variation'        => ''
+            ];
+        }
+
+        return $response;
     }
 }

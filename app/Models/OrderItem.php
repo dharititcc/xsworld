@@ -55,6 +55,16 @@ class OrderItem extends Model
     }
 
     /**
+     * The variations that belong to the RestaurantItem
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function variations(): BelongsTo
+    {
+        return $this->belongsTo(RestaurantVariation::class, 'variation_id', 'id');
+    }
+
+    /**
      * Method scopeAddon
      *
      * @param \Illuminate\Database\Eloquent\Builder $query [explicite description]

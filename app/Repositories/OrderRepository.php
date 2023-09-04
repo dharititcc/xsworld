@@ -133,7 +133,8 @@ class OrderRepository extends BaseRepository
     {
         $user        = auth()->user();
         $order       = Order::with([
-            'items'
+            'items',
+            'items.variations'
         ])->where('user_id',$user->id)->get();
 
         return $order;
