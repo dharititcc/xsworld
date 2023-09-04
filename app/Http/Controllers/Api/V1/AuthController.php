@@ -450,7 +450,7 @@ class AuthController extends APIController
             'password'              => Hash::make($request->password),
             'phone'                 => $request->phone,
             'country_code'          => $request->country_code,
-            'country'               => $request->country,
+            'country_id'            => $request->country,
             'address'               => $request->address,
             'registration_type'     => $request->registration_type,
             'birth_date'            => $request->birth_date,

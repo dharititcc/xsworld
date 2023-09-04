@@ -38,7 +38,7 @@ class LoginRequest extends FormRequest
                                         ]
         ];
 
-        if( request()->registration_type == User::EMAIL )
+        if( in_array(request()->registration_type, [User::EMAIL, User::GOOGLE, User::FACEBOOK]))
         {
             $rules['email'] = 'required|email';
         }
