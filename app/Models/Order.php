@@ -24,6 +24,14 @@ class Order extends Model
     const COMPLETED = 3;
     const CANCELED  = 4;
 
+    const ORDER_STATUS = [
+        self::PENDNIG       => 'Pending',
+        self::ACCEPTED      => 'Accepted',
+        self::READY         => 'Ready',
+        self::COMPLETED     => 'Completed',
+        self::CANCELED      => 'Canceled',
+    ];
+
     /**
      * The attributes that are mass assignable.
      *
@@ -41,7 +49,6 @@ class Order extends Model
         'amount',
         'transaction_id',
         'currency_id',
-        'cancel_reason',
         'apply_time',
         'accepted_date',
         'total',
@@ -58,6 +65,16 @@ class Order extends Model
         'updated_at'    => 'datetime',
         'accepted_date' => 'datetime'
     ];
+
+    /**
+     * Method getOrderStatusAttribute
+     *
+     * @return string
+    */
+    public function getOrderStatusAttribute(): string
+    {
+        return self::ORDER_STATUS[$this->status];
+    }
 
     /**
      * Get the user that owns the Order
@@ -106,7 +123,7 @@ class Order extends Model
      */
     public function payment_method(): BelongsTo
     {
-        return $this->belongsTo(PaymentMethod::class, 'payment_method_id', 'id');
+        return $this->belongsTo(UserPaymentMethod::class, 'user_id ', 'id');
     }
 
     /**
