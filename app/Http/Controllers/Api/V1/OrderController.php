@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Requests\AddtocartRequest;
 use App\Http\Resources\OrderResource;
 use App\Repositories\OrderRepository;
-use Illuminate\Database\Eloquent\Collection;
 
 class OrderController extends APIController
 {
@@ -50,21 +49,25 @@ class OrderController extends APIController
                     "quantity": 2,
                     "mixer": {
                         "id": 361,
-                        "price": 0
+                        "price": 0,
+                        "quantity": 1
                     },
                     "addons": [
                         {
                             "id": 283,
-                            "price": 16
+                            "price": 16,
+                            "quantity": 1
                         },
                         {
                             "id": 284,
-                            "price": 10
+                            "price": 10,
+                            "quantity": 1
                         }
                     ],
                     "variation": {
                         "id" : 61,
-                        "price": 15
+                        "price": 15,
+                        "quantity": 1
                     }
                 },
                 {
@@ -74,21 +77,25 @@ class OrderController extends APIController
                     "quantity": 2,
                     "mixer": {
                         "id": 361,
-                        "price": 0
+                        "price": 0,
+                        "quantity": 1
                     },
                     "addons": [
                         {
                             "id": 283,
-                            "price": 16
+                            "price": 16,
+                            "quantity": 1
                         },
                         {
                             "id": 284,
-                            "price": 10
+                            "price": 10,
+                            "quantity": 1
                         }
                     ],
                     "variation": {
                         "id" : 61,
-                        "price": 15
+                        "price": 15,
+                        "quantity": 1
                     }
                 }
             ]

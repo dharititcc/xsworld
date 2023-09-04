@@ -257,15 +257,15 @@ class OrderSeeder extends Seeder
 
                 $variation = $item->variations->random(1)->first();
 
-                $orderDetails[] = [
+                $newOrderItem = $newOrder->items()->create([
                     'restaurant_item_id'    => $variation->restaurant_item_id,
                     'variation_id'          => $variation->id,
-                    'parent_item_id'        => $item->id,
+                    'parent_item_id'        => null,
                     'quantity'              => 1,
                     'price'                 => $variation->price,
                     'type'                  => RestaurantItem::ITEM,
                     'total'                 => 1 * $variation->price
-                ];
+                ]);
             }
 
             // add addons
@@ -278,7 +278,6 @@ class OrderSeeder extends Seeder
                     $orderDetails[] = [
                         'restaurant_item_id'    => $addon->id,
                         'variation_id'          => null,
-                        'parent_item_id'        => null,
                         'quantity'              => 2,
                         'price'                 => $addon->price,
                         'type'                  => RestaurantItem::ADDON,
@@ -293,7 +292,6 @@ class OrderSeeder extends Seeder
             $orderDetails[] = [
                 'restaurant_item_id'    => $mixer->id,
                 'variation_id'          => null,
-                'parent_item_id'        => null,
                 'quantity'              => 2,
                 'price'                 => $mixer->price,
                 'type'                  => RestaurantItem::MIXER,
@@ -304,6 +302,7 @@ class OrderSeeder extends Seeder
             {
                 foreach( $orderDetails as $order_item )
                 {
+					$order_item['parent_item_id'] = $newOrderItem->id;
                     $newOrder->items()->create($order_item);
                 }
             }

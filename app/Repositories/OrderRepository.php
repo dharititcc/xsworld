@@ -2,7 +2,7 @@
 
 use App\Exceptions\GeneralException;
 use App\Models\Order;
-use App\Models\PickupPoint;
+use App\Models\Restaurant;
 use App\Models\RestaurantItem;
 use App\Repositories\BaseRepository;
 use Illuminate\Support\Collection;
@@ -33,11 +33,9 @@ class OrderRepository extends BaseRepository
         // check if order request is available
         if( !empty($order) && !empty($orderItems) )
         {
-            // dd($order);
-            $pickupPoint = PickupPoint::find($order['pickup_point_id']);
-            $order['pickup_point_id'] = $pickupPoint->id;
+            $restaurant = Restaurant::find($order['restaurant_id']);
             $order['user_id'] = $user->id;
-            $order['pickup_point_user_id'] = $pickupPoint->user_id;
+            $order['currency_id'] = $restaurant->currency_id;
 
             // dd($order);
             $newOrder = Order::create($order);
@@ -63,6 +61,7 @@ class OrderRepository extends BaseRepository
                     {
                         $mixerArr = [
                             'restaurant_item_id'=> $item['mixer']['id'],
+                            'parent_item_id'    => $item['item_id'],
                             'price'             => $item['mixer']['price'],
                             'type'              => RestaurantItem::MIXER,
                             'quantity'          => $item['mixer']['quantity'],
@@ -84,7 +83,8 @@ class OrderRepository extends BaseRepository
                             {
                                 $addonData = [
                                     'restaurant_item_id'    => $addon['id'],
-                                    'restaurant_item_id'    => $addon['price'],
+                                    'parent_item_id'        => $item['item_id'],
+                                    'price'                 => $addon['price'],
                                     'type'                  => RestaurantItem::ADDON,
                                     'quantity'              => $addon['quantity'],
                                     'total'                 => $addon['quantity'] * $addon['price']
@@ -101,6 +101,7 @@ class OrderRepository extends BaseRepository
                     {
                         $variationArr = [
                             'restaurant_item_id'    => $item['item_id'],
+                            'parent_item_id'        => $item['item_id'],
                             'variation_id'          => $item['variation']['id'],
                             'quantity'              => $item['variation']['quantity'],
                             'price'                 => $item['variation']['price'],
@@ -133,8 +134,9 @@ class OrderRepository extends BaseRepository
     {
         $user        = auth()->user();
         $order       = Order::with([
-            'items',
-            'items.variations'
+            'order_items',
+            'order_addons',
+            'order_mixer'
         ])->where('user_id',$user->id)->get();
 
         return $order;

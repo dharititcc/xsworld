@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Order extends Model
 {
@@ -135,6 +136,36 @@ class Order extends Model
     public function items(): HasMany
     {
         return $this->hasMany(OrderItem::class, 'order_id', 'id');
+    }
+
+    /**
+     * Method order_items
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function order_items(): HasMany
+    {
+        return $this->hasMany(OrderItem::class, 'order_id', 'id')->where('type', RestaurantItem::ITEM);
+    }
+
+    /**
+     * Method order_addons
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function order_addons(): HasMany
+    {
+        return $this->hasMany(OrderItem::class, 'order_id', 'id')->where('type', RestaurantItem::ADDON);
+    }
+
+    /**
+     * Method order_mixer
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function order_mixer(): HasOne
+    {
+        return $this->hasOne(OrderItem::class, 'order_id', 'id')->where('type', RestaurantItem::MIXER);
     }
 
     /**

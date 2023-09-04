@@ -19,14 +19,14 @@ class OrderResource extends JsonResource
             'id'                        => $this->id,
             'restaurant_name'           => $this->restaurant->name,
             'restaurant_id'             => $this->restaurant->id,
-            'pickup_point'              => $this->pickup_point,
-            'pickup_point_user'         => $this->pickup_point_user->name,
+            'pickup_point'              => $this->pickup_point ?? '',
+            'pickup_point_user'         => $this->pickup_point_user->name ?? '',
             'amount'                    => $this->amount,
             'total'                     => $this->total,
             'status'                    => $this->order_status,
             'user_payment_method'       => '',
             'credit_point'              => $this->credit_point,
-            'order_items'               => isset($this->items) ? OrderItemResource::collection($this->items) : []
+            'order_items'               => isset($this->order_items) ? OrderItemResource::collection($this->order_items) : []
         ];
     }
 }

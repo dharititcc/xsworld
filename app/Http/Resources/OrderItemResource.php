@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\RestaurantItem;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class OrderItemResource extends JsonResource
@@ -14,27 +15,24 @@ class OrderItemResource extends JsonResource
      */
     public function toArray($request)
     {
-
-        $response = [
-            'id'               => $this->id,
-            'name'             => $this->restaurant_item->name,
-            'quantity'         => $this->quantity,
-            'price'            => $this->price,
-            'total'            => $this->total,
-            'type'             => $this->restaurant_item->item_type,
-            // 'variation'        => isset($this->variations) ? VariationResource::collection($this->variations) : []
-        ];
-
-        if($this->variation_id)
+        $response = [];
+        if( $this->type == RestaurantItem::ITEM )
         {
-            $response += [
-                'variation'        => $this->variations->name
-            ];
-        }
-        else
-        {
-            $response += [
-                'variation'        => ''
+            $response = [
+                'id'               => $this->id,
+                'name'             => $this->restaurant_item->name,
+                'quantity'         => $this->quantity,
+                'price'            => $this->price,
+                'total'            => $this->total,
+                'type'             => $this->restaurant_item->item_type,
+                'variation'        => isset($this->variation_id) ? [
+                    'id'        => $this->id,
+                    'name'      => $this->variation->name,
+                    'price'     => $this->price,
+                    'quantity'  => $this->quantity
+                ] : [],
+                'addons'            => $this->addons,
+                'mixer'             => $this->mixer
             ];
         }
 
