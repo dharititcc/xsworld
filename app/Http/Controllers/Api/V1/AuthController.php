@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\V1\Traits\Authenticate;
 use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\LoginRequest;
 use App\Http\Resources\UserResource;
+use App\Models\User;
 use App\Repositories\UserRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -450,14 +451,15 @@ class AuthController extends APIController
             'password'              => Hash::make($request->password),
             'phone'                 => $request->phone,
             'country_code'          => $request->country_code,
-            'country'               => $request->country,
+            'country_id'            => $request->country,
             'address'               => $request->address,
             'registration_type'     => $request->registration_type,
             'birth_date'            => $request->birth_date,
             'platform'              => $request->platform,
             'os_version'            => $request->os_version,
             'application_version'   => $request->application_version,
-            'model'                 => $request->model
+            'model'                 => $request->model,
+            'user_type'             => User::CUSTOMER
         ];
 
         $user = $this->repository->create($dataArr);

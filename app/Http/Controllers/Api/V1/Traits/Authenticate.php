@@ -41,7 +41,7 @@ trait Authenticate
                     // validation
                     $this->validateEmail($request);
 
-                    $user = User::find($request->email);
+                    $user = User::where('email', $request->email)->first();
 
                     if( $user instanceof \App\Models\User && isset( $user->id ) )
                     {
@@ -53,7 +53,7 @@ trait Authenticate
                     // validation
                     $this->validateEmail($request);
 
-                    $user = User::find($request->email);
+                    $user = User::where('email', $request->email)->first();
 
                     if( $user instanceof \App\Models\User && isset( $user->id ) )
                     {
