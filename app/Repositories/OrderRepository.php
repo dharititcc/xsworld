@@ -137,8 +137,26 @@ class OrderRepository extends BaseRepository
             'order_items',
             'order_items.addons',
             'order_items.mixer'
-        ])->where('user_id',$user->id)->get();
+        ])->where('user_id',$user->id)->where('type',Order::CART)->get();
 
         return $order;
+    }
+
+    /**
+     * Method getOrderdata
+     *
+     * @return Collection
+     */
+    function getOrderdata() : Collection
+    {
+        $user        = auth()->user();
+        $order       = Order::with([
+            'order_items',
+            'order_items.addons',
+            'order_items.mixer'
+        ])->where('user_id',$user->id)->where('type',Order::ORDER)->get();
+
+        return $order;
+
     }
 }

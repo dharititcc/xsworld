@@ -51,6 +51,8 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'v1', 'as' => 'api.v1.'], fun
         Route::post('/addtocart', 'OrderController@addToCart')->name('addtocart');
         // {api/v1/users/viewcart}
         Route::post('/viewcart', 'OrderController@viewCart')->name('viewcart');
+        // {api/v1/users/orderhistory}
+        Route::get('/orderhistory', 'OrderController@orderHistory')->name('orderhistory');
     });
 
     Route::group(['prefix' => 'users','middleware' => 'auth:api'], function ()
