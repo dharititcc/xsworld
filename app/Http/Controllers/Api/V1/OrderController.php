@@ -32,25 +32,73 @@ class OrderController extends APIController
      */
     public function addToCart(AddtocartRequest $request)
     {
-        $dataArr = [
-            'restaurant_item_id'  => $request->restaurant_item_id,
-            'category_id'         => $request->category_id,
-            'price'               => $request->price,
-            'quantity'            => $request->quantity,
-            'is_variable'         => $request->is_variable,
-            'mixer'               => $request->mixer ?? null,
-            'addon'               => $request->addon ?? null,
-            'variation'           => $request->variation ?? null
-        ];
-
-        $add_to_cart   = $this->repository->addTocart($dataArr);
-
-        if($add_to_cart)
+        // sample request
+        /*
         {
-            return $this->respondSuccess('Item added');
+            "order": {
+                "pickup_point_id": 2,
+                "type": 0,              // 0=CART, 1=ORDER
+                "total": 50,
+                "currency_id": 1,
+                "restaurant_id": 4
+            },
+            "order_items": [
+                {
+                    "item_id": 69,
+                    "category_id": 2,
+                    "price": 0,
+                    "quantity": 2,
+                    "mixer": {
+                        "id": 361,
+                        "price": 0
+                    },
+                    "addons": [
+                        {
+                            "id": 283,
+                            "price": 16
+                        },
+                        {
+                            "id": 284,
+                            "price": 10
+                        }
+                    ],
+                    "variation": {
+                        "id" : 61,
+                        "price": 15
+                    }
+                },
+                {
+                    "item_id": 69,
+                    "category_id": 2,
+                    "price": 0,
+                    "quantity": 2,
+                    "mixer": {
+                        "id": 361,
+                        "price": 0
+                    },
+                    "addons": [
+                        {
+                            "id": 283,
+                            "price": 16
+                        },
+                        {
+                            "id": 284,
+                            "price": 10
+                        }
+                    ],
+                    "variation": {
+                        "id" : 61,
+                        "price": 15
+                    }
+                }
+            ]
         }
+        */
 
-        return $this->respondWithError('Item not added.');
+        $requestData    = $request->all();
+        $order          = $this->repository->addTocart($requestData);
+
+        return $this->respondSuccess('Order created successfully.');
     }
 
     /**

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 
 class PickupPoint extends Model
@@ -18,7 +19,8 @@ class PickupPoint extends Model
      * @var array
      */
     protected $fillable = [
-        'name'
+        'name',
+        'restaurant_id'
     ];
 
     /**
@@ -39,5 +41,25 @@ class PickupPoint extends Model
     public function attachment(): MorphOne
     {
         return $this->morphOne(Attachment::class, 'attachmentable');
+    }
+
+    /**
+     * Get the restaurant that owns the PickupPoint
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function restaurant(): BelongsTo
+    {
+        return $this->belongsTo(Restaurant::class, 'restaurant_id', 'id');
+    }
+
+    /**
+     * Get the user that owns the PickupPoint for bartender
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'user_id', 'id');
     }
 }
