@@ -143,4 +143,24 @@ class User extends Authenticatable
     {
         return $this->hasOne(User::class, 'user_id', 'id');
     }
+
+    /**
+     * Get all of the orders for the User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function orders(): HasMany
+    {
+        return $this->hasMany(Order::class, 'user_id', 'id')->where('type', Order::ORDER);
+    }
+
+    /**
+     * Get all of the carts for the User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function carts(): HasMany
+    {
+        return $this->hasMany(Order::class, 'user_id', 'id')->where('type', Order::CART);
+    }
 }
