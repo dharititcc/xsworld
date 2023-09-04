@@ -46,10 +46,10 @@
                             <a href="venue-management.html" class="grey-brd-box padbox text-center lable-box"><span>Venue Management</span></a>
                             <a href="#" class="grey-brd-box padbox text-center lable-box"><span>Analytics</span></a>
                             <a href="table-management.html" class="grey-brd-box padbox text-center lable-box"><span>Table Management</span></a>
-                            <a href="#" class="grey-brd-box padbox text-center lable-box"><span>Food List</span></a>
-                            <a href="drinks-list.html" class="grey-brd-box padbox text-center lable-box"><span>Drink List</span></a>
-                            <a href="#" class="grey-brd-box padbox text-center lable-box"><span>Mixer Management</span></a>
-                            <a href="category-management.html" class="grey-brd-box padbox text-center lable-box"><span>Category Management</span></a>
+                            <a href="{{ route('restaurants.foods.index') }}" class="grey-brd-box padbox text-center lable-box"><span>Food List</span></a>
+                            <a href="{{ route('restaurants.drinks.index') }}" class="grey-brd-box padbox text-center lable-box"><span>Drink List</span></a>
+                            <a href="{{ route('restaurants.mixers.index') }}" class="grey-brd-box padbox text-center lable-box"><span>Mixer Management</span></a>
+                            <a href="{{ route('restaurants.categories.index') }}" class="grey-brd-box padbox text-center lable-box"><span>Category Management</span></a>
                             <a href="#" class="grey-brd-box padbox text-center lable-box"><span>Pick-up Zone Management</span></a>
                         </div>
                     </div>

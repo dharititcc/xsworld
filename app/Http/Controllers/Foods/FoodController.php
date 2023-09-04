@@ -28,10 +28,10 @@ class FoodController extends Controller
         if ($request->ajax())
         {
             $data = RestaurantItem::query()
-                    ->with(['category', 'restaurant'])
+                    ->with(['category', 'restaurant','variations'])
                     ->whereHas('restaurant', function($query) use($restaurant)
                     {
-                        return $query->where('id', $restaurant->id);
+                        return $query->where('id', $restaurant->id)->where('type',2);
                     });
                     if(empty($request->get('category')))
                     {

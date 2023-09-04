@@ -71,12 +71,12 @@ class LoginController extends Controller
             $user->loadMissing(['restaurants']);
 
             // restaurant
-            $restaurants = $user->restaurants;
-
-            if( $restaurants->count() === 1 )
-            {
-                $restaurant = $restaurants[0];
-            }
+            $restaurant = $user->restaurants->where('id', 1)->first();
+            // dd($restaurants);
+            // if( $restaurants->count() === 1 )
+            // {
+            //     $restaurant = $restaurants[0];
+            // }
 
             // add restaurants in the session variable
             session(['restaurant' => $restaurant]);

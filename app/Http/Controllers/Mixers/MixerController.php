@@ -1,15 +1,13 @@
 <?php
 
-namespace App\Http\Controllers\Drinks;
+namespace App\Http\Controllers\Mixers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\RestaurantItem;
-use App\Models\Category;
-use App\Models\Restaurant;
 use DataTables;
 
-class DrinkController extends Controller
+class MixerController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -33,7 +31,7 @@ class DrinkController extends Controller
                     ->with(['category', 'restaurant','variations'])
                     ->whereHas('restaurant', function($query) use($restaurant)
                     {
-                        return $query->where('id', $restaurant->id)->where('type',2);
+                        return $query->where('id', $restaurant->id)->where('type',3);
                     });
                     if(empty($request->get('category')))
                     {
@@ -56,11 +54,12 @@ class DrinkController extends Controller
 
                     }
                     $data = $data->get();
+                    //dd($data);
             return Datatables::of($data)
                 ->make(true);
         }
 
-        return view('restaurant.drinks-list')->with('categories',$categories);
+        return view('restaurant.mixer-list')->with('categories',$categories);
     }
 
     /**

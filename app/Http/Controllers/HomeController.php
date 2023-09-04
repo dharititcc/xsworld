@@ -24,6 +24,7 @@ class HomeController extends Controller
      */
     public function index()
     {
+        // dd(session('restaurant'));
         if( access()->isRestaurantOwner() )
         {
             return view('restaurant.dashboard');

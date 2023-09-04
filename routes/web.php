@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect('/login');
 });
 
 Auth::routes();
@@ -34,6 +34,10 @@ Route::group(['prefix' => 'restaurants', 'as' => 'restaurants.', 'middleware' =>
     Route::group(['namespace' => 'Foods'], function()
     {
         Route::resource('foods', 'FoodController');
+    });
+    Route::group(['namespace' => 'mixers'], function()
+    {
+        Route::resource('mixers', 'MixerController');
     });
 });
 

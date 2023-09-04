@@ -91,7 +91,7 @@ class User extends Authenticatable
      */
     public function restaurants(): BelongsToMany
     {
-        return $this->belongsToMany(Restaurant::class, 'restaurant_owners', 'restaurant_id', 'user_id');
+        return $this->belongsToMany(Restaurant::class, 'restaurant_owners', 'user_id', 'restaurant_id');
     }
 
     /**

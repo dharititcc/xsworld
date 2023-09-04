@@ -4,20 +4,19 @@
 @endsection
 @section('content')
 <!-- Page content-->
-<div class="container-fluid">
-    <main>
+
         <div class="outrbox">
             @if ($categories->count())
                 @php
                     $cnt = 1;
                 @endphp
                 @foreach ($categories as $category)
-                    <div class="d-flex mb-4 justify-content-between">
+                    <div class="d-flex mb-4 justify-content-between doubl-line">
                         <h2 class="yellow">{{ $category->name }} Categories</h2>
                         <div class="count-item">Total: {{ $category->children->count() }}</div>
                     </div>
 
-                    <div class="grid colmn-5">
+                    <div class="grid colmn-5 f-ctg">
                         @if ($category->children->count())
                             @foreach ($category->children as $child)
                                 <div class="catg-box overly">
@@ -41,8 +40,7 @@
                 @endforeach
             @endif
         </div>
-    </main>
-</div>
+
 
 <!-- Global popup -->
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
