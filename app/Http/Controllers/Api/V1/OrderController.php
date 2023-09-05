@@ -137,13 +137,25 @@ class OrderController extends APIController
     public function viewCart()
     {
         $cart_data      = $this->repository->getCartdata();
-        // dd($cart_data);
 
         if($cart_data)
         {
             return $this->respondSuccess('Cart data found', OrderResource::collection($cart_data));
         }
+    }
 
+    /**
+     * Method orderHistory
+     *
+     * @return void
+     */
+    function orderHistory()
+    {
+        $order_data      = $this->repository->getOrderdata();
 
+        if($order_data)
+        {
+            return $this->respondSuccess('Order data found', OrderResource::collection($order_data));
+        }
     }
 }
