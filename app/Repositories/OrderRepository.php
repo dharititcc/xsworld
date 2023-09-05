@@ -221,7 +221,7 @@ class OrderRepository extends BaseRepository
                     ];
 
                     // add mixer in the order items table
-                    $newOrderItem = $this->createOrderItem($newOrder, $mixerArr);
+                    $mixerItem = $this->createOrderItem($newOrder, $mixerArr);
                 }
 
                 // make proper data for addons
@@ -243,7 +243,7 @@ class OrderRepository extends BaseRepository
                             ];
 
                             // add addon in the order items table
-                            $newOrderItem = $this->createOrderItem($newOrder, $addonData);
+                            $addonItem = $this->createOrderItem($newOrder, $addonData);
                         }
                     }
                 }
