@@ -140,7 +140,7 @@ class OrderController extends APIController
 
         if($cart_data)
         {
-            return $this->respondSuccess('Cart data found', OrderResource::collection($cart_data));
+            return $this->respondSuccess('Cart data found', new OrderResource($cart_data));
         }
     }
 

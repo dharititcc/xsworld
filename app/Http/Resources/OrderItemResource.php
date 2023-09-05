@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use App\Models\RestaurantItem;
 use Illuminate\Http\Resources\Json\JsonResource;
+use stdClass;
 
 class OrderItemResource extends JsonResource
 {
@@ -16,6 +17,7 @@ class OrderItemResource extends JsonResource
     public function toArray($request)
     {
         $response = [];
+
         if( $this->type == RestaurantItem::ITEM )
         {
             $response = [
@@ -30,9 +32,9 @@ class OrderItemResource extends JsonResource
                     'name'      => $this->variation->name,
                     'price'     => $this->price,
                     'quantity'  => $this->quantity
-                ] : [],
+                ] : new stdClass,
                 'addons'            => isset($this->addons) ? OrderItemAddonResource::collection($this->addons) : [],
-                'mixer'             => isset($this->mixer) ? new OrderItemMixerResource($this->mixer) : []
+                'mixer'             => isset($this->mixer) ? new OrderItemMixerResource($this->mixer) : new stdClass
             ];
         }
 

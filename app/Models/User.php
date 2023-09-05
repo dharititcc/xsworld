@@ -164,4 +164,14 @@ class User extends Authenticatable
     {
         return $this->hasMany(Order::class, 'user_id', 'id')->where('type', Order::CART);
     }
+
+    /**
+     * Get all of the latest_cart for the User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function latest_cart(): HasOne
+    {
+        return $this->hasOne(Order::class, 'user_id', 'id')->where('type', Order::CART)->latest();
+    }
 }

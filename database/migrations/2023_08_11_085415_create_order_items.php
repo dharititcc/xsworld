@@ -27,7 +27,7 @@ class CreateOrderItems extends Migration
 
             $table->foreign('order_id')->references('id')->on('orders')->onDelete('cascade');
             $table->foreign('restaurant_item_id')->references('id')->on('restaurant_items');
-            $table->foreign('parent_item_id')->references('id')->on('restaurant_items');
+            $table->foreign('parent_item_id')->references('id')->on('order_items');
             $table->foreign('variation_id')->references('id')->on('restaurant_item_variations');
         });
     }

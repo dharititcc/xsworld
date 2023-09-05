@@ -129,18 +129,15 @@ class OrderRepository extends BaseRepository
     /**
      * Method getCartdata
      *
-     * @return Collection
+     * @return Order
      */
-    public function getCartdata() : Collection
+    public function getCartdata(): Order
     {
         $user        = auth()->user();
-        $order       = Order::with([
-            'order_items',
-            'order_items.addons',
-            'order_items.mixer'
-        ])->where('user_id',$user->id)->where('type',Order::CART)->get();
 
-        return $order;
+        $user->loadMissing(['latest_cart']);
+
+        return $user->latest_cart;
     }
 
     /**
@@ -169,8 +166,12 @@ class OrderRepository extends BaseRepository
     function getCartCount() : array
     {
         $user       = auth()->user();
+
+        $user->loadMissing(['latest_cart', 'latest_cart.restaurant', 'latest_cart.order_items']);
+
         $cart       = [
-            'cart_count' => $user->carts->count()
+            'cart_count'    => $user->latest_cart->order_items->count(),
+            'restaurant_id' => $user->latest_cart->restaurant->id
         ];
 
         return $cart;
