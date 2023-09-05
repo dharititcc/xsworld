@@ -75,7 +75,7 @@ trait Authenticate
                     break;
                 default:
                     // validation
-                    $this->validateLogin($request);
+                    $this->validateEmail($request);
                     return Auth::attempt($this->credentials($request));
                     break;
             }
