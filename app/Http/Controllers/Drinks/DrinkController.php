@@ -29,6 +29,14 @@ class DrinkController extends Controller
         }
         if ($request->ajax())
         {
+            if(!empty($request->get('enable')))
+            {   //is_available
+                $data = $this->updateItemAvailable($request->get('enable'), 1);
+            }
+            if(!empty($request->get('disable')))
+            {    //not available
+                $data =  $this->updateItemAvailable($request->get('disable'), 0);
+            }
             $data = RestaurantItem::query()
                     ->with(['category', 'restaurant','variations'])
                     ->whereHas('restaurant', function($query) use($restaurant)
@@ -127,5 +135,11 @@ class DrinkController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function updateItemAvailable($data, $value)
+    {
+        $updateitems = RestaurantItem::whereIn("id", $data)->update(["is_available" => $value]);
+        return $updateitems;
     }
 }
