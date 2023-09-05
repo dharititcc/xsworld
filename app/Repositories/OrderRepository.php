@@ -6,6 +6,7 @@ use App\Models\Restaurant;
 use App\Models\RestaurantItem;
 use App\Repositories\BaseRepository;
 use Illuminate\Support\Collection;
+use Nette\Utils\Arrays;
 
 /**
  * Class OrderRepository.
@@ -158,5 +159,20 @@ class OrderRepository extends BaseRepository
 
         return $order;
 
+    }
+
+    /**
+     * Method getCartCount
+     *
+     * @return array
+     */
+    function getCartCount() : array
+    {
+        $user       = auth()->user();
+        $cart       = [
+            'cart_count' => $user->carts->count()
+        ];
+
+        return $cart;
     }
 }
