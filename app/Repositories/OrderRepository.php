@@ -320,4 +320,35 @@ class OrderRepository extends BaseRepository
 
         return $cart;
     }
+
+    /**
+     * Method deleteItem
+     *
+     * @param array $data [explicite description]
+     *
+     * @return Order
+     */
+    function deleteItem(array $data): Order
+    {
+        $order_item_id = $data['order_item_id'] ? $data['order_item_id'] : null;
+        $orderItem  = OrderItem::with(['addons','mixer', 'order'])->findOrFail($order_item_id);
+        $order  = $orderItem->order;
+
+        if($orderItem->parent_item_id == null)
+        {
+            $data = $orderItem->addons()->delete();
+            $data = $orderItem->mixer()->delete();
+            $orderItem->delete();
+        }
+        else
+        {
+            $orderItem->delete();
+        }
+
+        $order->refresh();
+        $order->loadMissing(['items']);
+        $order->update(['total' => $order->items->sum('total')]);
+
+        return $order;
+    }
 }

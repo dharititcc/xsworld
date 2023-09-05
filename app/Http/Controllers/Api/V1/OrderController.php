@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Exceptions\GeneralException;
 use App\Http\Requests\AddtocartRequest;
+use App\Http\Requests\OrderDeleteItemRequest;
 use App\Http\Resources\OrderResource;
 use App\Models\Order;
 use App\Repositories\OrderRepository;
@@ -49,6 +50,7 @@ class OrderController extends APIController
      *
      * @param AddtocartRequest $request [explicite description]
      *
+     * @return \Illuminate\Http\JsonResponse
      */
     public function addToCart(AddtocartRequest $request)
     {
@@ -132,7 +134,7 @@ class OrderController extends APIController
     /**
      * Method viewCart
      *
-     * @return void
+     * @return \Illuminate\Http\JsonResponse
      */
     public function viewCart()
     {
@@ -149,7 +151,7 @@ class OrderController extends APIController
     /**
      * Method orderHistory
      *
-     * @return void
+     * @return \Illuminate\Http\JsonResponse
      */
     function orderHistory()
     {
@@ -166,7 +168,7 @@ class OrderController extends APIController
     /**
      * Method cartCount
      *
-     * @return void
+     * @return \Illuminate\Http\JsonResponse
      */
     public function cartCount()
     {
@@ -175,6 +177,23 @@ class OrderController extends APIController
         if($data)
         {
             return $this->respondSuccess('Cart data found', $data);
+        }
+    }
+
+    /**
+     * Method deleteItem
+     *
+     * @param OrderDeleteItemRequest $request [explicite description]
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function deleteItem(OrderDeleteItemRequest $request)
+    {
+        $order_data   = $this->repository->deleteItem($request->validated());
+
+        if(isset($order_data->id))
+        {
+            return $this->respondSuccess('Order data found', new OrderResource($order_data));
         }
     }
 }
