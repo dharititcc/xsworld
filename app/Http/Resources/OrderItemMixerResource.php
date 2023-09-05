@@ -20,7 +20,8 @@ class OrderItemMixerResource extends JsonResource
             'restaurant_item_id'    => $this->restaurant_item_id,
             'name'                  => $this->restaurant_item->name,
             'quantity'              => $this->quantity,
-            'price'                 => $this->price
+            'price'                 => $this->price,
+            'total'                 => $this->total
         ];
     }
 }

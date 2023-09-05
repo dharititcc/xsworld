@@ -54,8 +54,28 @@ class OrderRepository extends BaseRepository
                         'type'                  => RestaurantItem::ITEM,
                         'total'                 => $item['quantity'] * $item['price']
                     ];
+
+                    if( !empty( $item['variation'] ) )
+                    {
+                        $variationArr = [
+                            'restaurant_item_id'    => $item['item_id'],
+                            'parent_item_id'        => null,
+                            'variation_id'          => $item['variation']['id'],
+                            'quantity'              => $item['variation']['quantity'],
+                            'price'                 => $item['variation']['price'],
+                            'type'                  => RestaurantItem::ITEM,
+                            'total'                 => $item['variation']['price'] * $item['variation']['quantity']
+                        ];
+
+                        // add variation in the order items table
+                        $newOrderItem = $newOrder->items()->create($variationArr);
+                    }
+                    else
+                    {
+                        $newOrderItem = $newOrder->items()->create($itemArr);
+                    }
+
                     // add item in the order items table
-                    $newOrderItem = $newOrder->items()->create($itemArr);
 
                     // make proper mixer data for the table
                     if( isset( $item['mixer'] ) )
@@ -95,23 +115,6 @@ class OrderRepository extends BaseRepository
                                 $newOrder->items()->create($addonData);
                             }
                         }
-                    }
-
-                    // make proper data for variations if any
-                    if( !empty( $item['variation'] ) )
-                    {
-                        $variationArr = [
-                            'restaurant_item_id'    => $item['item_id'],
-                            'parent_item_id'        => $item['item_id'],
-                            'variation_id'          => $item['variation']['id'],
-                            'quantity'              => $item['variation']['quantity'],
-                            'price'                 => $item['variation']['price'],
-                            'type'                  => RestaurantItem::ITEM,
-                            'total'                 => $item['variation']['price'] * $item['variation']['quantity']
-                        ];
-
-                        // add variation in the order items table
-                        $newOrder->items()->create($variationArr);
                     }
                 }
             }
