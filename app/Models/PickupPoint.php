@@ -44,6 +44,16 @@ class PickupPoint extends Model
     }
 
     /**
+     * Method getImageAttribute
+     *
+     * @return string
+     */
+    public function getImageAttribute(): string
+    {
+        return isset($this->attachment) ? asset('storage/pickup_points/'.$this->attachment->stored_name) : '';
+    }
+
+    /**
      * Get the restaurant that owns the PickupPoint
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
