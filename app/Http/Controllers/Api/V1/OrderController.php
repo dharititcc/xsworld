@@ -142,6 +142,8 @@ class OrderController extends APIController
         {
             return $this->respondSuccess('Cart data found', new OrderResource($cart_data));
         }
+
+        return $this->respondWithError('Your cart is empty.');
     }
 
     /**
@@ -157,6 +159,8 @@ class OrderController extends APIController
         {
             return $this->respondSuccess('Order data found', OrderResource::collection($order_data));
         }
+
+        return $this->respondWithError('Your order not found.');
     }
 
     /**
