@@ -37,18 +37,15 @@ class OrderRepository extends BaseRepository
 
         $latestCart = $user->latest_cart;
 
-        if( isset( $latestCart->id ) )
+        if( isset( $latestCart->id ) && ($latestCart->restaurant->id ==  $order['restaurant_id']) )
         {
             // check restaurant id available in the cart
-            if( $latestCart->restaurant->id ==  $order['restaurant_id'])
-            {
-                return $this->checkSameRestaurantOrder($user, $latestCart, $orderItems);
-            }
+            return $this->checkSameRestaurantOrder($user, $latestCart, $orderItems);
         }
         else
         {
             // new order
-            return $this->createOrder($user, $data);
+            return $this->createOrder($user, $order, $orderItems);
         }
 
         throw new GeneralException('Order request is invalid.');
@@ -161,17 +158,21 @@ class OrderRepository extends BaseRepository
      *
      * @param User $user [explicite description]
      * @param array $data [explicite description]
+     * @param array $orderItems [explicite description]
      *
      * @return Order
      */
-    private function createOrder(User $user, array $data): Order
+    private function createOrder(User $user, array $data, array $orderItems): Order
     {
         $restaurant = Restaurant::find($data['restaurant_id']);
         $order['user_id'] = $user->id;
+        $order['restaurant_id'] = $restaurant->id;
         $order['currency_id'] = $restaurant->currency_id;
 
         // dd($order);
         $newOrder = Order::create($order);
+
+        $newOrder->refresh();
 
         if( !empty($orderItems) )
         {
@@ -206,8 +207,6 @@ class OrderRepository extends BaseRepository
                 {
                     $newOrderItem = $this->createOrderItem($newOrder, $itemArr);
                 }
-
-                // add item in the order items table
 
                 // make proper mixer data for the table
                 if( isset( $item['mixer'] ) )
