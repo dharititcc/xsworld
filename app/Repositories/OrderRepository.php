@@ -234,8 +234,8 @@ class OrderRepository extends BaseRepository
         $user->loadMissing(['latest_cart', 'latest_cart.restaurant', 'latest_cart.order_items']);
 
         $cart       = [
-            'cart_count'    => $user->latest_cart->order_items->count(),
-            'restaurant_id' => $user->latest_cart->restaurant->id
+            'cart_count'    => isset($user->latest_cart->order_items) ? $user->latest_cart->order_items->count() : 0,
+            'restaurant_id' => $user->latest_cart->restaurant->id ?? ''
         ];
 
         return $cart;
