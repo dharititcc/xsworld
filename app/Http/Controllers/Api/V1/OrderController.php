@@ -220,7 +220,7 @@ class OrderController extends APIController
      */
     public function deleteCart(CartDeleteRequest $request)
     {
-    $order_data   = $this->repository->deleteCart($request->validated());
+        $order_data   = $this->repository->deleteCart($request->validated());
 
         return $this->respondSuccess('Order deleted successfully');
     }
