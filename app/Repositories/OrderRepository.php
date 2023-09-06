@@ -249,9 +249,9 @@ class OrderRepository extends BaseRepository
      */
     function deleteItem(array $data): Order
     {
-        $order_item_id = $data['order_item_id'] ? $data['order_item_id'] : null;
-        $orderItem  = OrderItem::with(['addons','mixer', 'order'])->findOrFail($order_item_id);
-        $order  = $orderItem->order;
+        $order_item_id  = $data['order_item_id'] ? $data['order_item_id'] : null;
+        $orderItem      = OrderItem::with(['addons','mixer', 'order'])->findOrFail($order_item_id);
+        $order          = $orderItem->order;
 
         if($orderItem->parent_item_id == null)
         {
@@ -267,6 +267,30 @@ class OrderRepository extends BaseRepository
         $order->refresh();
         $order->loadMissing(['items']);
         $order->update(['total' => $order->items->sum('total')]);
+
+        return $order;
+    }
+
+    /**
+     * Method updateOrder
+     *
+     * @param array $data [explicite description]
+     *
+     * @return Order
+     */
+    function updateOrder(array $data) : Order
+    {
+        $order_id   = $data['order_id'] ? $data['order_id'] : null;
+        $status     = $data['status'] ? $data['status'] : null;
+        $order      = Order::findOrFail($order_id);
+
+        if(isset($order->id))
+        {
+            $order->update(['status' => $status]);
+        }
+
+        $order->refresh();
+        $order->loadMissing(['items']);
 
         return $order;
     }

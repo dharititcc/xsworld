@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Exceptions\GeneralException;
 use App\Http\Requests\AddtocartRequest;
 use App\Http\Requests\OrderDeleteItemRequest;
+use App\Http\Requests\OrderUpdateRequest;
 use App\Http\Resources\OrderResource;
 use App\Models\Order;
 use App\Repositories\OrderRepository;
@@ -195,5 +196,23 @@ class OrderController extends APIController
         {
             return $this->respondSuccess('Order data found', new OrderResource($order_data));
         }
+    }
+
+    /**
+     * Method orderUpdate
+     *
+     * @param OrderUpdateRequest $request [explicite description]
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function orderUpdate(OrderUpdateRequest $request)
+    {
+        $order_data   = $this->repository->updateOrder($request->validated());
+
+        if(isset($order_data->id))
+        {
+            return $this->respondSuccess('Order data updated', new OrderResource($order_data));
+        }
+
     }
 }

@@ -58,6 +58,8 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'v1', 'as' => 'api.v1.'], fun
         Route::get('/cart', 'OrderController@cartCount')->name('cart');
         // {api/v1/barorderhistory}
         Route::get('/barorderhistory', 'BarController@barOrderHistory')->name('barOrderHistory');
+        // {api/v1/orderupdate}
+        Route::post('/orderupdate', 'OrderController@orderUpdate')->name('orderupdate');
         // {api/v1/deleteitem}
         Route::post('/deleteitem', 'OrderController@deleteItem')->name('deleteitem');
     });
