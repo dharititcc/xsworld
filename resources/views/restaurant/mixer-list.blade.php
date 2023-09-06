@@ -13,8 +13,8 @@
                                 <h2 class="yellow">Sort By</h2><div class="searchbox"><input type="text" name="search" id="search" class="searchbar" placeholder="Find a Drink"></div>
                             </div>
                             <div class="mb-4">
-                            <button class="bor-btn">Disable Drink</button>
-                                            <button class="bor-btn ms-3">Enable Drink</button>
+                              <button class="bor-btn" id="disable" >Disable Drink</button>
+                              <button class="bor-btn ms-3" id="enable" >Enable Drink</button>
                                             </div>
                             <div class="data-table drinks scroll-y h-600">
                                 <table width="100%" class="drink_datatable">
@@ -69,14 +69,15 @@ function load_data(data = null) {
                      "defaultContent" : "",
                      "bSortable"      : false,
                       render:function(data, type, row){
-                        return '<label class="cst-check"><input name="id" type="checkbox" value="'+row.id+'"><span class="checkmark"></span></label>'
+                        return '<label class="cst-check"><input name="id" class="checkboxitem" type="checkbox" value="'+row.id+'"><span class="checkmark"></span></label>'
                       }
                    },
                    {
                      "data"           : "name", // can be null or undefined ->type
                      "defaultContent" : "",
                       render:function(data, type, row){
-                        return '<div class="prdname green"> '+row.name+' </div><a href="#" class="edit">Edit</a>  <div class="add-date">Added '+formatDate(row.created_at)+'</div>'
+                        var color = (row.is_available == 1) ? "green":"red";
+                        return '<div class="prdname '+color+'"> '+row.name+' </div><a href="#" class="edit">Edit</a>  <div class="add-date">Added '+formatDate(row.created_at)+'</div>'
                       }
                    },
                    {
@@ -108,12 +109,18 @@ function load_data(data = null) {
                      "defaultContent" : "",
                      "bSortable"      : false,
                       render:function(data, type, row){
-                        var html;
-                        if(row.is_featured == 1){
-                          html ='<div class="green"><strong>Featured Drink</strong> </div><div class="green"><strong> In-Stock</strong></div></td>'
-                         return html
-                      }
-                      return '<div class="green"><strong> In-Stock</strong></div></td>'
+                        var html='';
+                        if(row.is_featured == 1)
+                        {
+                          html +='<div class="green"><strong>Featured Drink</strong> </div>'
+                        }
+                        if(row.is_available == 1)
+                        {
+                          html +='<div class="green"><strong> In-Stock</strong></div>'
+                        }else{
+                          html +='<div class="red"><strong>  Out Of Stock</strong></div>'
+                        }
+                      return html
                     }
                    },
             ]
@@ -139,5 +146,53 @@ function load_data(data = null) {
           data['search_main'] = this.value;
       load_data(data);
     });
+    $(function(){
+      $('#enable').click(function(e) {
+          e.preventDefault();
+          $.confirmModal('<label>Are you sure you want to do this?</label>', function(el) {
+            var data = [];
+            var i= 0;
+            data['enable'] = $.map($('input[name="id"]:checked'), function(c){return c.value; })
+            $('.drink_datatable').DataTable().destroy();
+            load_data(data);
+              //console.log(data);
+          });
+        });
+    });
+    $(function(){
+      $('#disable').click(function(e) {
+          e.preventDefault();
+          $.confirmModal('<label>Are you sure you want to do this?</label>', function(el) {
+            var data = [];
+            var i= 0;
+            data['disable'] = $.map($('input[name="id"]:checked'), function(c){return c.value; })
+            $('.drink_datatable').DataTable().destroy();
+            load_data(data);
+              //console.log(data);
+          });
+        });
+    });
+
+    $(document).ready(function(){
+      $('.checkboxitem').click(function() {
+        alert(1);
+          if ($(this).is(':checked')) {
+              $('#disable').removeAttr('disabled');
+              $('#enable').removeAttr('disabled');
+          } else {
+              $('#id_of_your_button').attr('disabled');
+          }
+      });
+
+      $('#allcheck').click(function(e) {
+          e.preventDefault();
+        alert();
+          $('input[name="id"]').attr('checked','checked');
+        // $(this).val('uncheck all');
+      },function(){
+          $('input[name="id"]').removeAttr('checked');
+          //$(this).val('check all');
+      })
+  });
   </script>
 @endsection

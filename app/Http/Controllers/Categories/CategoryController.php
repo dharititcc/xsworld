@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Categories;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Http\Requests\CategoryRequest;
+use App\Models\Category;
 
 class CategoryController extends Controller
 {
@@ -14,10 +16,10 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        $restaurant = session('restaurant')->loadMissing(['main_categories', 'main_categories.children']);
-        // dd($restaurant);
+        $restaurant = session('restaurant');
+        $category = Category::whereNull('parent_id')->where('restaurant_id',$restaurant->id)->get();
         return view('categories.index',[
-            'categories' => $restaurant->main_categories
+            'categories' => $category
         ]);
     }
 
@@ -39,7 +41,27 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        //
+
+        $restaurant = session('restaurant')->loadMissing(['main_categories', 'main_categories.children']);
+        $image = $request->file('photo');
+        $profileImage ="";
+        if ($image = $request->file('photo'))
+        {
+            $destinationPath = public_path('/storage/categories');
+            $profileImage = date('YmdHis') . "." . $image->getClientOriginalExtension();
+            $image->move($destinationPath, $profileImage);
+        }
+        $category                       = new Category();
+        $category->name                 = $request->get('name');
+        $category->parent_id            = $request->get('category_id');
+        $category->restaurant_id        = $restaurant->id;
+        $category->save();
+        $category->attachment()->create([
+            'stored_name'   => $profileImage,
+            'original_name' => $profileImage,
+            'attachmentable_id' => $category->id,
+        ]);
+        return $category;
     }
 
     /**
@@ -50,7 +72,8 @@ class CategoryController extends Controller
      */
     public function show($id)
     {
-        //
+        $category = Category::where('id', $id)->first();
+        return $category;
     }
 
     /**
@@ -73,7 +96,7 @@ class CategoryController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        dd($request->all());
     }
 
     /**
@@ -84,6 +107,9 @@ class CategoryController extends Controller
      */
     public function destroy($id)
     {
-        //
+       $delete = Category::find($id);
+       $delete->items()->delete();
+       $delete->delete();
+       return $delete;
     }
 }
