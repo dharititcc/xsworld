@@ -56,8 +56,6 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'v1', 'as' => 'api.v1.'], fun
         Route::get('/orderhistory', 'OrderController@orderHistory')->name('orderhistory');
         // {api/v1/users/cart}
         Route::get('/cart', 'OrderController@cartCount')->name('cart');
-        // {api/v1/barorderhistory}
-        Route::get('/barorderhistory', 'BarController@barOrderHistory')->name('barOrderHistory');
         // {api/v1/orderupdate}
         Route::post('/orderupdate', 'OrderController@orderUpdate')->name('orderupdate');
         // {api/v1/deleteitem}
@@ -98,6 +96,8 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'v1', 'as' => 'api.v1.'], fun
             Route::post('logout', 'AuthController@logout')->name('bartender.logout');
 
             // orders
+            // {api/v1/barorderhistory}
+            Route::get('/barorderhistory', 'BarController@barOrderHistory')->name('barOrderHistory');
         });
     });
 });
