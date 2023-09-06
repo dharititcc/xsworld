@@ -8,7 +8,6 @@ use App\Models\RestaurantItem;
 use App\Models\User;
 use App\Repositories\BaseRepository;
 use Illuminate\Support\Collection;
-use Nette\Utils\Arrays;
 
 /**
  * Class OrderRepository.
@@ -58,9 +57,9 @@ class OrderRepository extends BaseRepository
      * @param Order $order [explicite description]
      * @param array $orderItems [explicite description]
      *
-     * @return void
+     * @return Order
      */
-    private function checkSameRestaurantOrder(User $user, Order $order, array $orderItems)
+    private function checkSameRestaurantOrder(User $user, Order $order, array $orderItems): Order
     {
         // check if order request is available
         if( isset( $order->id ) && !empty($orderItems) )
@@ -79,7 +78,7 @@ class OrderRepository extends BaseRepository
                         'total'                 => $item['quantity'] * $item['price']
                     ];
 
-                    if( !empty( $item['variation'] ) )
+                    if( isset( $item['variation'] ) && !empty( $item['variation'] ) )
                     {
                         $variationArr = [
                             'restaurant_item_id'    => $item['item_id'],
@@ -102,7 +101,7 @@ class OrderRepository extends BaseRepository
                     // add item in the order items table
 
                     // make proper mixer data for the table
-                    if( isset( $item['mixer'] ) )
+                    if( isset( $item['mixer'] ) && !empty( $item['mixer'] ) )
                     {
                         $mixerArr = [
                             'restaurant_item_id'=> $item['mixer']['id'],
@@ -118,7 +117,7 @@ class OrderRepository extends BaseRepository
                     }
 
                     // make proper data for addons
-                    if( isset( $item['addons'] ) )
+                    if( isset( $item['addons'] ) && !empty( $item['addons'] ) )
                     {
                         $addons = $item['addons'];
 
@@ -174,87 +173,7 @@ class OrderRepository extends BaseRepository
 
         $newOrder->refresh();
 
-        if( !empty($orderItems) )
-        {
-            foreach( $orderItems as $item )
-            {
-                // make proper item array for the table
-                $itemArr = [
-                    'restaurant_item_id'    => $item['item_id'],
-                    'category_id'           => $item['category_id'],
-                    'price'                 => $item['price'],
-                    'quantity'              => $item['quantity'],
-                    'type'                  => RestaurantItem::ITEM,
-                    'total'                 => $item['quantity'] * $item['price']
-                ];
-
-                if( !empty( $item['variation'] ) )
-                {
-                    $variationArr = [
-                        'restaurant_item_id'    => $item['item_id'],
-                        'parent_item_id'        => null,
-                        'variation_id'          => $item['variation']['id'],
-                        'quantity'              => $item['variation']['quantity'],
-                        'price'                 => $item['variation']['price'],
-                        'type'                  => RestaurantItem::ITEM,
-                        'total'                 => $item['variation']['price'] * $item['variation']['quantity']
-                    ];
-
-                    // add variation in the order items table
-                    $newOrderItem = $this->createOrderItem($newOrder, $variationArr);
-                }
-                else
-                {
-                    $newOrderItem = $this->createOrderItem($newOrder, $itemArr);
-                }
-
-                // make proper mixer data for the table
-                if( isset( $item['mixer'] ) )
-                {
-                    $mixerArr = [
-                        'restaurant_item_id'=> $item['mixer']['id'],
-                        'parent_item_id'    => $newOrderItem->id,
-                        'price'             => $item['mixer']['price'],
-                        'type'              => RestaurantItem::MIXER,
-                        'quantity'          => $item['mixer']['quantity'],
-                        'total'             => $item['mixer']['quantity'] * $item['mixer']['price']
-                    ];
-
-                    // add mixer in the order items table
-                    $mixerItem = $this->createOrderItem($newOrder, $mixerArr);
-                }
-
-                // make proper data for addons
-                if( isset( $item['addons'] ) )
-                {
-                    $addons = $item['addons'];
-
-                    if( !empty( $addons ) )
-                    {
-                        foreach( $addons as $addon )
-                        {
-                            $addonData = [
-                                'restaurant_item_id'    => $addon['id'],
-                                'parent_item_id'        => $newOrderItem->id,
-                                'price'                 => $addon['price'],
-                                'type'                  => RestaurantItem::ADDON,
-                                'quantity'              => $addon['quantity'],
-                                'total'                 => $addon['quantity'] * $addon['price']
-                            ];
-
-                            // add addon in the order items table
-                            $addonItem = $this->createOrderItem($newOrder, $addonData);
-                        }
-                    }
-                }
-            }
-        }
-
-        $newOrder->refresh();
-        $newOrder->loadMissing(['items']);
-        $newOrder->update(['total' => $newOrder->items->sum('total')]);
-
-        return $newOrder;
+        return $this->checkSameRestaurantOrder($user, $newOrder, $orderItems);
     }
 
     /**
