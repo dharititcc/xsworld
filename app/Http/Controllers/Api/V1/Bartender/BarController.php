@@ -1,11 +1,10 @@
 <?php
 
-namespace App\Http\Controllers\Api\V1;
+namespace App\Http\Controllers\Api\V1\Bartender;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\V1\APIController;
 use App\Http\Resources\OrderResource;
 use App\Repositories\BarRepository;
-use Illuminate\Http\Request;
 
 class BarController extends APIController
 {
