@@ -26,6 +26,7 @@ Route::group(['prefix' => 'restaurants', 'as' => 'restaurants.', 'middleware' =>
     Route::group(['namespace' => 'Categories'], function()
     {
         Route::resource('categories', 'CategoryController');
+        Route::post('categories/multidelete', 'CategoryController@deleteCategories')->name('delete/categories');
     });
     Route::group(['namespace' => 'Drinks'], function()
     {
@@ -38,6 +39,10 @@ Route::group(['prefix' => 'restaurants', 'as' => 'restaurants.', 'middleware' =>
     Route::group(['namespace' => 'mixers'], function()
     {
         Route::resource('mixers', 'MixerController');
+    });
+    Route::group(['namespace' => 'addons'], function()
+    {
+        Route::resource('addons', 'AddonsController');
     });
 });
 

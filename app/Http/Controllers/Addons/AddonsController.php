@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Controllers\Mixers;
+namespace App\Http\Controllers\Addons;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\RestaurantItem;
 use DataTables;
 
-class MixerController extends Controller
+class AddonsController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -17,13 +17,12 @@ class MixerController extends Controller
     public function index(Request $request)
     {
         $restaurant = session('restaurant')->loadMissing(['main_categories']);
-        $category = $restaurant->main_categories()->with(['children'])->where('name', 'Drinks')->first();
+        $category = $restaurant->main_categories()->with(['children'])->where('name', 'Food')->first();
         if($category)
         {
             $categories = $category->children;
             $subcategory = $category->children->pluck('id');
         }
-        //dd($categories);
         if ($request->ajax())
         {
             if(!empty($request->get('enable')))
@@ -38,7 +37,7 @@ class MixerController extends Controller
                     ->with(['category', 'restaurant','variations'])
                     ->whereHas('restaurant', function($query) use($restaurant)
                     {
-                        return $query->where('id', $restaurant->id)->where('type',3);
+                        return $query->where('id', $restaurant->id)->where('type',1);
                     });
                     if (!empty($request->get('search_main')))
                     {
@@ -46,11 +45,12 @@ class MixerController extends Controller
 
                     }
                     $data = $data->get();
+                    //dd($data);
             return Datatables::of($data)
                 ->make(true);
         }
 
-        return view('restaurant.mixer-list')->with('categories',$categories);
+        return view('restaurant.addon-list')->with('categories',$categories);
     }
 
     /**
@@ -87,7 +87,7 @@ class MixerController extends Controller
             $restaurantitem                       = new RestaurantItem();
             $restaurantitem->name                 = $request->get('name');
             $restaurantitem->price                = $request->get('price');
-            $restaurantitem->type                 = 3;
+            $restaurantitem->type                 = 1;
             $restaurantitem->is_available         = 1;
             $restaurantitem->category_id         = $value;
             $restaurantitem->restaurant_id        = $restaurant->id;
@@ -98,6 +98,7 @@ class MixerController extends Controller
                 'attachmentable_id' => $restaurantitem->id,
             ]);
         }
+
         return $restaurantitem;
     }
 

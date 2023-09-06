@@ -1,6 +1,6 @@
 @extends('layouts.restaurant.mainlayout')
 @section('topbar')
-@include('restaurant.partials.mixertopbar')
+@include('restaurant.partials.addontopbar')
 @endsection
 @section('content')
 <style>
@@ -41,29 +41,29 @@
                             <div class="modal-content">
                               <div class="modal-header justify-content-start ">
                                   <button type="button" class="back" data-bs-dismiss="modal" aria-label="Close"><i class="icon-left"></i></button>
-                                  <h2>Add Mixer</h2>
+                                  <h2>Add Addon</h2>
                               </div>
                               <div class="modal-body">
-                              <form name="addmixer" id="mixerpopup" method="post" action="javascript:void(0)">
+                              <form name="addmixer" id="addonpopup" method="post" action="javascript:void(0)">
                                       @csrf
                                 <div style="min-height: 300px;">
                                       <div class="form-group mb-4">
-                                          <input type="text" name="name" class="form-control vari2" placeholder="Mixer Name" >
+                                          <input type="text" name="name" class="form-control vari2" placeholder="Addon Name" >
                                       </div>
                                       <div class="form-group mb-4">
-                                        <input type="number" name="price" class="form-control vari2" placeholder="Mixer Price" >
+                                        <input type="number" name="price" class="form-control vari2" placeholder="Addon Price" >
                                     </div>
                                     <div class="list-catg">
-                                    @foreach ($categories as $child)
-                                      <label>
-                                          <input type="checkbox" name="category" id="category" value="{{$child->id}}">
-                                          <span>{{$child->name}}</span>
-                                      </label>
-                                      @endforeach
-                                    </div>
+                                      @foreach ($categories as $child)
+                                        <label>
+                                            <input type="checkbox" name="category" id="category" value="{{$child->id}}">
+                                            <span>{{$child->name}}</span>
+                                        </label>
+                                        @endforeach
+                                      </div>
                                       <div class="form-group grey-brd-box custom-upload mb-5">
                                           <input id="upload" type="file"  class="files" name="image" />
-                                          <label for="upload"><span> Add Mixer Feature Image (This can be changed).</span> <i class="icon-plus"></i></label>
+                                          <label for="upload"><span> Add Addon Feature Image (This can be changed).</span> <i class="icon-plus"></i></label>
                                       </div>
                                   </div>
                                     <button class="bor-btn w-100 font-26" id="submitBtn" type="submit">Save</button>
@@ -77,52 +77,6 @@
 @section('pagescript')
 @parent
 <script type="text/javascript">
-$(document).ready(function()
-{
-    if (window.File && window.FileList && window.FileReader)
-    {
-        $(".files").on("change", function(e)
-        {
-            var clickedButton   = this,
-                files           = e.target.files,
-                filesLength     = files.length;
-            for (var i = 0; i < filesLength; i++)
-            {
-                var f               = files[i],
-                    fileReader      = new FileReader();
-                fileReader.onload   = (function(e)
-                {
-                    var file        = e.target,
-                        thumbnail   = `
-                        <div class="pip">
-                            <img class="imageThumb" src="${e.target.result}" title="${file.name}" />
-                            <i class="icon-trash remove"></i>
-                        </div>
-                    `;
-                    $(thumbnail).insertAfter(clickedButton);
-                    $(".remove").click(function() {
-                        $(this).parent(".pip").remove();
-                    });
-                });
-                fileReader.readAsDataURL(f);
-            }
-        });
-    }
-    else
-    {
-        alert("Your browser doesn't support to File API")
-    }
-});
-
-jQuery(document).ready(function()
-{
-    $('#sidebarToggle1').on('click', function(e)
-    {
-        e.preventDefault();
-
-        $('body').removeClass('sb-sidenav-toggled');
-    });
-});
 function formatDate(date) {
     var d = new Date(date),
         month = '' + (d.getMonth() + 1),
@@ -144,7 +98,7 @@ function load_data(data = null) {
             serverSide: true,
             searching: false,
             ajax:{
-              url :"{{ route('restaurants.mixers.index') }}",
+              url :"{{ route('restaurants.addons.index') }}",
               data :data,
             },
             columns: [
@@ -259,7 +213,7 @@ function load_data(data = null) {
 
     $(document).ready(function(){
       $('.checkboxitem').click(function() {
-       // alert(1);
+        alert(1);
           if ($(this).is(':checked')) {
               $('#disable').removeAttr('disabled');
               $('#enable').removeAttr('disabled');
@@ -278,14 +232,11 @@ function load_data(data = null) {
           //$(this).val('check all');
       })
   });
-  $("#mixerpopup").validate({
+  $("#addonpopup").validate({
     rules: {
         name: {
         required: true,
         maxlength: 50
-    },
-    category: {
-      onecheck: true
     },
     price: {
         required: true,
@@ -294,7 +245,6 @@ function load_data(data = null) {
     },
     image: {
         required: true,
-    // accept: "image/jpg,image/jpeg,image/png,image/gif"
     },
     message: {
         required: true
@@ -335,7 +285,7 @@ function load_data(data = null) {
    data.append('price', price);
    data.append('category', category);
   $.ajax({
-    url: 'mixers',
+    url: 'addons',
     type: "POST",
     data: data,
     processData: false,
@@ -343,7 +293,7 @@ function load_data(data = null) {
     success: function( response ) {
       $('#submitBtn').html('Submit');
       $("#submitBtn"). attr("disabled", false);
-      alert('Mixer has been added successfully');
+      alert('Addon has been added successfully');
       location.reload(true);
       //document.getElementById("categorypopup").reset();
     }

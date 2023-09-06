@@ -59,6 +59,22 @@
                     <input type="text" name="name" class="form-control vari2" placeholder="Category Name" >
                     <input id="category_id" type="hidden"  class="category_id" name="category_id" />
                 </div>
+                <div class="form-group mb-4">
+                    {{-- <div class="list-catg">
+                    <label>
+                        <input type="checkbox" name="contain_addon" id="contain_addon" class="" value="1">
+                        <span>Contain Addon</span>
+                    </label>
+                    <label>
+                        <input type="checkbox" name="contain_mixer" id="contain_mixer" class="" value="1">
+                        <span>Contain Mixer</span>
+                    </label>
+                    </div> --}}
+                    {{-- <label for="contain_addon"> Contain Addon</label>
+                    <input type="checkbox" name="contain_mixer" id="contain_mixer" class="" value="1">
+                    <label for="contain_mixer">Contain Mixer</label><br> --}}
+                    <input id="cat_id" type="hidden"  class="cat_id" name="cat_id" />
+                </div>
                 <div class="form-group grey-brd-box custom-upload mb-5">
                     <input id="upload" type="file"  class="files" name="image" />
                     <label for="upload"><span> Add Category Feature Image (This can be changed).</span> <i class="icon-plus"></i></label>
@@ -87,6 +103,13 @@
                     <input type="text" name="name" id="updatename" class="form-control vari2" placeholder="Category Name" >
                     <input id="cat_id" type="hidden"  class="cat_id" name="cat_id" />
                 </div>
+                <div class="form-group mb-4">
+                    {{-- <input type="checkbox" name="contain_addon" id="contain_addon" class="form-control" value="1">
+                    <label for="vehicle1"> Contain Addon</label><br>
+                    <input type="checkbox" name="contain_mixer" id="contain_mixer" class="form-control" value="1">
+                    <label for="vehicle1"> Contain Mixer</label><br> --}}
+                    <input id="cat_id" type="hidden"  class="cat_id" name="cat_id" />
+                </div>
                 <div class="form-group grey-brd-box custom-upload mb-5">
                     <input id="updateupload" type="file"  class="updatefiles" name="updateimage" />
                     <label for="upload"><span> Add Category Feature Image (This can be changed).</span> <i class="icon-plus"></i></label>
@@ -99,6 +122,34 @@
     </div>
   </div>
 <!-- Global update popup -->
+<!-- Remove categories -->
+<div class="modal fade wd800" id="remove_Ctg" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <!-- <div class="modal-header justify-content-start ">
+            <button type="button" class="back" data-bs-dismiss="modal" aria-label="Close"><i class="icon-left"></i></button>
+            <h2>Remove Categories</h2>
+        </div> -->
+        <div class="modal-body">
+           <div style="min-height: 300px;">
+            @foreach ($categories as $category)
+            <h2 class="yellow mb-4">{{$category->name}} Categories</h2>
+            <div class="list-catg">
+                @foreach ($category->children as $child)
+                <label>
+                    <input type="checkbox" name="category" id="category" value="{{$child->id}}">
+                    <span>{{$child->name}}</span>
+                </label>
+                @endforeach
+            </div>
+             <div class="gldnline-sepr"></div>
+            @endforeach
+            </div>
+              <button id="bulkdelete" class="bor-btn w-100 font-26" type="button">Remove</button>
+        </div>
+      </div>
+    </div>
+  </div>
 @endsection
 
 @section('pagescript')
@@ -188,8 +239,12 @@ $("#categorypopup").validate({
   let name = $("input[name=name]").val();
   let category_id = $("input[name=category_id]").val();
   var photo = $('#upload').prop('files')[0];
+//   var contain_addon = $("input[name='contain_addon']:checked").val() ? 1 : 0;
+//   var contain_mixer = $("input[name='contain_mixer']:checked").val() ? 1: 0;
    data.append('name', name);
    data.append('photo', photo);
+//    data.append('contain_addon', contain_addon);
+//    data.append('contain_mixer', contain_mixer);
    data.append('category_id', category_id);
   $.ajax({
     url: 'categories',
@@ -244,6 +299,9 @@ $("#categorypopup").validate({
   var data = new FormData();
   let name = $("#updatename").val();
   let category_id = $("input[name=cat_id]").val();
+  let contain_addon = $("input[name='contain_addon']:checked").val();
+  let contain_mixer = $("input[name='contain_mixer']:checked").val();
+  
   var photo = $('#updateupload').prop('files')[0];
    data.append('name', name);
    data.append('photo', photo);
@@ -289,12 +347,6 @@ function updateCategory(id)
             //location.reload(true);
             },
             error: function(data) {
-            // var errors = $.parseJSON(data.responseText);
-            // $('#edit-product-errors').html('');
-            // $.each(errors.messages, function(key, value) {
-            //     $('#edit-product-errors').append('<li>' + value + '</li>');
-            // });
-            // $("#edit-error-bag").show();
              }
          });
 }
@@ -313,7 +365,7 @@ $(function(){
     });
 
   function deleteConform(id) {
-      if(!confirm("Are You Sure to delete this 'Category' and 'All Items'")){
+      if(!confirm("Are You Sure to delete this 'Category' and 'All Items'?")){
       event.preventDefault();
       }
       else
@@ -331,6 +383,41 @@ $(function(){
          });
       }
   }
+  $(function(){
+      $('#bulkdelete').click(function(e) {
+        if(!confirm("Are You Sure to delete this 'Categories' and 'All Items'?")){
+      event.preventDefault();
+      }
+      else
+      {
+          e.preventDefault();
+        //   $.confirmModal("<label>Are You Sure to delete this 'Categories' and 'All Items' ?</label>"), function(el) 
+        //   {
+            // var val = [];
+            // // <input type="checkbox" name="category[]" id="category" value="{{$child->id}}">
+            //     $('#category:checkbox:checked').each(function(i){
+            //     val[i] = $(this).val();
+            //     });
+                var category = [];
+              $.each($("input[name='category']:checked"), function(i){
+                category[i] = $(this).val();
+              });
+              console.log(category);
+            $.ajax({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                url: "categories/multidelete",
+                type: "POST",
+                data:{category},
+                success: function( response ) {
+                alert('Categories are deleted successfully');
+                location.reload(true);
+                }
+             });
+          }
+        });
+    });
 
 
 </script>

@@ -41,7 +41,7 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-
+       // dd($request->all());
         $restaurant = session('restaurant')->loadMissing(['main_categories', 'main_categories.children']);
         $image = $request->file('photo');
         $profileImage ="";
@@ -54,6 +54,8 @@ class CategoryController extends Controller
         $category                       = new Category();
         $category->name                 = $request->get('name');
         $category->parent_id            = $request->get('category_id');
+        //$category->contain_addon        = $request->get('contain_addon');
+        //$category->contain_mixer        = $request->get('contain_mixer');
         $category->restaurant_id        = $restaurant->id;
         $category->save();
         $category->attachment()->create([
@@ -111,5 +113,24 @@ class CategoryController extends Controller
        $delete->items()->delete();
        $delete->delete();
        return $delete;
+    }
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function deleteCategories(Request $request)
+    {
+        //dd($request->get('category'));
+        $category = $request->get('category');
+        foreach ($category as $key => $value) {
+            //dd($value);
+            $delete = Category::find($value);
+            $delete->items()->delete();
+            $delete->delete();
+        }
+
+       return 1;
     }
 }

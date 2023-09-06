@@ -5,10 +5,11 @@
     <div class="list-group">
         <a href="{{ route('home') }}">Dashboard</a>
         <a href="{{ route('restaurants.categories.index') }}">Categories Management</a>
-        <a href="add-drinks.html">Add Drinks</a>
+        {{-- <a href="add-drinks.html">Add Drinks</a> --}}
         <a href="{{ route('restaurants.drinks.index') }}">Drinks List</a>
         <a href="{{ route('restaurants.foods.index') }}">Foods List</a>
         <a href="{{ route('restaurants.mixers.index') }}">Mixer Management</a>
+        <a href="{{ route('restaurants.addons.index') }}">Addons Management</a>
         <a href="#">Analytics</a>
         <a href="#">Pick-up Zones</a>
         <a href="#">Bar Management</a>
