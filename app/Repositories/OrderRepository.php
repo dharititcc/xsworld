@@ -235,7 +235,7 @@ class OrderRepository extends BaseRepository
 
         $cart       = [
             'cart_count'    => isset($user->latest_cart->order_items) ? $user->latest_cart->order_items->count() : 0,
-            'restaurant_id' => $user->latest_cart->restaurant->id ?? ''
+            'restaurant_id' => $user->latest_cart->restaurant->id ?? 0
         ];
 
         return $cart;
@@ -308,9 +308,10 @@ class OrderRepository extends BaseRepository
      *
      * @param array $data [explicite description]
      *
-     * @return void
+     * @return bool
+     * @throws \App\Exceptions\GeneralException
      */
-    function deleteCart(array $data)
+    function deleteCart(array $data): bool
     {
         $user       = auth()->user();
         $order_id   = $data['order_id'] ? $data['order_id'] : null;
@@ -322,9 +323,9 @@ class OrderRepository extends BaseRepository
             $order->items()->delete();
 
             // delete order
-            $order->delete();
+            return $order->delete();
         }
 
-        return $order;
+        throw new GeneralException('Order is not found.');
     }
 }
