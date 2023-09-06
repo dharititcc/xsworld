@@ -174,4 +174,26 @@ class User extends Authenticatable
     {
         return $this->hasOne(Order::class, 'user_id', 'id')->where('type', Order::CART)->latest();
     }
+
+    /**
+     * Method getNameAttribute
+     *
+     * @return string
+     */
+    public function getNameAttribute(): string
+    {
+        $name = '';
+
+        if( $this->first_name )
+        {
+            $name = $this->first_name;
+        }
+
+        if( $this->last_name )
+        {
+            $name .= " ".$this->last_name;
+        }
+
+        return $name;
+    }
 }

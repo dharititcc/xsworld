@@ -62,6 +62,8 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'v1', 'as' => 'api.v1.'], fun
         Route::post('/orderupdate', 'OrderController@orderUpdate')->name('orderupdate');
         // {api/v1/deleteitem}
         Route::post('/deleteitem', 'OrderController@deleteItem')->name('deleteitem');
+        // {api/v1/deleteorder}
+        Route::post('/deletecart', 'OrderController@deleteCart')->name('deletecart');
     });
 
     Route::group(['prefix' => 'users','middleware' => 'auth:api'], function ()

@@ -7,6 +7,7 @@ use App\Models\Restaurant;
 use App\Models\RestaurantItem;
 use App\Models\User;
 use App\Repositories\BaseRepository;
+use Carbon\Carbon;
 use Illuminate\Support\Collection;
 
 /**
@@ -280,17 +281,49 @@ class OrderRepository extends BaseRepository
      */
     function updateOrder(array $data) : Order
     {
-        $order_id   = $data['order_id'] ? $data['order_id'] : null;
-        $status     = $data['status'] ? $data['status'] : null;
-        $order      = Order::findOrFail($order_id);
+        $order_id          = $data['order_id'] ? $data['order_id'] : null;
+        $status            = $data['status'] ? $data['status'] : null;
+        $apply_time        = $data['apply_time'] ? $data['apply_time'] : null;
+        $order             = Order::findOrFail($order_id);
 
         if(isset($order->id))
         {
+            if($status == 1)
+            {
+                $accepted_date = Carbon::now()->addMinutes($apply_time);
+                $order->update(['apply_time' => $apply_time,'accepted_date' => $accepted_date]);
+            }
+
             $order->update(['status' => $status]);
         }
 
         $order->refresh();
         $order->loadMissing(['items']);
+
+        return $order;
+    }
+
+    /**
+     * Method deleteCart
+     *
+     * @param array $data [explicite description]
+     *
+     * @return void
+     */
+    function deleteCart(array $data)
+    {
+        $user       = auth()->user();
+        $order_id   = $data['order_id'] ? $data['order_id'] : null;
+        $order      = Order::where(['id' => $order_id, 'user_id' => $user->id])->first();
+
+        if(isset($order->id))
+        {
+            // delete order items
+            $order->items()->delete();
+
+            // delete order
+            $order->delete();
+        }
 
         return $order;
     }

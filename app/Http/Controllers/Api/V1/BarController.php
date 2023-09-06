@@ -27,7 +27,7 @@ class BarController extends APIController
     /**
      * Method barOrderHistory
      *
-     * @return void
+     * @return \Illuminate\Http\JsonResponse
      */
     public function barOrderHistory()
     {

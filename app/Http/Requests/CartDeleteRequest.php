@@ -2,11 +2,9 @@
 
 namespace App\Http\Requests;
 
-use App\Models\Order;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
-class OrderUpdateRequest extends FormRequest
+class CartDeleteRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -26,12 +24,7 @@ class OrderUpdateRequest extends FormRequest
     public function rules()
     {
         return [
-            'order_id'          => 'required',
-            'apply_time'        => 'nullable',
-            'status'            => [
-                                    'required',
-                                        Rule::in(Order::ACCEPTED, Order::READY, Order::COMPLETED, Order::CANCELED)
-                                    ]
+            'order_id'  => 'required'
         ];
     }
 }
