@@ -14,10 +14,10 @@ class OrderResource extends JsonResource
      */
     public function toArray($request)
     {
-        // dd($this->payment_method);
         return [
             'id'                        => $this->id,
             'restaurant_name'           => $this->restaurant->name,
+            'user'                      => $this->user->name,
             'restaurant_id'             => $this->restaurant->id,
             'pickup_point'              => $this->pickup_point ?? '',
             'pickup_point_user'         => $this->pickup_point_user->name ?? '',
