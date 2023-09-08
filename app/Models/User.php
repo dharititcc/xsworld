@@ -51,6 +51,8 @@ class User extends Authenticatable
         'country_code',
         'birth_date',
         'address',
+        'platform',
+        'os_version',
         'application_version',
         'model',
         'credit_points'

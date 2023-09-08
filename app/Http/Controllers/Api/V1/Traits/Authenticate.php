@@ -5,6 +5,8 @@ use App\Models\User;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 trait Authenticate
 {
@@ -42,7 +44,9 @@ trait Authenticate
                     $this->validateEmail($request);
 
                     $user = User::where('email', $request->email)->first();
-
+                    if(!$user){
+                       $user = $this->socialRegister($request);
+                    }
                     if( $user instanceof \App\Models\User && isset( $user->id ) )
                     {
                         auth()->login($user);
@@ -54,6 +58,9 @@ trait Authenticate
                     $this->validateEmail($request);
 
                     $user = User::where('email', $request->email)->first();
+                    if(!$user){
+                        $user = $this->socialRegister($request);
+                    }
 
                     if( $user instanceof \App\Models\User && isset( $user->id ) )
                     {
@@ -178,5 +185,38 @@ trait Authenticate
                 return 'email';
                 break;
         }
+    }
+
+    /**
+     * Method socialRegister
+     *
+     * @param Request $request [explicite description]
+     *
+     * @return App\Models\User
+     */
+    public function socialRegister(Request $request) : User
+    {
+        $dataArr = [
+            'first_name'            => $request->first_name ?? 'test',
+            'last_name'             => $request->last_name ?? '',
+            'email'                 => $request->email,
+            'password'              => Hash::make(Str::random(6)),
+            'phone'                 => $request->phone,
+            // 'country_code'          => $request->country_code,
+            // 'country_id'            => $request->country,
+            // 'address'               => $request->address,
+            'registration_type'     => $request->registration_type,
+            // 'birth_date'            => $request->birth_date,
+            'platform'              => $request->platform,
+            'os_version'            => $request->os_version,
+            'fcm_token'             => $request->fcm_token,
+            'application_version'   => $request->application_version,
+            'model'                 => $request->model,
+            'user_type'             => User::CUSTOMER
+        ];
+
+        $user = User::create($dataArr);
+
+        return $user;
     }
 }
