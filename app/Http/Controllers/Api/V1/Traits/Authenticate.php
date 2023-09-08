@@ -201,7 +201,7 @@ trait Authenticate
             'last_name'             => $request->last_name ?? '',
             'email'                 => $request->email,
             'password'              => Hash::make(Str::random(6)),
-            'phone'                 => $request->phone ?? 123456789,
+            'phone'                 => $request->phone ?? rand(),
             // 'country_code'          => $request->country_code,
             // 'country_id'            => $request->country,
             // 'address'               => $request->address,
