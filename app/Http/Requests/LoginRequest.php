@@ -26,7 +26,6 @@ class LoginRequest extends FormRequest
     public function rules()
     {
         $rules = [
-            'password'              => 'required|string|min:6',
             'fcm_token'             => 'required|string',
             'platform'              => 'required',
             'os_version'            => 'required',
@@ -38,7 +37,14 @@ class LoginRequest extends FormRequest
                                         ]
         ];
 
-        if( in_array(request()->registration_type, [User::EMAIL, User::GOOGLE, User::FACEBOOK]))
+        if (request()->registration_type == User::EMAIL)
+        {
+            $rules['email']         = 'required|email|exists:users,email';
+            $rules['password']      = 'required|string|min:6';
+
+        }
+
+        if( in_array(request()->registration_type, [ User::GOOGLE, User::FACEBOOK]))
         {
             $rules['email'] = 'required|email|exists:users,email';
         }
