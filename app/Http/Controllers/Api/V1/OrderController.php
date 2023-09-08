@@ -35,7 +35,7 @@ class OrderController extends APIController
      * @param Request $request [explicite description]
      * @param Order $order [explicite description]
      *
-     * @return void
+     * @return \Illuminate\Http\JsonResponse
      */
     public function show(Request $request, Order $order)
     {
@@ -208,6 +208,24 @@ class OrderController extends APIController
         $order_data   = $this->repository->updateOrder($request->validated());
 
         return $this->respondSuccess('Order data updated', new OrderResource($order_data));
+    }
+
+    /**
+     * Method updateCart
+     *
+     * @param Request $request [explicite description]
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function updateCart(Request $request)
+    {
+        $input = $request->all();
+
+        $order = Order::findOrFail($input['order']['order_id']);
+
+        $order          = $this->repository->updateCart($order, $input['order_items']);
+
+        return $this->respondSuccess('Order updated successfully.');
     }
 
 
