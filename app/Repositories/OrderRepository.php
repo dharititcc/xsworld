@@ -178,6 +178,23 @@ class OrderRepository extends BaseRepository
     }
 
     /**
+     * Method updateCart
+     *
+     * @param Order $order [explicite description]
+     * @param array $data [explicite description]
+     *
+     * @return Order
+     */
+    public function updateCart(Order $order, array $data): Order
+    {
+        $user = auth()->user();
+
+        $order->items()->delete();
+
+        return $this->checkSameRestaurantOrder($user, $order, $data);
+    }
+
+    /**
      * Method createOrderItem
      *
      * @param Order $order [explicite description]
