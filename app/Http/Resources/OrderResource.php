@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use Carbon\Carbon;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class OrderResource extends JsonResource
@@ -28,7 +29,7 @@ class OrderResource extends JsonResource
             'status'                    => $this->order_status,
             'user_payment_method'       => '',
             'credit_point'              => $this->credit_point,
-            'created_date'              => $this->created_at,
+            'created_date'              => Carbon::parse($this->created_at)->toDateTimeString(),
             'progress'                  => $this->progress,
             'currency'                  => $this->restaurant->currency->code,
             'order_items'               => isset($this->order_items) ? OrderItemResource::collection($this->order_items) : [],
