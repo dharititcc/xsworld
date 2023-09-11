@@ -280,7 +280,8 @@ class OrderRepository extends BaseRepository
 
         $cart       = [
             'cart_count'    => isset($user->latest_cart->order_items) ? $user->latest_cart->order_items->count() : 0,
-            'restaurant_id' => $user->latest_cart->restaurant->id ?? 0
+            'restaurant_id' => $user->latest_cart->restaurant->id ?? 0,
+            'order_id'      => $user->latest_cart->id ?? 0
         ];
 
         return $cart;
