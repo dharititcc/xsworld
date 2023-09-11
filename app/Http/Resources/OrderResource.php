@@ -29,7 +29,7 @@ class OrderResource extends JsonResource
             'credit_point'              => $this->credit_point,
             'created_date'              => $this->created_at,
             'progress'                  => $this->progress,
-            'currency'                  => $this->restaurant->currency->name,
+            'currency'                  => $this->restaurant->currency->code,
             'order_items'               => isset($this->order_items) ? OrderItemResource::collection($this->order_items) : [],
             'pickup_points'             => RestaurantPickupPointResources::collection($this->restaurant->pickup_points)
         ];
