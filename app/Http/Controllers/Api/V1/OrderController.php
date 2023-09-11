@@ -227,7 +227,7 @@ class OrderController extends APIController
 
         $order          = $this->repository->updateCart($order, $input);
 
-        return $this->respondSuccess('Order updated successfully.');
+        return $this->respondSuccess('Order updated successfully.', new OrderResource($order));
     }
 
 
