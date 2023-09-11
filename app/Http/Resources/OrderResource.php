@@ -23,7 +23,7 @@ class OrderResource extends JsonResource
             'pickup_point_user'         => $this->pickup_point_user->name ?? '',
             'pickup_point_user_image'   => isset($this->pickup_point->id) ? $this->pickup_point->image : '',
             'amount'                    => $this->amount,
-            'total'                     => $this->total,
+            'total'                     => number_format($this->total, 2),
             'status'                    => $this->order_status,
             'user_payment_method'       => '',
             'credit_point'              => $this->credit_point,
