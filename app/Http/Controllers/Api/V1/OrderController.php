@@ -221,9 +221,11 @@ class OrderController extends APIController
     {
         $input = $request->all();
 
-        $order = Order::findOrFail($input['order']['order_id']);
+        $order = Order::findOrFail($input['order_id']);
 
-        $order          = $this->repository->updateCart($order, $input['order_items']);
+        $order->loadMissing(['order_items']);
+
+        $order          = $this->repository->updateCart($order, $input);
 
         return $this->respondSuccess('Order updated successfully.');
     }

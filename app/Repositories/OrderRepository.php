@@ -187,11 +187,39 @@ class OrderRepository extends BaseRepository
      */
     public function updateCart(Order $order, array $data): Order
     {
-        $user = auth()->user();
+        /*[
+            "order_id" => 10
+            "item_id" => 38
+            "quantity" => 5
+        ];*/
+        $user       = auth()->user();
+        $orderItem  = $order->order_items->where('id', $data['item_id'])->first();
 
-        $order->items()->delete();
+        $orderItem->loadMissing(['addons', 'mixer']);
 
-        return $this->checkSameRestaurantOrder($user, $order, $data);
+        // update order item quantity
+        $orderItem->update(['quantity' => $data['quantity'], 'total' => $data['quantity'] * $orderItem->price]);
+
+        // check if that item has any addons
+        if( $orderItem->addons->count() )
+        {
+            foreach( $orderItem->addons as $addon )
+            {
+                $addon->update(['quantity' => $data['quantity'], 'total' => $data['quantity'] * $addon->price]);
+            }
+        }
+
+        // check if that item has any mixer
+        if( isset( $orderItem->mixer->id ) )
+        {
+            $orderItem->mixer->update(['quantity' => $data['quantity'], 'total' => $data['quantity'] * $orderItem->mixer->price]);
+        }
+
+        $order->refresh();
+        $order->loadMissing(['items']);
+        $order->update(['total' => $order->items->sum('total')]);
+
+        return $order;
     }
 
     /**
