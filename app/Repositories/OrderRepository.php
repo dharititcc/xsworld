@@ -330,16 +330,27 @@ class OrderRepository extends BaseRepository
         $status            = $data['status'] ? $data['status'] : null;
         $apply_time        = $data['apply_time'] ? $data['apply_time'] : null;
         $order             = Order::findOrFail($order_id);
+        $updateArr         = [];
 
         if(isset($order->id))
         {
             if($status == 1)
             {
-                $accepted_date = Carbon::now()->addMinutes($apply_time);
-                $order->update(['apply_time' => $apply_time,'accepted_date' => $accepted_date]);
+                $updateArr['accepted_date'] = Carbon::now();
+                $updateArr['status']        = $status;
             }
 
-            $order->update(['status' => $status]);
+            if( isset($apply_time) )
+            {
+                $updateArr['apply_time'] = $apply_time;
+            }
+
+            if( $status != 1 )
+            {
+                $updateArr['status']   = $status;
+            }
+
+            $order->update($updateArr);
         }
 
         $order->refresh();

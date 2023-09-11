@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -105,7 +106,7 @@ class Order extends Model
      */
     public function pickup_point(): BelongsTo
     {
-        return $this->belongsTo(RestaurantPickupPoint::class, 'restaurant_pickup_point_id', 'id');
+        return $this->belongsTo(PickupPoint::class, 'pickup_point_id', 'id');
     }
 
     /**
@@ -190,5 +191,25 @@ class Order extends Model
     public function scopeCart(Builder $query): Builder
     {
         return $query->where('type', self::CART);
+    }
+
+    /**
+     * Method getProgressattribute
+     *
+     * @return string
+     */
+    public function getProgressattribute()
+    {
+        $remaining_time     = '';
+        $current_time       = Carbon::now();
+
+        if(isset($this->accepted_date))
+        {
+            $accepted_time  = Carbon::parse($this->accepted_date);
+            $apply_time     = $accepted_time->addMinutes($this->apply_time);
+            $remaining_time = $current_time->diffInSeconds($apply_time);
+        }
+
+        return $remaining_time;
     }
 }
