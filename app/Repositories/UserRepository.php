@@ -1,5 +1,6 @@
 <?php namespace App\Repositories;
 
+use App\Billing\Stripe;
 use App\Models\User;
 use App\Repositories\BaseRepository;
 use File;
@@ -143,6 +144,10 @@ class UserRepository extends BaseRepository
             $user = User::create($data);
             if( $data['user_type'] == User::CUSTOMER )
             {
+                $stripe     = new Stripe();
+                $customer   = $stripe->createCustomer($data);
+                $str['stripe_customer_id'] = $customer->id;
+                $user->update($str);
                 $user->payment_methods()->create([
                     'name' => 'Cash'
                 ]);

@@ -24,6 +24,7 @@ class CustomerSeeder extends Seeder
             'password'              => Hash::make('12345678'),
             'phone'                 => '8000640987',
             'user_type'             => User::CUSTOMER,
+            'stripe_customer_id'    => 'cus_OcgbIPws1iMoOB',
             'created_at' 	        => Carbon::now()->toDateTimeString(),
             'updated_at' 	        => Carbon::now()->toDateTimeString(),
             'email_verified_at'     => Carbon::now()->toDateTimeString()

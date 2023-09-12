@@ -48,6 +48,7 @@ class User extends Authenticatable
         'user_type',
         'fcm_token',
         'country_id',
+        'stripe_customer_id',
         'country_code',
         'birth_date',
         'address',
