@@ -29,6 +29,7 @@ class OrderResource extends JsonResource
             'status'                    => $this->order_status,
             'user_payment_method'       => '',
             'credit_point'              => $this->credit_point,
+            'apply_time'                => $this->apply_time ?? 0,
             'created_date'              => Carbon::parse($this->created_at)->toDateTimeString(),
             'progress'                  => $this->progress,
             'currency'                  => $this->restaurant->currency->code,
