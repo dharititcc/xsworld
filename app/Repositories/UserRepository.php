@@ -174,6 +174,7 @@ class UserRepository extends BaseRepository
         foreach ($customer_cards->data as $value) {
             $cards[] = [
                 'name'          => $value->name,
+                'fingerprint'   => $value->fingerprint,
                 'brand'         => $value->brand,
                 'country'       => $value->country,
                 'exp_month'     => $value->exp_month,
