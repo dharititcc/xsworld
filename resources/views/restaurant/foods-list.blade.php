@@ -54,169 +54,143 @@
                         @endsection
 @section('pagescript')
 @parent
- <!-- Global popup -->
- <div class="modal fade" id="wd930" tabindex="0" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered modal-xl">
-      <div class="modal-content">
-          <div class="modal-header dri-heder">
-              <div class="head-left">
+    <!-- Global popup -->
+    <div class="modal fade" id="wd930" tabindex="0" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-xl">
+        <form name="adddrink" id="drinkpopup" method="post" action="javascript:void(0)">
+          <div class="modal-content">
+              <div class="modal-header dri-heder">
+                  <div class="head-left">
+                      <button type="button" class="back" data-bs-dismiss="modal" aria-label="Close"><i
+                              class="icon-left"></i></button>
+                      <h2>Manually Add Food</h2>
+                  </div>
+                  <div class="head-right">
+                      <a href="javascript:void(0)" data-is_favorite="0" class="favorite is_favorite null"></a>
+
+                      <button class="bor-btn" id="submitBtn" type="submit">Save</button>
+                  </div>
+              </div>
+              <div class="modal-body">
+                  <div class="row">
+                      <div class="col-md-4">
+                          <div class="tab-btn">
+                              <a href="#" class="bor-btn product_type active" data-product_type="0">Simple</a>
+                              <a href="#" class="bor-btn product_type" data-product_type="1">Variable</a>
+                          </div>
+                          {{-- <div class="grey-brd-box d-flex featured-img">
+                              <a href="#" class="add-edit"><i class="icon-plus"></i></a>
+                              <span class="img-text">Product Image</span>
+                          </div> --}}
+                          <div class="form-group grey-brd-box d-flex featured-img">
+                              <input id="upload" type="file" class="files" name="image" hidden/>
+                              <label for="upload"><span> Product Image</span> <i
+                                      class="icon-plus"></i></label>
+                          </div>
+                          <input type="text" name="price" id="price" class="form-control vari2 mb-3" placeholder="Enter Price">
+
+                      </div>
+                      <div class="col-md-8">
+                          <div class="form-group mb-4">
+                              <input type="text" name="name" class="form-control vari3" placeholder="Product Name">
+                          </div>
+                          <div class="grid colmn-5 cstm-catgory">
+                              @foreach ($categories as $category)
+                              <label>
+                                  <input type="checkbox" name="category_id" value="{{$category->id}}">
+                                  <div class="category">
+                                      <div class="name">{{$category->name}}
+                                          <span>{{$category->items->count()}} Total</span>
+                                      </div>
+                                  </div>
+                              </label>
+                              @endforeach
+                          </div>
+                          <div class="extr-info">
+                              <div class="head">
+                                  <h2 class="yellow">Additional Information</h2> <span class="optional-info"></span>
+                              </div>
+                              <div class="form-group">
+                                  <input type="text" name="ingredients" class="form-control vari1" placeholder="Ingredients">
+                              </div>
+                              <div class="form-group full-w-form">
+                                  <div class="row">
+                                      <div class="col-md-3"><input type="text" name="country_of_origin" class="form-control vari1"
+                                              placeholder="Country of Origin"></div>
+                                      <div class="col-md-4"><input type="text" name="year_of_production" class="form-control vari1"
+                                              placeholder="Year of Production"></div>
+                                      <div class="col-md-5"><input type="text" name="type_of_drink" class="form-control vari1"
+                                              placeholder="Type of Drink (Spirit/Wines)"></div>
+                                  </div>
+                              </div>
+
+                              <textarea id="description" name="description"
+                                  placeholder="Product descriptor goes into this box it can be brief or it can be long, this is to be displayed when the user clicks on the specific beverage."
+                                  class="prd-desc"></textarea>
+
+
+                          </div>
+                      </div>
+                  </div>
+
+                  <div class="prd-variation" style="display: none">
+                      <div class="head">
+                          <h2 class="yellow">Drink Variations</h2>
+                          <div class="add-remove"><a href="#" class="bor-btn plus" type="button"><i
+                                      class="icon-plus"></i></a> <a href="#" class="bor-btn minus"
+                                  type="button"><i class="icon-minus"></i></a></div>
+                      </div>
+                      <div class="variety grid colmn-7">
+                          {{-- <div class="grey-brd-box item-box">
+                              <button><i class="icon-minus"></i></button>
+                              <aside> Glass
+                                  <span>($12.50)</span>
+                              </aside>
+                          </div> --}}
+                          <a href="#" class="grey-brd-box item-box add" data-bs-toggle="modal"
+                              data-bs-target="#addDrink">
+                              <aside>+ Add Variation </aside>
+                          </a>
+                      </div>
+                  </div>
+              </div>
+
+          </div>
+        </form>
+      </div>
+  </div>
+  <!-- Global popup -->
+  <div class="modal fade" id="addDrink" tabindex="0" data-crudetype="1" aria-labelledby="exampleModalLabel" aria-hidden="false">
+      <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+              <div class="modal-header justify-content-start ">
                   <button type="button" class="back" data-bs-dismiss="modal" aria-label="Close"><i
                           class="icon-left"></i></button>
-                  <h2>Manually Add Food</h2>
+                  <h2>Add Drink Variation</h2>
               </div>
-              <div class="head-right">
-                  <a href="javascript:void(0)" class="favorite null"></a>
-
-                  <button class="bor-btn" type="button">Save</button>
-              </div>
-          </div>
-          <div class="modal-body">
-              <div class="row">
-                  <div class="col-md-4">
-                      <div class="tab-btn">
-                          <a href="#" class="bor-btn active">Simple</a>
-                          <a href="#" class="bor-btn">Variable</a>
-                      </div>
-                      <div class="grey-brd-box d-flex featured-img">
-                          <a href="#" class="add-edit"><i class="icon-plus"></i></a>
-                          <span class="img-text">Product Image</span>
-                      </div>
-                      <input type="text" class="form-control vari2 mb-3" placeholder="Enter Price">
-
-                  </div>
-                  <div class="col-md-8">
+              <div class="modal-body">
+                  <div style="min-height: 300px;">
                       <div class="form-group mb-4">
-                          <input type="text" class="form-control vari3" placeholder="Product Name">
+                          <input type="text" class="form-control vari2" placeholder="Variation Name">
                       </div>
-                      <div class="grid colmn-5 cstm-catgory">
-                          <label>
-                              <input type="checkbox" value="">
-                              <div class="category">
-                                  <div class="name">Beer
-                                      <span>14 Total</span>
-                                  </div>
-                              </div>
-                          </label>
-                          <label>
-                              <input type="checkbox" value="">
-                              <div class="category">
-                                  <div class="name">Spirit
-                                      <span>43 Total</span>
-                                  </div>
-                              </div>
-                          </label>
-                          <label>
-                              <input type="checkbox" value="">
-                              <div class="category">
-                                  <div class="name">Cocktail
-                                      <span>8 Total</span>
-                                  </div>
-                              </div>
-                          </label>
-                          <label>
-                              <input type="checkbox" value="">
-                              <div class="category">
-                                  <div class="name">Wine
-                                      <span>32 Total</span>
-                                  </div>
-                              </div>
-                          </label>
-                          <label>
-                              <input type="checkbox" value="">
-                              <div class="category">
-                                  <div class="name">Non-Alc
-                                      <span>7 Total</span>
-                                  </div>
-                              </div>
-                          </label>
+                      <div class="form-group mb-4">
+                          <input type="text" class="form-control vari2" placeholder="Variation Price">
                       </div>
-                      <div class="extr-info">
-                          <div class="head">
-                              <h2 class="yellow">Additional Information</h2> <span class="optional-info">Optional,
-                                  required for some drinks.</span>
-                          </div>
-                          <div class="form-group">
-                              <input type="text" class="form-control vari1" placeholder="Ingredients">
-                          </div>
-                          <div class="form-group full-w-form">
-                              <div class="row">
-                                  <div class="col-md-3"><input type="text" class="form-control vari1"
-                                          placeholder="Country of Origin"></div>
-                                  <div class="col-md-4"><input type="text" class="form-control vari1"
-                                          placeholder="Year of Production"></div>
-                                  <div class="col-md-5"><input type="text" class="form-control vari1"
-                                          placeholder="Type of Drink (Spirit/Wines)"></div>
-                              </div>
-                          </div>
-
-                          <textarea
-                              placeholder="Product descriptor goes into this box it can be brief or it can be long, this is to be displayed when the user clicks on the specific beverage."
-                              class="prd-desc"></textarea>
-
-
+                      <div class="form-group">
+                          <input type="text" class="form-control vari2" placeholder="Condition?">
                       </div>
                   </div>
+                  <button class="bor-btn w-100 font-26" type="button">Save</button>
               </div>
-
-              <div class="prd-variation">
-                  <div class="head">
-                      <h2 class="yellow">Drink Variations</h2>
-                      <div class="add-remove"><a href="#" class="bor-btn plus" type="button"><i
-                                  class="icon-plus"></i></a> <a href="#" class="bor-btn minus"
-                              type="button"><i class="icon-minus"></i></a></div>
-                  </div>
-                  <div class="variety grid colmn-7">
-                      <div class="grey-brd-box item-box">
-                          <button><i class="icon-minus"></i></button>
-                          <aside> Glass
-                              <span>($12.50)</span>
-                          </aside>
-                      </div>
-
-                      <div class="grey-brd-box item-box">
-                          <button><i class="icon-minus"></i></button>
-                          <aside> Jug
-                              <span>($12.50)</span>
-                          </aside>
-                      </div>
-                      <a href="#" class="grey-brd-box item-box add" data-bs-toggle="modal"
-                          data-bs-target="#addDrink">
-                          <aside>+ Add Variation </aside>
-                      </a>
-                  </div>
-              </div>
-          </div>
-
-      </div>
-  </div>
-</div>
-<!-- Global popup -->
-<div class="modal fade" id="addDrink" tabindex="0" aria-labelledby="exampleModalLabel" aria-hidden="false">
-  <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-          <div class="modal-header justify-content-start ">
-              <button type="button" class="back" data-bs-dismiss="modal" aria-label="Close"><i
-                      class="icon-left"></i></button>
-              <h2>Add Drink Variation</h2>
-          </div>
-          <div class="modal-body">
-              <div style="min-height: 300px;">
-                  <div class="form-group mb-4">
-                      <input type="text" class="form-control vari2" placeholder="Variation Name">
-                  </div>
-                  <div class="form-group mb-4">
-                      <input type="text" class="form-control vari2" placeholder="Variation Price">
-                  </div>
-                  <div class="form-group">
-                      <input type="text" class="form-control vari2" placeholder="Condition?">
-                  </div>
-              </div>
-              <button class="bor-btn w-100 font-26" type="button">Save</button>
           </div>
       </div>
   </div>
-</div>
 <script type="text/javascript">
+var moduleConfig = {
+            'addFood': "{!! route('restaurants.foods.store') !!}",
+            'getFood': "{!! route('restaurants.foods.show', ':ID') !!}",
+            'updateFood': "{!! route('restaurants.foods.update', ':ID') !!}",
+        };
 function formatDate(date) {
     var d = new Date(date),
         month = '' + (d.getMonth() + 1),
@@ -399,5 +373,142 @@ function load_data(data = null) {
           //$(this).val('check all');
       })
   });
+  $('.product_type').click(function(e)
+        {
+            var product_type = $(this).data('product_type');
+            $('.product_type').removeClass('active');
+            if(product_type === 1){
+                document.getElementById("price").style.visibility='hidden';
+                $('.prd-variation').removeAttr("style");
+            }else{
+                document.getElementById("price").style.visibility='visible';
+                $(".prd-variation").css("display", "none");
+            }
+            $(this).addClass('active');
+        });
+        $('.is_favorite').click(function(e)
+        {
+            var is_favorite = $(this).data('is_favorite');
+            if(is_favorite === 0){
+                $('.is_favorite').removeClass('null');
+                $(this).data('is_favorite',1);
+            }else{
+                $(this).data('is_favorite',0);
+                $('.is_favorite').addClass('null');
+            }
+        });
+    $('#submitBtn').click(function(e)
+    { //alert(1);
+        $("#drinkpopup").validate({
+                rules: {
+                    name: {
+                        required: true,
+                    },
+                    description: {
+                        required: true,
+                    },
+                    category_id : {
+                        required: true,
+                    },
+                    price: {
+                        required: true,
+                    },
+                    image: {
+                        required: true,
+                    },
+                    ingredients: {
+                        required: true,
+                    },
+                    country_of_origin: {
+                        required: true,
+                    },
+                    type_of_drink: {
+                        required: true,
+                    },
+                    year_of_production: {
+                        required: true,
+                    },
+                    message: {
+                        required: true
+                    },
+                },
+                messages: {
+                    name: {
+                        required: "Please enter name",
+                        maxlength: "Your name maxlength should be 50 characters long."
+                    },
+                    image: {
+                        required: "Please enter files", //accept: 'Not an image!'
+                    }
+                },
+                submitHandler: function(form) {
+                   // console.log('new');
+                    formsubmit(form);
+                }
+            });
+
+    });
+    function formsubmit(from){
+        $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+
+                $('#submitBtn').html('Please Wait...');
+                $("#submitBtn").attr("disabled", true);
+                var route = "";
+                var crudetype = $('#addDrink').data('crudetype'); //getter
+                var data                = new FormData(),
+                    name                = $("input[name=name]").val(),
+                    description         = $("#description").val(),
+                    price               = $("input[name=price]").val(),
+                    ingredients         = $("input[name=ingredients]").val(),
+                    country_of_origin   = $("input[name=country_of_origin]").val(),
+                    type_of_drink       = $("input[name=type_of_drink]").val(),
+                    year_of_production  = $("input[name=year_of_production]").val(),
+                    is_variable         = $(".product_type.active").data('product_type'),
+                    is_featured         = $(".is_favorite").data('is_favorite'),
+                    photo               = $('#upload').prop('files')[0];
+                    var category = [];
+                    $.each($("input[name='category_id']:checked"), function(i) {
+                        category[i] = $(this).val();
+                    });
+                    //console.log(is_variable);return false;
+
+                data.append('name', name);
+                data.append('category_id', category);
+                data.append('description', description);
+                data.append('price', price);
+                data.append('ingredients', ingredients);
+                data.append('country_of_origin', country_of_origin);
+                data.append('type_of_drink', type_of_drink);
+                data.append('year_of_production', year_of_production);
+                data.append('is_variable', is_variable);
+                data.append('is_featured', is_featured);
+                data.append('photo', photo);
+                //console.log(crudetype);
+                if (crudetype === 1) {
+                    route = moduleConfig.addFood;
+                } else {
+                    route = moduleConfig.updateFood.replace(':ID', category_id),
+                        data.append('_method', 'PUT');
+                }
+                console.log(route);
+                $.ajax({
+                    url: route,
+                    type: "POST",
+                    data: data,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        $('#submitBtn').html('Submit');
+                        $("#submitBtn").attr("disabled", false);
+                        alert('Ajax form has been submitted successfully');
+                        document.getElementById("categorypopup").reset();
+                        location.reload(true);
+                    }
+                });
+    }
   </script>
 @endsection

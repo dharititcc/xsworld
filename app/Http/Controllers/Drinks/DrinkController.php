@@ -89,6 +89,43 @@ class DrinkController extends Controller
      */
     public function store(Request $request)
     {
+        //dd($request->all());
+        $restaurant = session('restaurant')->loadMissing(['main_categories', 'main_categories.children']);
+        $image = $request->file('photo');
+        $profileImage ="";
+        if ($image = $request->file('photo'))
+        {
+            $destinationPath = public_path('/storage/items');
+            $profileImage = date('YmdHis') . "." . $image->getClientOriginalExtension();
+            $image->move($destinationPath, $profileImage);
+        }
+        $categories = explode(',',$request->get('category_id'));
+
+        foreach ($categories as $key => $value)
+        {
+            $drinkArr = [
+                "name"                  => $request->get('name'),
+                "category_id"           => $value,
+                "description"           => $request->get('description'),
+                "price"                 => $request->get('price'),
+                "ingredients"           => $request->get('ingredients'),
+                "country_of_origin"     => $request->get('country_of_origin'),
+                "type_of_drink"         => $request->get('type_of_drink'),
+                "year_of_production"    => $request->get('year_of_production'),
+                "photo"                 => $request->get('name'),
+                "is_variable"           => $request->get('is_variable'),
+                "is_featured"           => $request->get('is_featured'),
+                "is_available"          => 1,
+                "type"                  => 2,
+                "restaurant_id"         => $restaurant->id
+            ];
+            $newRestaurantItem = RestaurantItem::create($drinkArr);
+            $newRestaurantItem->attachment()->create([
+                'stored_name'   => $profileImage,
+                'original_name' => $profileImage
+            ]);
+        }
+        return $newRestaurantItem->refresh();
         //
     }
 

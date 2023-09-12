@@ -50,7 +50,12 @@ class RestaurantItem extends Model
         'is_featured',
         'is_variable',
         'type',
-        'parent_id'    // FK (Addon/Mixers of specific item / specific restaurant)
+        'parent_id',    // FK (Addon/Mixers of specific item / specific restaurant)
+        'ingredients',
+        'country_of_origin',
+        'year_of_production',
+        'type_of_drink',
+        'is_available'
     ];
 
     /**
