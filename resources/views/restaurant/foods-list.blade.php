@@ -54,6 +54,168 @@
                         @endsection
 @section('pagescript')
 @parent
+ <!-- Global popup -->
+ <div class="modal fade" id="wd930" tabindex="0" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-xl">
+      <div class="modal-content">
+          <div class="modal-header dri-heder">
+              <div class="head-left">
+                  <button type="button" class="back" data-bs-dismiss="modal" aria-label="Close"><i
+                          class="icon-left"></i></button>
+                  <h2>Manually Add Food</h2>
+              </div>
+              <div class="head-right">
+                  <a href="javascript:void(0)" class="favorite null"></a>
+
+                  <button class="bor-btn" type="button">Save</button>
+              </div>
+          </div>
+          <div class="modal-body">
+              <div class="row">
+                  <div class="col-md-4">
+                      <div class="tab-btn">
+                          <a href="#" class="bor-btn active">Simple</a>
+                          <a href="#" class="bor-btn">Variable</a>
+                      </div>
+                      <div class="grey-brd-box d-flex featured-img">
+                          <a href="#" class="add-edit"><i class="icon-plus"></i></a>
+                          <span class="img-text">Product Image</span>
+                      </div>
+                      <input type="text" class="form-control vari2 mb-3" placeholder="Enter Price">
+
+                  </div>
+                  <div class="col-md-8">
+                      <div class="form-group mb-4">
+                          <input type="text" class="form-control vari3" placeholder="Product Name">
+                      </div>
+                      <div class="grid colmn-5 cstm-catgory">
+                          <label>
+                              <input type="checkbox" value="">
+                              <div class="category">
+                                  <div class="name">Beer
+                                      <span>14 Total</span>
+                                  </div>
+                              </div>
+                          </label>
+                          <label>
+                              <input type="checkbox" value="">
+                              <div class="category">
+                                  <div class="name">Spirit
+                                      <span>43 Total</span>
+                                  </div>
+                              </div>
+                          </label>
+                          <label>
+                              <input type="checkbox" value="">
+                              <div class="category">
+                                  <div class="name">Cocktail
+                                      <span>8 Total</span>
+                                  </div>
+                              </div>
+                          </label>
+                          <label>
+                              <input type="checkbox" value="">
+                              <div class="category">
+                                  <div class="name">Wine
+                                      <span>32 Total</span>
+                                  </div>
+                              </div>
+                          </label>
+                          <label>
+                              <input type="checkbox" value="">
+                              <div class="category">
+                                  <div class="name">Non-Alc
+                                      <span>7 Total</span>
+                                  </div>
+                              </div>
+                          </label>
+                      </div>
+                      <div class="extr-info">
+                          <div class="head">
+                              <h2 class="yellow">Additional Information</h2> <span class="optional-info">Optional,
+                                  required for some drinks.</span>
+                          </div>
+                          <div class="form-group">
+                              <input type="text" class="form-control vari1" placeholder="Ingredients">
+                          </div>
+                          <div class="form-group full-w-form">
+                              <div class="row">
+                                  <div class="col-md-3"><input type="text" class="form-control vari1"
+                                          placeholder="Country of Origin"></div>
+                                  <div class="col-md-4"><input type="text" class="form-control vari1"
+                                          placeholder="Year of Production"></div>
+                                  <div class="col-md-5"><input type="text" class="form-control vari1"
+                                          placeholder="Type of Drink (Spirit/Wines)"></div>
+                              </div>
+                          </div>
+
+                          <textarea
+                              placeholder="Product descriptor goes into this box it can be brief or it can be long, this is to be displayed when the user clicks on the specific beverage."
+                              class="prd-desc"></textarea>
+
+
+                      </div>
+                  </div>
+              </div>
+
+              <div class="prd-variation">
+                  <div class="head">
+                      <h2 class="yellow">Drink Variations</h2>
+                      <div class="add-remove"><a href="#" class="bor-btn plus" type="button"><i
+                                  class="icon-plus"></i></a> <a href="#" class="bor-btn minus"
+                              type="button"><i class="icon-minus"></i></a></div>
+                  </div>
+                  <div class="variety grid colmn-7">
+                      <div class="grey-brd-box item-box">
+                          <button><i class="icon-minus"></i></button>
+                          <aside> Glass
+                              <span>($12.50)</span>
+                          </aside>
+                      </div>
+
+                      <div class="grey-brd-box item-box">
+                          <button><i class="icon-minus"></i></button>
+                          <aside> Jug
+                              <span>($12.50)</span>
+                          </aside>
+                      </div>
+                      <a href="#" class="grey-brd-box item-box add" data-bs-toggle="modal"
+                          data-bs-target="#addDrink">
+                          <aside>+ Add Variation </aside>
+                      </a>
+                  </div>
+              </div>
+          </div>
+
+      </div>
+  </div>
+</div>
+<!-- Global popup -->
+<div class="modal fade" id="addDrink" tabindex="0" aria-labelledby="exampleModalLabel" aria-hidden="false">
+  <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+          <div class="modal-header justify-content-start ">
+              <button type="button" class="back" data-bs-dismiss="modal" aria-label="Close"><i
+                      class="icon-left"></i></button>
+              <h2>Add Drink Variation</h2>
+          </div>
+          <div class="modal-body">
+              <div style="min-height: 300px;">
+                  <div class="form-group mb-4">
+                      <input type="text" class="form-control vari2" placeholder="Variation Name">
+                  </div>
+                  <div class="form-group mb-4">
+                      <input type="text" class="form-control vari2" placeholder="Variation Price">
+                  </div>
+                  <div class="form-group">
+                      <input type="text" class="form-control vari2" placeholder="Condition?">
+                  </div>
+              </div>
+              <button class="bor-btn w-100 font-26" type="button">Save</button>
+          </div>
+      </div>
+  </div>
+</div>
 <script type="text/javascript">
 function formatDate(date) {
     var d = new Date(date),
