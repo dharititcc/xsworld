@@ -155,4 +155,34 @@ class UserRepository extends BaseRepository
         }
         return $user;
     }
+
+    /**
+     * Method fetchCard
+     *
+     * @param array $data [explicite description]
+     *
+     * @return array
+     */
+    function fetchCard(array $data) : array
+    {
+        $customer_id    = isset($data['customer_id']) ? $data['customer_id'] : null;
+        $stripe         = new Stripe();
+        $customer_cards = $stripe->fetchCards($customer_id);
+        $customer       = $stripe->fetchCustomer($customer_id);
+        $cards          = [];
+
+        foreach ($customer_cards->data as $value) {
+            $cards[] = [
+                'name'          => $value->name,
+                'brand'         => $value->brand,
+                'country'       => $value->country,
+                'exp_month'     => $value->exp_month,
+                'exp_year'      => $value->exp_year,
+                'last4'         => $value->last4,
+                'default_card'  => ($customer->default_source == $value->id) ?? false ,
+            ];
+        }
+
+        return $cards;
+    }
 }

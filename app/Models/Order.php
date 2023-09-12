@@ -20,18 +20,22 @@ class Order extends Model
     const CART  = 1;
     const ORDER = 2;
 
-    const PENDNIG   = 0;
-    const ACCEPTED  = 1;
-    const READY     = 2;
-    const COMPLETED = 3;
-    const CANCELED  = 4;
+    const PENDNIG           = 0;
+    const ACCEPTED          = 1;
+    const READY             = 2;
+    const COMPLETED         = 3;
+    const CANCELED          = 4;
+    const PARTIAL_REFUND    = 5;
+    const FULL_REFUND       = 6;
 
     const ORDER_STATUS = [
-        self::PENDNIG       => 'Pending',
-        self::ACCEPTED      => 'Accepted',
-        self::READY         => 'Ready',
-        self::COMPLETED     => 'Completed',
-        self::CANCELED      => 'Canceled',
+        self::PENDNIG           => 'Pending',
+        self::ACCEPTED          => 'Accepted',
+        self::READY             => 'Ready',
+        self::COMPLETED         => 'Completed',
+        self::CANCELED          => 'Canceled',
+        self::PARTIAL_REFUND    => 'Partially Refund',
+        self::FULL_REFUND       => 'Full Refund',
     ];
 
     /**
@@ -201,13 +205,15 @@ class Order extends Model
     public function getProgressattribute()
     {
         $remaining_time     = '';
-        $current_time       = Carbon::now();
+        $current_time       = Carbon::now()->timezone('Asia/kolkata');
 
         if(isset($this->accepted_date))
         {
-            $accepted_time  = Carbon::parse($this->accepted_date);
+            $accepted_time  = Carbon::createFromFormat('Y-m-d H:i:s', $this->accepted_date, 'Asia/Kolkata');
+            // dd($accepted_time);
             $apply_time     = $accepted_time->addMinutes($this->apply_time);
-            $remaining_time = $current_time->diffInSeconds($apply_time);
+            $remaining_time = $apply_time->diffInSeconds($current_time);
+            // dd($current_time);
         }
 
         return $remaining_time;

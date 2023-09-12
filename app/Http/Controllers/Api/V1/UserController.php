@@ -8,6 +8,7 @@ use App\Repositories\UserRepository;
 use Illuminate\Http\Request;
 use App\Http\Requests\UpdateProfileRequest;
 use App\Http\Requests\ChangePasswordRequest;
+use App\Http\Requests\FetchCardRequest;
 use App\Http\Requests\UserFavouriteItemsRequest;
 use Illuminate\Support\Facades\Hash;
 
@@ -341,5 +342,28 @@ class UserController extends APIController
     {
         $validated  = $request->validate(['email' => "required|email"]);
        // return \Response::json($arr);
+    }
+
+    /**
+     * Method fetchCard
+     *
+     * @param FetchCardRequest $request [explicite description]
+     *
+     * @return void
+     */
+    public function fetchCard(FetchCardRequest $request)
+    {
+       $card_data = $this->repository->fetchCard($request->validated());
+
+       if(!empty($card_data))
+       {
+            return $this->respond([
+                'status' => true,
+                'message'=> 'User cards retrieved.',
+                'item'   => $card_data
+            ]);
+       }
+
+       throw new GeneralException('There is no card found');
     }
 }

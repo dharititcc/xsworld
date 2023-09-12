@@ -1,5 +1,6 @@
 <?php namespace App\Http\Controllers\Api\V1\Traits;
 
+use App\Billing\Stripe;
 use App\Exceptions\GeneralException;
 use App\Models\User;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
@@ -215,7 +216,11 @@ trait Authenticate
             'user_type'             => User::CUSTOMER
         ];
 
-        $user = User::create($dataArr);
+        $user                       = User::create($dataArr);
+        $stripe                     = new Stripe();
+        $customer                   = $stripe->createCustomer($data);
+        $str['stripe_customer_id']  = $customer->id;
+        $user->update($str);
 
         return $user;
     }

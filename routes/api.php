@@ -76,6 +76,8 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'v1', 'as' => 'api.v1.'], fun
         Route::get('get-profile', 'UserController@me')->name('get-profile');
         // {api/v1/users/favourite}
         Route::post('favourite', 'UserController@favorite')->name('user.favorite');
+        // {api/v1/users/fetchcard}
+        Route::post('fetchcard', 'UserController@fetchCard')->name('user.fetchcard');
     });
 
     Route::group(['prefix' => 'countries'], function ()
