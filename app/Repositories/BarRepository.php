@@ -45,4 +45,20 @@ class BarRepository extends BaseRepository
 
         return $order;
     }
+
+    /**
+     * Method getCompletedOrder
+     *
+     * @return Collection
+     */
+    public function getCompletedOrder() : Collection
+    {
+        $order       = Order::with([
+            'order_items',
+            'order_items.addons',
+            'order_items.mixer'
+        ])->where(['type'=> Order::ORDER , 'status' => Order::COMPLETED])->get();
+
+        return $order;
+    }
 }

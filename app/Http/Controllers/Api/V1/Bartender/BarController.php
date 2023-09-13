@@ -40,4 +40,19 @@ class BarController extends APIController
 
         return $this->respondSuccess('Orders found.', $data);
     }
+
+    /**
+     * Method completedorderhistory
+     *
+     * @return void
+     */
+    public function completedorderhistory()
+    {
+        $completedOrder      = $this->repository->getCompletedOrder();
+
+        if( $completedOrder->count() )
+        {
+            return $this->respondSuccess('Orders Found.', $completedOrder->count() ? OrderResource::collection($completedOrder) : [],);
+        }
+    }
 }
