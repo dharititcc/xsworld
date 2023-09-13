@@ -19,8 +19,9 @@ class PickupZoneController extends Controller
     {
         $restaurant = session('restaurant');
         // dd($restaurant);
-        $pickup_points = RestaurantPickupPoint::restaurantget($restaurant->id);
+        $pickup_points = RestaurantPickupPoint::with(['attachment'])->restaurantget($restaurant->id);
         $food_pickup_points = $pickup_points->type(1)->get();
+        // dd($food_pickup_points[2]->image);
         $drink_pickup_points = $pickup_points->type(2)->get();
         return view('pickup.index',[
             'food_pickup_points' => $food_pickup_points,
