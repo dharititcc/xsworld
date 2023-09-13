@@ -244,19 +244,20 @@ class UserRepository extends BaseRepository
     /**
      * Method checkCardAlreadyExist
      *
-     * @param array $card [explicite description]
+     * @param array $cards [explicite description]
      * @param string $fingerprint [explicite description]
      *
      * @return bool
      */
-    public function checkCardAlreadyExist(array $card, string $fingerprint): bool
+    public function checkCardAlreadyExist(array $cards, string $fingerprint): bool
     {
         $exist          = false;
+
         if( !empty( $cards ) )
         {
             foreach( $cards as $card )
             {
-                if( $card['fingerprint'] === $fingerprint )
+                if( $card['fingerprint'] == $fingerprint )
                 {
                     $exist = true;
                 }

@@ -172,7 +172,7 @@ class Stripe
                 $customerId,
                 [
                     'object' => 'card',
-                    'limit' => 3,
+                    // 'limit' => 3,
                 ]
             );
         }

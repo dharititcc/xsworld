@@ -24,7 +24,7 @@ class DeleteCardRequest extends FormRequest
     public function rules()
     {
         return [
-            'customer_id'  => 'required',
+            // 'customer_id'  => 'required',
             'card_id'      => 'required',
         ];
     }
