@@ -11,6 +11,7 @@ use App\Http\Requests\ChangePasswordRequest;
 use App\Http\Requests\DeleteCardRequest;
 use App\Http\Requests\FetchCardRequest;
 use App\Http\Requests\UserFavouriteItemsRequest;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends APIController
@@ -350,7 +351,7 @@ class UserController extends APIController
      *
      * @param FetchCardRequest $request [explicite description]
      *
-     * @return void
+     * @return \Illuminate\Http\JsonResponse
      */
     public function fetchCard(FetchCardRequest $request)
     {
@@ -373,7 +374,7 @@ class UserController extends APIController
      *
      * @param DeleteCardRequest $request [explicite description]
      *
-     * @return void
+     * @return \Illuminate\Http\JsonResponse
      */
     public function delectcard(DeleteCardRequest $request)
     {
@@ -387,6 +388,21 @@ class UserController extends APIController
             ]);
         }
 
-       throw new GeneralException('There is no card found');
+        throw new GeneralException('There is no card found');
+    }
+
+    /**
+     * Method attachCard
+     *
+     * @param Request $request [explicite description]
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function attachCard(Request $request): JsonResponse
+    {
+        $input          = $request->all();
+        $cards          = $this->repository->attachCard($input);
+
+        return $this->respondSuccess('Credit card attached successfully.');
     }
 }

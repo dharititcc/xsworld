@@ -80,6 +80,8 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'v1', 'as' => 'api.v1.'], fun
         Route::post('fetchcard', 'UserController@fetchCard')->name('user.fetchcard');
         // {api/v1/users/fetchcard}
         Route::post('delectcard', 'UserController@delectcard')->name('user.delectcard');
+        // {api/v1/users/attach-card}
+        Route::post('attach-card', 'UserController@attachCard')->name('user.attach-card');
     });
 
     Route::group(['prefix' => 'countries'], function ()

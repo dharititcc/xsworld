@@ -1,9 +1,12 @@
 <?php namespace App\Repositories;
 
 use App\Billing\Stripe;
+use App\Exceptions\GeneralException;
 use App\Models\User;
 use App\Repositories\BaseRepository;
 use File;
+use Stripe\Source;
+use Stripe\Token;
 
 /**
  * Class UserRepository.
@@ -195,13 +198,108 @@ class UserRepository extends BaseRepository
      *
      * @return mixed
      */
-    function deleteUserCard(array $data)
+    public function deleteUserCard(array $data)
     {
-        $customer_id    = isset($data['customer_id']) ? $data['customer_id'] : null;
+        $user           = auth()->user();
         $card_id        = isset($data['card_id']) ? $data['card_id'] : null;
         $stripe         = new Stripe();
-        $delete         = $stripe->deleteCard($customer_id , $card_id);
+        $delete         = $stripe->deleteCard($user->stripe_customer_id , $card_id);
 
         return $delete->deleted;
+    }
+
+    /**
+     * Method retrieveToken
+     *
+     * @param string $token [explicite description]
+     *
+     * @return Token
+     */
+    public function retrieveToken(string $token): Token
+    {
+        $stripe         = new Stripe();
+        $token          = isset( $token ) ? $token : null;
+        return $stripe->retrieveToken($token);
+    }
+
+    public function attachCard(array $data)
+    {
+        $user           = auth()->user();
+        $token          = isset( $data['token'] ) ? $this->retrieveToken($data['token']) : null;
+        $fingerprint    = $token->card->fingerprint;
+        $cards          = $this->fetchCard(['customer_id' => $user->stripe_customer_id]);
+        $stripe         = new Stripe();
+
+        // check card exist
+        if( !$this->checkCardAlreadyExist($cards, $fingerprint) )
+        {
+            // generate source
+            $source = $this->generateSource($stripe, $user, $token);
+
+            // attach source to customer
+            return $source = $this->attachSource($stripe, $user->stripe_customer_id, $source);
+        }
+        else
+        {
+            throw new GeneralException('Card is already taken for this customer.');
+        }
+    }
+
+    /**
+     * Method checkCardAlreadyExist
+     *
+     * @param array $card [explicite description]
+     * @param string $fingerprint [explicite description]
+     *
+     * @return bool
+     */
+    public function checkCardAlreadyExist(array $card, string $fingerprint): bool
+    {
+        $exist          = false;
+        if( !empty( $cards ) )
+        {
+            foreach( $cards as $card )
+            {
+                if( $card['fingerprint'] === $fingerprint )
+                {
+                    $exist = true;
+                }
+                else
+                {
+                    continue;
+                }
+            }
+        }
+
+        return $exist;
+    }
+
+    /**
+     * Method generateSource
+     *
+     * @param Stripe $stripe [explicite description]
+     * @param User $user [explicite description]
+     * @param Token $token [explicite description]
+     *
+     * @return Source
+     */
+    private function generateSource(Stripe $stripe, User $user, Token $token): Source
+    {
+        // generate source
+        return $stripe->createSource($user->email, $token);
+    }
+
+    /**
+     * Method attachSource
+     *
+     * @param Stripe $stripe [explicite description]
+     * @param string $customerId [explicite description]
+     * @param Source $source [explicite description]
+     *
+     * @return mixed
+     */
+    private function attachSource(Stripe $stripe, string $customerId, Source $source)
+    {
+        return $stripe->attachSource($customerId, $source->id);
     }
 }

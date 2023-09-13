@@ -3,6 +3,7 @@
 use App\Exceptions\GeneralException;
 use Stripe\Exception\ApiErrorException;
 use Stripe\StripeClient;
+use Stripe\Token;
 
 class Stripe
 {
@@ -112,8 +113,8 @@ class Stripe
      * @param $customerId $customerId [explicite description]
      * @param $sourceId $sourceId [explicite description]
      *
-     * @throws GeneralException
-     * @return mixed
+     * @return \Stripe\BankAccount|\Stripe\Card|\Stripe\Source
+     * @throws \App\Exceptions\GeneralException
      */
     public function attachSource($customerId, $sourceId)
     {
@@ -197,6 +198,36 @@ class Stripe
         catch(ApiErrorException $e)
         {
             throw new GeneralException($e->getError()->message);
+        }
+    }
+
+    /**
+     * Method retrieveToken
+     *
+     * @param string $token [explicite description]
+     *
+     * @return Token
+     * @throws \App\Exceptions\GeneralException
+     */
+    public function retrieveToken($token): Token
+    {
+        if( isset( $token ) && $token != '' )
+        {
+            try
+            {
+                return $this->stripe->tokens->retrieve(
+                    $token,
+                    []
+                );
+            }
+            catch(ApiErrorException $e)
+            {
+                throw new GeneralException($e->getError()->message);
+            }
+        }
+        else
+        {
+            throw new GeneralException('There is no token found. Token is required.');
         }
     }
 }
