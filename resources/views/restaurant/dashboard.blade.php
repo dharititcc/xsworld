@@ -50,7 +50,7 @@
                             <a href="{{ route('restaurants.drinks.index') }}" class="grey-brd-box padbox text-center lable-box"><span>Drink List</span></a>
                             <a href="{{ route('restaurants.mixers.index') }}" class="grey-brd-box padbox text-center lable-box"><span>Mixer Management</span></a>
                             <a href="{{ route('restaurants.categories.index') }}" class="grey-brd-box padbox text-center lable-box"><span>Category Management</span></a>
-                            <a href="#" class="grey-brd-box padbox text-center lable-box"><span>Pick-up Zone Management</span></a>
+                            <a href="{{route('restaurants.pickup.index')}}" class="grey-brd-box padbox text-center lable-box"><span>Pick-up Zone Management</span></a>
                         </div>
                     </div>
                 </div>

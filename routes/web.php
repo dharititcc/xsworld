@@ -55,6 +55,13 @@ Route::group(['prefix' => 'restaurants', 'as' => 'restaurants.', 'middleware' =>
     {
         Route::resource('addons', 'AddonsController');
     });
+
+    Route::group(['namespace' => 'pickup'], function()
+    {
+        Route::resource('pickup', 'PickupZoneController');
+    });
+
+
 });
 
 
