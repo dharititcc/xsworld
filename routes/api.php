@@ -64,6 +64,8 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'v1', 'as' => 'api.v1.'], fun
         Route::post('/deleteitem', 'OrderController@deleteItem')->name('deleteitem');
         // {api/v1/deleteorder}
         Route::post('/deletecart', 'OrderController@deleteCart')->name('deletecart');
+        // {api/v1/placeorder}
+        Route::post('/placeorder', 'OrderController@placeOrder')->name('placeorder');
     });
 
     Route::group(['prefix' => 'users','middleware' => 'auth:api'], function ()
@@ -77,9 +79,11 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'v1', 'as' => 'api.v1.'], fun
         // {api/v1/users/favourite}
         Route::post('favourite', 'UserController@favorite')->name('user.favorite');
         // {api/v1/users/fetchcard}
-        Route::post('fetchcard', 'UserController@fetchCard')->name('user.fetchcard');
+        Route::get('fetchcard', 'UserController@fetchCard')->name('user.fetchcard');
         // {api/v1/users/fetchcard}
         Route::post('delectcard', 'UserController@delectcard')->name('user.delectcard');
+        // {api/v1/users/attach-card}
+        Route::post('attach-card', 'UserController@attachCard')->name('user.attach-card');
     });
 
     Route::group(['prefix' => 'countries'], function ()
@@ -104,6 +108,8 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'v1', 'as' => 'api.v1.'], fun
             // orders
             // {api/v1/barorderhistory}
             Route::get('/barorderhistory', 'BarController@barOrderHistory')->name('barOrderHistory');
+            // {api/v1/completedorderhistory}
+            Route::get('/completedorderhistory', 'BarController@completedorderhistory')->name('completedorderhistory');
         });
     });
 });

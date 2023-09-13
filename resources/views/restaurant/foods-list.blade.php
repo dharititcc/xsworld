@@ -187,10 +187,37 @@
   </div>
 <script type="text/javascript">
 var moduleConfig = {
-            'addFood': "{!! route('restaurants.foods.store') !!}",
-            'getFood': "{!! route('restaurants.foods.show', ':ID') !!}",
+            'addFood'   : "{!! route('restaurants.foods.store') !!}",
+            'getFood'   : "{!! route('restaurants.foods.show', ':ID') !!}",
             'updateFood': "{!! route('restaurants.foods.update', ':ID') !!}",
         };
+        if (window.File && window.FileList && window.FileReader) {
+                $(".files").on("change", function(e) {
+                    var clickedButton = this,
+                        files = e.target.files,
+                        filesLength = files.length;
+                    for (var i = 0; i < filesLength; i++) {
+                        var f = files[i],
+                            fileReader = new FileReader();
+                        fileReader.onload = (function(e) {
+                            var file = e.target,
+                                thumbnail = `
+                                    <div class="pip">
+                                        <img class="imageThumb" src="${e.target.result}" title="${file.name}" />
+                                        <i class="icon-trash remove"></i>
+                                    </div>
+                                `;
+                            $(thumbnail).insertAfter(clickedButton);
+                            $(".remove").click(function() {
+                                $(this).parent(".pip").remove();
+                            });
+                        });
+                        fileReader.readAsDataURL(f);
+                    }
+                });
+            } else {
+                alert("Your browser doesn't support to File API")
+            }
 function formatDate(date) {
     var d = new Date(date),
         month = '' + (d.getMonth() + 1),

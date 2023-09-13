@@ -1,8 +1,10 @@
 <?php namespace App\Billing;
 
 use App\Exceptions\GeneralException;
+use Stripe\Charge;
 use Stripe\Exception\ApiErrorException;
 use Stripe\StripeClient;
+use Stripe\Token;
 
 class Stripe
 {
@@ -112,8 +114,8 @@ class Stripe
      * @param $customerId $customerId [explicite description]
      * @param $sourceId $sourceId [explicite description]
      *
-     * @throws GeneralException
-     * @return mixed
+     * @return \Stripe\Account|\Stripe\BankAccount|\Stripe\Card|\Stripe\Source
+     * @throws \App\Exceptions\GeneralException
      */
     public function attachSource($customerId, $sourceId)
     {
@@ -169,7 +171,9 @@ class Stripe
         {
             return $this->stripe->customers->allSources(
                 $customerId,
-                []
+                [
+                    'object' => 'card'
+                ]
             );
         }
         catch(ApiErrorException $e)
@@ -191,6 +195,102 @@ class Stripe
         {
             return $this->stripe->customers->retrieve(
                 $customerId,
+                []
+            );
+        }
+        catch(ApiErrorException $e)
+        {
+            throw new GeneralException($e->getError()->message);
+        }
+    }
+
+    /**
+     * Method retrieveToken
+     *
+     * @param string $token [explicite description]
+     *
+     * @return Token
+     * @throws \App\Exceptions\GeneralException
+     */
+    public function retrieveToken($token): Token
+    {
+        if( isset( $token ) && $token != '' )
+        {
+            try
+            {
+                return $this->stripe->tokens->retrieve(
+                    $token,
+                    []
+                );
+            }
+            catch(ApiErrorException $e)
+            {
+                throw new GeneralException($e->getError()->message);
+            }
+        }
+        else
+        {
+            throw new GeneralException('There is no token found. Token is required.');
+        }
+    }
+
+    public function retrieveSource(string $customerId, string $cardId)
+    {
+        try
+        {
+            return $this->stripe->customers->retrieveSource(
+                $customerId,
+                $cardId,
+            );
+        }
+        catch(ApiErrorException $e)
+        {
+            throw new GeneralException($e->getError()->message);
+        }
+    }
+
+    /**
+     * Method createCharge
+     *
+     * @param array $data [explicite description]
+     *
+     * @return Charge
+     */
+    public function createCharge(array $data): Charge
+    {
+        /*
+        $data = [
+            'amount' => 2000,
+            'currency' => 'aud',
+            'customer' => CUSTOMER_ID,
+            'capture' => true,
+            'source' => 'tok_visa', //A payment source to be charged. This can be the ID of a card (i.e., credit or debit card), a bank account, a source, a token, or a connected account. For certain sources—namely, cards, bank accounts, and attached sources—you must also pass the ID of the associated customer.
+            'description' => 'My First Test Charge (created for API docs at https://www.stripe.com/docs/api)',
+        ]
+        */
+        try
+        {
+            return $this->stripe->charges->create($data);
+        }
+        catch(ApiErrorException $e)
+        {
+            throw new GeneralException($e->getError()->message);
+        }
+    }
+
+    /**
+     * Method captureCharge
+     *
+     * @param string $charge [explicite description]
+     *
+     * @return Charge
+     */
+    public function captureCharge(string $charge): Charge
+    {
+        try
+        {
+            return $this->stripe->charges->capture(
+                $charge,
                 []
             );
         }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Addons;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\RestaurantItemsResource;
 use Illuminate\Http\Request;
 use App\Models\RestaurantItem;
 use DataTables;
@@ -105,12 +106,12 @@ class AddonsController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  int  RestaurantItem $addon
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(RestaurantItem $addon)
     {
-        //
+        return new RestaurantItemsResource($addon);
     }
 
     /**
