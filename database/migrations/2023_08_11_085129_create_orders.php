@@ -25,6 +25,7 @@ class CreateOrders extends Migration
             $table->decimal('credit_point', 14,2)->default(0)->comment('Used from credit point');
             $table->decimal('amount', 14,2)->default(0);
             $table->string('transaction_id')->nullable();
+            $table->string('card_id')->nullable();
             $table->text('cancel_reason')->nullable();
             $table->unsignedTinyInteger('apply_time')->nullable();
             $table->timestamp('accepted_date')->nullable();

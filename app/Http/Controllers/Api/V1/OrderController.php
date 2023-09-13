@@ -7,6 +7,7 @@ use App\Http\Requests\AddtocartRequest;
 use App\Http\Requests\CartDeleteRequest;
 use App\Http\Requests\OrderDeleteItemRequest;
 use App\Http\Requests\OrderUpdateRequest;
+use App\Http\Requests\PlaceOrderRequest;
 use App\Http\Resources\OrderResource;
 use App\Models\Order;
 use App\Repositories\OrderRepository;
@@ -243,5 +244,17 @@ class OrderController extends APIController
         $order_data   = $this->repository->deleteCart($request->validated());
 
         return $this->respondSuccess('Order deleted successfully');
+    }
+
+    /**
+     * Method placeOrder
+     *
+     * @param PlaceOrderRequest $request [explicite description]
+     *
+     * @return void
+     */
+    public function placeOrder(PlaceOrderRequest $request)
+    {
+        $place_order = $this->repository->placeOrder($request->validated());
     }
 }

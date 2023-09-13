@@ -1,5 +1,6 @@
 <?php namespace App\Repositories;
 
+use App\Billing\Stripe;
 use App\Exceptions\GeneralException;
 use App\Models\Order;
 use App\Models\OrderItem;
@@ -384,5 +385,49 @@ class OrderRepository extends BaseRepository
         }
 
         throw new GeneralException('Order is not found.');
+    }
+
+    /**
+     * Method placeOrder
+     *
+     * @param array $data [explicite description]
+     *
+     * @return Order
+     */
+    function placeOrder(array $data): Order
+    {
+        $order_id           = $data['order_id'] ? $data['order_id'] : null;
+        $card_id            = $data['card_id'] ? $data['card_id'] : null;
+        $credit_amount      = $data['credit_amount'] ? $data['credit_amount'] : null;
+        $amount             = $data['amount'] ? $data['amount'] : null;
+        $pickup_point_id    = $data['pickup_point_id'] ? $data['pickup_point_id'] : null;
+        $table_id           = $data['table_id'] ? $data['table_id'] : null;
+        $order              = Order::where(['id' => $order_id])->first();
+        $user               = auth()->user();
+
+        $updateArr         = [];
+        $paymentArr        = [];
+
+        if(isset($order->id))
+        {
+            $paymentArr = [
+                'amount'        => $amount * 100,
+                'currency'      => $order->restaurant->currency->code,
+                'customer'      => $user->stripe_customer_id,
+                'capture'       => false,
+                'source'        => $card_id,
+                'description'   => $order_id
+            ];
+
+            $stripe         = new Stripe();
+            $payment_data   = $stripe->createCharge($paymentArr);
+            dd($payment_data);
+            $updateArr['type'] = Order::ORDER;
+            $order->update($updateArr);
+        }
+        $order->refresh();
+        $order->loadMissing(['items']);
+
+        return $order;
     }
 }
