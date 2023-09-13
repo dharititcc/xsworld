@@ -1,6 +1,7 @@
 <?php namespace App\Billing;
 
 use App\Exceptions\GeneralException;
+use Stripe\Charge;
 use Stripe\Exception\ApiErrorException;
 use Stripe\StripeClient;
 use Stripe\Token;
@@ -171,8 +172,7 @@ class Stripe
             return $this->stripe->customers->allSources(
                 $customerId,
                 [
-                    'object' => 'card',
-                    // 'limit' => 3,
+                    'object' => 'card'
                 ]
             );
         }
@@ -231,6 +231,72 @@ class Stripe
         else
         {
             throw new GeneralException('There is no token found. Token is required.');
+        }
+    }
+
+    public function retrieveSource(string $customerId, string $cardId)
+    {
+        try
+        {
+            return $this->stripe->customers->retrieveSource(
+                $customerId,
+                $cardId,
+            );
+        }
+        catch(ApiErrorException $e)
+        {
+            throw new GeneralException($e->getError()->message);
+        }
+    }
+
+    /**
+     * Method createCharge
+     *
+     * @param array $data [explicite description]
+     *
+     * @return Charge
+     */
+    public function createCharge(array $data): Charge
+    {
+        /*
+        $data = [
+            'amount' => 2000,
+            'currency' => 'aud',
+            'customer' => CUSTOMER_ID,
+            'capture' => true,
+            'source' => 'tok_visa', //A payment source to be charged. This can be the ID of a card (i.e., credit or debit card), a bank account, a source, a token, or a connected account. For certain sources—namely, cards, bank accounts, and attached sources—you must also pass the ID of the associated customer.
+            'description' => 'My First Test Charge (created for API docs at https://www.stripe.com/docs/api)',
+        ]
+        */
+        try
+        {
+            return $this->stripe->charges->create($data);
+        }
+        catch(ApiErrorException $e)
+        {
+            throw new GeneralException($e->getError()->message);
+        }
+    }
+
+    /**
+     * Method captureCharge
+     *
+     * @param string $charge [explicite description]
+     *
+     * @return Charge
+     */
+    public function captureCharge(string $charge): Charge
+    {
+        try
+        {
+            return $this->stripe->charges->capture(
+                $charge,
+                []
+            );
+        }
+        catch(ApiErrorException $e)
+        {
+            throw new GeneralException($e->getError()->message);
         }
     }
 }
