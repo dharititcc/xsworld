@@ -77,7 +77,7 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'v1', 'as' => 'api.v1.'], fun
         // {api/v1/users/favourite}
         Route::post('favourite', 'UserController@favorite')->name('user.favorite');
         // {api/v1/users/fetchcard}
-        Route::post('fetchcard', 'UserController@fetchCard')->name('user.fetchcard');
+        Route::get('fetchcard', 'UserController@fetchCard')->name('user.fetchcard');
         // {api/v1/users/fetchcard}
         Route::post('delectcard', 'UserController@delectcard')->name('user.delectcard');
         // {api/v1/users/attach-card}

@@ -113,7 +113,7 @@ class Stripe
      * @param $customerId $customerId [explicite description]
      * @param $sourceId $sourceId [explicite description]
      *
-     * @return \Stripe\BankAccount|\Stripe\Card|\Stripe\Source
+     * @return \Stripe\Account|\Stripe\BankAccount|\Stripe\Card|\Stripe\Source
      * @throws \App\Exceptions\GeneralException
      */
     public function attachSource($customerId, $sourceId)
@@ -170,7 +170,10 @@ class Stripe
         {
             return $this->stripe->customers->allSources(
                 $customerId,
-                []
+                [
+                    'object' => 'card',
+                    'limit' => 3,
+                ]
             );
         }
         catch(ApiErrorException $e)

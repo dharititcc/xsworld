@@ -168,16 +168,16 @@ class UserRepository extends BaseRepository
      */
     function fetchCard(array $data) : array
     {
-        $customer_id    = isset($data['customer_id']) ? $data['customer_id'] : null;
+        $user           = auth()->user();
         $stripe         = new Stripe();
-        $customer_cards = $stripe->fetchCards($customer_id);
-        $customer       = $stripe->fetchCustomer($customer_id);
+        $customer_cards = $stripe->fetchCards($user->stripe_customer_id);
+        $customer       = $stripe->fetchCustomer($user->stripe_customer_id);
         $cards          = [];
-
+        // dd($customer_cards);
         foreach ($customer_cards->data as $value) {
             $cards[] = [
                 'id'            => $value->id,
-                'name'          => $value->name,
+                'name'          => $value->name ?? '',
                 'fingerprint'   => $value->fingerprint,
                 'brand'         => $value->brand,
                 'country'       => $value->country,
@@ -233,11 +233,7 @@ class UserRepository extends BaseRepository
         // check card exist
         if( !$this->checkCardAlreadyExist($cards, $fingerprint) )
         {
-            // generate source
-            $source = $this->generateSource($stripe, $user, $token);
-
-            // attach source to customer
-            return $source = $this->attachSource($stripe, $user->stripe_customer_id, $source);
+            return $source = $this->attachSource($stripe, $user->stripe_customer_id, $token);
         }
         else
         {
@@ -294,11 +290,11 @@ class UserRepository extends BaseRepository
      *
      * @param Stripe $stripe [explicite description]
      * @param string $customerId [explicite description]
-     * @param Source $source [explicite description]
+     * @param Token $source [explicite description]
      *
-     * @return mixed
+     * @return \Stripe\Account|\Stripe\BankAccount|\Stripe\Card|\Stripe\Source
      */
-    private function attachSource(Stripe $stripe, string $customerId, Source $source)
+    private function attachSource(Stripe $stripe, string $customerId, Token $source)
     {
         return $stripe->attachSource($customerId, $source->id);
     }
