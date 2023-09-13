@@ -42,14 +42,20 @@
 
                 @foreach ($food_pickup_points as $pickup_point)
                     <div class="catg-box overly">
-                        <button><i class="icon-trash"></i></button>
-                        <figure><img src="{{$pickup_point->attachment}}"><figcaption><span>{{$pickup_point->name}}</span></figcaption>
+                        {{-- <button><i class="icon-trash"></i></button>
+                         --}}
+                        <button onclick="return deleteConform({{ $pickup_point->id }});"><i
+                            class="icon-trash"></i></button>
+                        <figure onclick="updatePickup({{$pickup_point->id}})" data-type="Edit" data-parent_id="{{$pickup_point->id}}" data-parant="{{$pickup_point->name}}" class="pickup_point_modal">
+                            <img src="{{$pickup_point->attachment}}" alt="{{$pickup_point->name}}">
+                            <figcaption><span>{{$pickup_point->name}}</span></figcaption>
                         </figure>
+
                     </div>
 
                 @endforeach
 
-                <a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#exampleModal" class="catg-box add overly"><figure><i class="icon-plus"> </i></figure><!--<input type="text" required="" autofocus=""> --></a>
+                <a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#pickupModal" class="catg-box add overly"><figure><i class="icon-plus"> </i></figure><!--<input type="text" required="" autofocus=""> --></a>
             </div>
             <div class="gldnline-sepr mb-5 mt-5"></div>
 
@@ -76,24 +82,30 @@
 </div>
 
 <!-- Global popup -->
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="pickupModal" data-crudetype="1" tabindex="-1" aria-labelledby="pickupModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
         <div class="modal-header justify-content-start ">
             <button type="button" class="back" data-bs-dismiss="modal" aria-label="Close"><i class="icon-left"></i></button>
-            <h2>Add Food Pick-up</h2>
+            <h2><span class="pickup_model_title">Add Food </span> Pick-up</h2>
         </div>
         <div class="modal-body">
+            <form name="addpickup" id="pickupForm" method="post" action="javascript:void(0)">
+                @csrf
             <div style="min-height: 300px;">
                 <div class="form-group mb-4">
-                    <input type="text" class="form-control vari2" placeholder="Zone Name" >
+                    <input type="text" class="form-control vari2" name="pickup_name" id="pickup_name" placeholder="Zone Name" >
+                    <span id="Errorname"></span>
+                    <input id="pickup_id" type="hidden" class="pickup_id" name="pickup_id" />
+                    <input id="types" type="hidden" class="types" name="types" value="1"/>
                 </div>
-                <div class="form-group grey-brd-box custom-upload mb-5">
+                <div class="form-group grey-brd-box custom-upload mb-5 image_box">
                     <input id="upload" type="file" class="files" name="files[]" hidden />
                     <label for="upload"><span> Add Zone Feature Image <br> (This can be changed & is mandatory).</span> <i class="icon-plus"></i></label>
+                    <span id="Errorfiles"></span>
                 </div>
             </div>
-                <button class="bor-btn w-100 font-26" type="button">Save</button>
+                <button class="bor-btn w-100 font-26" id="pickup_submitBtn" type="submit">Save</button>
         </div>
 
         </div>
@@ -105,33 +117,10 @@
 @endsection
 
 @section('pagescript')
+<script src="{{asset('js/pickup/pickup.js')}}"></script>
 <script>
-    if (window.File && window.FileList && window.FileReader) {
-        $(".files").on("change", function(e) {
-            var clickedButton = this,
-                files = e.target.files,
-                filesLength = files.length;
-            for (var i = 0; i < filesLength; i++) {
-                var f = files[i],
-                    fileReader = new FileReader();
-                fileReader.onload = (function(e) {
-                    var file = e.target,
-                        thumbnail = `
-                            <div class="pip">
-                                <img class="imageThumb" src="${e.target.result}" title="${file.name}" />
-                                <i class="icon-trash remove"></i>
-                            </div>
-                        `;
-                    $(thumbnail).insertAfter(clickedButton);
-                    $(".remove").click(function() {
-                        $(this).parent(".pip").remove();
-                    });
-                });
-                fileReader.readAsDataURL(f);
-            }
-        });
-    } else {
-        alert("Your browser doesn't support to File API")
-    }
+    var routeStore = '{{ route("restaurants.pickup.store") }}';
+    var routeUpdate = "{{ route('restaurants.pickup.update',':ID') }}";
+    var routeGet = "{{ route('restaurants.pickup.show',':ID') }}";
 </script>
 @endsection

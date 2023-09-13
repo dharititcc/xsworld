@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Pickup;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\RestaurantPickupPointResource;
 use App\Models\RestaurantPickupPoint;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class PickupZoneController extends Controller
 {
@@ -45,7 +47,30 @@ class PickupZoneController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'name' => 'required',
+            'photo' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
+        $restaurant = session('restaurant');
+        if($request->hasFile('photo'))
+        {
+            $destinationPath = public_path('/storage/pickup_point');
+            $pickupimage = date('YmdHis') . "." . $request->photo->getClientOriginalExtension();
+            $request->photo->move($destinationPath,$pickupimage);
+        }
+        $pickupArr = [
+            'name' => $request->name,
+            'user_id' => Auth::user()->id,
+            'restaurant_id' => $restaurant->id,
+            'type' => $request->types,
+        ];
+        
+        $newPickup = RestaurantPickupPoint::create($pickupArr);
+        $newPickup->attachment()->create([
+            'stored_name' => $pickupimage,
+            'original_name' => $pickupimage
+        ]);
+        return $newPickup->refresh();
     }
 
     /**
@@ -54,9 +79,9 @@ class PickupZoneController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(RestaurantPickupPoint $pickup)
     {
-        //
+        return new RestaurantPickupPointResource($pickup);
     }
 
     /**
@@ -77,9 +102,28 @@ class PickupZoneController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, RestaurantPickupPoint $pickup)
     {
-        //
+        if(isset($pickup->id)) {
+            $dataArr = [
+                'name' => $request->name,
+            ];
+            $pickup->update($dataArr);
+            $pickup->refresh();
+            $pickupimage = '';
+            if ($request->hasFile('photo'))
+            {
+                $image = $request->file('photo');
+                $destinationPath = public_path('/storage/pickup_point');
+                $pickupimage = date('YmdHis') . "." . $image->getClientOriginalExtension();
+                $image->move($destinationPath, $pickupimage);
+                $pickup->attachment()->update([
+                    'stored_name'   => $pickupimage,
+                    'original_name' => $pickupimage
+                ]);
+            }
+
+        }
     }
 
     /**
@@ -90,6 +134,8 @@ class PickupZoneController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $delete = RestaurantPickupPoint::find($id);
+        $delete->delete();
+        return response()->json(['success'=>'pickup zone deleted successfully.']);
     }
 }
