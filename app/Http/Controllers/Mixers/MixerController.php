@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Mixers;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\RestaurantItemsResource;
 use Illuminate\Http\Request;
 use App\Models\RestaurantItem;
 use DataTables;
@@ -38,7 +39,7 @@ class MixerController extends Controller
                     ->with(['category', 'restaurant','variations'])
                     ->whereHas('restaurant', function($query) use($restaurant)
                     {
-                        return $query->where('id', $restaurant->id)->where('type',3);
+                        return $query->where('restaurants.id', $restaurant->id)->where('restaurant_items.type',3);
                     });
                     if (!empty($request->get('search_main')))
                     {
@@ -104,12 +105,12 @@ class MixerController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  int  RestaurantItem $mixer
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(RestaurantItem $mixer)
     {
-        //
+        return new RestaurantItemsResource($mixer);
     }
 
     /**
