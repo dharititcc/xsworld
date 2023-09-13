@@ -173,6 +173,7 @@ class UserRepository extends BaseRepository
 
         foreach ($customer_cards->data as $value) {
             $cards[] = [
+                'id'            => $value->id,
                 'name'          => $value->name,
                 'fingerprint'   => $value->fingerprint,
                 'brand'         => $value->brand,
@@ -185,5 +186,22 @@ class UserRepository extends BaseRepository
         }
 
         return $cards;
+    }
+
+    /**
+     * Method deleteUserCard
+     *
+     * @param array $data [explicite description]
+     *
+     * @return mixed
+     */
+    function deleteUserCard(array $data)
+    {
+        $customer_id    = isset($data['customer_id']) ? $data['customer_id'] : null;
+        $card_id        = isset($data['card_id']) ? $data['card_id'] : null;
+        $stripe         = new Stripe();
+        $delete         = $stripe->deleteCard($customer_id , $card_id);
+
+        return $delete->deleted;
     }
 }

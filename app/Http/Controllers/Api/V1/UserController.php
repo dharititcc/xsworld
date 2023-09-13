@@ -8,6 +8,7 @@ use App\Repositories\UserRepository;
 use Illuminate\Http\Request;
 use App\Http\Requests\UpdateProfileRequest;
 use App\Http\Requests\ChangePasswordRequest;
+use App\Http\Requests\DeleteCardRequest;
 use App\Http\Requests\FetchCardRequest;
 use App\Http\Requests\UserFavouriteItemsRequest;
 use Illuminate\Support\Facades\Hash;
@@ -363,6 +364,28 @@ class UserController extends APIController
                 'item'   => $card_data
             ]);
        }
+
+       throw new GeneralException('There is no card found');
+    }
+
+    /**
+     * Method delectcard
+     *
+     * @param DeleteCardRequest $request [explicite description]
+     *
+     * @return void
+     */
+    public function delectcard(DeleteCardRequest $request)
+    {
+        $card = $this->repository->deleteUserCard($request->validated());
+
+        if($card)
+        {
+            return $this->respond([
+                'status' => true,
+                'message'=> 'User card deleted.'
+            ]);
+        }
 
        throw new GeneralException('There is no card found');
     }
