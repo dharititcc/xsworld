@@ -47,7 +47,7 @@
                         <button onclick="return deleteConform({{ $pickup_point->id }});"><i
                             class="icon-trash"></i></button>
                         <figure onclick="updatePickup({{$pickup_point->id}})" data-type="Edit" data-parent_id="{{$pickup_point->id}}" data-parant="{{$pickup_point->name}}" class="pickup_point_modal">
-                            <img src="{{$pickup_point->attachment}}" alt="{{$pickup_point->name}}">
+                            <img src="{{$pickup_point->image}}" alt="{{$pickup_point->name}}">
                             <figcaption><span>{{$pickup_point->name}}</span></figcaption>
                         </figure>
 
