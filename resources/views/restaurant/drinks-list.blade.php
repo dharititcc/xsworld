@@ -3,11 +3,6 @@
     @include('restaurant.partials.drinktopbar')
 @endsection
 @section('content')
-    <style>
-        table.dataTable tbody tr {
-            background-color: #0f0e0e !important;
-        }
-    </style>
     <div class="outrbox">
         <h2 class="yellow mb-4">Category Preview Tiles</h2>
         <div class="grid colmn-6 mb-3">
@@ -25,13 +20,13 @@
                     placeholder="Find a Drink"></div>
         </div>
         <div class="filter-box  mb-4">
-            <button class="bor-btn category" onclick="getCategory(null)">All <span class="stock"></span></button>
+            <button class="bor-btn category active" onclick="getCategory(null)">All <span class="stock"></span></button>
             @foreach ($categories as $category)
                 <button class="bor-btn category" onclick="getCategory({{ $category->id }})">{{ $category->name }} <span
                         class="stock">({{ $category->items->count() }})</span></button>
             @endforeach
         </div>
-        <div class="mb-4">
+        <div class="mb-4 table-en-ds">
             <button class="bor-btn" id="disable">Disable Drink</button>
             <button class="bor-btn ms-3" id="enable">Enable Drink</button>
         </div>
@@ -43,7 +38,6 @@
                                     class="checkmark"></span></label></th>
                         <th>
                             Name
-                            <a href="#" class="sort-icon ms-1"><i class="icon-sort"></i></a>
                         </th>
                         <th class="type">Type</th>
                         <th class="price">Price</th>
@@ -201,6 +195,7 @@
             'getDrink': "{!! route('restaurants.drinks.show', ':ID') !!}",
             'updateDrink': "{!! route('restaurants.drinks.update', ':ID') !!}",
         };
+    var table = null;
     if (window.File && window.FileList && window.FileReader) {
                 $(".files").on("change", function(e) {
                     var clickedButton = this,
@@ -242,13 +237,13 @@
             return [day, month, year].join('-');
         }
         load_data();
-
         function load_data(data = null) {
             // console.log(data);
-            var table = $('.drink_datatable').DataTable({
+            table = $('.drink_datatable').DataTable({
                 processing: true,
                 serverSide: true,
                 searching: false,
+                order: [[1, 'asc']],
                 ajax: {
                     url: "{{ route('restaurants.drinks.index') }}",
                     data: data,
@@ -256,7 +251,7 @@
                 columns: [{
                         "data": "id", // can be null or undefined
                         "defaultContent": "",
-                        "bSortable": false,
+                        "sortable": false,
                         render: function(data, type, row) {
                             return '<label class="cst-check"><input name="id" class="checkboxitem" type="checkbox" value="' +
                                 row.id + '"><span class="checkmark"></span></label>'
@@ -280,7 +275,7 @@
                             var text = "";
                             if (row.variations.length > 0) {
                                 for (let i = 0; i < row.variations.length; i++) {
-                                    text += '<label class="">' + row.variations[i]['name'] + "</label><br>";
+                                    text += '<label class="">' + row.variations[i]['name'] + "</label>";
                                 }
                                 return text
                             }
@@ -296,7 +291,7 @@
                             if (row.variations.length > 0) {
                                 for (let i = 0; i < row.variations.length; i++) {
                                     text += '<label class="price">$' + row.variations[i]['price'] +
-                                        "</label><br>";
+                                        "</label>";
                                 }
                                 return text
                             }
@@ -308,7 +303,14 @@
                         "defaultContent": "",
                         "bSortable": false,
                         render: function(data, type, row) {
-                            return row.description
+                            var string = row.description;
+
+                            if( string )
+                            {
+                                return string ? string.slice(0, 50) + (string.length > 10 ? "..." : "") : '';
+                            }
+
+                            return '';
                         }
                     },
                     {
@@ -361,40 +363,37 @@
             load_data(data);
         });
 
-        
+        $(function() {
+            $('#enable').click(function(e) {
+                e.preventDefault();
+                $.confirmModal('<label>Are you sure you want to do this?</label>', function(el) {
+                    var data = [];
+                    var i = 0;
+                    data['enable'] = $.map($('input[name="id"]:checked'), function(c) {
+                        return c.value;
+                    })
+                    $('.drink_datatable').DataTable().destroy();
+                    load_data(data);
+                    //console.log(data);
+                });
+            });
+        });
 
-        // $(function() {
-        //     $('#enable').click(function(e) {
-        //         e.preventDefault();
-        //         $.confirmModal('<label>Are you sure you want to do this?</label>', function(el) {
-        //             var data = [];
-        //             var i = 0;
-        //             data['enable'] = $.map($('input[name="id"]:checked'), function(c) {
-        //                 return c.value;
-        //             })
-        //             $('.drink_datatable').DataTable().destroy();
-        //             load_data(data);
-        //             //console.log(data);
-        //         });
-        //     });
-        // });
-       
-
-        // $(function() {
-        //     $('#disable').click(function(e) {
-        //         e.preventDefault();
-        //         $.confirmModal('<label>Are you sure you want to do this?</label>', function(el) {
-        //             var data = [];
-        //             var i = 0;
-        //             data['disable'] = $.map($('input[name="id"]:checked'), function(c) {
-        //                 return c.value;
-        //             })
-        //             $('.drink_datatable').DataTable().destroy();
-        //             load_data(data);
-        //             //console.log(data);
-        //         });
-        //     });
-        // });
+        $(function() {
+            $('#disable').click(function(e) {
+                e.preventDefault();
+                $.confirmModal('<label>Are you sure you want to do this?</label>', function(el) {
+                    var data = [];
+                    var i = 0;
+                    data['disable'] = $.map($('input[name="id"]:checked'), function(c) {
+                        return c.value;
+                    })
+                    $('.drink_datatable').DataTable().destroy();
+                    load_data(data);
+                    //console.log(data);
+                });
+            });
+        });
 
         $(document).ready(function() {
             $('.checkboxitem').click(function() {
