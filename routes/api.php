@@ -110,6 +110,7 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'v1', 'as' => 'api.v1.'], fun
             Route::get('/barorderhistory', 'BarController@barOrderHistory')->name('barOrderHistory');
             // {api/v1/completedorderhistory}
             Route::get('/completedorderhistory', 'BarController@completedorderhistory')->name('completedorderhistory');
+            Route::get('/show/{order}', 'BarController@show')->name('bar.show');
         });
     });
 });

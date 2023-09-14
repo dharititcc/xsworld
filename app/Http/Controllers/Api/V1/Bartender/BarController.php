@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers\Api\V1\Bartender;
 
+use App\Exceptions\GeneralException;
 use App\Http\Controllers\Api\V1\APIController;
 use App\Http\Resources\OrderResource;
+use App\Models\Order;
 use App\Repositories\BarRepository;
 
 class BarController extends APIController
@@ -54,5 +56,22 @@ class BarController extends APIController
         {
             return $this->respondSuccess('Orders Found.', $completedOrder->count() ? OrderResource::collection($completedOrder) : [],);
         }
+    }
+
+    /**
+     * Method show
+     *
+     * @param Order $order [explicite description]
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function show(Order $order)
+    {
+        if( isset( $order->id ) )
+        {
+            return $this->respondSuccess('Order detail found.', new OrderResource($order));
+        }
+
+        throw new GeneralException('Order not found.');
     }
 }
