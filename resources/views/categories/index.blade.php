@@ -20,8 +20,15 @@
                     @if ($category->children->count())
                         @foreach ($category->children as $child)
                             <div class="catg-box overly">
-                                <button onclick="return deleteConform({{ $child->id }});"><i
-                                        class="icon-trash"></i></button>
+
+                                <form method="POST" action="{{ route('restaurants.categories.destroy', $child->id) }}">
+                                    @csrf
+                                    <input name="_method" type="hidden" value="DELETE">
+                                    <button type="submit" class="show_confirm" data-toggle="tooltip" title='Delete'><i class="icon-trash"></i></button>
+                                </form>
+                                
+                                {{-- <button onclick="return deleteConform({{ $child->id }});"><i
+                                        class="icon-trash"></i></button> --}}
                                 {{-- <a  onclick="return deleteConform('Are you sure?')" href="#"><i class="icon-trash"></i></a> --}}
                                 <figure onClick="updateCategory({{ $child->id }})" data-type="Edit" data-parent_id="{{ $category->id }}" data-parent="{{ $category->name }}" class="category_model"><img src="{{ $child->image }}"
                                         alt="{{ $child->name }}">
@@ -117,7 +124,7 @@
                             <div class="gldnline-sepr"></div>
                         @endforeach
                     </div>
-                    <button id="bulkdelete" class="bor-btn w-100 font-26" type="button">Remove</button>
+                    <button class="bor-btn w-100 font-26 show_confirm" type="button">Remove</button>
                 </div>
             </div>
         </div>
@@ -125,6 +132,7 @@
 @endsection
 
 @section('pagescript')
+    <script src="{{asset('js/sweetalert.js')}}"></script>
     @parent
     <script>
         var moduleConfig = {
@@ -363,40 +371,71 @@
                 });
             }
         }
-        $(function() {
-            $('#bulkdelete').click(function(e) {
-                if (!confirm("Are You Sure to delete this 'Categories' and 'All Items'?")) {
-                    event.preventDefault();
-                } else {
-                    e.preventDefault();
-                    //   $.confirmModal("<label>Are You Sure to delete this 'Categories' and 'All Items' ?</label>"), function(el) 
-                    //   {
-                    // var val = [];
-                    // // <input type="checkbox" name="category[]" id="category" value="{{ $child->id }}">
-                    //     $('#category:checkbox:checked').each(function(i){
-                    //     val[i] = $(this).val();
-                    //     });
-                    var category = [];
-                    $.each($("input[name='category']:checked"), function(i) {
-                        category[i] = $(this).val();
-                    });
-                    console.log(category);
-                    $.ajax({
-                        headers: {
-                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                        },
-                        url: "categories/multidelete",
-                        type: "POST",
-                        data: {
-                            category
-                        },
-                        success: function(response) {
-                            alert('Categories are deleted successfully');
-                            location.reload(true);
-                        }
-                    });
-                }
-            });
+        $('.show_confirm').click(function(event) {
+            event.preventDefault();
+            swal({
+                title: `Are you sure you want to delete this Records?`,
+                icon: "warning",
+                buttons: true,
+                dangerMode: true,
+            })
+                .then((willDelete) => {
+                    if (willDelete) {
+                        var category = [];
+                        $.each($("input[name='category']:checked"), function(i) {
+                            category[i] = $(this).val();
+                        });
+                        console.log(category);
+                        $.ajax({
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                            },
+                            url: "categories/multidelete",
+                            type: "POST",
+                            data: {
+                                category
+                            },
+                            success: function(response) {
+                                location.reload(true);
+                            }
+                        });
+                    }
+                });
         });
+        // $(function() {
+        //     $('#bulkdelete').click(function(e) {
+        //         if (!confirm("Are You Sure to delete this 'Categories' and 'All Items'?")) {
+        //             event.preventDefault();
+        //         } else {
+        //             e.preventDefault();
+        //             //   $.confirmModal("<label>Are You Sure to delete this 'Categories' and 'All Items' ?</label>"), function(el) 
+        //             //   {
+        //             // var val = [];
+        //             // // <input type="checkbox" name="category[]" id="category" value="{{ $child->id }}">
+        //             //     $('#category:checkbox:checked').each(function(i){
+        //             //     val[i] = $(this).val();
+        //             //     });
+        //             var category = [];
+        //             $.each($("input[name='category']:checked"), function(i) {
+        //                 category[i] = $(this).val();
+        //             });
+        //             console.log(category);
+        //             $.ajax({
+        //                 headers: {
+        //                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        //                 },
+        //                 url: "categories/multidelete",
+        //                 type: "POST",
+        //                 data: {
+        //                     category
+        //                 },
+        //                 success: function(response) {
+        //                     alert('Categories are deleted successfully');
+        //                     location.reload(true);
+        //                 }
+        //             });
+        //         }
+        //     });
+        // });
     </script>
 @endsection
