@@ -206,7 +206,7 @@ class Order extends Model
      */
     public function getProgressattribute()
     {
-        $remaining_time     = '';
+        $remaining_time     = 0;
         $current_time       = Carbon::now()->timezone('Asia/kolkata');
 
         if(isset($this->accepted_date))
