@@ -421,8 +421,15 @@ class OrderRepository extends BaseRepository
 
             $stripe         = new Stripe();
             $payment_data   = $stripe->createCharge($paymentArr);
-            dd($payment_data);
-            $updateArr['type'] = Order::ORDER;
+
+            $updateArr = [
+                'type'              => Order::ORDER,
+                'card_id'           => $card_id,
+                'charge_id'         => $payment_data->id,
+                'pickup_point_id'   => $pickup_point_id,
+                'credit_amount'     => $credit_amount
+            ];
+
             $order->update($updateArr);
         }
         $order->refresh();

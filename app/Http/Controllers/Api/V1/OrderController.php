@@ -256,5 +256,7 @@ class OrderController extends APIController
     public function placeOrder(PlaceOrderRequest $request)
     {
         $place_order = $this->repository->placeOrder($request->validated());
+
+        return $this->respondSuccess('Order payment successfully.', new OrderResource($place_order));
     }
 }

@@ -33,6 +33,8 @@ class OrderResource extends JsonResource
             'created_date'              => Carbon::parse($this->created_at)->toDateTimeString(),
             'progress'                  => $this->progress,
             'currency'                  => $this->restaurant->currency->code,
+            'card_id'                   => $this->card_id ?? '',
+            'charge_id'                 => $this->charge_id ?? '',
             'order_items'               => isset($this->order_items) ? OrderItemResource::collection($this->order_items) : [],
             'pickup_points'             => RestaurantPickupPointResources::collection($this->restaurant->pickup_points)
         ];

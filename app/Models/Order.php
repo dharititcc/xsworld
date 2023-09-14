@@ -51,6 +51,8 @@ class Order extends Model
         'pickup_point_user_id',
         'type',
         'status',
+        'card_id',
+        'charge_id',
         'payment_method_id',
         'credit_point',
         'amount',
