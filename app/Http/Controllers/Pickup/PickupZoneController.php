@@ -19,10 +19,9 @@ class PickupZoneController extends Controller
     {
         $restaurant = session('restaurant');
         // dd($restaurant);
-        $pickup_points = RestaurantPickupPoint::with(['attachment'])->restaurantget($restaurant->id);
-        $food_pickup_points = $pickup_points->type(1)->get();
-        // dd($food_pickup_points[2]->image);
-        $drink_pickup_points = $pickup_points->type(2)->get();
+        $food_pickup_points = RestaurantPickupPoint::with(['attachment'])->restaurantget($restaurant->id)->type(1)->get();
+        $drink_pickup_points = RestaurantPickupPoint::with(['attachment'])->restaurantget($restaurant->id)->type(2)->get();
+        
         return view('pickup.index',[
             'food_pickup_points' => $food_pickup_points,
             'drink_pickup_points' => $drink_pickup_points,
@@ -137,6 +136,6 @@ class PickupZoneController extends Controller
     {
         $delete = RestaurantPickupPoint::find($id);
         $delete->delete();
-        return response()->json(['success'=>'pickup zone deleted successfully.']);
+        return redirect()->back();
     }
 }

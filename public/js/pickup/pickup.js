@@ -7,9 +7,23 @@ $(document).ready(function() {
             // parent = $this.data('parent'),
             parent_id  = $this.data('parent_id'),
             type = $this.data('type');
+            var pickupType = $(this).data('pickuptype');
+            $('#types').val(pickupType);
             modal.find('.pickup_model_title').html(`${type}`);
             modal.find('#pickupForm').find('#pickup_id').val(parent_id);
             modal.modal('show');
+    });
+
+    $('#get_type_drink').on('click',function() {
+        var pickupType = $(this).data('pickuptype');
+        $('.pickup_model_title').html('Add Drink');
+        $('#types').val(pickupType);
+    });
+
+    $('#get_type_food').on('click',function() {
+        $('.pickup_model_title').html('Add Food');
+        var pickupType = $(this).data('pickuptype');
+        $('#types').val(pickupType);
     });
 
     //close modal pop up
@@ -18,6 +32,9 @@ $(document).ready(function() {
         $this.find('#pickupForm').find('.form-control').val('');
         $this.find('#pickupForm').find('.pip').remove();
         $this.find('#pickupForm').find('#pickup_id').val('');
+        var $alertas = $('#pickupForm');
+        $alertas.validate().resetForm();
+        $alertas.find('.error').removeClass('error');
     });
 
     //image preview
@@ -127,7 +144,6 @@ function formsubmit(form) {
     data.append('pickup_id',pickup_id);
     data.append('types',types);
     if(crudetype === 1) {
-        console.log(routeStore);
         route = routeStore;
     } else {
         route = routeUpdate.replace(':ID', pickup_id),
@@ -150,10 +166,8 @@ function formsubmit(form) {
     });
 }
 function getPickup(id) {
-    console.log(id);
     $('#pickup_id').val(id);
     $('#pickupModal').data('crudetype',1);
-    $('.pickup_model_title').html("Add");
 }
 
 
@@ -164,7 +178,6 @@ function updatePickup(id) {
         url: routeGet.replace(':ID',id),
         type: 'GET',
         success: function(res) {
-            console.log(res);
             $('#pickup_name').val(res.data.name);
             var image = `<div class="pip">
             <img class="imageThumb" src="${ res.data.image!="" ?res.data.image :'#'}" title="" />
@@ -183,20 +196,20 @@ function updatePickup(id) {
     });
 }
 
-function deleteConform(id) {
-    if(!confirm("Are You Sure You want to delete this?")) {
-        event.preventDefault();
-    } else {
-        $.ajax({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            url: "pickup/" +id,
-            type: "DELETE",
-            success: function(res) {
-                alert('Pickup is deleted successfully');
-                location.reload(true);
-            }
-        });
-    }
-}
+// function deleteConform(id) {
+//     if(!confirm("Are You Sure You want to delete this?")) {
+//         event.preventDefault();
+//     } else {
+//         $.ajax({
+//             headers: {
+//                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+//             },
+//             url: "pickup/" +id,
+//             type: "DELETE",
+//             success: function(res) {
+//                 alert('Pickup is deleted successfully');
+//                 location.reload(true);
+//             }
+//         });
+//     }
+// }

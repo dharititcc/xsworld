@@ -133,7 +133,7 @@ class CategoryController extends Controller
        $delete = Category::find($id);
        $delete->items()->delete();
        $delete->delete();
-       return $delete;
+       return redirect()->back();
     }
     /**
      * Remove the specified resource from storage.
@@ -152,6 +152,6 @@ class CategoryController extends Controller
             $delete->delete();
         }
 
-       return 1;
+        return redirect()->back();
     }
 }
