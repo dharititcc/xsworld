@@ -405,4 +405,23 @@ class UserController extends APIController
 
         return $this->respondSuccess('Credit card attached successfully.');
     }
+
+    /**
+     * Method markDefaultCard
+     *
+     * @param Request $request [explicite description]
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function markDefaultCard(Request $request)
+    {
+        $input          = $request->all();
+
+        if( $this->repository->markDefaultCard($input) )
+        {
+            return $this->respondSuccess('Marked default credit card.');
+        }
+
+        throw new GeneralException('Mark default credit card is failed.');
+    }
 }

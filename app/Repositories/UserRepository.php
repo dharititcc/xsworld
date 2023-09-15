@@ -299,4 +299,27 @@ class UserRepository extends BaseRepository
     {
         return $stripe->attachSource($customerId, $source->id);
     }
+
+    /**
+     * Method markDefaultCard
+     *
+     * @param array $input [explicite description]
+     *
+     * @return bool
+     * @throws \App\Exceptions\GeneralException
+     */
+    public function markDefaultCard(array $input): bool
+    {
+        if( isset($input['card_id']) )
+        {
+            $user           = auth()->user();
+            $stripe         = new Stripe();
+            $customer       = $stripe->fetchCustomer($user->stripe_customer_id);
+
+            $customer->default_source = $input['card_id'];
+            return $customer->save();
+        }
+
+        throw new GeneralException('Card id is required.');
+    }
 }
