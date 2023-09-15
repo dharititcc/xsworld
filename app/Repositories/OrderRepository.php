@@ -354,13 +354,12 @@ class OrderRepository extends BaseRepository
      */
     function placeOrder(array $data): Order
     {
-        $order_id           = $data['order_id'] ? $data['order_id'] : null;
         $card_id            = $data['card_id'] ? $data['card_id'] : null;
         $credit_amount      = $data['credit_amount'] ? $data['credit_amount'] : null;
         $amount             = $data['amount'] ? $data['amount'] : null;
         $pickup_point_id    = $data['pickup_point_id'] ? $data['pickup_point_id'] : null;
         $table_id           = $data['table_id'] ? $data['table_id'] : null;
-        $order              = Order::where(['id' => $order_id])->first();
+        $order              = Order::findOrFail($data['order_id']);
         $user               = auth()->user();
 
         $updateArr         = [];
@@ -374,11 +373,14 @@ class OrderRepository extends BaseRepository
                 'customer'      => $user->stripe_customer_id,
                 'capture'       => false,
                 'source'        => $card_id,
-                'description'   => $order_id
+                'description'   => $order->id
             ];
 
-            $stripe         = new Stripe();
-            $payment_data   = $stripe->createCharge($paymentArr);
+            if( $order->total != $credit_amount )
+            {
+                $stripe         = new Stripe();
+                $payment_data   = $stripe->createCharge($paymentArr);
+            }
 
             $updateArr = [
                 'type'              => Order::ORDER,
