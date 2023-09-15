@@ -56,9 +56,7 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'v1', 'as' => 'api.v1.'], fun
         Route::get('/orderhistory', 'OrderController@orderHistory')->name('orderhistory');
         // {api/v1/users/cart}
         Route::get('/cart', 'OrderController@cartCount')->name('cart');
-        // {api/v1/orderupdate}
-        Route::post('/orderupdate', 'OrderController@orderUpdate')->name('orderupdate');
-        // {api/v1/order/update}
+        // {api/v1/cart/update}
         Route::post('/updatecart', 'OrderController@updateCart')->name('order.update');
         // {api/v1/deleteitem}
         Route::post('/deleteitem', 'OrderController@deleteItem')->name('deleteitem');
@@ -84,6 +82,8 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'v1', 'as' => 'api.v1.'], fun
         Route::post('delectcard', 'UserController@delectcard')->name('user.delectcard');
         // {api/v1/users/attach-card}
         Route::post('attach-card', 'UserController@attachCard')->name('user.attach-card');
+        // {api/v1/users/mark-default-card}
+        Route::post('mark-default-card', 'Usercontroller@markdefaultcard')->name('user.mark-default-card');
     });
 
     Route::group(['prefix' => 'countries'], function ()
@@ -106,6 +106,8 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'v1', 'as' => 'api.v1.'], fun
             Route::post('logout', 'AuthController@logout')->name('bartender.logout');
 
             // orders
+            // {api/v1/orderupdate}
+            Route::post('/orderupdate', 'BarController@orderUpdate')->name('barOrderUpdate');
             // {api/v1/barorderhistory}
             Route::get('/barorderhistory', 'BarController@barOrderHistory')->name('barOrderHistory');
             // {api/v1/completedorderhistory}

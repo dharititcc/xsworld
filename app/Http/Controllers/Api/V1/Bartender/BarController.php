@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1\Bartender;
 
 use App\Exceptions\GeneralException;
 use App\Http\Controllers\Api\V1\APIController;
+use App\Http\Requests\OrderUpdateRequest;
 use App\Http\Resources\OrderResource;
 use App\Models\Order;
 use App\Repositories\BarRepository;
@@ -73,5 +74,19 @@ class BarController extends APIController
         }
 
         throw new GeneralException('Order not found.');
+    }
+
+    /**
+     * Method orderUpdate
+     *
+     * @param OrderUpdateRequest $request [explicite description]
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function orderUpdate(OrderUpdateRequest $request)
+    {
+        $order_data   = $this->repository->updateOrder($request->validated());
+
+        return $this->respondSuccess('Order data updated', new OrderResource($order_data));
     }
 }

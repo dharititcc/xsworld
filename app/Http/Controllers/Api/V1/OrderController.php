@@ -198,20 +198,6 @@ class OrderController extends APIController
     }
 
     /**
-     * Method orderUpdate
-     *
-     * @param OrderUpdateRequest $request [explicite description]
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function orderUpdate(OrderUpdateRequest $request)
-    {
-        $order_data   = $this->repository->updateOrder($request->validated());
-
-        return $this->respondSuccess('Order data updated', new OrderResource($order_data));
-    }
-
-    /**
      * Method updateCart
      *
      * @param Request $request [explicite description]

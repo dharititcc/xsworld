@@ -320,48 +320,6 @@ class OrderRepository extends BaseRepository
     }
 
     /**
-     * Method updateOrder
-     *
-     * @param array $data [explicite description]
-     *
-     * @return Order
-     */
-    function updateOrder(array $data) : Order
-    {
-        $order_id          = $data['order_id'] ? $data['order_id'] : null;
-        $status            = $data['status'] ? $data['status'] : null;
-        $apply_time        = $data['apply_time'] ? $data['apply_time'] : null;
-        $order             = Order::findOrFail($order_id);
-        $updateArr         = [];
-
-        if(isset($order->id))
-        {
-            if($status == 1)
-            {
-                $updateArr['accepted_date'] = Carbon::now();
-                $updateArr['status']        = $status;
-            }
-
-            if( isset($apply_time) )
-            {
-                $updateArr['apply_time'] = $apply_time;
-            }
-
-            if( $status != 1 )
-            {
-                $updateArr['status']   = $status;
-            }
-
-            $order->update($updateArr);
-        }
-
-        $order->refresh();
-        $order->loadMissing(['items']);
-
-        return $order;
-    }
-
-    /**
      * Method deleteCart
      *
      * @param array $data [explicite description]
