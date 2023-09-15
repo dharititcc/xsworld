@@ -363,37 +363,37 @@
             load_data(data);
         });
 
-        $(function() {
-            $('#enable').click(function(e) {
-                e.preventDefault();
-                $.confirmModal('<label>Are you sure you want to do this?</label>', function(el) {
-                    var data = [];
-                    var i = 0;
-                    data['enable'] = $.map($('input[name="id"]:checked'), function(c) {
-                        return c.value;
-                    })
-                    $('.drink_datatable').DataTable().destroy();
-                    load_data(data);
-                    //console.log(data);
-                });
-            });
-        });
+        // $(function() {
+        //     $('#enable').click(function(e) {
+        //         e.preventDefault();
+        //         $.confirmModal('<label>Are you sure you want to do this?</label>', function(el) {
+        //             var data = [];
+        //             var i = 0;
+        //             data['enable'] = $.map($('input[name="id"]:checked'), function(c) {
+        //                 return c.value;
+        //             })
+        //             $('.drink_datatable').DataTable().destroy();
+        //             load_data(data);
+        //             //console.log(data);
+        //         });
+        //     });
+        // });
 
-        $(function() {
-            $('#disable').click(function(e) {
-                e.preventDefault();
-                $.confirmModal('<label>Are you sure you want to do this?</label>', function(el) {
-                    var data = [];
-                    var i = 0;
-                    data['disable'] = $.map($('input[name="id"]:checked'), function(c) {
-                        return c.value;
-                    })
-                    $('.drink_datatable').DataTable().destroy();
-                    load_data(data);
-                    //console.log(data);
-                });
-            });
-        });
+        // $(function() {
+        //     $('#disable').click(function(e) {
+        //         e.preventDefault();
+        //         $.confirmModal('<label>Are you sure you want to do this?</label>', function(el) {
+        //             var data = [];
+        //             var i = 0;
+        //             data['disable'] = $.map($('input[name="id"]:checked'), function(c) {
+        //                 return c.value;
+        //             })
+        //             $('.drink_datatable').DataTable().destroy();
+        //             load_data(data);
+        //             //console.log(data);
+        //         });
+        //     });
+        // });
 
         $(document).ready(function() {
             $('.checkboxitem').click(function() {
