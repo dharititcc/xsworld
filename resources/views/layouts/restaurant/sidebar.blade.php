@@ -10,6 +10,7 @@
         <a href="{{ route('restaurants.foods.index') }}">Foods List</a>
         <a href="{{ route('restaurants.mixers.index') }}">Mixer Management</a>
         <a href="{{ route('restaurants.addons.index') }}">Addons Management</a>
+        <a href="{{ route('restaurants.waiter.index') }}">Account Manager</a>
         <a href="#">Analytics</a>
         <a href="{{route('restaurants.pickup.index')}}">Pick-up Zones</a>
         <a href="#">Bar Management</a>

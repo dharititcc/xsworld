@@ -56,7 +56,8 @@ class User extends Authenticatable
         'os_version',
         'application_version',
         'model',
-        'credit_points'
+        'credit_points',
+        'username',
     ];
 
     /**
@@ -65,7 +66,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token',
+         'remember_token',
     ];
 
     /**
