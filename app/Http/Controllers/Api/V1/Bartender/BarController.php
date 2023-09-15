@@ -35,10 +35,12 @@ class BarController extends APIController
     {
         $incomingOrder      = $this->repository->getIncomingOrder();
         $confirmedOrder     = $this->repository->getConfirmedOrder();
+        $completedOrder     = $this->repository->getCompletedOrder();
 
         $data = [
             'incoming_order'       => $incomingOrder->count() ? OrderResource::collection($incomingOrder) : [],
-            'confirmed_order'      => $confirmedOrder->count() ? OrderResource::collection($confirmedOrder) : []
+            'confirmed_order'      => $confirmedOrder->count() ? OrderResource::collection($confirmedOrder) : [],
+            'completed_order'      => $completedOrder->count() ? OrderResource::collection($completedOrder) : [],
         ];
 
         return $this->respondSuccess('Orders found.', $data);

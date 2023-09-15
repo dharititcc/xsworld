@@ -93,7 +93,9 @@ class RestaurantItemController extends APIController
      **/
     public function index(RestaurantItemsRequest $request)
     {
-        $restaurantsitems           = $this->repository->getRestaurantItems($request->validated());
+        $input = $request->validated();
+        $input['is_available'] = 1;
+        $restaurantsitems           = $this->repository->getRestaurantItems($input);
 
         if( $restaurantsitems->count() )
         {

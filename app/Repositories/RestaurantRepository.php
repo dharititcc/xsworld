@@ -138,7 +138,7 @@ class RestaurantRepository extends BaseRepository
      */
     public function getRestaurantItems(array $data):Collection
     {
-        $query = RestaurantItem::with(['category', 'category.mixers', 'category.addons', 'attachment'])->where('restaurant_id', $data['restaurant_id'] )->where('category_id', $data['category_id'] )->where('type', RestaurantItem::ITEM);
+        $query = RestaurantItem::availableItem($data['is_available'])->with(['category', 'category.mixers', 'category.addons', 'attachment'])->where('restaurant_id', $data['restaurant_id'] )->where('category_id', $data['category_id'] )->where('type', RestaurantItem::ITEM);
 
         return $query->get();
     }

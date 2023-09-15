@@ -28,6 +28,7 @@ class UserResource extends JsonResource
             'birth_date'            => $this->birth_date ?? '',
             'profile_img'           => $this->image,
             'member_id'             => $this->id,
+            'credit_point'          => $this->credit_point ?? 0,
             'created_at'            => $this->created_at->format('Y-m-d H:i:s')
         ];
     }

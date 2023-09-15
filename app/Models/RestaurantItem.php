@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -188,5 +189,10 @@ class RestaurantItem extends Model
                 }
             });
         }
+    }
+
+    public function scopeAvailableItem(Builder $query, int $type)
+    {
+        return $query->where('is_available', $type);
     }
 }
