@@ -317,7 +317,13 @@ class UserRepository extends BaseRepository
             $customer       = $stripe->fetchCustomer($user->stripe_customer_id);
 
             $customer->default_source = $input['card_id'];
-            return $customer->save();
+
+            if($customer->save())
+            {
+                return true;
+            }
+
+            throw new GeneralException('Card is failed to mark as default.');
         }
 
         throw new GeneralException('Card id is required.');
