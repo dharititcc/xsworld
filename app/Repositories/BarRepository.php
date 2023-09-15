@@ -25,7 +25,7 @@ class BarRepository extends BaseRepository
             'order_items',
             'order_items.addons',
             'order_items.mixer'
-        ])->where(['type'=> Order::ORDER , 'status' => Order::PENDNIG])->get();
+        ])->where(['type'=> Order::ORDER , 'status' => Order::PENDNIG])->orderBy('id','desc')->get();
 
         return $order;
     }
@@ -41,7 +41,7 @@ class BarRepository extends BaseRepository
             'order_items',
             'order_items.addons',
             'order_items.mixer'
-        ])->where(['type'=> Order::ORDER , 'status' => Order::ACCEPTED])->get();
+        ])->where(['type'=> Order::ORDER , 'status' => Order::ACCEPTED])->orderBy('id','desc')->get();
 
         return $order;
     }
