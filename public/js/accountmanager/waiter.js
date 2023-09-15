@@ -130,7 +130,6 @@ function formsubmit(form) {
         processData: false,
         contentType: false,
         success: function(res) {
-            console.log(res);
             $('#waiter_submitBtn').html('Submit');
             $('#waiter_submitBtn').attr('disabled',false);
             alert('Waiter has been submitted successfully');
@@ -155,7 +154,6 @@ function getWaiter(id)
         url: routeGet.replace(':ID',id),
         type: 'GET',
         success: function(res) {
-            console.log(res);
             $('#waiter_name').val(res.first_name);
             $('#waiter_id').val(res.username);
             // $('#password').val(res.password);

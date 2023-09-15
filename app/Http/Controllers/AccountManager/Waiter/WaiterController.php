@@ -21,7 +21,7 @@ class WaiterController extends Controller
     public function index()
     {
         $restaurant = session('restaurant');
-        $waiters = User::select('id','first_name','username','email')->where('user_type',Config::get('constant.user_type.WAITER'))->get();
+        $waiters = User::select('id','first_name','username','email')->where('user_type',User::WAITER)->get();
 
         return view('accountManager.waiter.index',[
             'waiters' => $waiters,
@@ -69,7 +69,7 @@ class WaiterController extends Controller
             'email' => $email,
             'country_code' => $countryCode,
             'phone' => $mobileNumber,
-            'user_type' => Config::get('constant.user_type.WAITER'),
+            'user_type' => User::WAITER,
         ]);
         
         return $waiterArr->refresh();
