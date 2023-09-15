@@ -61,7 +61,16 @@ Route::group(['prefix' => 'restaurants', 'as' => 'restaurants.', 'middleware' =>
         Route::resource('pickup', 'PickupZoneController');
     });
 
-
+    Route::group(['namespace' => 'accountmanager'], function()
+    {
+        Route::resource('accountmanager', 'AccountManagerController');
+        Route::group(['namespace' => 'waiter'], function()
+        {
+            Route::resource('waiter', 'WaiterController');
+            Route::get('waiter/email','WaiterController@generateRandomString');
+        });
+    });
+    
 });
 
 

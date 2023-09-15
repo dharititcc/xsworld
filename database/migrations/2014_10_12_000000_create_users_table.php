@@ -22,7 +22,7 @@ class CreateUsersTable extends Migration
             $table->bigInteger('phone')->unique();
             $table->bigInteger('phone2')->nullable();
             $table->unsignedTinyInteger('registration_type')->default(0)->comment('0=EMAIL, 1=PHONE, 2=GOOGLE, 3=FACEBOOK');
-            $table->unsignedTinyInteger('user_type')->default(1)->comment('1=CUSTOMER, 2=RESTAURANT_OWNER, 3=ADMIN, 4=BARTENDER');
+            $table->unsignedTinyInteger('user_type')->default(1)->comment('1=CUSTOMER, 2=RESTAURANT_OWNER, 3=ADMIN, 4=BARTENDER,5=WAITER,6=KITCHEN');
             $table->unsignedBigInteger('country_id')->nullable();
             $table->string('stripe_customer_id')->nullable();
             $table->string('country_code',5)->nullable();

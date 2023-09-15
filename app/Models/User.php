@@ -24,6 +24,8 @@ class User extends Authenticatable
     const RESTAURANT_OWNER  = 2;
     const ADMIN             = 3;
     const BARTENDER         = 4;
+    const WAITER            = 5;
+    const KITCHEN           = 6;
 
     /** Registration types */
     const EMAIL     = 0;
@@ -56,7 +58,8 @@ class User extends Authenticatable
         'os_version',
         'application_version',
         'model',
-        'credit_points'
+        'credit_points',
+        'username',
     ];
 
     /**
@@ -65,7 +68,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token',
+         'remember_token',
     ];
 
     /**

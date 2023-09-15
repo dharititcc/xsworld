@@ -285,7 +285,7 @@
                     route = moduleConfig.addCategory;
                 } else {
                     route = moduleConfig.updateCategory.replace(':ID', category_id),
-                        data.append('_method', 'PUT');
+                    data.append('_method', 'PUT');
                 }
                 console.log(route);
                 $.ajax({
