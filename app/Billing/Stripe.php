@@ -135,6 +135,30 @@ class Stripe
     }
 
     /**
+     * Method getSingleCard
+     *
+     * @param $customerId $customerId [explicite description]
+     * @param $cardId $cardId [explicite description]
+     *
+     * @return \Stripe\Account|\Stripe\BankAccount|\Stripe\Card|\Stripe\Source
+     */
+    public function getSingleCard(string $customerId, string $cardId)
+    {
+        try
+        {
+            return $this->stripe->customers->retrieveSource(
+                $customerId,
+                $cardId,
+                []
+            );
+        }
+        catch(ApiErrorException $e)
+        {
+            throw new GeneralException($e->getError()->message);
+        }
+    }
+
+    /**
      * Method deleteCard
      *
      * @param $customerId $customerId [explicite description]
