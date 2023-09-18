@@ -169,6 +169,8 @@
 
 @section('pagescript')
 <script src="{{asset('js/accountmanager/waiter.js')}}"></script>
+<script src="{{asset('js/accountmanager/addBarzone.js')}}"></script>
+<script src="{{asset('js/accountmanager/addkitchen.js')}}"></script>
 <script src="{{asset('js/sweetalert.js')}}"></script>
 <script>
     var routeStore = '{{ route("restaurants.waiter.store") }}';
