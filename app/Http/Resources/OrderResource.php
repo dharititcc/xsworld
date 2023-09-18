@@ -29,6 +29,7 @@ class OrderResource extends JsonResource
             'amount'                    => $this->amount,
             'total'                     => number_format($this->total, 2),
             'status'                    => $this->order_status,
+            'status_no'                 => $this->status,
             'user_payment_method'       => '',
             'credit_point'              => $this->credit_point,
             'apply_time'                => $this->apply_time ?? 0,
@@ -39,7 +40,7 @@ class OrderResource extends JsonResource
             'charge_id'                 => $this->charge_id ?? '',
             'order_items'               => isset($this->order_items) ? OrderItemResource::collection($this->order_items) : [],
             'pickup_points'             => RestaurantPickupPointResources::collection($this->restaurant->pickup_points),
-            'card_details'              => isset($this->card_id) ? $this->carddetails : new stdClass
+            // 'card_details'              => isset($this->carddetails) ? $this->carddetails : new stdClass
         ];
     }
 }
