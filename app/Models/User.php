@@ -148,7 +148,7 @@ class User extends Authenticatable
      */
     public function pickup_point(): HasOne
     {
-        return $this->hasOne(User::class, 'user_id', 'id');
+        return $this->hasOne(RestaurantPickupPoint::class, 'user_id', 'id');
     }
 
     /**

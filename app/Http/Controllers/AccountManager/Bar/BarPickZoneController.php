@@ -1,18 +1,15 @@
 <?php
 
-namespace App\Http\Controllers\AccountManager\Waiter;
+namespace App\Http\Controllers\AccountManager\Bar;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\UpdateWaiterRequest;
-use App\Http\Resources\UserResource;
 use App\Models\RestaurantPickupPoint;
 use App\Models\User;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Hash;
 
-class WaiterController extends Controller
+class BarPickZoneController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -22,15 +19,9 @@ class WaiterController extends Controller
     public function index()
     {
         $restaurant = session('restaurant');
-        $waiters = User::select('id','first_name','username','email')->where('user_type',User::WAITER)->get();
-        $barpickzones = User::select('id','first_name','username','email')->where('user_type',User::BARTENDER)->get();
         $pickup_points = RestaurantPickupPoint::restaurantget($restaurant->id)->whereNull('user_id')->get();
-        // dd($pickup_points);
-
         return view('accountManager.waiter.index',[
-            'waiters' => $waiters,
             'pickup_points' => $pickup_points,
-            'barpickzones' => $barpickzones,
         ]);
     }
 
@@ -50,10 +41,9 @@ class WaiterController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(UpdateWaiterRequest $request)
+    public function store(Request $request)
     {
         $restaurant = session('restaurant');
-        
         //Random Email
         $domains = ["gmail.com", "yahoo.com", "hotmail.com", "example.com", "yourdomain.com"];
         $username = $this->generateRandomString(8);
@@ -65,22 +55,21 @@ class WaiterController extends Controller
         $countryCode = $countryCodes[array_rand($countryCodes)];
         // Generate an 8-digit random number
         $mobileNumber = mt_rand(10000000, 99999999);
-        // dd($request->waiter_id);
-        // $usernameUnique = User::select('username')->where('username',$request->waiter_id)->pluck('username');
-        
-        $waiterArr = User::create([
-            'username' => $request->waiter_id,
-            'first_name' => $request->first_name,
+        $barArr = User::create([
+            'username' => $request->barpick_id,
+            'first_name' => Str::random(5),
             'password' => Hash::make($request->password),
             'email' => $email,
             'country_code' => $countryCode,
             'phone' => $mobileNumber,
-            'user_type' => User::WAITER,
+            'user_type' => User::BARTENDER,
         ]);
+        RestaurantPickupPoint::where('id',$request->pickup_points)->update(['user_id'=>$barArr->id]);
         
-        return $waiterArr->refresh();
+        return $barArr->refresh();
     }
 
+    
     function generateRandomString($length) {
         $characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ123456789';
         $randomString = '';
@@ -91,7 +80,6 @@ class WaiterController extends Controller
         
         return $randomString;
     }
-
     /**
      * Display the specified resource.
      *
@@ -100,10 +88,11 @@ class WaiterController extends Controller
      */
     public function show($user)
     {
-        // dd($user);
         $user = User::find($user);
+        $user->pickup_point_name = $user->pickup_point->name;
+        $user->pickup_point = $user->pickup_point;
+        // dd($user->toArray());
         return $user->toArray();
-        // return new UserResource($user);
     }
 
     /**
@@ -124,14 +113,9 @@ class WaiterController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, User $waiter)
+    public function update(Request $request, $id)
     {
-        $dataArr = [
-            'first_name' => $request->first_name,
-            'password' => Hash::make($request->password),
-        ];
-        $waiter->update($dataArr);
-        $waiter->refresh();
+        //
     }
 
     /**
@@ -142,8 +126,9 @@ class WaiterController extends Controller
      */
     public function destroy($id)
     {
-        $waiterDel = User::find($id);
-        $waiterDel->delete();
+        $barpickDel = User::find($id);
+        RestaurantPickupPoint::where('user_id',$id)->update(['user_id' => null]);
+        $barpickDel->delete();
         return redirect()->back();
     }
 }

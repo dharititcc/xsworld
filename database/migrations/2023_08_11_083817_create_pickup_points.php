@@ -16,12 +16,12 @@ class CreatePickupPoints extends Migration
         Schema::create('pickup_points', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('user_id')->nullable()->index()->comment('bartender user ID');
             $table->unsignedBigInteger('restaurant_id');
             $table->timestamps();
             $table->softDeletes();
 
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('user_id')->references('id')->on('users');
             $table->foreign('restaurant_id')->references('id')->on('restaurants')->onDelete('cascade');
 
         });
