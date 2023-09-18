@@ -59,6 +59,8 @@ class BarController extends APIController
         {
             return $this->respondSuccess('Orders Found.', $completedOrder->count() ? OrderResource::collection($completedOrder) : [],);
         }
+
+        throw new GeneralException('Order not found.');
     }
 
     /**
@@ -89,6 +91,11 @@ class BarController extends APIController
     {
         $order_data   = $this->repository->updateOrder($request->validated());
 
-        return $this->respondSuccess('Order data updated', new OrderResource($order_data));
+        if($order_data->id)
+        {
+            return $this->respondSuccess('Order data updated', new OrderResource($order_data));
+        }
+
+        throw new GeneralException('Order not found.');
     }
 }

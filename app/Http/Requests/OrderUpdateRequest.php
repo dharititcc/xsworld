@@ -28,10 +28,7 @@ class OrderUpdateRequest extends FormRequest
         return [
             'order_id'          => 'required',
             'apply_time'        => 'nullable',
-            'status'            => [
-                                    'required',
-                                        Rule::in(Order::ACCEPTED, Order::READY, Order::COMPLETED, Order::CANCELED)
-                                    ]
+            'status'            => 'required',
         ];
     }
 }

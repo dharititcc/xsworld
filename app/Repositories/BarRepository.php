@@ -59,7 +59,7 @@ class BarRepository extends BaseRepository
             'order_items',
             'order_items.addons',
             'order_items.mixer'
-        ])->where(['type'=> Order::ORDER , 'status' => Order::COMPLETED])->get();
+        ])->where(['type'=> Order::ORDER , 'status' => Order::COMPLETED])->orderBy('id','desc')->get();
 
         return $order;
     }
@@ -103,6 +103,18 @@ class BarRepository extends BaseRepository
                 $payment_data                   = $stripe->captureCharge($order->charge_id);
                 $updateArr['status']            = $status;
                 $updateArr['transaction_id']    = $payment_data->balance_transaction;
+            }
+
+            if($status == 4)
+            {
+                // RESTAURANT_CANCELED and process for refund
+                $updateArr['status']            = $status;
+            }
+
+            if($status == 6)
+            {
+                // RESTAURANT_TOXICATION and process for refund
+                $updateArr['status']            = $status;
             }
 
             $order->update($updateArr);

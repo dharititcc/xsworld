@@ -20,22 +20,26 @@ class Order extends Model
     const CART  = 1;
     const ORDER = 2;
 
-    const PENDNIG           = 0;
-    const ACCEPTED          = 1;
-    const READY             = 2;
-    const COMPLETED         = 3;
-    const CANCELED          = 4;
-    const PARTIAL_REFUND    = 5;
-    const FULL_REFUND       = 6;
+    const PENDNIG                       = 0;
+    const ACCEPTED                      = 1;
+    const READY                         = 2;
+    const COMPLETED                     = 3;
+    const RESTAURANT_CANCELED           = 4;
+    const CONFIRM_PICKUP                = 5;
+    const RESTAURANT_TOXICATION         = 6;
+    const PARTIAL_REFUND                = 7;
+    const FULL_REFUND                   = 8;
 
     const ORDER_STATUS = [
-        self::PENDNIG           => 'Pending',
-        self::ACCEPTED          => 'Accepted',
-        self::READY             => 'Ready',
-        self::COMPLETED         => 'Completed',
-        self::CANCELED          => 'Canceled',
-        self::PARTIAL_REFUND    => 'Partially Refund',
-        self::FULL_REFUND       => 'Full Refund',
+        self::PENDNIG                   => 'Pending',
+        self::ACCEPTED                  => 'Accepted',
+        self::READY                     => 'Ready',
+        self::COMPLETED                 => 'Completed',
+        self::RESTAURANT_CANCELED       => 'Restaurant Canceled',
+        self::CONFIRM_PICKUP            => 'Order Pickup',
+        self::RESTAURANT_TOXICATION     => 'Cancel due to Intoxication',
+        self::PARTIAL_REFUND            => 'Partially Refund',
+        self::FULL_REFUND               => 'Full Refund',
     ];
 
     /**
