@@ -44,8 +44,28 @@
                 </div>
                 <div class="gldnline-sepr mb-5 mt-5"></div>
             
-                <div class="d-flex mb-4 justify-content-between doubl-line"><h2 class="yellow">Bar Pick Zones Accounts</h2> <div class="count-item">Total: 0</div></div>
+                <div class="d-flex mb-4 justify-content-between doubl-line"><h2 class="yellow">Bar Pick Zones Accounts</h2> <div class="count-item">Total: {{$barpickzones->count()}}</div></div>
                 <div class="grid colmn-5">
+
+                    @foreach ($barpickzones as $barpickzone)
+                        <div class="catg-box overly">
+                            {{-- <button><i class="icon-trash"></i></button>
+                            --}}
+                            <form method="POST" action="{{ route('restaurants.barpickzone.destroy', $barpickzone->id) }}">
+                                @csrf
+                                <input name="_method" type="hidden" value="DELETE">
+                                <button type="submit" class="show_confirm" data-toggle="tooltip" title='Delete'><i class="icon-trash"></i></button>
+                            </form>
+
+                            {{-- <button onclick="return deleteConform({{ $barpickzone->id }});"><i
+                                class="icon-trash"></i></button> --}}
+                            <figure onclick="getBarpickzone({{$barpickzone->id}})" data-type="Edit Barpickzone" data-parent_id="{{$barpickzone->id}}" data-parant="{{$barpickzone->first_name}}" class="barpickzone_modal">
+                                
+                                <figcaption><span>{{$barpickzone->username}}</span></figcaption>
+                                {{-- <figcaption><span>{{$barpickzone->first_name}}</span></figcaption> --}}
+                            </figure>
+                        </div>
+                    @endforeach
                 
                
                 
@@ -96,73 +116,77 @@
 </div>
 <!-- Global popup --> 
 <!-- Global popup -->
-<div class="modal fade" id="addkitchen" tabindex="-1" aria-labelledby="addkitchenLabel" aria-hidden="true">
-<div class="modal-dialog modal-dialog-centered">
-<div class="modal-content">
-<div class="modal-header justify-content-start ">
-    <button type="button" class="back" data-bs-dismiss="modal" aria-label="Close"><i class="icon-left"></i></button>
-    <h2>Add Kitchen</h2>
-</div>
-<div class="modal-body">
-   <div style="min-height: 300px;">
-        <div class="form-group mb-4">
-            <input type="text" class="form-control vari2" placeholder="Login ID">
-        </div>
-        <div class="form-group mb-4">
-            <input type="password" class="form-control vari2" placeholder="Password">
-        </div>
-        <div class="form-group">
-            <label class="white-lable d-block text-center">Pickup Location</label>
-            <select class="form-control vari2" multiple>
-                <option>---</option>
-                <option>Geelong</option>
-                <option>Clayton</option>
-                <option>Hamptorn</option>
-                <option>Mentone</option>
-            </select>
-            
-        </div>
-    </div>
-      <button class="bor-btn w-100 font-26" type="button">Add Kitchen</button>
-</div>
+<div class="modal fade" id="addkitchen" data-crudetype="1" tabindex="-1" aria-labelledby="addkitchenLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header justify-content-start ">
+                <button type="button" class="back" data-bs-dismiss="modal" aria-label="Close"><i class="icon-left"></i></button>
+                <h2>Add Kitchen</h2>
+            </div>
+            <div class="modal-body">
+                <div style="min-height: 300px;">
+                        <div class="form-group mb-4">
+                            <input type="text" class="form-control vari2" placeholder="Login ID">
+                        </div>
+                        <div class="form-group mb-4">
+                            <input type="password" class="form-control vari2" placeholder="Password">
+                        </div>
+                        <div class="form-group">
+                            <label class="white-lable d-block text-center">Pickup Location</label>
+                            <select class="form-control vari2" multiple>
+                                <option>---</option>
+                                <option>Geelong</option>
+                                <option>Clayton</option>
+                                <option>Hamptorn</option>
+                                <option>Mentone</option>
+                            </select>
+                            
+                        </div>
+                    </div>
+                    <button class="bor-btn w-100 font-26" type="button">Add Kitchen</button>
+                </div>
 
-</div>
-</div>
+            </div>
+        </div>
 </div>
 <!-- Global popup --> 
 <!-- Global popup -->
-<div class="modal fade" id="addBarzone" tabindex="-1" aria-labelledby="addBarzoneLabel" aria-hidden="true">
-<div class="modal-dialog modal-dialog-centered">
-<div class="modal-content">
-<div class="modal-header justify-content-start ">
-    <button type="button" class="back" data-bs-dismiss="modal" aria-label="Close"><i class="icon-left"></i></button>
-    <h2>Add Bar</h2>
-</div>
-<div class="modal-body">
-   <div style="min-height: 300px;">
-        <div class="form-group mb-4">
-            <input type="text" class="form-control vari2" placeholder="Login ID">
-        </div>
-        <div class="form-group mb-4">
-            <input type="password" class="form-control vari2" placeholder="Password">
-        </div>
-        <div class="form-group">
-            <label class="white-lable d-block text-center">Pickup Location</label>
-            <select class="form-control vari2">
-                <option>---</option>
-                <option>Geelong</option>
-                <option>Clayton</option>
-                <option>Hamptorn</option>
-                <option>Mentone</option>
-            </select>
-            
+<div class="modal fade" id="addBarzone" data-crudetype="1" tabindex="-1" aria-labelledby="addBarzoneLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header justify-content-start ">
+                <button type="button" class="back" data-bs-dismiss="modal" aria-label="Close"><i class="icon-left"></i></button>
+                <h2><span class="barzone_model_title"> </span>Bar</h2>
+            </div>
+            <div class="modal-body">
+                <form name="addbarpickform" id="addbarpickform" method="post" action="javascript:void(0)">
+                    @csrf
+                    <div style="min-height: 300px;">
+                        <div class="form-group mb-4">
+                            <input id="user_id" type="hidden" class="user_id" name="user_id" />
+                            <input type="text" name="barpick_id" id="barpick_id" class="form-control vari2" placeholder="Login ID">
+                            <span id="Errorid"></span>
+                        </div>
+                        <div class="form-group mb-4">
+                            <input type="password" name="password" id="password" class="form-control vari2" placeholder="Password">
+                            <span id="Errorpassword"></span>
+                        </div>
+                        <div class="form-group">
+                            <label class="white-lable d-block text-center">Pickup Location</label>
+                            <select name="pickup_points" id="pickup_points" class="form-control vari2">
+                                @foreach ($pickup_points as $pickup_point)
+                                    <option value="{{$pickup_point->id}}">{{$pickup_point->name}}</option>
+                                @endforeach
+                            </select>
+                            
+                        </div>
+                    </div>
+                        <button class="bor-btn w-100 font-26" id="barpickzone_submitBtn"  type="submit">Add Bar</button>
+                </form>
+
+            </div>
         </div>
     </div>
-      <button class="bor-btn w-100 font-26" type="button">Add Bar</button>
-</div>
-
-</div>
-</div>
 </div>
 <!-- Global popup -->
 @endsection
@@ -176,5 +200,8 @@
     var routeStore = '{{ route("restaurants.waiter.store") }}';
     var routeUpdate = "{{ route('restaurants.waiter.update',':ID') }}";
     var routeGet = "{{ route('restaurants.waiter.show',':ID') }}";
+    var barpickStore = '{{route("restaurants.barpickzone.store")}}';
+    var barpickUpdate = "{{route('restaurants.barpickzone.update',':ID')}}";
+    var barpickGet = "{{route('restaurants.barpickzone.show',':ID')}}";
 </script>
 @endsection

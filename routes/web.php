@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\AccountManager\Bar\BarPickZoneController;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -61,13 +63,18 @@ Route::group(['prefix' => 'restaurants', 'as' => 'restaurants.', 'middleware' =>
         Route::resource('pickup', 'PickupZoneController');
     });
 
-    Route::group(['namespace' => 'accountmanager'], function()
+    Route::group(['namespace' => 'AccountManager'], function()
     {
         Route::resource('accountmanager', 'AccountManagerController');
         Route::group(['namespace' => 'waiter'], function()
         {
             Route::resource('waiter', 'WaiterController');
             Route::get('waiter/email','WaiterController@generateRandomString');
+        });
+
+        Route::group(['namespace' => 'Bar'], function()
+        {
+            Route::resource('barpickzone', 'BarPickZoneController');
         });
     });
     

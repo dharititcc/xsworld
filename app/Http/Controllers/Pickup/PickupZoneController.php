@@ -60,7 +60,6 @@ class PickupZoneController extends Controller
         }
         $pickupArr = [
             'name' => $request->name,
-            'user_id' => Auth::user()->id,
             'restaurant_id' => $restaurant->id,
             'type' => $request->types,
         ];
