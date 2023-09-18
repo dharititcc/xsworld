@@ -29,6 +29,7 @@ class Order extends Model
     const RESTAURANT_TOXICATION         = 6;
     const PARTIAL_REFUND                = 7;
     const FULL_REFUND                   = 8;
+    const DELAY_ORDER                   = 9;
 
     const ORDER_STATUS = [
         self::PENDNIG                   => 'Pending',
@@ -40,6 +41,7 @@ class Order extends Model
         self::RESTAURANT_TOXICATION     => 'Cancel due to Intoxication',
         self::PARTIAL_REFUND            => 'Partially Refund',
         self::FULL_REFUND               => 'Full Refund',
+        self::DELAY_ORDER               => 'Delay Order',
     ];
 
     /**
