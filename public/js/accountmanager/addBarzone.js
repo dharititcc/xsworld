@@ -7,14 +7,13 @@ $(document).ready(function() {
             // parent = $this.data('parent'),
             parent_id  = $this.data('parent_id'),
             type = $this.data('type');
-            // $('.waiter_model_title').html('Add');
             modal.find('#addbarpickform').find('#user_id').val(parent_id);
             modal.modal('show');
     });
     $('.waiters').on('click',function(e) {
         e.preventDefault();
-        $('#waiter_submitBtn').html('Add Waiter');
-        $('.waiter_model_title').html('Add ');
+        $('#barpickzone_submitBtn').html('Add Bar');
+        $('.barzone_model_title').html('Add ');
     })
 
     //close modal pop up

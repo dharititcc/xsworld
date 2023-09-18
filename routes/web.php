@@ -76,6 +76,11 @@ Route::group(['prefix' => 'restaurants', 'as' => 'restaurants.', 'middleware' =>
         {
             Route::resource('barpickzone', 'BarPickZoneController');
         });
+
+        Route::group(['namespace' => 'Kitchen'], function()
+        {
+            Route::resource('kitchen', 'KitchenController');
+        });
     });
     
 });

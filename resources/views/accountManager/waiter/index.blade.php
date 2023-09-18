@@ -35,12 +35,31 @@
                 </a>
             </div>
             <div class="gldnline-sepr mb-5 mt-5"></div>
-            <div class="d-flex mb-4 justify-content-between doubl-line"><h2 class="yellow">Kitchen Accounts </h2> <div class="count-item">Total: 0</div></div>
+            <div class="d-flex mb-4 justify-content-between doubl-line"><h2 class="yellow">Kitchen Accounts </h2> <div class="count-item">Total: {{$kitchens->count()}}</div></div>
                 <div class="grid colmn-5">
                     
+                    @foreach ($kitchens as $kitchen)
+                        <div class="catg-box overly">
+                            {{-- <button><i class="icon-trash"></i></button>
+                            --}}
+                            <form method="POST" action="{{ route('restaurants.kitchen.destroy', $kitchen->id) }}">
+                                @csrf
+                                <input name="_method" type="hidden" value="DELETE">
+                                <button type="submit" class="show_confirm" data-toggle="tooltip" title='Delete'><i class="icon-trash"></i></button>
+                            </form>
+
+                            {{-- <button onclick="return deleteConform({{ $kitchen->id }});"><i
+                                class="icon-trash"></i></button> --}}
+                            <figure onclick="getkitchen({{$kitchen->id}})" data-type="Edit kitchen" data-parent_id="{{$kitchen->id}}" data-parant="{{$kitchen->first_name}}" class="kitchen_modal">
+                                
+                                <figcaption><span>{{$kitchen->username}}</span></figcaption>
+                                {{-- <figcaption><span>{{$kitchen->first_name}}</span></figcaption> --}}
+                            </figure>
+                        </div>
+                    @endforeach
                 
                     
-                    <a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#addkitchen" class="catg-box add overly"><figure><i class="icon-plus"> </i></figure><!--<input type="text" required="" autofocus=""> --></a>
+                    <a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#addkitchen" class="catg-box add overly kitchen"><figure><i class="icon-plus"> </i></figure><!--<input type="text" required="" autofocus=""> --></a>
                 </div>
                 <div class="gldnline-sepr mb-5 mt-5"></div>
             
@@ -121,31 +140,39 @@
         <div class="modal-content">
             <div class="modal-header justify-content-start ">
                 <button type="button" class="back" data-bs-dismiss="modal" aria-label="Close"><i class="icon-left"></i></button>
-                <h2>Add Kitchen</h2>
+                <h2><span class="kitchen_model_title"> </span>Kitchen</h2>
             </div>
             <div class="modal-body">
-                <div style="min-height: 300px;">
-                        <div class="form-group mb-4">
-                            <input type="text" class="form-control vari2" placeholder="Login ID">
+                <form name="addkitchenform" id="addkitchenform" method="post" action="javascript:void(0)">
+                    @csrf
+                    <div style="min-height: 300px;">
+                            <div class="form-group mb-4">
+                                <input id="user_id" type="hidden" class="user_id" name="user_id" />
+                                <input type="text" name="kitchen_id" id="kitchen_id" class="form-control vari2" placeholder="Login ID">
+                                <span id="Errorid"></span>
+                            </div>
+                            <div class="form-group mb-4">
+                                <input type="password" name="password" id="password" class="form-control vari2" placeholder="Password">
+                                <span id="Errorpassword"></span>
+                            </div>
+                            <div class="form-group">
+                                <label class="white-lable d-block text-center">Pickup Location</label>
+                                <select name="kitchen_point[]" id="kitchen_point" class="form-control vari2" multiple>
+                                    <option>---</option>
+                                    @foreach ($pickup_points as $pickup_point)
+                                        <option value="{{$pickup_point->id}}">{{$pickup_point->name}}</option>
+                                    @endforeach
+                                    {{-- <option>Geelong</option>
+                                    <option>Clayton</option>
+                                    <option>Hamptorn</option>
+                                    <option>Mentone</option> --}}
+                                </select>
+                                
+                            </div>
                         </div>
-                        <div class="form-group mb-4">
-                            <input type="password" class="form-control vari2" placeholder="Password">
-                        </div>
-                        <div class="form-group">
-                            <label class="white-lable d-block text-center">Pickup Location</label>
-                            <select class="form-control vari2" multiple>
-                                <option>---</option>
-                                <option>Geelong</option>
-                                <option>Clayton</option>
-                                <option>Hamptorn</option>
-                                <option>Mentone</option>
-                            </select>
-                            
-                        </div>
+                        <button class="bor-btn w-100 font-26" id="kitchen_submitBtn" type="submit">Add Kitchen</button>
                     </div>
-                    <button class="bor-btn w-100 font-26" type="button">Add Kitchen</button>
-                </div>
-
+                </form>
             </div>
         </div>
 </div>
@@ -200,8 +227,13 @@
     var routeStore = '{{ route("restaurants.waiter.store") }}';
     var routeUpdate = "{{ route('restaurants.waiter.update',':ID') }}";
     var routeGet = "{{ route('restaurants.waiter.show',':ID') }}";
+
     var barpickStore = '{{route("restaurants.barpickzone.store")}}';
     var barpickUpdate = "{{route('restaurants.barpickzone.update',':ID')}}";
     var barpickGet = "{{route('restaurants.barpickzone.show',':ID')}}";
+
+    var kitchenStore = '{{route("restaurants.kitchen.store")}}';
+    var kitchenUpdate = "{{route('restaurants.kitchen.update',':ID')}}";
+    var kitchenGet = "{{route('restaurants.kitchen.show',':ID')}}";
 </script>
 @endsection
