@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Billing\Stripe;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -9,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use stdClass;
 
 class Order extends Model
 {
@@ -225,5 +227,32 @@ class Order extends Model
         }
 
         return $remaining_time;
+    }
+
+    /**
+     * Method getCardDetailsattribute
+     *
+     * @return array
+     */
+    public function getCardDetailsattribute()
+    {
+        if($this->card_id)
+        {
+            $card_details = new stdClass;
+            $stripe_customer_id = $this->user->stripe_customer_id;
+            $stripe = new Stripe();
+            $card   = $stripe->getSingleCard($stripe_customer_id,$this->card_id);
+
+            if($card)
+            {
+                $card_details = [
+                    'name'  =>  $card->name,
+                    'brand' =>  $card->brand,
+                    'last4' =>  $card->last4
+                ];
+            }
+
+            return $card_details;
+        }
     }
 }
