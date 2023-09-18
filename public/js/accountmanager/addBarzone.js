@@ -142,16 +142,16 @@ function getBarpickzone(id)
         type: 'GET',
         success: function(res) {
             // console.log(res);
-            $('#pickup_points').html('<option value="">-- Select pickup_points --</option>');
-            $.each(res.pickup_point, function (key, value) {
-                console.log(value);
-                $("#pickup_points").append('<option value="' + value
-                    .id + '">' + value.name + '</option>');
-            });
 
+            var pickupPoint = res.pickup_point,
+                options     = `
+                    <option value="">-- Select pickup points --</option>
+                    <option value="${pickupPoint.id}">${pickupPoint.name}</option>
+                `;
 
+            $("#pickup_points").append(options);
             $('#barpick_id').val(res.username);
-            // $('#password').val(res.password);
+            $('#pickup_points').val(pickupPoint.id);
 
             $('#addBarzone').data('crudetype',0);
             $('#addBarzone').modal('show');
