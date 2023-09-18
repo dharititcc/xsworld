@@ -245,4 +245,21 @@ class OrderController extends APIController
 
         return $this->respondSuccess('Order payment successfully.', new OrderResource($place_order));
     }
+
+    /**
+     * Method currentOrder
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function currentOrder()
+    {
+        $cart_data      = $this->repository->getCartdata();
+
+        if($cart_data)
+        {
+            return $this->respondSuccess('order data found', new OrderResource($cart_data));
+        }
+
+        return $this->respondWithError('Your order is empty.');
+    }
 }
