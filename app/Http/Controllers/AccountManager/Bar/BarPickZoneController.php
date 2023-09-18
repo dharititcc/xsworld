@@ -113,9 +113,14 @@ class BarPickZoneController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, User $bar)
     {
-        //
+        $dataArr = [
+            'password' => Hash::make($request->password),
+        ];
+        RestaurantPickupPoint::where('id',$request->pickup_points)->update(['user_id'=>$bar->id]);
+        $bar->update($dataArr);
+        $bar->refresh();
     }
 
     /**
