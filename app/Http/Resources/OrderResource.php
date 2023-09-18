@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use Carbon\Carbon;
 use Illuminate\Http\Resources\Json\JsonResource;
+use stdClass;
 
 class OrderResource extends JsonResource
 {
@@ -37,7 +38,8 @@ class OrderResource extends JsonResource
             'card_id'                   => $this->card_id ?? '',
             'charge_id'                 => $this->charge_id ?? '',
             'order_items'               => isset($this->order_items) ? OrderItemResource::collection($this->order_items) : [],
-            'pickup_points'             => RestaurantPickupPointResources::collection($this->restaurant->pickup_points)
+            'pickup_points'             => RestaurantPickupPointResources::collection($this->restaurant->pickup_points),
+            'card_details'              => isset($this->card_id) ? $this->carddetails : new stdClass
         ];
     }
 }
