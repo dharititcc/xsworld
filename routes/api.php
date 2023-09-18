@@ -83,7 +83,7 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'v1', 'as' => 'api.v1.'], fun
         // {api/v1/users/attach-card}
         Route::post('attach-card', 'UserController@attachCard')->name('user.attach-card');
         // {api/v1/users/mark-default-card}
-        Route::post('mark-default-card', 'Usercontroller@markdefaultcard')->name('user.mark-default-card');
+        Route::post('mark-default-card', 'UserController@markdefaultcard')->name('user.mark-default-card');
     });
 
     Route::group(['prefix' => 'countries'], function ()

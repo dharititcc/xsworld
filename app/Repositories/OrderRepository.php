@@ -367,28 +367,38 @@ class OrderRepository extends BaseRepository
 
         if(isset($order->id))
         {
-            $paymentArr = [
-                'amount'        => $amount * 100,
-                'currency'      => $order->restaurant->currency->code,
-                'customer'      => $user->stripe_customer_id,
-                'capture'       => false,
-                'source'        => $card_id,
-                'description'   => $order->id
-            ];
+            if($order->total == $credit_amount)
+            {
+                $updateArr = [
+                    'type'              => Order::ORDER,
+                    'pickup_point_id'   => $pickup_point_id,
+                    'credit_amount'     => $credit_amount
+                ];
+            }
+
 
             if( $order->total != $credit_amount )
             {
+                $paymentArr = [
+                    'amount'        => $amount * 100,
+                    'currency'      => $order->restaurant->currency->code,
+                    'customer'      => $user->stripe_customer_id,
+                    'capture'       => false,
+                    'source'        => $card_id,
+                    'description'   => $order->id
+                ];
+
                 $stripe         = new Stripe();
                 $payment_data   = $stripe->createCharge($paymentArr);
-            }
 
-            $updateArr = [
-                'type'              => Order::ORDER,
-                'card_id'           => $card_id,
-                'charge_id'         => $payment_data->id,
-                'pickup_point_id'   => $pickup_point_id,
-                'credit_amount'     => $credit_amount
-            ];
+                $updateArr = [
+                    'type'              => Order::ORDER,
+                    'card_id'           => $card_id,
+                    'charge_id'         => $payment_data->id,
+                    'pickup_point_id'   => $pickup_point_id,
+                    'credit_amount'     => $credit_amount
+                ];
+            }
 
             $order->update($updateArr);
         }
