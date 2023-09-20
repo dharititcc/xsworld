@@ -253,11 +253,11 @@ class OrderController extends APIController
      */
     public function currentOrder()
     {
-        $cart_data      = $this->repository->getCartdata();
+        $currentOrder      = $this->repository->getCurrentOrder();
 
-        if($cart_data)
+        if(isset( $currentOrder->id ))
         {
-            return $this->respondSuccess('order data found', new OrderResource($cart_data));
+            return $this->respondSuccess('order data found', new OrderResource($currentOrder));
         }
 
         return $this->respondWithError('Your order is empty.');

@@ -182,6 +182,16 @@ class User extends Authenticatable
     }
 
     /**
+     * Get all of the latest_order for the User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function latest_order(): HasOne
+    {
+        return $this->hasOne(Order::class, 'user_id', 'id')->where('type', Order::ORDER)->latest();
+    }
+
+    /**
      * Method getNameAttribute
      *
      * @return string

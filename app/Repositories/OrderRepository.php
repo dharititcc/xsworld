@@ -251,6 +251,20 @@ class OrderRepository extends BaseRepository
     }
 
     /**
+     * Method getCartdata
+     *
+     * @return Order
+     */
+    public function getCurrentOrder(): ?Order
+    {
+        $user        = auth()->user();
+
+        $user->loadMissing(['latest_order']);
+
+        return $user->latest_order;
+    }
+
+    /**
      * Method getOrderdata
      *
      * @return Collection
