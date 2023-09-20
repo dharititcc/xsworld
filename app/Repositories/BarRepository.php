@@ -2,8 +2,10 @@
 
 use App\Billing\Stripe;
 use App\Models\Order;
+use App\Models\User;
 use App\Repositories\BaseRepository;
 use Carbon\Carbon;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 
 /**
@@ -124,5 +126,20 @@ class BarRepository extends BaseRepository
         $order->loadMissing(['items']);
 
         return $order;
+    }
+
+    /**
+     * Method updateStatus
+     *
+     * @param array $data [explicite description]
+     *
+     * @return mixed
+     */
+    public function updateStatus(array $data)
+    {
+        $user   = auth()->user();
+        $user->pickup_point()->update($data);
+        $user->refresh();
+        return $user;
     }
 }

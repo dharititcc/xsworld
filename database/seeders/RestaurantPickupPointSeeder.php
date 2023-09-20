@@ -37,6 +37,9 @@ class RestaurantPickupPointSeeder extends Seeder
                                 [
                                     'name'  => 'Back Bar'
                                 ],
+                                [
+                                    'name'  => 'South Bar'
+                                ],
                             ];
                             if( !empty($pickupPointArr) )
                             {

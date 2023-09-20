@@ -20,7 +20,20 @@ class PickupPoint extends Model
      */
     protected $fillable = [
         'name',
-        'restaurant_id'
+        'restaurant_id',
+        'pickup_point_id',
+        'user_id',
+        'status',
+        'type',
+    ];
+
+    const OFFLINE      = 0;
+    const ONLINE       = 1;
+
+
+    const STATUS = [
+        self::OFFLINE     => 'OFFLINE',
+        self::ONLINE      => 'ONLINE',
     ];
 
     /**
@@ -71,5 +84,41 @@ class PickupPoint extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
+    }
+
+    /**
+     * Method ScopeRestaurantget
+     *
+     * @param $query $query [explicite description]
+     * @param $arg $arg [explicite description]
+     *
+     * @return mixed
+     */
+    public function ScopeRestaurantget($query,$arg)
+    {
+        return $query->where('restaurant_id',$arg);
+    }
+
+    /**
+     * Method ScopeType
+     *
+     * @param $query $query [explicite description]
+     * @param $arg $arg [explicite description]
+     *
+     * @return mixed
+     */
+    public function ScopeType($query,$arg)
+    {
+        return $query->where('type',$arg);
+    }
+
+     /**
+     * Method getStatusAttribute
+     *
+     * @return string
+    */
+    public function getPickUpStatusAttribute(): string
+    {
+        return self::STATUS[$this->status];
     }
 }

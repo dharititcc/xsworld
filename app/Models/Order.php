@@ -236,9 +236,9 @@ class Order extends Model
      */
     public function getCardDetailsattribute()
     {
+        $card_details = new stdClass;
         if($this->card_id)
         {
-            $card_details = new stdClass;
             $stripe_customer_id = $this->user->stripe_customer_id;
             $stripe = new Stripe();
             $card   = $stripe->getSingleCard($stripe_customer_id,$this->card_id);
@@ -250,8 +250,12 @@ class Order extends Model
                     'brand' =>  $card->brand,
                     'last4' =>  $card->last4
                 ];
+                return $card_details;
             }
 
+        }
+        else
+        {
             return $card_details;
         }
     }

@@ -18,6 +18,7 @@ class CreatePickupPoints extends Migration
             $table->string('name');
             $table->unsignedBigInteger('user_id')->nullable()->index()->comment('bartender user ID');
             $table->unsignedBigInteger('restaurant_id');
+            $table->integer('status')->comment("1 => Online , 0 => Offline")->default(1);
             $table->timestamps();
             $table->softDeletes();
 

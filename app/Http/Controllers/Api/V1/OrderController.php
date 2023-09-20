@@ -8,6 +8,7 @@ use App\Http\Requests\CartDeleteRequest;
 use App\Http\Requests\OrderDeleteItemRequest;
 use App\Http\Requests\OrderUpdateRequest;
 use App\Http\Requests\PlaceOrderRequest;
+use App\Http\Resources\OrderListResource;
 use App\Http\Resources\OrderResource;
 use App\Models\Order;
 use App\Repositories\OrderRepository;
@@ -162,7 +163,7 @@ class OrderController extends APIController
 
         if($order_data)
         {
-            return $this->respondSuccess('Order data found', OrderResource::collection($order_data));
+            return $this->respondSuccess('Order data found', OrderListResource::collection($order_data));
         }
 
         return $this->respondWithError('Your order not found.');

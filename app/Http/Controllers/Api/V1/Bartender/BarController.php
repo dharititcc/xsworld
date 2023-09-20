@@ -5,9 +5,12 @@ namespace App\Http\Controllers\Api\V1\Bartender;
 use App\Exceptions\GeneralException;
 use App\Http\Controllers\Api\V1\APIController;
 use App\Http\Requests\OrderUpdateRequest;
+use App\Http\Resources\OrderListResource;
 use App\Http\Resources\OrderResource;
+use App\Http\Resources\UserResource;
 use App\Models\Order;
 use App\Repositories\BarRepository;
+use Illuminate\Http\Request;
 
 class BarController extends APIController
 {
@@ -57,7 +60,7 @@ class BarController extends APIController
 
         if( $completedOrder->count() )
         {
-            return $this->respondSuccess('Orders Found.', $completedOrder->count() ? OrderResource::collection($completedOrder) : [],);
+            return $this->respondSuccess('Orders Found.', $completedOrder->count() ? OrderListResource::collection($completedOrder) : [],);
         }
 
         throw new GeneralException('Order not found.');
@@ -97,5 +100,20 @@ class BarController extends APIController
         }
 
         throw new GeneralException('Order not found.');
+    }
+
+    /**
+     * Method gostatus
+     *
+     * @param Request $request [explicite description]
+     *
+     * @return void
+     */
+    public function gostatus(Request $request)
+    {
+        $input          = $request->all();
+        $pickup_point   = $this->repository->updateStatus($input);
+
+        return $this->respondSuccess('Status updated');
     }
 }
