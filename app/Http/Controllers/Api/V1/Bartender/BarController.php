@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1\Bartender;
 use App\Exceptions\GeneralException;
 use App\Http\Controllers\Api\V1\APIController;
 use App\Http\Requests\OrderUpdateRequest;
+use App\Http\Resources\BarOrderListingResource;
 use App\Http\Resources\OrderListResource;
 use App\Http\Resources\OrderResource;
 use App\Http\Resources\UserResource;
@@ -41,9 +42,9 @@ class BarController extends APIController
         $completedOrder     = $this->repository->getCompletedOrder();
 
         $data = [
-            'incoming_order'       => $incomingOrder->count() ? OrderResource::collection($incomingOrder) : [],
-            'confirmed_order'      => $confirmedOrder->count() ? OrderResource::collection($confirmedOrder) : [],
-            'completed_order'      => $completedOrder->count() ? OrderResource::collection($completedOrder) : [],
+            'incoming_order'       => $incomingOrder->count() ? BarOrderListingResource::collection($incomingOrder) : [],
+            'confirmed_order'      => $confirmedOrder->count() ? BarOrderListingResource::collection($confirmedOrder) : [],
+            'completed_order'      => $completedOrder->count() ? BarOrderListingResource::collection($completedOrder) : [],
         ];
 
         return $this->respondSuccess('Orders found.', $data);
