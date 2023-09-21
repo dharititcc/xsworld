@@ -297,7 +297,7 @@
                     success: function(response) {
                         $('#submitBtn').html('Submit');
                         $("#submitBtn").attr("disabled", false);
-                        alert('Ajax form has been submitted successfully');
+                        alert('Category form has been submitted successfully');
                         document.getElementById("categorypopup").reset();
                         location.reload(true);
                     }

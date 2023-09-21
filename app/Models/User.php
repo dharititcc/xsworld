@@ -91,6 +91,11 @@ class User extends Authenticatable
         return $this->morphOne(Attachment::class, 'attachmentable');
     }
 
+    public function kitchen_pickup_point()
+    {
+        return $this->hasMany(KitchenPickPoint::class,'user_id');
+    }
+
     /**
      * The restaurants that belong to the User
      *

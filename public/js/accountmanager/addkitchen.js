@@ -20,7 +20,6 @@ $(document).ready(function() {
     modal.on('hide.bs.modal',function(){
         var $this = jQuery(this);
         $this.find('#addkitchenform').find('.form-control').val('');
-        $this.find('#addkitchenform').find('.pip').remove();
         $('#kitchen_id').attr('disabled',false);
         var $alertas = $('#addkitchenform');
         $alertas.validate().resetForm();
@@ -103,6 +102,7 @@ function formsubmit(form) {
         kitchen_id = $('#kitchen_id').val();
         // kitchen_point = $("#kitchen_point option:selected").val();
         password = $('#password').val();
+        user_id = $('#user_id').val();
     
         $.each($("#kitchen_point option:selected"), function(i) {
             kitchen_point[i] = $(this).val();
@@ -111,12 +111,13 @@ function formsubmit(form) {
     data.append('kitchen_id',kitchen_id);
     data.append('password',password);
     data.append('kitchen_point',kitchen_point);
+    data.append('user_id',user_id);
     if(crudetype === 1) {
-        /// add waiter
-        route = kitchenStore;
+        /// add kitchen
+        route = moduleConfig.kitchenStore;
     } else {
-        /// update waiter
-        route = kitchenUpdate.replace(':ID', user_id),
+        /// update kitchen
+        route = moduleConfig.kitchenUpdate.replace(':ID', user_id),
         data.append('_method','PUT');
     }
     $.ajax({
@@ -132,5 +133,28 @@ function formsubmit(form) {
             document.getElementById('addkitchenform').reset();
             location.reload(true);
         }
+    });
+}
+
+function getkitchen(id)
+{
+    $('kitchen_model_title').html('Edit');
+    $('#kitchen_submitBtn').html('Edit Kitchen');
+    $('#user_id').val(id);
+    $('#kitchen_id').attr('disabled',true);
+    $.ajax({
+        url: moduleConfig.kitchenGet.replace(':ID',id),
+        type: 'GET',
+        success: function(res) {
+
+            $.each(res.pickup_point_name, function (key, val) {
+                $('select option[value="'+val.id+'"]').attr("selected",true);
+            });
+
+            $('#kitchen_id').val(res.username);
+            $('#addkitchen').data('crudetype',0);
+            $('#addkitchen').modal('show');
+        },
+        error: function(data) {}
     });
 }

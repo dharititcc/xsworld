@@ -194,8 +194,9 @@
                         render: function(data, type, row) {
                             var color = (row.is_available == 1) ? "green" : "red";
                             return '<div class="prdname ' + color + '"> ' + row.name +
-                                ' </div><a href="javascript:void(0)" data-type="Edit" onClick="getMixer(' + row.id +
-                                ')" class="edit mixer_model" >Edit</a>  <div class="add-date">Added ' + formatDate(row
+                                ' </div><a href="javascript:void(0)" id="mixer_id" data-type="Edit" onClick="getMixer(' + row.id +
+                                ')" class="edit mixer_model" data-parent_id=" ' + row.id +
+                                ' ">Edit</a>  <div class="add-date">Added ' + formatDate(row
                                     .created_at) + '</div>'
                         }
                     },
@@ -400,7 +401,6 @@
                 url: moduleConfig.getMixer.replace(':ID', id),
                 type: "GET",
                 success: function(response) {
-                    console.log(response);
                     $("input[name=name]").val(response.data.name);
                     $("input[name=price]").val(response.data.price);
                     var image = `

@@ -21,7 +21,6 @@ $(document).ready(function() {
     modal.on('hide.bs.modal',function(){
         var $this = jQuery(this);
         $this.find('#addwaiterform').find('.form-control').val('');
-        $this.find('#addwaiterform').find('.pip').remove();
         $('#waiter_id').attr('disabled',false);
         var $alertas = $('#addwaiterform');
         $alertas.validate().resetForm();
@@ -102,6 +101,8 @@ function formsubmit(form) {
     });
     $('#waiter_submitBtn').html('Please Wait...');
     $('#waiter_submitBtn').attr('disabled',true);
+
+    // XS.Common.btnProcessingStart($('#waiter_submitBtn'));
     var route = '';
     var crudetype = $('#waiterModal').data('crudetype');
     var data = new FormData(),
@@ -116,10 +117,10 @@ function formsubmit(form) {
     data.append('password',password);
     if(crudetype === 1) {
         /// add waiter
-        route = routeStore;
+        route = moduleConfig.waiterStore;
     } else {
         /// update waiter
-        route = routeUpdate.replace(':ID', user_id),
+        route = moduleConfig.waiterUpdate.replace(':ID', user_id),
         data.append('_method','PUT');
     }
     
@@ -151,7 +152,7 @@ function getWaiter(id)
     $('#user_id').val(id);
     $('#waiter_id').attr('disabled',true);
     $.ajax({
-        url: routeGet.replace(':ID',id),
+        url: moduleConfig.waiterGet.replace(':ID',id),
         type: 'GET',
         success: function(res) {
             $('#waiter_name').val(res.first_name);

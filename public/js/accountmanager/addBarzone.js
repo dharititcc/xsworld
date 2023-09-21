@@ -10,17 +10,16 @@ $(document).ready(function() {
             modal.find('#addbarpickform').find('#user_id').val(parent_id);
             modal.modal('show');
     });
-    $('.waiters').on('click',function(e) {
+    $('.barzone').on('click',function(e) {
         e.preventDefault();
         $('#barpickzone_submitBtn').html('Add Bar');
-        $('.barzone_model_title').html('Add ');
+        $('.barzone_model_title').html('Add Bar');
     })
 
     //close modal pop up
     modal.on('hide.bs.modal',function(){
         var $this = jQuery(this);
         $this.find('#addbarpickform').find('.form-control').val('');
-        $this.find('#addbarpickform').find('.pip').remove();
         $('#barpick_id').attr('disabled',false);
         var $alertas = $('#addbarpickform');
         $alertas.validate().resetForm();
@@ -101,17 +100,20 @@ function formsubmit(form) {
     var data = new FormData(),
         barpick_id = $('#barpick_id').val();
         pickup_points = $("#pickup_points option:selected").val();
+        console.log(pickup_points);
         password = $('#password').val();
+        user_id = $('#user_id').val();
     
     data.append('barpick_id',barpick_id);
     data.append('password',password);
     data.append('pickup_points',pickup_points);
+    data.append('user_id',user_id);
     if(crudetype === 1) {
-        /// add waiter
-        route = barpickStore;
+        /// add bar
+        route = moduleConfig.barpickStore;
     } else {
-        /// update waiter
-        route = barpickUpdate.replace(':ID', user_id),
+        /// update bar
+        route = moduleConfig.barpickUpdate.replace(':ID', user_id),
         data.append('_method','PUT');
     }
     $.ajax({
@@ -137,20 +139,24 @@ function getBarpickzone(id)
     $('#user_id').val(id);
     $('#barpick_id').attr('disabled',true);
     $.ajax({
-        url: barpickGet.replace(':ID',id),
+        url: moduleConfig.barpickGet.replace(':ID',id),
         type: 'GET',
         success: function(res) {
             // console.log(res);
 
             var pickupPoint = res.pickup_point,
                 options     = `
-                    <option value="">-- Select pickup points --</option>
                     <option value="${pickupPoint.id}">${pickupPoint.name}</option>
                 `;
 
+            console.log($("#pickup_points").append(options));
             $("#pickup_points").append(options);
             $('#barpick_id').val(res.username);
             $('#pickup_points').val(pickupPoint.id);
+
+            $("#pickup_points option").each(function() {
+                $(this).siblings('[value="'+ this.value +'"]').remove();
+              });
 
             $('#addBarzone').data('crudetype',0);
             $('#addBarzone').modal('show');
