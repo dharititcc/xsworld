@@ -45,7 +45,7 @@ class BarRepository extends BaseRepository
             'order_items',
             'order_items.addons',
             'order_items.mixer'
-        ])->where(['type'=> Order::ORDER ])->whereIn('status', [Order::COMPLETED, Order::DELAY_ORDER])->orderBy('id','desc')->get();
+        ])->where(['type'=> Order::ORDER ])->whereIn('status', [Order::ACCEPTED, Order::DELAY_ORDER])->orderBy('id','desc')->get();
 
         return $order;
     }
