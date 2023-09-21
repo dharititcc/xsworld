@@ -49,16 +49,16 @@ Route::group(['prefix' => 'restaurants', 'as' => 'restaurants.', 'middleware' =>
     {
         Route::resource('foods', 'FoodController');
     });
-    Route::group(['namespace' => 'mixers'], function()
+    Route::group(['namespace' => 'Mixers'], function()
     {
         Route::resource('mixers', 'MixerController');
     });
-    Route::group(['namespace' => 'addons'], function()
+    Route::group(['namespace' => 'Addons'], function()
     {
         Route::resource('addons', 'AddonsController');
     });
 
-    Route::group(['namespace' => 'pickup'], function()
+    Route::group(['namespace' => 'Pickup'], function()
     {
         Route::resource('pickup', 'PickupZoneController');
     });
@@ -82,7 +82,7 @@ Route::group(['prefix' => 'restaurants', 'as' => 'restaurants.', 'middleware' =>
             Route::resource('kitchen', 'KitchenController');
         });
     });
-    
+
 });
 
 
