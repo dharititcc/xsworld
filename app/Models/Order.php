@@ -38,7 +38,7 @@ class Order extends Model
         self::ACCEPTED                  => 'Accepted',
         self::READY                     => 'Ready',
         self::COMPLETED                 => 'Completed',
-        self::RESTAURANT_CANCELED       => 'Restaurant Canceled',
+        self::RESTAURANT_CANCELED       => 'Cancelled',
         self::CONFIRM_PICKUP            => 'Order Pickup',
         self::RESTAURANT_TOXICATION     => 'Cancel due to Intoxication',
         self::PARTIAL_REFUND            => 'Partially Refund',
