@@ -276,7 +276,7 @@ class OrderRepository extends BaseRepository
             'order_items',
             'order_items.addons',
             'order_items.mixer'
-        ])->where('user_id',$user->id)->where('type',Order::ORDER)->get();
+        ])->where('user_id',$user->id)->where('type',Order::ORDER)->orderBy('id','desc')->get();
 
         return $order;
 
