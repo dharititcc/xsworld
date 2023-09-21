@@ -53,6 +53,7 @@
                         @csrf
                         <div style="min-height: 300px;">
                             <div class="form-group mb-4">
+                                <input id="mixer_id" type="hidden" class="mixer_id" name="mixer_id" />
                                 <input type="text" name="name" class="form-control vari2" placeholder="Mixer Name">
                             </div>
                             <div class="form-group mb-4">
@@ -110,9 +111,13 @@
             // close modal pop up
             modal.on('hide.bs.modal', function()
             {
-                var $this = jQuery(this);
 
+                var $this = jQuery(this);
                 $this.find('#mixerpopup').find('.form-control').val('');
+                var $alertas = $('#mixerpopup');
+                $alertas.validate().resetForm();
+                $alertas.find('.error').removeClass('error');
+
 
                 $this.find('#mixerpopup').find('.pip').remove();
                 //$this.find('#mixerpopup').find('#category_id').val('');
@@ -194,8 +199,8 @@
                         render: function(data, type, row) {
                             var color = (row.is_available == 1) ? "green" : "red";
                             return '<div class="prdname ' + color + '"> ' + row.name +
-                                ' </div><a href="javascript:void(0)" id="mixer_id" data-type="Edit" onClick="getMixer(' + row.id +
-                                ')" class="edit mixer_model" data-parent_id=" ' + row.id +
+                                ' </div><a href="javascript:void(0)" id="mixer_model_a" data-type="Edit" onClick="getMixer(' + row.id +
+                                ')" class="edit mixer_model" data-id=" ' + row.id +
                                 ' ">Edit</a>  <div class="add-date">Added ' + formatDate(row
                                     .created_at) + '</div>'
                         }
@@ -355,6 +360,8 @@
                     }
                 });
 
+                var id = $('#mixer_model_a').data('id');
+                console.log(id);
                 $('#submitBtn').html('Please Wait...');
                 $("#submitBtn").attr("disabled", true);
 

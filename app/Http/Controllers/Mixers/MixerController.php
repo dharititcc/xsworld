@@ -131,9 +131,40 @@ class MixerController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, RestaurantItem $mixer)
     {
-        dd('hii');
+        $restaurant = session('restaurant')->loadMissing(['main_categories', 'main_categories.children']);
+        $image = $request->file('photo');
+        $profileImage ="";
+        if ($image = $request->file('photo'))
+        {
+            $destinationPath = public_path('/storage/mixers');
+            $profileImage = date('YmdHis') . "." . $image->getClientOriginalExtension();
+            $image->move($destinationPath, $profileImage);
+            // unlink('/storage/mixers/'.$mixer->photo);
+        }
+        
+        //category
+        $category = explode(',',$request->get('category'));
+        if($category) {
+            foreach ($category as $key => $value)
+            {
+                $mixer->name                 = $request->get('name');
+                $mixer->price                = $request->get('price');
+                $mixer->type                 = 3;
+                $mixer->is_available         = 1;
+                $mixer->category_id         = $value;
+                $mixer->restaurant_id        = $restaurant->id;
+                $mixer->save();
+                $mixer->attachment()->create([
+                    'stored_name'   => $profileImage,
+                    'original_name' => $profileImage,
+                    'attachmentable_id' => $mixer->id,
+                ]);
+            }
+            return $mixer;
+        }
+
     }
 
     /**
