@@ -1,7 +1,7 @@
 $(document).ready(function() {
     var modal = $("#addkitchen");
     //addkitchen open pop up
-    $(".kitchen_modal").on("click",function(e) {
+    $(".kitchen_popup_modal").on("click",function(e) {
         e.preventDefault();
         var $this = $(this),
             // parent = $this.data('parent'),

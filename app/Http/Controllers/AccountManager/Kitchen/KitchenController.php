@@ -62,8 +62,9 @@ class KitchenController extends Controller
             'phone' => $mobileNumber,
             'user_type' => User::KITCHEN,
         ]);
-       
-        $kitchen_points = explode(',',$request->kitchen_point);
+        
+        // dd($request->kitchen_point);
+        $kitchen_points = $request->kitchen_point;
         foreach($kitchen_points as $kitchen_point)
         {
             KitchenPickPoint::create([
@@ -74,7 +75,7 @@ class KitchenController extends Controller
       
         // RestaurantPickupPoint::whereIn('id',$kitchen_points[0])->update(['user_id'=>$kitchenArr->id]);
         
-        return $kitchenArr->refresh();
+        return redirect()->back();
     }
 
     function generateRandomString($length) {
@@ -132,7 +133,7 @@ class KitchenController extends Controller
             'password' => Hash::make($request->password),
         ];
 
-        $kitchen_points = explode(',',$request->kitchen_point);
+        $kitchen_points = $request->kitchen_point;
         KitchenPickPoint::where('user_id',$kitchen->id)->delete();
         foreach($kitchen_points as $kitchen_point)
         {
@@ -143,7 +144,7 @@ class KitchenController extends Controller
         }
         ($dataArr) ?? $kitchen->update($dataArr);
         
-        return $kitchen->refresh();
+        return redirect()->back();
     }
 
     /**

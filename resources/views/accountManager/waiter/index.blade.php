@@ -60,9 +60,9 @@
 
                             {{-- <button onclick="return deleteConform({{ $kitchen->id }});"><i
                                 class="icon-trash"></i></button> --}}
-                            <figure onclick="getkitchen({{ $kitchen->id }})" data-type="Edit kitchen"
+                            <figure data-type="Edit kitchen"
                                 data-parent_id="{{ $kitchen->id }}" data-parant="{{ $kitchen->first_name }}"
-                                class="kitchen_modal">
+                                class="kitchen_popup_modal">
 
                                 <figcaption><span>{{ $kitchen->username }}</span></figcaption>
                                 {{-- <figcaption><span>{{$kitchen->first_name}}</span></figcaption> --}}
@@ -72,7 +72,7 @@
 
 
                     <a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#addkitchen"
-                        class="catg-box add overly kitchen">
+                        class="catg-box add overly kitchen kitchen_popup_modal">
                         <figure><i class="icon-plus"> </i></figure>
                         <!--<input type="text" required="" autofocus=""> -->
                     </a>
@@ -100,7 +100,7 @@
                                 class="icon-trash"></i></button> --}}
                             <figure onclick="getBarpickzone({{ $barpickzone->id }})" data-type="Edit Barpickzone"
                                 data-parent_id="{{ $barpickzone->id }}" data-parant="{{ $barpickzone->first_name }}"
-                                class="barpickzone_modal">
+                                class="barpickzone_popup_modal">
 
                                 <figcaption><span>{{ $barpickzone->username }}</span></figcaption>
                                 {{-- <figcaption><span>{{$barpickzone->first_name}}</span></figcaption> --}}
@@ -112,7 +112,7 @@
 
 
                     <a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#addBarzone"
-                        class="catg-box add overly barzone">
+                        class="catg-box add overly barzone barpickzone_popup_modal">
                         <figure><i class="icon-plus"> </i></figure>
 
                         <!--<input type="text" required="" autofocus=""> -->
@@ -164,7 +164,7 @@
     </div>
     <!-- Global popup -->
     <!-- Global popup -->
-    <div class="modal fade" id="addkitchen" data-crudetype="1" tabindex="-1" aria-labelledby="addkitchenLabel"
+    <div class="modal fade" id="kitchenModal" data-crudetype="1" tabindex="-1" aria-labelledby="kitchenModalLabel"
         aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -174,7 +174,7 @@
                     <h2><span class="kitchen_model_title"> </span>Kitchen</h2>
                 </div>
                 <div class="modal-body">
-                    <form name="addkitchenform" id="addkitchenform" method="post" action="javascript:void(0)">
+                    <form name="addkitchenform" id="addkitchenform" method="post">
                         @csrf
                         <div style="min-height: 300px;">
                             <div class="form-group mb-4">
@@ -207,7 +207,7 @@
     </div>
     <!-- Global popup -->
     <!-- Global popup -->
-    <div class="modal fade" id="addBarzone" data-crudetype="1" tabindex="-1" aria-labelledby="addBarzoneLabel"
+    <div class="modal fade" id="addBarModal" data-crudetype="1" tabindex="-1" aria-labelledby="addBarModalLabel"
         aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -217,7 +217,7 @@
                     <h2><span class="barzone_model_title"> </span>Bar</h2>
                 </div>
                 <div class="modal-body">
-                    <form name="addbarpickform" id="addbarpickform" method="post" action="javascript:void(0)">
+                    <form name="addbarpickform" id="addbarpickform" method="post">
                         @csrf
                         <div style="min-height: 300px;">
                             <div class="form-group mb-4">
@@ -263,7 +263,7 @@
         kitchenUpdate: "{!! route('restaurants.kitchen.update', ':ID') !!}",
         kitchenGet: "{!! route('restaurants.kitchen.show', ':ID') !!}",
 
-        barpickStore: '{!! route('restaurants.barpickzone.store') !!}',
+        barpickStore: "{!! route('restaurants.barpickzone.store') !!}",
         barpickUpdate: "{!! route('restaurants.barpickzone.update', ':ID') !!}",
         barpickGet: "{!! route('restaurants.barpickzone.show', ':ID') !!}",
     };
