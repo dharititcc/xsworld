@@ -66,7 +66,7 @@ Route::group(['prefix' => 'restaurants', 'as' => 'restaurants.', 'middleware' =>
     Route::group(['namespace' => 'AccountManager'], function()
     {
         Route::resource('accountmanager', 'AccountManagerController');
-        Route::group(['namespace' => 'waiter'], function()
+        Route::group(['namespace' => 'Waiter'], function()
         {
             Route::resource('waiter', 'WaiterController');
             Route::get('waiter/email','WaiterController@generateRandomString');
