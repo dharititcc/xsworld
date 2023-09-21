@@ -7,6 +7,7 @@ use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\LoginRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
+use App\Models\UserDevices;
 use App\Repositories\UserRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -158,6 +159,12 @@ class AuthController extends APIController
                 'model'                 => $input['model'],
                 'fcm_token'             => $input['fcm_token'],
             ];
+
+            $tokenArr = [
+                'user_id'       => $user->id,
+                'fcm_token'     => $input['fcm_token'],
+            ];
+            $token              = UserDevices::create($tokenArr);
 
             $this->repository->update($dataArr, $user);
 
