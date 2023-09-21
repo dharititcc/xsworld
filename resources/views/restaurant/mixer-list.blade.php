@@ -14,7 +14,7 @@
             <div class="searchbox"><input type="text" name="search" id="search" class="searchbar"
                     placeholder="Find a Drink"></div>
         </div>
-        <div class="mb-4">
+        <div class="mb-4 table-en-ds">
             <button class="bor-btn" id="disable">Disable Drink</button>
             <button class="bor-btn ms-3" id="enable">Enable Drink</button>
         </div>
@@ -26,7 +26,6 @@
                                     class="checkmark"></span></label></th>
                         <th>
                             Name
-                            <a href="#" class="sort-icon ms-1"><i class="icon-sort"></i></a>
                         </th>
                         <th class="price">Price</th>
                         <th class="popularity">Popularity</th>
@@ -180,6 +179,7 @@
                 processing: true,
                 serverSide: true,
                 searching: false,
+                order: [[1, 'asc']],
                 ajax: {
                     url: moduleConfig.getMixerlist,
                     data: data,

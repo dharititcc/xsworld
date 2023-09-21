@@ -97,7 +97,7 @@ class BarController extends APIController
 
         if($order_data->id)
         {
-            return $this->respondSuccess('Order data updated', new OrderResource($order_data));
+            return $this->respondSuccess('Order data updated');
         }
 
         throw new GeneralException('Order not found.');

@@ -24,7 +24,7 @@ class MixerController extends Controller
             $categories = $category->children;
             $subcategory = $category->children->pluck('id');
         }
-        //dd($categories);
+
         if ($request->ajax())
         {
             if(!empty($request->get('enable')))
@@ -39,7 +39,7 @@ class MixerController extends Controller
                     ->with(['category', 'restaurant','variations'])
                     ->whereHas('restaurant', function($query) use($restaurant)
                     {
-                        return $query->where('restaurants.id', $restaurant->id)->where('restaurant_items.type',3);
+                        return $query->where('restaurants.id', $restaurant->id)->where('restaurant_items.type', 3);
                     });
                     if (!empty($request->get('search_main')))
                     {
