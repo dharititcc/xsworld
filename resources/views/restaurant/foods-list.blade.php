@@ -12,7 +12,7 @@
     <h2 class="yellow mb-4">Category Preview Tiles</h2>
     <div class="grid colmn-6 mb-3">
         @foreach ($categories as $category)
-        <a href="#" class="catg-box">
+        <a href="javascript:void(0);" class="catg-box">
             <figure><img src="{{$category->image}}" alt=""></figure>
             <figcaption>{{$category->name}} </figcaption>
         </a>
