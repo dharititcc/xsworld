@@ -67,7 +67,7 @@
                                 @endforeach
                             </div>
                             <div class="form-group grey-brd-box custom-upload mb-5">
-                                <input id="upload" type="file" class="files" name="image" />
+                                <input id="upload" type="file" class="files d-none" name="image" />
                                 <label for="upload"><span> Add Mixer Feature Image (This can be changed).</span> <i
                                         class="icon-plus"></i></label>
                             </div>
@@ -93,16 +93,55 @@
         };
         var modal = $("#exampleModal");
             // modal open pop up
-            $('.mixer_model').on('click', function(e)
+            $('body').on('click', '.mixer_model', function(e)
             {
                 e.preventDefault();
-
                 var $this       = $(this),
-                    //parent      = $this.data('parent'),
-                    //parent_id   = $this.data('parent_id'),
-                    type        = $this.data('type');
+                    type        = $this.data('type'),
+                    mixer_id    = $this.data('mixer_id');
                 modal.find('.model_title').html(`${type}`);
-                //modal.find('#mixerpopup').find('#category_id').val(parent_id);
+
+                if( type == 'Add' )
+                {
+                    $('.model_title').html('Add');
+                    modal.find('form').attr('action', moduleConfig.addMixer);
+                }
+                else
+                {
+                    // ajax get data
+                    $('.model_title').html('Edit');
+                    // $('#cat_id').val(id);
+                    $.ajax({
+                        url: moduleConfig.getMixer.replace(':ID', mixer_id),
+                        type: "GET",
+                        success: function(response) {
+                            modal.find('form').attr('action', moduleConfig.updateMixer.replace(':ID', mixer_id));
+                            $("input[name=name]").val(response.data.name);
+                            $("input[name=price]").val(response.data.price);
+                            $("input[name=category]").val(response.data.categories);
+                            var image = `
+                                            <div class="pip">
+                                                <img class="imageThumb" src="${ response.data.image != "" ? response.data.image : ''}" title="" />
+                                                <i class="icon-trash remove"></i>
+                                            </div>
+                                        `;
+
+                            if( response.data.image != "" )
+                            {
+                                $(".image_box").children('.pip').remove();
+                                $("#upload").after(image);
+                            }
+
+                            $(".remove").click(function() {
+                                $(this).parent(".pip").remove();
+                            });
+
+                            $('#exampleModal').data('crudetype', 0);
+                            $('#exampleModal').modal('show');
+                        },
+                        error: function(data) {}
+                    });
+                }
 
                 modal.modal('show');
             });
@@ -119,7 +158,11 @@
 
 
                 $this.find('#mixerpopup').find('.pip').remove();
-                //$this.find('#mixerpopup').find('#category_id').val('');
+                $this.find('form').removeAttr('action');
+                $this.find('input[name="category"]:checked').each(function(){
+                    $(this).prop('checked', false);
+                });
+                $this.find('input[name="_method"]').remove();
             });
 
             if (window.File && window.FileList && window.FileReader) {
@@ -199,8 +242,7 @@
                         render: function(data, type, row) {
                             var color = (row.is_available == 1) ? "green" : "red";
                             return '<div class="prdname ' + color + '"> ' + row.name +
-                                ' </div><a href="javascript:void(0)" id="mixer_model_a" data-type="Edit" onClick="getMixer(' + row.id +
-                                ')" class="edit mixer_model" data-id=" ' + row.id +
+                                ' </div><a href="javascript:void(0)" data-type="Edit" data-mixer_id="'+row.id+'" class="edit mixer_model" data-id=" ' + row.id +
                                 ' ">Edit</a>  <div class="add-date">Added ' + formatDate(row
                                     .created_at) + '</div>'
                         }
@@ -250,53 +292,12 @@
             });
         }
 
-        function getCategory(id) {
-            var data = [];
-            data['category'] = id;
-            if (!data) {
-                $('.drink_datatable').DataTable().destroy();
-                load_data();
-            } else {
-                $('.drink_datatable').DataTable().destroy();
-                load_data(data);
-            }
-        }
         $("#search").keyup(function() {
             $('.drink_datatable').DataTable().destroy();
             var data = [];
             data['search_main'] = this.value;
             load_data(data);
         });
-        // $(function() {
-        //     $('#enable').click(function(e) {
-        //         e.preventDefault();
-        //         $.confirmModal('<label>Are you sure you want to do this?</label>', function(el) {
-        //             var data = [];
-        //             var i = 0;
-        //             data['enable'] = $.map($('input[name="id"]:checked'), function(c) {
-        //                 return c.value;
-        //             })
-        //             $('.drink_datatable').DataTable().destroy();
-        //             load_data(data);
-        //             //console.log(data);
-        //         });
-        //     });
-        // });
-        // $(function() {
-        //     $('#disable').click(function(e) {
-        //         e.preventDefault();
-        //         $.confirmModal('<label>Are you sure you want to do this?</label>', function(el) {
-        //             var data = [];
-        //             var i = 0;
-        //             data['disable'] = $.map($('input[name="id"]:checked'), function(c) {
-        //                 return c.value;
-        //             })
-        //             $('.drink_datatable').DataTable().destroy();
-        //             load_data(data);
-        //             //console.log(data);
-        //         });
-        //     });
-        // });
 
         $(document).ready(function() {
             $('.checkboxitem').click(function() {
@@ -379,13 +380,11 @@
                 data.append('category', category);
                 var crudetype = $('#exampleModal').data('crudetype');
                 if (crudetype === 1) {
-                    route = moduleConfig.addMixer;
                 } else {
-                    route = moduleConfig.updateMixer.replace(':ID', id),
                         data.append('_method', 'PUT');
                 }
                 $.ajax({
-                    url: route,
+                    url: form.getAttribute('action'),
                     type: "POST",
                     data: data,
                     processData: false,
@@ -395,38 +394,9 @@
                         $("#submitBtn").attr("disabled", false);
                         alert('Mixer has been added successfully');
                         location.reload(true);
-                        //document.getElementById("categorypopup").reset();
                     }
                 });
             }
         });
-
-        function getMixer(id) {
-             $('.model_title').html('Edit');
-            // $('#cat_id').val(id);
-            $.ajax({
-                url: moduleConfig.getMixer.replace(':ID', id),
-                type: "GET",
-                success: function(response) {
-                    $("input[name=name]").val(response.data.name);
-                    $("input[name=price]").val(response.data.price);
-                    var image = `
-                                    <div class="pip">
-                                        <img class="imageThumb" src="${ response.data.image!="" ?response.data.image :'#'}" title="" />
-                                        <i class="icon-trash remove"></i>
-                                    </div>
-                                `;
-
-                    $(".image_box").children('.pip').remove();
-                    $("#upload").after(image);
-                    $(".remove").click(function() {
-                        $(this).parent(".pip").remove();
-                    });
-                    $('#exampleModal').data('crudetype', 0);
-                    $('#exampleModal').modal('show');
-                },
-                error: function(data) {}
-            });
-        }
     </script>
 @endsection

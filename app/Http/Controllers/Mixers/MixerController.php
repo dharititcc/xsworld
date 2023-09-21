@@ -35,16 +35,15 @@ class MixerController extends Controller
             {    //not available
                 $data =  $this->updateItemAvailable($request->get('disable'), 0);
             }
-            $data = RestaurantItem::query()
+            $data = RestaurantItem::query()->groupBy('name')
                     ->with(['category', 'restaurant','variations'])
                     ->whereHas('restaurant', function($query) use($restaurant)
                     {
-                        return $query->where('restaurants.id', $restaurant->id)->where('restaurant_items.type', 3);
+                        return $query->where('restaurants.id', $restaurant->id)->where('restaurant_items.type', RestaurantItem::MIXER);
                     });
                     if (!empty($request->get('search_main')))
                     {
                         $data = $data->Textsearch(e($request->get('search_main')),"search");
-
                     }
                     $data = $data->get();
             return Datatables::of($data)
@@ -110,7 +109,19 @@ class MixerController extends Controller
      */
     public function show(RestaurantItem $mixer)
     {
-        return new RestaurantItemsResource($mixer);
+        $categories = RestaurantItem::query()->select('category_id')->where('restaurant_id', $mixer->restaurant_id)->where('type', RestaurantItem::MIXER)->groupBy('category_id')->pluck('category_id')->toArray();
+        $data = [
+            'name'          => $mixer->name,
+            'price'         => $mixer->price,
+            'categories'    => $categories,
+            'image'         => $mixer->attachment ? asset('storage/mixers/'.$mixer->attachment->stored_name) : '',
+            'restaurant_id' => $mixer->restaurant_id,
+        ];
+
+        return response()->json([
+            'status' => true,
+            'data'   => $data
+        ]);
     }
 
     /**
@@ -143,7 +154,7 @@ class MixerController extends Controller
             $image->move($destinationPath, $profileImage);
             // unlink('/storage/mixers/'.$mixer->photo);
         }
-        
+
         //category
         $category = explode(',',$request->get('category'));
         if($category) {
