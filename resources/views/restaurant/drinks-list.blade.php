@@ -20,9 +20,9 @@
                     placeholder="Find a Drink"></div>
         </div>
         <div class="filter-box  mb-4">
-            <button class="bor-btn category active" onclick="getCategory(null)">All <span class="stock"></span></button>
+            <button class="bor-btn category active" data-category_id="">All <span class="stock"></span></button>
             @foreach ($categories as $category)
-                <button class="bor-btn category" onclick="getCategory({{ $category->id }})">{{ $category->name }} <span
+                <button class="bor-btn category" data-category_id="{{ $category->id }}">{{ $category->name }} <span
                         class="stock">({{ $category->items->count() }})</span></button>
             @endforeach
         </div>
@@ -246,7 +246,10 @@
                 order: [[1, 'asc']],
                 ajax: {
                     url: "{{ route('restaurants.drinks.index') }}",
-                    data: data,
+                    data: {
+                        category: jQuery('.category.active').data('category_id'),
+                        search_main: jQuery("#search").val()
+                    },
                 },
                 columns: [{
                         "data": "id", // can be null or undefined
@@ -345,22 +348,32 @@
             });
         }
 
-        function getCategory(id) {
-            var data = [];
-            data['category'] = id;
-            if (!data) {
-                $('.drink_datatable').DataTable().destroy();
-                load_data();
-            } else {
-                $('.drink_datatable').DataTable().destroy();
-                load_data(data);
+        $('.category').on('click', function(e)
+        {
+            e.preventDefault();
+
+            var $this       = $(this),
+                categoryId  = $this.data('category_id');
+
+            if( !categoryId )
+            {
+                // all focus
+                $this.closest('.filter-box').find('.category').removeClass('active');
+                $this.addClass('active');
             }
-        }
+            else
+            {
+                // specific category focus
+                $this.closest('.filter-box').find('.category').removeClass('active');
+                $this.addClass('active');
+            }
+            $('.drink_datatable').DataTable().destroy();
+            load_data();
+        });
+
         $("#search").keyup(function() {
             $('.drink_datatable').DataTable().destroy();
-            var data = [];
-            data['search_main'] = this.value;
-            load_data(data);
+            load_data();
         });
 
         // $(function() {

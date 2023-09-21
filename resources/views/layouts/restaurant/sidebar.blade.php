@@ -1,6 +1,6 @@
 <div id="sidebar-wrapper">
     <div class="sidebar-header"><label> {{ session('restaurant')->name }}</label> <a href="javascript:void(0);" class="setting"> <i class="icon-settings-thin"></i></a></div>
-    <div class="sidebar-title"><button type="button" id="sidebarToggle1"><i class="icon-left"></i></button> <img src="img/xsworld.png" alt="" class="logo"></div>
+    <div class="sidebar-title"><button type="button" id="sidebarToggle1"><i class="icon-left"></i></button> <img src="{{ asset('img/xsworld.png') }}" alt="" class="logo"></div>
     <figure><img src="{{ session('restaurant')->image }}" alt="{{ session('restaurant')->name }}"></figure>
     <div class="list-group">
         <a href="{{ route('home') }}">Dashboard</a>
