@@ -61,7 +61,7 @@
                             <div class="list-catg">
                                 @foreach ($categories as $child)
                                     <label>
-                                        <input type="checkbox" name="category" id="category" value="{{ $child->id }}">
+                                        <input type="checkbox" name="category[]" id="category" value="{{ $child->id }}">
                                         <span>{{ $child->name }}</span>
                                     </label>
                                 @endforeach
@@ -104,6 +104,7 @@
                 if( type == 'Add' )
                 {
                     $('.model_title').html('Add');
+                    modal.find('form').find('input[name="_method"]').remove();
                     modal.find('form').attr('action', moduleConfig.addMixer);
                 }
                 else
@@ -116,9 +117,10 @@
                         type: "GET",
                         success: function(response) {
                             modal.find('form').attr('action', moduleConfig.updateMixer.replace(':ID', mixer_id));
+                            modal.find('form').append(`<input type="hidden" name="_method" value="PUT" />`);
                             $("input[name=name]").val(response.data.name);
                             $("input[name=price]").val(response.data.price);
-                            $("input[name=category]").val(response.data.categories);
+                            $('input[name="category[]"]').val(response.data.categories);
                             var image = `
                                             <div class="pip">
                                                 <img class="imageThumb" src="${ response.data.image != "" ? response.data.image : ''}" title="" />
@@ -159,7 +161,7 @@
 
                 $this.find('#mixerpopup').find('.pip').remove();
                 $this.find('form').removeAttr('action');
-                $this.find('input[name="category"]:checked').each(function(){
+                $this.find('input[name="category[]"]:checked').each(function(){
                     $(this).prop('checked', false);
                 });
                 $this.find('input[name="_method"]').remove();
@@ -366,23 +368,8 @@
                 $('#submitBtn').html('Please Wait...');
                 $("#submitBtn").attr("disabled", true);
 
-                var data = new FormData();
-                let name = $("input[name=name]").val();
-                let price = $("input[name=price]").val();
-                var photo = $('#upload').prop('files')[0];
-                var category = [];
-                $.each($("input[name='category']:checked"), function(i) {
-                    category[i] = $(this).val();
-                });
-                data.append('name', name);
-                data.append('photo', photo);
-                data.append('price', price);
-                data.append('category', category);
-                var crudetype = $('#exampleModal').data('crudetype');
-                if (crudetype === 1) {
-                } else {
-                        data.append('_method', 'PUT');
-                }
+                var data = new FormData(form);
+
                 $.ajax({
                     url: form.getAttribute('action'),
                     type: "POST",

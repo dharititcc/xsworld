@@ -81,7 +81,7 @@ class MixerController extends Controller
             $image->move($destinationPath, $profileImage);
         }
         //category
-        $category = explode(',',$request->get('category'));
+        $category = $request->get('category');
         foreach ($category as $key => $value)
         {
             $restaurantitem                       = new RestaurantItem();
@@ -109,7 +109,8 @@ class MixerController extends Controller
      */
     public function show(RestaurantItem $mixer)
     {
-        $categories = RestaurantItem::query()->select('category_id')->where('restaurant_id', $mixer->restaurant_id)->where('type', RestaurantItem::MIXER)->groupBy('category_id')->pluck('category_id')->toArray();
+        $categories = RestaurantItem::query()->select('category_id')->where('restaurant_id', $mixer->restaurant_id)->where('type', RestaurantItem::MIXER)->where('name', $mixer->name)->groupBy('category_id')->pluck('category_id')->toArray();
+
         $data = [
             'name'          => $mixer->name,
             'price'         => $mixer->price,
@@ -156,26 +157,84 @@ class MixerController extends Controller
         }
 
         //category
-        $category = explode(',',$request->get('category'));
-        if($category) {
-            foreach ($category as $key => $value)
+        $category = $request->get('category');
+
+        // get old mixers list
+        $oldCategories = RestaurantItem::where('restaurant_id', $mixer->restaurant_id)->where('type', RestaurantItem::MIXER)->where('name', $mixer->name)->get()->pluck('category_id')->toArray();
+        $changeArr = [];
+
+        if( !empty( $oldCategories ) )
+        {
+            foreach( $oldCategories as $oldCat )
             {
-                $mixer->name                 = $request->get('name');
-                $mixer->price                = $request->get('price');
-                $mixer->type                 = 3;
-                $mixer->is_available         = 1;
-                $mixer->category_id         = $value;
-                $mixer->restaurant_id        = $restaurant->id;
-                $mixer->save();
-                $mixer->attachment()->create([
-                    'stored_name'   => $profileImage,
-                    'original_name' => $profileImage,
-                    'attachmentable_id' => $mixer->id,
-                ]);
+                if( !in_array($oldCat, $category) )
+                {
+                    $changeArr[] = $oldCat;
+                }
             }
-            return $mixer;
         }
 
+        if( !empty( $changeArr ) )
+        {
+            $items = RestaurantItem::where('restaurant_id', $mixer->restaurant_id)->where('type', RestaurantItem::MIXER)->where('name', $mixer->name)->whereIn('category_id', $changeArr)->get();
+
+            if( $items->count() )
+            {
+                foreach( $items as $item )
+                {
+                    // delete
+                    $item->delete();
+                }
+            }
+        }
+
+        if( !empty( $category ) )
+        {
+            foreach( $category as $cat )
+            {
+                $oldMixer = RestaurantItem::where('restaurant_id', $mixer->restaurant_id)
+                            ->where('type', RestaurantItem::MIXER)
+                            ->where('category_id', $cat)
+                            ->first();
+
+                if( isset( $oldMixer->id ) )
+                {
+                    // update
+                    $oldMixer->name = $request->get('name');
+                    $oldMixer->price = $request->get('price');
+                    $oldMixer->category_id = $cat;
+                    $oldMixer->save();
+
+                    $oldMixer->attachment()->create([
+                        'stored_name'   => $profileImage,
+                        'original_name' => $profileImage,
+                        'attachmentable_id' => $oldMixer->id,
+                    ]);
+                }
+                else
+                {
+                    // insert
+                    $newMixer = RestaurantItem::create(
+                        [
+                            'name'              => $request->get('name'),
+                            'price'             => $request->get('price'),
+                            'type'              => RestaurantItem::MIXER,
+                            'is_available'      => 1,
+                            'category_id'       => $cat,
+                            'restaurant_id'     => $restaurant->id
+                        ]
+                    );
+
+                    $newMixer->attachment()->create([
+                        'stored_name'   => $profileImage,
+                        'original_name' => $profileImage,
+                        'attachmentable_id' => $newMixer->id,
+                    ]);
+                }
+            }
+
+            return true;
+        }
     }
 
     /**
