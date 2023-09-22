@@ -239,16 +239,15 @@ class Order extends Model
         $card_details = new stdClass;
         if($this->card_id)
         {
-            $stripe_customer_id = $this->user->stripe_customer_id;
             $stripe = new Stripe();
-            $card   = $stripe->getSingleCard($stripe_customer_id,$this->card_id);
+            $card   = $stripe->retrieveCharge($this->charge_id);
 
-            if($card)
+            if(isset($card->source->id))
             {
                 $card_details = [
-                    'name'  =>  $card->name,
-                    'brand' =>  $card->brand,
-                    'last4' =>  $card->last4
+                    'name'  =>  $card->source->name,
+                    'brand' =>  $card->source->brand,
+                    'last4' =>  $card->source->last4
                 ];
                 return $card_details;
             }

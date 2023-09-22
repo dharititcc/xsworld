@@ -2,10 +2,9 @@
 
 use App\Billing\Stripe;
 use App\Models\Order;
-use App\Models\User;
 use App\Repositories\BaseRepository;
 use Carbon\Carbon;
-use Illuminate\Support\Arr;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 
 /**
@@ -19,17 +18,38 @@ class BarRepository extends BaseRepository
     const MODEL = Order::class;
 
     /**
+     * Method orderQuery
+     *
+     * @return Builder
+     */
+    private function orderQuery(): Builder
+    {
+        $user = auth()->user();
+
+        $user->loadMissing(['pickup_point']);
+
+        return Order::with([
+            'order_items',
+            'order_items.addons',
+            'order_items.mixer'
+        ])->where('pickup_point_id', $user->pickup_point->id);
+    }
+
+    /**
      * Method getIncomingOrder
      *
      * @return Collection
      */
     public function getIncomingOrder() : Collection
     {
-        $order       = Order::with([
-            'order_items',
-            'order_items.addons',
-            'order_items.mixer'
-        ])->where(['type'=> Order::ORDER , 'status' => Order::PENDNIG])->orderBy('id','desc')->get();
+        $user = auth()->user();
+
+        $user->loadMissing(['pickup_point']);
+
+        $order       = $this->orderQuery()
+        ->where(['type'=> Order::ORDER , 'status' => Order::PENDNIG])
+        ->orderBy('id','desc')
+        ->get();
 
         return $order;
     }
@@ -41,11 +61,15 @@ class BarRepository extends BaseRepository
      */
     public function getConfirmedOrder() : Collection
     {
-        $order       = Order::with([
-            'order_items',
-            'order_items.addons',
-            'order_items.mixer'
-        ])->where(['type'=> Order::ORDER ])->whereIn('status', [Order::ACCEPTED, Order::DELAY_ORDER])->orderBy('id','desc')->get();
+        $user = auth()->user();
+
+        $user->loadMissing(['pickup_point']);
+
+        $order       = $this->orderQuery()
+        ->where(['type'=> Order::ORDER ])
+        ->whereIn('status', [Order::ACCEPTED, Order::DELAY_ORDER])
+        ->orderBy('id','desc')
+        ->get();
 
         return $order;
     }
@@ -57,11 +81,14 @@ class BarRepository extends BaseRepository
      */
     public function getCompletedOrder() : Collection
     {
-        $order       = Order::with([
-            'order_items',
-            'order_items.addons',
-            'order_items.mixer'
-        ])->where(['type'=> Order::ORDER,'status' => Order::COMPLETED])->orderBy('id','desc')->get();
+        $user = auth()->user();
+
+        $user->loadMissing(['pickup_point']);
+
+        $order       = $this->orderQuery()
+        ->where(['type'=> Order::ORDER,'status' => Order::COMPLETED])
+        ->orderBy('id','desc')
+        ->get();
 
         return $order;
     }
