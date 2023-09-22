@@ -45,7 +45,7 @@ class AddonsController extends Controller
                         $data = $data->Textsearch(e($request->get('search_main')),"search");
 
                     }
-                    $data = $data->get();
+                    $data = $data->groupBy('name')->orderByDesc('id')->get();
                     //dd($data);
             return Datatables::of($data)
                 ->make(true);
@@ -82,7 +82,7 @@ class AddonsController extends Controller
             $image->move($destinationPath, $profileImage);
         }
         //category
-        $category = explode(',',$request->get('category'));
+        $category = $request->get('category');
         foreach ($category as $key => $value)
         {
             $restaurantitem                       = new RestaurantItem();

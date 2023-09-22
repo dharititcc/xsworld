@@ -48,10 +48,11 @@
                     <h2><span class="model_title">Add</span> Addon</h2>
                 </div>
                 <div class="modal-body">
-                    <form name="addmixer" id="addonpopup" method="post" action="javascript:void(0)">
+                    <form name="addmixer" id="addonpopup" method="post" >
                         @csrf
                         <div style="min-height: 300px;">
                             <div class="form-group mb-4">
+                                <input id="addon_id" type="hidden" class="addon_id" name="addon_id" />
                                 <input type="text" name="name" class="form-control vari2" placeholder="Addon Name">
                             </div>
                             <div class="form-group mb-4">
@@ -60,7 +61,8 @@
                             <div class="list-catg">
                                 @foreach ($categories as $child)
                                     <label>
-                                        <input type="checkbox" name="category" id="category" value="{{ $child->id }}">
+                                        <?php  ?>
+                                        <input type="checkbox" name="category[]" id="category" value="{{ $child->id }}">
                                         <span>{{ $child->name }}</span>
                                     </label>
                                 @endforeach
@@ -92,16 +94,49 @@
         };
         var modal = $("#exampleModal");
             // modal open pop up
-            $('.addon_model').on('click', function(e)
+            $('body').on('click', '.addon_model', function(e)
             {
                 e.preventDefault();
 
                 var $this       = $(this),
-                    //parent      = $this.data('parent'),
-                    //parent_id   = $this.data('parent_id'),
+                    addon_id    = $this.data('addon_id'),
                     type        = $this.data('type');
                 modal.find('.model_title').html(`${type}`);
-                //modal.find('#mixerpopup').find('#category_id').val(parent_id);
+
+                if(type == 'Add')
+                {
+                    console.log(type);
+                    $('.model_title').html('Add');
+                    modal.find('form').find('input[name="_method"]').remove();
+                    modal.find('form').attr('action',moduleConfig.addAddon);
+                } else {
+
+                    $('.model_title').html('Edit');
+                    $.ajax({
+                        url: moduleConfig.getAddon.replace(':ID', addon_id),
+                        type: "GET",
+                        success: function(response) {
+                            console.log(response);
+                            $("input[name=name]").val(response.data.name);
+                            $("input[name=price]").val(response.data.price);
+                            var image = `
+                                            <div class="pip">
+                                                <img class="imageThumb" src="${ response.data.image!="" ?response.data.image :'#'}" title="" />
+                                                <i class="icon-trash remove"></i>
+                                            </div>
+                                        `;
+
+                            $(".image_box").children('.pip').remove();
+                            $("#upload").after(image);
+                            $(".remove").click(function() {
+                                $(this).parent(".pip").remove();
+                            });
+                            $('#exampleModal').data('crudetype', 0);
+                            $('#exampleModal').modal('show');
+                        },
+                        error: function(data) {}
+                    });
+                }
 
                 modal.modal('show');
             });
@@ -112,37 +147,52 @@
                 var $this = jQuery(this);
 
                 $this.find('#addonpopup').find('.form-control').val('');
+                var $alertas = $('#addonpopup');
+                $alertas.validate().resetForm();
+                $alertas.find('.error').removeClass('error');
 
                 $this.find('#addonpopup').find('.pip').remove();
-                //$this.find('#mixerpopup').find('#category_id').val('');
+                $this.find('form').removeAttr('action');
+                $this.find('input[name="category[]"]:checked').each(function() {
+                    $(this).prop('checked',false);
+                });
+                $this.find('input[name="_method"]').remove();
             });
-        if (window.File && window.FileList && window.FileReader) {
-            $(".files").on("change", function(e) {
-                var clickedButton = this,
-                    files = e.target.files,
-                    filesLength = files.length;
-                for (var i = 0; i < filesLength; i++) {
-                    var f = files[i],
-                        fileReader = new FileReader();
-                    fileReader.onload = (function(e) {
-                        var file = e.target,
-                            thumbnail = `
-                        <div class="pip">
-                            <img class="imageThumb" src="${e.target.result}" title="${file.name}" />
-                            <i class="icon-trash remove"></i>
-                        </div>
-                    `;
-                        $(thumbnail).insertAfter(clickedButton);
-                        $(".remove").click(function() {
-                            $(this).parent(".pip").remove();
+
+            if (window.File && window.FileList && window.FileReader) {
+                $(".files").on("change", function(e) {
+                    var clickedButton = this,
+                        files = e.target.files,
+                        filesLength = files.length;
+                    for (var i = 0; i < filesLength; i++) {
+                        var f = files[i],
+                            fileReader = new FileReader();
+                        fileReader.onload = (function(e) {
+                            var file = e.target,
+                                thumbnail = `
+                            <div class="pip">
+                                <img class="imageThumb" src="${e.target.result}" title="${file.name}" />
+                                <i class="icon-trash remove"></i>
+                            </div>
+                        `;
+                            $(thumbnail).insertAfter(clickedButton);
+                            $(".remove").click(function() {
+                                $(this).parent(".pip").remove();
+                            });
                         });
-                    });
-                    fileReader.readAsDataURL(f);
-                }
+                        fileReader.readAsDataURL(f);
+                    }
+                });
+            } else {
+                alert("Your browser doesn't support to File API");
+            }
+
+        jQuery(document).ready(function() {
+            $('#sidebarToggle1').on('click',function(e) {
+               e.preventDefault();
+               $('body') .removeClass('sb-sidenav-toggled');
             });
-        } else {
-            alert("Your browser doesn't support to File API")
-        }
+        })
 
         function formatDate(date) {
             var d = new Date(date),
@@ -166,7 +216,7 @@
                 serverSide: true,
                 searching: false,
                 ajax: {
-                    url: "{{ route('restaurants.addons.index') }}",
+                    url: moduleConfig.getAddonlist,
                     data: data,
                 },
                 columns: [{
@@ -184,8 +234,8 @@
                         render: function(data, type, row) {
                             var color = (row.is_available == 1) ? "green" : "red";
                             return '<div class="prdname ' + color + '"> ' + row.name +
-                                ' </div><a href="javascript:void(0)" onClick="getAddon(' + row.id +
-                                ')" class="edit addon_model" >Edit</a>  <div class="add-date">Added ' + formatDate(row
+                                ' </div><a href="javascript:void(0)" data-type="Edit" data-addon_id="'+row.id+'" class="edit addon_model" data-id=" ' + row.id +
+                                ' " >Edit</a>  <div class="add-date">Added ' + formatDate(row
                                     .created_at) + '</div>'
                         }
                     },
@@ -234,53 +284,24 @@
             });
         }
 
-        function getCategory(id) {
-            var data = [];
-            data['category'] = id;
-            if (!data) {
-                $('.drink_datatable').DataTable().destroy();
-                load_data();
-            } else {
-                $('.drink_datatable').DataTable().destroy();
-                load_data(data);
-            }
-        }
+        // function getCategory(id) {
+        //     var data = [];
+        //     data['category'] = id;
+        //     if (!data) {
+        //         $('.drink_datatable').DataTable().destroy();
+        //         load_data();
+        //     } else {
+        //         $('.drink_datatable').DataTable().destroy();
+        //         load_data(data);
+        //     }
+        // }
+        
         $("#search").keyup(function() {
             $('.drink_datatable').DataTable().destroy();
             var data = [];
             data['search_main'] = this.value;
             load_data(data);
         });
-        // $(function() {
-        //     $('#enable').click(function(e) {
-        //         e.preventDefault();
-        //         $.confirmModal('<label>Are you sure you want to do this?</label>', function(el) {
-        //             var data = [];
-        //             var i = 0;
-        //             data['enable'] = $.map($('input[name="id"]:checked'), function(c) {
-        //                 return c.value;
-        //             })
-        //             $('.drink_datatable').DataTable().destroy();
-        //             load_data(data);
-        //             //console.log(data);
-        //         });
-        //     });
-        // });
-        // $(function() {
-        //     $('#disable').click(function(e) {
-        //         e.preventDefault();
-        //         $.confirmModal('<label>Are you sure you want to do this?</label>', function(el) {
-        //             var data = [];
-        //             var i = 0;
-        //             data['disable'] = $.map($('input[name="id"]:checked'), function(c) {
-        //                 return c.value;
-        //             })
-        //             $('.drink_datatable').DataTable().destroy();
-        //             load_data(data);
-        //             //console.log(data);
-        //         });
-        //     });
-        // });
 
         $(document).ready(function() {
             $('.checkboxitem').click(function() {
@@ -340,23 +361,24 @@
                     }
                 });
 
+
                 $('#submitBtn').html('Please Wait...');
                 $("#submitBtn").attr("disabled", true);
 
-                var data = new FormData();
-                let name = $("input[name=name]").val();
-                let price = $("input[name=price]").val();
-                var photo = $('#upload').prop('files')[0];
-                var category = [];
-                $.each($("input[name='category']:checked"), function(i) {
-                    category[i] = $(this).val();
-                });
-                data.append('name', name);
-                data.append('photo', photo);
-                data.append('price', price);
-                data.append('category', category);
+                var data = new FormData(form);
+                // let name = $("input[name=name]").val();
+                // let price = $("input[name=price]").val();
+                // var photo = $('#upload').prop('files')[0];
+                // var category = [];
+                // $.each($("input[name='category']:checked"), function(i) {
+                //     category[i] = $(this).val();
+                // });
+                // data.append('name', name);
+                // data.append('photo', photo);
+                // data.append('price', price);
+                // data.append('category', category);
                 $.ajax({
-                    url: 'addons',
+                    url: $(form).attr('action'),
                     type: "POST",
                     data: data,
                     processData: false,
@@ -372,31 +394,7 @@
             }
         });
         function getAddon(id) {
-          $('.model_title').html('Edit');
-            $.ajax({
-                url: moduleConfig.getAddon.replace(':ID', id),
-                type: "GET",
-                success: function(response) {
-                    console.log(response);
-                    $("input[name=name]").val(response.data.name);
-                    $("input[name=price]").val(response.data.price);
-                    var image = `
-                                    <div class="pip">
-                                        <img class="imageThumb" src="${ response.data.image!="" ?response.data.image :'#'}" title="" />
-                                        <i class="icon-trash remove"></i>
-                                    </div>
-                                `;
-
-                    $(".image_box").children('.pip').remove();
-                    $("#upload").after(image);
-                    $(".remove").click(function() {
-                        $(this).parent(".pip").remove();
-                    });
-                    $('#exampleModal').data('crudetype', 0);
-                    $('#exampleModal').modal('show');
-                },
-                error: function(data) {}
-            });
+          
         }
     </script>
 @endsection

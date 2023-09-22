@@ -45,7 +45,7 @@ class MixerController extends Controller
                     {
                         $data = $data->Textsearch(e($request->get('search_main')),"search");
                     }
-                    $data = $data->get();
+                    $data = $data->orderByDesc('id')->get();
             return Datatables::of($data)
                 ->make(true);
         }

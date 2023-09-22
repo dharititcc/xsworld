@@ -224,7 +224,7 @@
                 processing: true,
                 serverSide: true,
                 searching: false,
-                order: [[1, 'asc']],
+                order: [[1, 'desc']],
                 ajax: {
                     url: moduleConfig.getMixerlist,
                     data: data,
