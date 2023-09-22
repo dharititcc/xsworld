@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api\V1\Bartender;
 use App\Http\Controllers\Api\V1\APIController;
 use App\Http\Controllers\Api\V1\Traits\Authenticate;
 use App\Http\Requests\BartenderLoginRequest;
-use App\Http\Resources\UserResource;
+use App\Http\Resources\BartenderUserResource;
 use App\Repositories\UserRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
@@ -149,6 +149,8 @@ class AuthController extends APIController
         {
             $user = auth()->user();
 
+            $user->loadMissing(['pickup_point']);
+
             // update all other data
             $dataArr = [
                 'platform'              => $input['platform'],
@@ -165,7 +167,7 @@ class AuthController extends APIController
                 'status'    =>  true,
                 'message'   =>  'Login successful',
                 'token'     =>  $token,
-                'item'      =>  new UserResource($user),
+                'item'      =>  new BartenderUserResource($user),
             ]);
         }
 

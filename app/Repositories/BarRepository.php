@@ -2,10 +2,9 @@
 
 use App\Billing\Stripe;
 use App\Models\Order;
-use App\Models\User;
 use App\Repositories\BaseRepository;
 use Carbon\Carbon;
-use Illuminate\Support\Arr;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 
 /**
@@ -19,17 +18,38 @@ class BarRepository extends BaseRepository
     const MODEL = Order::class;
 
     /**
+     * Method orderQuery
+     *
+     * @return Builder
+     */
+    private function orderQuery(): Builder
+    {
+        $user = auth()->user();
+
+        $user->loadMissing(['pickup_point']);
+
+        return Order::with([
+            'order_items',
+            'order_items.addons',
+            'order_items.mixer'
+        ])->where('pickup_point_id', $user->pickup_point->id);
+    }
+
+    /**
      * Method getIncomingOrder
      *
      * @return Collection
      */
     public function getIncomingOrder() : Collection
     {
-        $order       = Order::with([
-            'order_items',
-            'order_items.addons',
-            'order_items.mixer'
-        ])->where(['type'=> Order::ORDER , 'status' => Order::PENDNIG])->orderBy('id','desc')->get();
+        $user = auth()->user();
+
+        $user->loadMissing(['pickup_point']);
+
+        $order       = $this->orderQuery()
+        ->where(['type'=> Order::ORDER , 'status' => Order::PENDNIG])
+        ->orderBy('id','desc')
+        ->get();
 
         return $order;
     }
@@ -41,11 +61,15 @@ class BarRepository extends BaseRepository
      */
     public function getConfirmedOrder() : Collection
     {
-        $order       = Order::with([
-            'order_items',
-            'order_items.addons',
-            'order_items.mixer'
-        ])->where(['type'=> Order::ORDER ])->whereIn('status', [Order::ACCEPTED, Order::DELAY_ORDER])->orderBy('id','desc')->get();
+        $user = auth()->user();
+
+        $user->loadMissing(['pickup_point']);
+
+        $order       = $this->orderQuery()
+        ->where(['type'=> Order::ORDER ])
+        ->whereIn('status', [Order::ACCEPTED, Order::DELAY_ORDER])
+        ->orderBy('id','desc')
+        ->get();
 
         return $order;
     }
@@ -57,11 +81,35 @@ class BarRepository extends BaseRepository
      */
     public function getCompletedOrder() : Collection
     {
-        $order       = Order::with([
-            'order_items',
-            'order_items.addons',
-            'order_items.mixer'
-        ])->where(['type'=> Order::ORDER,'status' => Order::COMPLETED])->orderBy('id','desc')->get();
+        $user = auth()->user();
+
+        $user->loadMissing(['pickup_point']);
+
+        $order       = $this->orderQuery()
+        ->where('type', Order::ORDER)
+        ->whereIn('status', [Order::COMPLETED, Order::RESTAURANT_CANCELED, Order::RESTAURANT_TOXICATION])
+        ->orderBy('id','desc')
+        ->get();
+
+        return $order;
+    }
+
+    /**
+     * Method getBarCollections
+     *
+     * @return Collection
+     */
+    public function getBarCollections() : Collection
+    {
+        $user = auth()->user();
+
+        $user->loadMissing(['pickup_point']);
+
+        $order       = $this->orderQuery()
+        ->where('type', Order::ORDER)
+        ->whereIn('status', [Order::COMPLETED])
+        ->orderBy('id','desc')
+        ->get();
 
         return $order;
     }
@@ -83,7 +131,7 @@ class BarRepository extends BaseRepository
 
         if(isset($order->id))
         {
-            if($status == 1)
+            if($status == Order::ACCEPTED)
             {
                 $updateArr['accepted_date'] = Carbon::now();
                 $updateArr['status']        = $status;
@@ -94,26 +142,29 @@ class BarRepository extends BaseRepository
                 $updateArr['apply_time'] = $apply_time;
             }
 
-            if( $status != 1 )
+            if( $status != Order::ACCEPTED )
             {
                 $updateArr['status']   = $status;
             }
 
-            if($status == 3)
+            if($status == Order::COMPLETED)
             {
-                $stripe                         = new Stripe();
-                $payment_data                   = $stripe->captureCharge($order->charge_id);
+                if( $order->charge_id )
+                {
+                    $stripe                         = new Stripe();
+                    $payment_data                   = $stripe->captureCharge($order->charge_id);
+                    $updateArr['transaction_id']    = $payment_data->balance_transaction;
+                }
                 $updateArr['status']            = $status;
-                $updateArr['transaction_id']    = $payment_data->balance_transaction;
             }
 
-            if($status == 4)
+            if($status == Order::RESTAURANT_CANCELED)
             {
                 // RESTAURANT_CANCELED and process for refund
                 $updateArr['status']            = $status;
             }
 
-            if($status == 6)
+            if($status == Order::RESTAURANT_TOXICATION)
             {
                 // RESTAURANT_TOXICATION and process for refund
                 $updateArr['status']            = $status;

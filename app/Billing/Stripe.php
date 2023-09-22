@@ -323,4 +323,26 @@ class Stripe
             throw new GeneralException($e->getError()->message);
         }
     }
+
+    /**
+     * Method retrieveCharge
+     *
+     * @param string $charge [explicite description]
+     *
+     * @return Charge
+     */
+    public function retrieveCharge(string $charge): Charge
+    {
+        try
+        {
+            return $this->stripe->charges->retrieve(
+                $charge,
+                []
+            );
+        }
+        catch(ApiErrorException $e)
+        {
+            throw new GeneralException($e->getError()->message);
+        }
+    }
 }
