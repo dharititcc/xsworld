@@ -86,7 +86,28 @@ class BarRepository extends BaseRepository
         $user->loadMissing(['pickup_point']);
 
         $order       = $this->orderQuery()
-        ->where(['type'=> Order::ORDER,'status' => Order::COMPLETED])
+        ->where('type', Order::ORDER)
+        ->whereIn('status', [Order::COMPLETED, Order::RESTAURANT_CANCELED, Order::RESTAURANT_TOXICATION])
+        ->orderBy('id','desc')
+        ->get();
+
+        return $order;
+    }
+
+    /**
+     * Method getBarCollections
+     *
+     * @return Collection
+     */
+    public function getBarCollections() : Collection
+    {
+        $user = auth()->user();
+
+        $user->loadMissing(['pickup_point']);
+
+        $order       = $this->orderQuery()
+        ->where('type', Order::ORDER)
+        ->whereIn('status', [Order::COMPLETED])
         ->orderBy('id','desc')
         ->get();
 
@@ -110,7 +131,7 @@ class BarRepository extends BaseRepository
 
         if(isset($order->id))
         {
-            if($status == 1)
+            if($status == Order::ACCEPTED)
             {
                 $updateArr['accepted_date'] = Carbon::now();
                 $updateArr['status']        = $status;
@@ -121,26 +142,29 @@ class BarRepository extends BaseRepository
                 $updateArr['apply_time'] = $apply_time;
             }
 
-            if( $status != 1 )
+            if( $status != Order::ACCEPTED )
             {
                 $updateArr['status']   = $status;
             }
 
-            if($status == 3)
+            if($status == Order::COMPLETED)
             {
-                $stripe                         = new Stripe();
-                $payment_data                   = $stripe->captureCharge($order->charge_id);
+                if( $order->charge_id )
+                {
+                    $stripe                         = new Stripe();
+                    $payment_data                   = $stripe->captureCharge($order->charge_id);
+                    $updateArr['transaction_id']    = $payment_data->balance_transaction;
+                }
                 $updateArr['status']            = $status;
-                $updateArr['transaction_id']    = $payment_data->balance_transaction;
             }
 
-            if($status == 4)
+            if($status == Order::RESTAURANT_CANCELED)
             {
                 // RESTAURANT_CANCELED and process for refund
                 $updateArr['status']            = $status;
             }
 
-            if($status == 6)
+            if($status == Order::RESTAURANT_TOXICATION)
             {
                 // RESTAURANT_TOXICATION and process for refund
                 $updateArr['status']            = $status;
