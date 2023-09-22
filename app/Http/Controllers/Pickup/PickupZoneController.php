@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Pickup;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\RestaurantPickupPointResource;
 use App\Models\RestaurantPickupPoint;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -21,11 +22,12 @@ class PickupZoneController extends Controller
         // dd($restaurant);
         $food_pickup_points = RestaurantPickupPoint::with(['attachment'])->restaurantget($restaurant->id)->type(1)->get();
         $drink_pickup_points = RestaurantPickupPoint::with(['attachment'])->restaurantget($restaurant->id)->type(2)->get();
+        $waiters = User::select('id','first_name','username','email')->where('user_type',User::WAITER)->get();
         
         return view('pickup.index',[
             'food_pickup_points' => $food_pickup_points,
             'drink_pickup_points' => $drink_pickup_points,
-
+            'waiters'             => $waiters,
         ]);
     }
 

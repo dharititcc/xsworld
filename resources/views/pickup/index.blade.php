@@ -8,14 +8,16 @@
 <div class="container-fluid">
     <main>
         <div class="outrbox">
-            <div class="d-flex mb-4 justify-content-between doubl-line"><h2 class="yellow">Active Waiters</h2> <div class="count-item">Total: 4</div></div>
+            <div class="d-flex mb-4 justify-content-between doubl-line"><h2 class="yellow">Active Waiters</h2> <div class="count-item">Total: {{$waiters->count()}}</div></div>
             <div class="grid colmn-5">
 
-                <div class="grey-brd-box waiters">
-                    <div class="status-box ">#01 Amy  <div class="status"> Active</div></div>
-                    <div class="wait-footer">Currently Serving Table 03</div>
-                </div>
-                <div class="grey-brd-box waiters">
+                @foreach ($waiters as $waiter)
+                    <div class="grey-brd-box waiters">
+                        <div class="status-box "># {{ $waiter->id }} {{$waiter->first_name}} <div class="status"> Active</div></div>
+                        <div class="wait-footer">Currently Serving Table 03</div>
+                    </div>
+                @endforeach
+                {{-- <div class="grey-brd-box waiters">
                     <div class="status-box ">#02 Samantha   <div class="status"> Active</div></div>
                     <div class="wait-footer">Currently Idle</div>
                 </div>
@@ -30,7 +32,7 @@
                 <div class="grey-brd-box waiters">
                     <div class="status-box ">Steven #13 <div class="status"> Active</div></div>
                     <div class="wait-footer">Currently Idle</div>
-                </div>
+                </div> --}}
 
                 <!-- <a href="#" class="grey-brd-box waiters add">
                     <i class="icon-plus"> </i>
