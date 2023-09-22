@@ -322,6 +322,59 @@ var XS = {}; // common variable used in all the files of the backend
             }
             // $("#tempRequestDiv > div:nth-child(" + (index) + ")").after(content); // working solution
             $(parentElement).children().eq(index-1).after(content);
+        },
+
+        /**
+         * Format date into dd-mm-yyyy
+         * @param {*} date
+         * @returns
+         */
+        formatDate: function(date)
+        {
+            var context = this;
+
+            var d = new Date(date),
+                month = '' + (d.getMonth() + 1),
+                day = '' + d.getDate(),
+                year = d.getFullYear();
+
+            if (month.length < 2)
+                month = '0' + month;
+            if (day.length < 2)
+                day = '0' + day;
+
+            return [day, month, year].join('-');
+        },
+
+        fileReaderBind: function()
+        {
+            if (window.File && window.FileList && window.FileReader) {
+                $(".files").on("change", function(e) {
+                    var clickedButton = this,
+                        files = e.target.files,
+                        filesLength = files.length;
+                    for (var i = 0; i < filesLength; i++) {
+                        var f = files[i],
+                            fileReader = new FileReader();
+                        fileReader.onload = (function(e) {
+                            var file = e.target,
+                                thumbnail = `
+                                    <div class="pip">
+                                        <img class="imageThumb" src="${e.target.result}" title="${file.name}" />
+                                        <i class="icon-trash remove"></i>
+                                    </div>
+                                `;
+                            $(thumbnail).insertAfter(clickedButton);
+                            $(".remove").click(function() {
+                                $(this).parent(".pip").remove();
+                            });
+                        });
+                        fileReader.readAsDataURL(f);
+                    }
+                });
+            } else {
+                alert("Your browser doesn't support to File API")
+            }
         }
     }
 })();
