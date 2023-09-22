@@ -77,7 +77,7 @@ class AddonsController extends Controller
         $profileImage ="";
         if ($image = $request->file('photo'))
         {
-            $destinationPath = public_path('/storage/mixers');
+            $destinationPath = public_path('/storage/addons');
             $profileImage = date('YmdHis') . "." . $image->getClientOriginalExtension();
             $image->move($destinationPath, $profileImage);
         }
@@ -111,7 +111,19 @@ class AddonsController extends Controller
      */
     public function show(RestaurantItem $addon)
     {
-        return new RestaurantItemsResource($addon);
+        $addon_categories = RestaurantItem::select('category_id')->where(['restaurant_id'=>$addon->restaurant_id,'type' => RestaurantItem::ADDON])
+                    ->where('name',$addon->name)->groupBy('category_id')->pluck('category_id')->toArray();
+        $addon = [
+            'name'          =>  $addon->name,
+            'price'         =>  $addon->price,
+            'categories'    =>  $addon_categories,
+            'image'         =>  $addon->attachment ?? asset('storage/addons/'.$addon->attachment->stored_name),
+            'restaurant_id' =>  $addon->restaurant_id,
+        ];
+        return response()->json([
+            'status' => true,
+            'addon'   => $addon
+        ]);
     }
 
     /**

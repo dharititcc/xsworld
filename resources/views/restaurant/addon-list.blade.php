@@ -116,24 +116,29 @@
                         type: "GET",
                         success: function(response) {
                             console.log(response);
-                            $("input[name=name]").val(response.data.name);
-                            $("input[name=price]").val(response.data.price);
+                            $("input[name=name]").val(response.addon.name);
+                            $("input[name=price]").val(response.addon.price);
+                            $('input[name="category[]"]').val(response.addon.categories);
                             var image = `
                                             <div class="pip">
-                                                <img class="imageThumb" src="${ response.data.image!="" ?response.data.image :'#'}" title="" />
+                                                <img class="imageThumb" src="${ response.addon.image!="" ?response.addon.image :'#'}" title="" />
                                                 <i class="icon-trash remove"></i>
                                             </div>
                                         `;
 
-                            $(".image_box").children('.pip').remove();
-                            $("#upload").after(image);
+                            if(response.addon.image != '')
+                            {
+                                $(".image_box").children('.pip').remove();
+                                $("#upload").after(image);
+                            }
+
                             $(".remove").click(function() {
                                 $(this).parent(".pip").remove();
                             });
                             $('#exampleModal').data('crudetype', 0);
                             $('#exampleModal').modal('show');
                         },
-                        error: function(data) {}
+                        error: function(addon) {}
                     });
                 }
 
