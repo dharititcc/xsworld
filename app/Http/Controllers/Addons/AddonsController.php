@@ -144,10 +144,92 @@ class AddonsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, RestaurantItem $addon)
     {
-        //
-    }
+        $restaurant = session('restaurant')->loadMissing(['main_categories', 'main_categories.children']);
+        $image = $request->file('photo');
+        $profileImage ="";
+        if ($image = $request->file('photo'))
+        {
+            $destinationPath = public_path('/storage/addons');
+            $profileImage = date('YmdHis') . "." . $image->getClientOriginalExtension();
+            $image->move($destinationPath, $profileImage);
+        }
+        $category = $request->get('category');
+        
+
+        // get old addons list
+        $oldCategories = RestaurantItem::where(['restaurant_id'=>$addon->restaurant_id,'type' => RestaurantItem::ADDON])
+                            ->where('name',$addon->name)->pluck('category_id')->toArray();
+        $changeArr = [];
+                            
+            if(!empty($oldCategories))
+            {
+                foreach($oldCategories as $oldcat)
+                {
+                    // dd($oldcat);
+                    if(!in_array($oldcat, $category))
+                    {
+                        $changeArr[] = $oldcat;
+                    }
+                }
+                // dd($changeArr);
+            }
+            // dd($changeArr);
+            if(!empty($changeArr))
+            {
+                $items = RestaurantItem::where(['restaurant_id'=>$addon->restaurant_id,'type' => RestaurantItem::ADDON])
+                        ->where('name',$addon->name)->whereIn('category_id',$changeArr)->get();
+                if($items->count()) {
+                    foreach($items as $item)
+                    {
+                        $item->delete();
+                    }
+                }
+            }
+
+            if(!empty($category))
+            {
+                foreach($category as $cat)
+                {
+                    $oldAddon = RestaurantItem::where('restaurant_id', $addon->restaurant_id)
+                                ->where('type', RestaurantItem::ADDON)
+                                ->where('category_id',$cat)
+                                ->first();
+                    if(isset($oldAddon->id))
+                    {
+                        $oldAddon->name = $request->name;
+                        $oldAddon->price = $request->price;
+                        $oldAddon->category_id = $cat;
+                        $oldAddon->save();
+
+                        $oldAddon->attachment()->create([
+                            'stored_name'   => $profileImage,
+                            'original_name' => $profileImage,
+                            'attachmentable_id' => $oldAddon->id,
+                        ]);
+                    } else {
+                        //insert
+                        $newAddon = RestaurantItem::create([
+                            'name' => $request->name,
+                            'price' => $request->price,
+                            'type' => RestaurantItem::ADDON,
+                            'is_available'      => 1,
+                            'category_id' => $cat,
+                            'restaurant_id'     => $restaurant->id
+                        ]);
+
+                        $newAddon->attachment()->create([
+                            'stored_name'   => $profileImage,
+                            'original_name' => $profileImage,
+                            'attachmentable_id' => $newAddon->id,
+                        ]);
+                    }
+
+                }
+                return true;
+            }            
+        }        
 
     /**
      * Remove the specified resource from storage.

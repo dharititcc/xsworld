@@ -116,6 +116,8 @@
                         type: "GET",
                         success: function(response) {
                             console.log(response);
+                            modal.find('form').attr('action',moduleConfig.updateAddon.replace(':ID',addon_id));
+                            modal.find('form').append(`<input type="hidden" name="_method" value="PUT" />`);
                             $("input[name=name]").val(response.addon.name);
                             $("input[name=price]").val(response.addon.price);
                             $('input[name="category[]"]').val(response.addon.categories);
@@ -289,18 +291,6 @@
             });
         }
 
-        // function getCategory(id) {
-        //     var data = [];
-        //     data['category'] = id;
-        //     if (!data) {
-        //         $('.drink_datatable').DataTable().destroy();
-        //         load_data();
-        //     } else {
-        //         $('.drink_datatable').DataTable().destroy();
-        //         load_data(data);
-        //     }
-        // }
-        
         $("#search").keyup(function() {
             $('.drink_datatable').DataTable().destroy();
             var data = [];
