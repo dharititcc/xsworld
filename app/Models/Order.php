@@ -230,6 +230,29 @@ class Order extends Model
     }
 
     /**
+     * Method getRemainingTimeattribute
+     *
+     * @return string
+     */
+    public function getRemainingTimeattribute()
+    {
+        $remaining_time     = 0;
+        $current_time       = Carbon::now();
+        if($this->updated_at)
+        {
+            $updated_time   = Carbon::parse($this->updated_at);
+            $apply_time     = $updated_time->addMinutes($this->apply_time);
+            $remaining_time = $current_time->diffInSeconds($apply_time);
+            $old_time       = Carbon::createFromFormat('Y-m-d H:i:s', $apply_time)->isPast();
+            if($old_time === true)
+            {
+                return 0;
+            }
+        }
+        return $remaining_time;
+    }
+
+    /**
      * Method getCardDetailsattribute
      *
      * @return array
