@@ -54,9 +54,8 @@
 @endsection
 
 
-@section('pagescript')
-<script src="{{asset('js/enableSweetalert.js')}}"></script>
-<script src="{{asset('js/disableSweetalert.js')}}"></script>
+
+
     @parent
     <!-- Global popup -->
     <div class="modal fade" id="wd930" tabindex="0" aria-hidden="true">
@@ -67,7 +66,7 @@
                     <div class="head-left">
                         <button type="button" class="back" data-bs-dismiss="modal" aria-label="Close"><i
                                 class="icon-left"></i></button>
-                        <h2>Manually Add Drink</h2>
+                        <h2><span class="model_title">Manually Add </span> Drink</h2>
                     </div>
                     <div class="head-right">
                         <a href="javascript:void(0)" data-is_favorite="0" class="favorite is_favorite null"></a>
@@ -534,13 +533,16 @@
     //             });
     // }
     </script>
-@endsection
 
 @section('pagescript')
+<script src="{{asset('js/enableSweetalert.js')}}"></script>
+<script src="{{asset('js/disableSweetalert.js')}}"></script>
 <script src="{{ asset('js/drink.js') }}"></script>
 <script type="text/javascript">
     var moduleConfig = {
-        tableAjax: "{!! route('restaurants.drinks.index') !!}"
+        tableAjax: "{!! route('restaurants.drinks.index') !!}",
+        drinkStore: "{!! route('restaurants.drinks.store') !!}",
+        drinkUpdate: "{!! route('restaurants.drinks.update', ':ID') !!}",
     };
 
     $(document).ready(function()
