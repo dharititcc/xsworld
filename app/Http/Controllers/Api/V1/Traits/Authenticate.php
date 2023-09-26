@@ -7,7 +7,6 @@ use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 
 trait Authenticate
 {
@@ -18,9 +17,9 @@ trait Authenticate
      *
      * @param Request $request [explicite description]
      *
-     * @return bool
+     * @return bool|array
      */
-    public function authenticate(Request $request): bool
+    public function authenticate(Request $request)
     {
         return $this->getLoginType($request);
     }
@@ -30,7 +29,7 @@ trait Authenticate
      *
      * @param Request $request [explicite description]
      *
-     * @return bool
+     * @return bool|array
      * @throws \App\Exceptions\GeneralException
      */
     public function getLoginType(Request $request)
@@ -45,13 +44,15 @@ trait Authenticate
                     $this->validateEmail($request);
 
                     $user = User::where('email', $request->email)->first();
-                    if(!$user){
-                       $user = $this->socialRegister($request);
-                    }
                     if( $user instanceof \App\Models\User && isset( $user->id ) )
                     {
                         auth()->login($user);
                         return true;
+                    }
+                    else
+                    {
+                        // insert
+                        return ['is_first_time' => 1];
                     }
                     break;
                 case User::FACEBOOK:
@@ -59,14 +60,16 @@ trait Authenticate
                     $this->validateEmail($request);
 
                     $user = User::where('email', $request->email)->first();
-                    if(!$user){
-                        $user = $this->socialRegister($request);
-                    }
 
                     if( $user instanceof \App\Models\User && isset( $user->id ) )
                     {
                         auth()->login($user);
                         return true;
+                    }
+                    else
+                    {
+                        // insert
+                        return ['is_first_time' => 1];
                     }
                     break;
                 case User::PHONE:
@@ -189,39 +192,23 @@ trait Authenticate
     }
 
     /**
-     * Method socialRegister
+     * Method insertUser
      *
-     * @param Request $request [explicite description]
+     * @param array $data [explicite description]
      *
-     * @return App\Models\User
+     * @return \App\Models\User
      */
-    public function socialRegister(Request $request) : User
+    private function insertUser(array $data): User
     {
-        $dataArr = [
-            'first_name'            => $request->first_name ?? 'test',
-            'last_name'             => $request->last_name ?? '',
-            'email'                 => $request->email,
-            'password'              => Hash::make(Str::random(6)),
-            'phone'                 => $request->phone ?? rand(),
-            // 'country_code'          => $request->country_code,
-            // 'country_id'            => $request->country,
-            // 'address'               => $request->address,
-            'registration_type'     => $request->registration_type,
-            // 'birth_date'            => $request->birth_date,
-            'platform'              => $request->platform,
-            'os_version'            => $request->os_version,
-            'fcm_token'             => $request->fcm_token,
-            'application_version'   => $request->application_version,
-            'model'                 => $request->model,
-            'user_type'             => User::CUSTOMER
-        ];
+        $user = User::create($data);
 
-        $user                       = User::create($dataArr);
         $stripe                     = new Stripe();
         $customer                   = $stripe->createCustomer($data);
-        $str['stripe_customer_id']  = $customer->id;
-        $user->update($str);
+
+        $user->stripe_customer_id = $customer->id;
+        $user->save();
 
         return $user;
     }
+
 }
