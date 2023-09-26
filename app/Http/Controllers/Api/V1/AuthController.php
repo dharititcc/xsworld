@@ -148,8 +148,10 @@ class AuthController extends APIController
      **/
     public function postLogin(LoginRequest $request)
     {
-        $input = $request->all();
-        if( $this->authenticate($request) )
+        $input          = $request->all();
+        $authenticated  = $this->authenticate($request);
+
+        if( is_bool($authenticated) )
         {
             $user = auth()->user();
 
@@ -176,6 +178,13 @@ class AuthController extends APIController
                 'message'   =>  'Login successful',
                 'token'     =>  $token,
                 'item'      =>  new UserResource($user),
+            ]);
+        }
+        else if( is_array($authenticated) )
+        {
+            return response()->json([
+                'status'        => true,
+                'is_first_time' => 1
             ]);
         }
 

@@ -17,9 +17,9 @@ trait Authenticate
      *
      * @param Request $request [explicite description]
      *
-     * @return bool
+     * @return bool|array
      */
-    public function authenticate(Request $request): bool
+    public function authenticate(Request $request)
     {
         return $this->getLoginType($request);
     }
@@ -29,7 +29,7 @@ trait Authenticate
      *
      * @param Request $request [explicite description]
      *
-     * @return bool
+     * @return bool|array
      * @throws \App\Exceptions\GeneralException
      */
     public function getLoginType(Request $request)
@@ -49,6 +49,11 @@ trait Authenticate
                         auth()->login($user);
                         return true;
                     }
+                    else
+                    {
+                        // insert
+                        return ['is_first_time' => 1];
+                    }
                     break;
                 case User::FACEBOOK:
                     // validation
@@ -60,6 +65,11 @@ trait Authenticate
                     {
                         auth()->login($user);
                         return true;
+                    }
+                    else
+                    {
+                        // insert
+                        return ['is_first_time' => 1];
                     }
                     break;
                 case User::PHONE:
@@ -179,6 +189,26 @@ trait Authenticate
                 return 'email';
                 break;
         }
+    }
+
+    /**
+     * Method insertUser
+     *
+     * @param array $data [explicite description]
+     *
+     * @return \App\Models\User
+     */
+    private function insertUser(array $data): User
+    {
+        $user = User::create($data);
+
+        $stripe                     = new Stripe();
+        $customer                   = $stripe->createCustomer($data);
+
+        $user->stripe_customer_id = $customer->id;
+        $user->save();
+
+        return $user;
     }
 
 }
