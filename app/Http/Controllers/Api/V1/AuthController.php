@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Api\V1\Traits\Authenticate;
 use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\LoginRequest;
+use App\Http\Requests\SocialRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use App\Models\UserDevices;
@@ -12,6 +13,7 @@ use App\Repositories\UserRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Str;
 
 /**
  * @group Authentication
@@ -473,12 +475,76 @@ class AuthController extends APIController
 
         if( isset($user->id) )
         {
-            return $this->respond([
-                'status' => true,
-                'message'=> 'Registration successfully. Now please check your email/phone to verify your account.'
-            ]);
+            return $this->registrationResponse();
         }
 
         return $this->respondWithError('Invalid Registration data.');
+    }
+
+    /**
+     * Method socialRegister
+     *
+     * @param Request $request [explicite description]
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function socialRegister(SocialRequest $request)
+    {
+        $dataArr = [
+            'first_name'            => $request->first_name,
+            'last_name'             => $request->last_name ?? '',
+            'email'                 => $request->email,
+            'password'              => Hash::make(Str::random(6)),
+            'phone'                 => $request->phone ?? rand(),
+            'country_code'          => $request->country_code,
+            'country_id'            => $request->country,
+            // 'address'               => $request->address,
+            'registration_type'     => $request->registration_type,
+            'birth_date'            => $request->birth_date,
+            'platform'              => $request->platform,
+            'os_version'            => $request->os_version,
+            'fcm_token'             => $request->fcm_token,
+            'application_version'   => $request->application_version,
+            'model'                 => $request->model,
+            'user_type'             => User::CUSTOMER
+        ];
+
+        $user = $this->repository->Socialcreate($dataArr);
+
+        $user->refresh();
+
+        $tokenArr = [
+            'user_id'       => $user->id,
+            'fcm_token'     => $request['fcm_token'],
+        ];
+        $token              = UserDevices::create($tokenArr);
+
+        if( isset($user->email_verified_at) )
+        {
+            $token  = $user->createToken('xs_world')->plainTextToken;
+            return $this->respond([
+                'status'    =>  true,
+                'message'   =>  'Login successful',
+                'token'     =>  $token,
+                'item'      =>  new UserResource($user),
+            ]);
+        }
+        else
+        {
+            return $this->registrationResponse();
+        }
+    }
+
+    /**
+     * Method registrationResponse
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    private function registrationResponse()
+    {
+        return $this->respond([
+            'status' => true,
+            'message'=> 'Registration successfully. Now please check your email/phone to verify your account.'
+        ]);
     }
 }

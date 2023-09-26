@@ -5,6 +5,7 @@ use App\Exceptions\GeneralException;
 use App\Models\User;
 use App\Repositories\BaseRepository;
 use File;
+use Illuminate\Support\Arr;
 use Stripe\Source;
 use Stripe\Token;
 
@@ -157,6 +158,33 @@ class UserRepository extends BaseRepository
             }
         }
         return $user;
+    }
+
+    /**
+     * Method Socialcreate
+     *
+     * @param array $data [explicite description]
+     *
+     * @return \App\Models\User
+     */
+    public function Socialcreate(array $data) : User
+    {
+        $user = User::where('email', $data['email'])->first();
+        if(!$user){
+            $user = User::create($data);
+            if( $data['user_type'] == User::CUSTOMER )
+            {
+                $stripe     = new Stripe();
+                $customer   = $stripe->createCustomer($data);
+                $str['stripe_customer_id'] = $customer->id;
+                $user->update($str);
+            }
+        }
+        if( $user instanceof \App\Models\User && isset( $user->id ) )
+        {
+            auth()->login($user);
+            return $user;
+        }
     }
 
     /**
