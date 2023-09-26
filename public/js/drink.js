@@ -6,7 +6,7 @@
             "defaultContent": "",
             "sortable": false,
             render: function (data, type, row) {
-                return `<label class="cst-check"><input name="id" class="checkboxitem" type="checkbox" value="${row.id}"><span class="checkmark"></span></label>`
+                return `<label class="cst-check"><input name="id" class="checkboxitem" data-drink_id="${row.id}" type="checkbox" value="${row.id}"><span class="checkmark"></span></label>`
             }
         },
         {
@@ -99,7 +99,10 @@
             activeCategory:     jQuery('.category.active'),
             search:             jQuery("#search"),
             category:           jQuery('.category'),
-            drinkModalAnchor:   jQuery('#drink_modal')
+            drinkModalAnchor:   jQuery('#drink_modal'),
+            drinkForm:          jQuery('#drinkpopup'),
+            drinkModalTitle:    jQuery('model_title'),
+            drinkSubmitBtn:     jQuery('submitBtn'),
         },
 
         init: function (){
@@ -210,6 +213,22 @@
             {
                 e.preventDefault();
 
+                var $this     = $(this),
+                    drinkId = $this.data('drink_id');
+
+                if(drinkId == undefined)
+                {
+                    console.log(drinkId);
+                    context.selectors.drinkModalTitle.html('Add ');
+                    context.addDrinkFormValidation();
+                    context.selectors.drinkForm.attr('action', moduleConfig.drinkStore);
+                } else {
+                    context.selectors.drinkModalTitle.html('Edit ');
+                    context.selectors.drinkSubmitBtn.html('Edit Drink');
+                    context.editDrinkFormValidation();
+                    context.selectors.drinkForm.attr('action', moduleConfig.drinkUpdate.replace(':ID', drinkId));
+                }
+
                 jQuery('#wd930').modal('show');
             });
         },
@@ -239,5 +258,102 @@
                 $this.find('.cstm-catgory').find('input[name="category_id[]"]').prop('checked', false);
             });
         },
+
+        addDrinkFormValidation: function()
+        {
+            var context = this;
+            context.selectors.drinkForm.validate({
+                errorPlacement: function($error, $element) {
+                    $error.appendTo($element.closest("div"));
+                },
+                rules: {
+                    name: {
+                        required: true,
+                    },
+                    description: {
+                        required: true,
+                    },
+                    category_id : {
+                        required: true,
+                    },
+                    price: {
+                        required: true,
+                        pattern: /^\d+(\.\d{1,2})?$/
+                    },
+                    image: {
+                        required: true,
+                    },
+                    ingredients: {
+                        required: true,
+                    },
+                    country_of_origin: {
+                        required: true,
+                    },
+                    type_of_drink: {
+                        required: true,
+                    },
+                    year_of_production: {
+                        required: true,
+                    },
+                    message: {
+                        required: true
+                    },
+                },
+                messages: {
+                    name: {
+                        required: "Please enter name",
+                        maxlength: "Your name maxlength should be 50 characters long."
+                    },
+                    price: {
+                        required: "please Enter Amount",
+                        pattern: "Please enter a valid price format (e.g., 100.50)"
+                    },
+                    image: {
+                        required: "Please enter files", //accept: 'Not an image!'
+                    }
+                },
+                submitHandler: function() {
+                    // console.log('new');
+                    context.submitDrinkForm(context.selectors.drinkForm.get(0));
+                }
+            });
+        },
+
+        editDrinkFormValidation: function()
+        {
+            var context = this;
+        },
+
+        submitDrinkForm: function(form)
+        {
+            console.log('submit call');
+            var context = this;
+            data = new FormData(form);
+            XS.Common.btnProcessingStart(context.selectors.drinkSubmitBtn);
+            var category = [];
+            $.each($("input[name='category_id']:checked"), function(i) {
+                category[i] = $(this).val();
+            });
+            
+            $.ajax({
+                url: $(form).attr('action'),
+                type: "POST",
+                data: data,
+                processData: false,
+                contentType: false,
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function(response) {
+                    alert('Ajax form has been submitted successfully');
+                    document.getElementById("categorypopup").reset();
+                    location.reload(true);
+                },
+                complete: function()
+                {
+                    XS.Common.btnProcessingStop(context.selectors.drinkSubmitBtn);
+                }
+            });
+        }
     }
 })();
