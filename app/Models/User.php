@@ -82,6 +82,16 @@ class User extends Authenticatable
     ];
 
     /**
+     * Get all of the devices for the User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function devices(): HasMany
+    {
+        return $this->hasMany(UserDevices::class, 'user_id', 'id');
+    }
+
+    /**
      * Method attachment
      *
      * @return \Illuminate\Database\Eloquent\Relations\MorphOne

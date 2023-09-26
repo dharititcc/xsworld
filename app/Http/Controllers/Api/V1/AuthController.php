@@ -512,7 +512,7 @@ class AuthController extends APIController
             'birth_date'            => $request->birth_date,
             'platform'              => $request->platform,
             'os_version'            => $request->os_version,
-            'fcm_token'             => $request->fcm_token,
+            'fcm_token'             => $request->fcm_token ?? null,
             'application_version'   => $request->application_version,
             'model'                 => $request->model,
             'user_type'             => User::CUSTOMER
@@ -522,26 +522,19 @@ class AuthController extends APIController
 
         $user->refresh();
 
-        $tokenArr = [
-            'user_id'       => $user->id,
-            'fcm_token'     => $request['fcm_token'],
-        ];
-        $token              = UserDevices::create($tokenArr);
+        if( isset($request->fcm_token) )
+        {
+            // inser device entry
+            $user->devices()->create(['fcm_token' => $request->fcm_token]);
+        }
 
-        if( isset($user->email_verified_at) )
-        {
-            $token  = $user->createToken('xs_world')->plainTextToken;
-            return $this->respond([
-                'status'    =>  true,
-                'message'   =>  'Login successful',
-                'token'     =>  $token,
-                'item'      =>  new UserResource($user),
-            ]);
-        }
-        else
-        {
-            return $this->registrationResponse();
-        }
+        $token  = $user->createToken('xs_world')->plainTextToken;
+        return $this->respond([
+            'status'    =>  true,
+            'message'   =>  'Login successful',
+            'token'     =>  $token,
+            'item'      =>  new UserResource($user),
+        ]);
     }
 
     /**

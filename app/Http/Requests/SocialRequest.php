@@ -29,11 +29,15 @@ class SocialRequest extends FormRequest
             'first_name'            => 'required|string',
             'last_name'             => 'required|string',
             'email'                 => 'required|email',
+            'phone'                 => 'required|unique:users,phone',
             'birth_date'            => 'required|date_format:Y-m-d',
             'platform'              => 'required',
             'os_version'            => 'required',
             'application_version'   => 'required',
             'model'                 => 'required',
+            'country'               => 'required',
+            'country_code'          => 'required',
+            'fcm_token'             => 'required',
             'registration_type'     => [
                                             'required',
                                             Rule::in(User::EMAIL, User::PHONE, User::GOOGLE, User::FACEBOOK)
