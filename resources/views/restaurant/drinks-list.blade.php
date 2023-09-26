@@ -20,9 +20,9 @@
                     placeholder="Find a Drink"></div>
         </div>
         <div class="filter-box  mb-4">
-            <button class="bor-btn category active" data-category_id="">All <span class="stock"></span></button>
+            <button class="bor-btn category drink_cat active" data-category_id="">All <span class="stock"></span></button>
             @foreach ($categories as $category)
-                <button class="bor-btn category" data-category_id="{{ $category->id }}">{{ $category->name }} <span
+                <button class="bor-btn category drink_cat" data-category_id="{{ $category->id }}">{{ $category->name }} <span
                         class="stock">({{ $category->items->count() }})</span></button>
             @endforeach
         </div>
@@ -60,13 +60,14 @@
     <!-- Global popup -->
     <div class="modal fade" id="wd930" tabindex="0" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-xl">
-          <form name="adddrink" id="drinkpopup" method="post" action="javascript:void(0)">
+          <form name="adddrink" id="drinkpopup" method="post" >
+            @csrf
             <div class="modal-content">
                 <div class="modal-header dri-heder">
                     <div class="head-left">
                         <button type="button" class="back" data-bs-dismiss="modal" aria-label="Close"><i
                                 class="icon-left"></i></button>
-                        <h2><span class="model_title">Manually Add </span> Drink</h2>
+                        <h2><span class="model_title">  </span> Drink</h2>
                     </div>
                     <div class="head-right">
                         <a href="javascript:void(0)" data-is_favorite="0" class="favorite is_favorite null"></a>
@@ -95,12 +96,14 @@
                         </div>
                         <div class="col-md-8">
                             <div class="form-group mb-4">
-                                <input type="text" name="name" class="form-control vari3" placeholder="Product Name">
+                                <input type="text" name="name" id="name" class="form-control vari3" placeholder="Product Name">
+                                <input id="product_type" type="hidden" class="product_type" name="is_variable" />
+                                <input id="is_featured" type="hidden" class="is_featured" name="is_featured" />
                             </div>
                             <div class="grid colmn-5 cstm-catgory">
                                 @foreach ($categories as $category)
                                 <label>
-                                    <input type="checkbox" name="category_id[]" value="{{$category->id}}">
+                                    <input type="checkbox" name="category_id[]" id="category_id" value="{{$category->id}}">
                                     <div class="category">
                                         <div class="name">{{$category->name}}
                                             <span>{{$category->items->count()}} Total</span>
@@ -114,15 +117,15 @@
                                     <h2 class="yellow">Additional Information</h2> <span class="optional-info"></span>
                                 </div>
                                 <div class="form-group">
-                                    <input type="text" name="ingredients" class="form-control vari1" placeholder="Ingredients">
+                                    <input type="text" name="ingredients" id="ingredients" class="form-control vari1" placeholder="Ingredients">
                                 </div>
                                 <div class="form-group full-w-form">
                                     <div class="row">
-                                        <div class="col-md-3"><input type="text" name="country_of_origin" class="form-control vari1"
+                                        <div class="col-md-3"><input type="text" name="country_of_origin" id="country_of_origin" class="form-control vari1"
                                                 placeholder="Country of Origin"></div>
-                                        <div class="col-md-4"><input type="text" name="year_of_production" class="form-control vari1"
+                                        <div class="col-md-4"><input type="text" name="year_of_production" id="year_of_production" class="form-control vari1"
                                                 placeholder="Year of Production"></div>
-                                        <div class="col-md-5"><input type="text" name="type_of_drink" class="form-control vari1"
+                                        <div class="col-md-5"><input type="text" name="type_of_drink" id="type_of_drink" class="form-control vari1"
                                                 placeholder="Type of Drink (Spirit/Wines)"></div>
                                     </div>
                                 </div>
@@ -543,6 +546,7 @@
         tableAjax: "{!! route('restaurants.drinks.index') !!}",
         drinkStore: "{!! route('restaurants.drinks.store') !!}",
         drinkUpdate: "{!! route('restaurants.drinks.update', ':ID') !!}",
+        drinkGet: "{!! route('restaurants.drinks.show', ':ID') !!}",
     };
 
     $(document).ready(function()
