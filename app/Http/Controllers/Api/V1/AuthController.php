@@ -164,21 +164,12 @@ class AuthController extends APIController
                 'fcm_token'             => $input['fcm_token'],
             ];
 
-            $tokenArr = [
-                'user_id'       => $user->id,
-                'fcm_token'     => $input['fcm_token'],
-            ];
-            $token              = UserDevices::create($tokenArr);
+            $this->repository->storeDevice($user, ['fcm_token' => $input['fcm_token']]);
 
             $this->repository->update($dataArr, $user);
 
             $token  = $user->createToken('xs_world')->plainTextToken;
-            return $this->respond([
-                'status'    =>  true,
-                'message'   =>  'Login successful',
-                'token'     =>  $token,
-                'item'      =>  new UserResource($user),
-            ]);
+            return $this->loginResponse($token, $user);
         }
         else if( is_array($authenticated) )
         {
@@ -484,7 +475,10 @@ class AuthController extends APIController
 
         if( isset($user->id) )
         {
-            return $this->registrationResponse();
+            return $this->respond([
+                'status' => true,
+                'message'=> 'Registration successfully. Now please check your email/phone to verify your account.'
+            ]);
         }
 
         return $this->respondWithError('Invalid Registration data.');
@@ -522,31 +516,27 @@ class AuthController extends APIController
 
         $user->refresh();
 
-        if( isset($request->fcm_token) )
-        {
-            // inser device entry
-            $user->devices()->create(['fcm_token' => $request->fcm_token]);
-        }
+        $this->repository->storeDevice($user, ['fcm_token' => $request->fcm_token]);
 
         $token  = $user->createToken('xs_world')->plainTextToken;
+        return $this->loginResponse($token, $user);
+    }
+
+    /**
+     * Method loginResponse
+     *
+     * @param string $token [explicite description]
+     * @param User $user [explicite description]
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    private function loginResponse(string $token, User $user): JsonResponse
+    {
         return $this->respond([
             'status'    =>  true,
             'message'   =>  'Login successful',
             'token'     =>  $token,
             'item'      =>  new UserResource($user),
-        ]);
-    }
-
-    /**
-     * Method registrationResponse
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    private function registrationResponse()
-    {
-        return $this->respond([
-            'status' => true,
-            'message'=> 'Registration successfully. Now please check your email/phone to verify your account.'
         ]);
     }
 }

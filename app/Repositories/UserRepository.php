@@ -356,4 +356,15 @@ class UserRepository extends BaseRepository
 
         throw new GeneralException('Card id is required.');
     }
+
+    public function storeDevice(User $user, array $input)
+    {
+        if( isset($input['fcm_token']) )
+        {
+            // inser device entry
+            return $user->devices()->create(['fcm_token' => $input['fcm_token']]);
+        }
+
+        throw new GeneralException('Failed to store device.');
+    }
 }
