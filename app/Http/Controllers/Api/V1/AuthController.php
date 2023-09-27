@@ -510,7 +510,8 @@ class AuthController extends APIController
             'fcm_token'             => $request->fcm_token ?? null,
             'application_version'   => $request->application_version,
             'model'                 => $request->model,
-            'user_type'             => User::CUSTOMER
+            'user_type'             => User::CUSTOMER,
+            'social_id'             => $request->social_id
         ];
 
         $user = $this->repository->Socialcreate($dataArr);

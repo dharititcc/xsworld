@@ -84,6 +84,19 @@ trait Authenticate
 
                     return Auth::attempt($this->credentials($request));
                     break;
+                case User::APPLE:
+                    $user = User::where('social_id', $request->social_id)->first();
+                    if( $user instanceof \App\Models\User && isset( $user->id ) )
+                    {
+                        auth()->login($user);
+                        return true;
+                    }
+                    else
+                    {
+                        // insert
+                        return ['is_first_time' => 1];
+                    }
+                    break;
                 default:
                     // validation
                     $this->validateEmail($request);
