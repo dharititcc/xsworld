@@ -156,12 +156,19 @@ class BarRepository extends BaseRepository
                     $updateArr['transaction_id']    = $payment_data->balance_transaction;
                 }
                 $updateArr['status']            = $status;
+                $updateArr['completion_date']   = Carbon::now();
             }
 
             if($status == Order::RESTAURANT_CANCELED)
             {
                 // RESTAURANT_CANCELED and process for refund
                 $updateArr['status']            = $status;
+            }
+
+            if($status == Order::CONFIRM_PICKUP)
+            {
+                $updateArr['status']            = $status;
+                $updateArr['served_date']       = Carbon::now();
             }
 
             if($status == Order::RESTAURANT_TOXICATION)
