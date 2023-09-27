@@ -291,7 +291,7 @@ class Order extends Model
      */
     function getCompletionTimeattribute()
     {
-        $completion_time = 0;
+        $completion_time = '';
         if($this->completion_date)
         {
             $completion_time   = Carbon::createFromFormat('Y-m-d H:i:s',$this->completion_date)->format('H:i');
@@ -306,7 +306,7 @@ class Order extends Model
      */
     function getServedTimeattribute()
     {
-        $served_time = 0;
+        $served_time = '';
         if($this->served_date)
         {
             $served_time   = Carbon::createFromFormat('Y-m-d H:i:s',$this->served_date)->format('h:i A');
