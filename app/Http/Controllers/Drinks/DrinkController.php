@@ -41,13 +41,13 @@ class DrinkController extends Controller
                     ->with(['category', 'restaurant','variations'])
                     ->whereHas('restaurant', function($query) use($restaurant)
                     {
-                        return $query->where('id', $restaurant->id)->where('type',2);
+                        return $query->where('restaurants.id', $restaurant->id)->where('restaurant_items.type',RestaurantItem::ITEM);
                     });
                     if(empty($request->get('category')))
                     {
                         $data = $data->whereHas('category', function($query) use($subcategory)
                         {
-                            return $query->whereIn('id', $subcategory);
+                            return $query->whereIn('categories.id', $subcategory);
                         });
                     }
                     else
@@ -55,7 +55,7 @@ class DrinkController extends Controller
                         $cat_id = $request->get('category');
                         $data = $data->whereHas('category', function($query) use($cat_id)
                         {
-                            return $query->where('id', $cat_id);
+                            return $query->where('categories.id', $cat_id);
                         });
                     }
                     if (!empty($request->get('search_main')))
