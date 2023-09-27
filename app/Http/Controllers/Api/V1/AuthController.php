@@ -286,10 +286,7 @@ class AuthController extends APIController
         );
                 return $this->respond([
                     'status' => true,
-                    'message'=> 'Mail send successfully Please check your mail.',
-                    'item'   => $status === Password::RESET_LINK_SENT
-                    ? back()->with(['status' => __($status)])
-                    : back()->withErrors(['email' => __($status)])
+                    'message'=> 'Mail send successfully Please check your mail.'
                 ]);
     }
 
