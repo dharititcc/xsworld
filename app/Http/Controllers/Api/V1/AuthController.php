@@ -10,6 +10,8 @@ use App\Http\Resources\UserResource;
 use App\Models\User;
 use App\Models\UserDevices;
 use App\Repositories\UserRepository;
+use Illuminate\Auth\Events\Registered;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
@@ -164,21 +166,12 @@ class AuthController extends APIController
                 'fcm_token'             => $input['fcm_token'],
             ];
 
-            $tokenArr = [
-                'user_id'       => $user->id,
-                'fcm_token'     => $input['fcm_token'],
-            ];
-            $token              = UserDevices::create($tokenArr);
+            $this->repository->storeDevice($user, ['fcm_token' => $input['fcm_token']]);
 
             $this->repository->update($dataArr, $user);
 
             $token  = $user->createToken('xs_world')->plainTextToken;
-            return $this->respond([
-                'status'    =>  true,
-                'message'   =>  'Login successful',
-                'token'     =>  $token,
-                'item'      =>  new UserResource($user),
-            ]);
+            return $this->loginResponse($token, $user);
         }
         else if( is_array($authenticated) )
         {
@@ -292,13 +285,11 @@ class AuthController extends APIController
         $status = Password::sendResetLink(
             $request->only('email')
         );
-                return $this->respond([
-                    'status' => true,
-                    'message'=> 'Mail send successfully Please check your mail.',
-                    'item'   => $status === Password::RESET_LINK_SENT
-                    ? back()->with(['status' => __($status)])
-                    : back()->withErrors(['email' => __($status)])
-                ]);
+
+        return $this->respond([
+            'status' => true,
+            'message'=> 'Mail send successfully Please check your mail.'
+        ]);
     }
 
     /**
@@ -482,9 +473,15 @@ class AuthController extends APIController
 
         $user = $this->repository->create($dataArr);
 
+        // verification email send and send verification code
+        event(new Registered($user));
+
         if( isset($user->id) )
         {
-            return $this->registrationResponse();
+            return $this->respond([
+                'status' => true,
+                'message'=> 'Registration successfully. Now please check your email/phone to verify your account.'
+            ]);
         }
 
         return $this->respondWithError('Invalid Registration data.');
@@ -515,38 +512,35 @@ class AuthController extends APIController
             'fcm_token'             => $request->fcm_token ?? null,
             'application_version'   => $request->application_version,
             'model'                 => $request->model,
-            'user_type'             => User::CUSTOMER
+            'user_type'             => User::CUSTOMER,
+            'social_id'             => $request->social_id
         ];
 
         $user = $this->repository->Socialcreate($dataArr);
 
         $user->refresh();
 
-        if( isset($request->fcm_token) )
-        {
-            // inser device entry
-            $user->devices()->create(['fcm_token' => $request->fcm_token]);
-        }
+        $this->repository->storeDevice($user, ['fcm_token' => $request->fcm_token]);
 
         $token  = $user->createToken('xs_world')->plainTextToken;
+        return $this->loginResponse($token, $user);
+    }
+
+    /**
+     * Method loginResponse
+     *
+     * @param string $token [explicite description]
+     * @param User $user [explicite description]
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    private function loginResponse(string $token, User $user): JsonResponse
+    {
         return $this->respond([
             'status'    =>  true,
             'message'   =>  'Login successful',
             'token'     =>  $token,
             'item'      =>  new UserResource($user),
-        ]);
-    }
-
-    /**
-     * Method registrationResponse
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    private function registrationResponse()
-    {
-        return $this->respond([
-            'status' => true,
-            'message'=> 'Registration successfully. Now please check your email/phone to verify your account.'
         ]);
     }
 }

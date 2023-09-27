@@ -37,6 +37,8 @@ class OrderResource extends JsonResource
             'updated_date'              => Carbon::parse($this->updated_at)->toDateTimeString(),
             'remaining_time'            => $this->remainingtime,
             'progress'                  => $this->progress ?? 0,
+            'completion_time'           => $this->completiontime ?? '',
+            'served_time'               => $this->servedtime ?? '',
             'currency'                  => $this->restaurant->currency->code,
             'card_id'                   => $this->card_id ?? '',
             'charge_id'                 => $this->charge_id ?? '',

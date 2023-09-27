@@ -33,6 +33,7 @@ class User extends Authenticatable
     const GOOGLE    = 2;
     const FACEBOOK  = 3;
     const USERNAME  = 4;
+    const APPLE     = 5;
 
     /**
      * The attributes that are mass assignable.

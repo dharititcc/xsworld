@@ -40,7 +40,7 @@ class SocialRequest extends FormRequest
             'fcm_token'             => 'required',
             'registration_type'     => [
                                             'required',
-                                            Rule::in(User::EMAIL, User::PHONE, User::GOOGLE, User::FACEBOOK)
+                                            Rule::in(User::EMAIL, User::PHONE, User::GOOGLE, User::FACEBOOK,User::APPLE)
                                         ]
         ];
     }

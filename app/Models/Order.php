@@ -68,6 +68,8 @@ class Order extends Model
         'currency_id',
         'apply_time',
         'accepted_date',
+        'served_date',
+        'completion_date',
         'total',
         'cancel_reason'
     ];
@@ -280,5 +282,35 @@ class Order extends Model
         {
             return $card_details;
         }
+    }
+
+    /**
+     * Method getCompletionTimeattribute
+     *
+     * @return string
+     */
+    function getCompletionTimeattribute()
+    {
+        $completion_time = '';
+        if($this->completion_date)
+        {
+            $completion_time   = Carbon::createFromFormat('Y-m-d H:i:s',$this->completion_date)->format('H:i');
+        }
+        return $completion_time;
+    }
+
+    /**
+     * Method getServedTimeattribute
+     *
+     * @return string
+     */
+    function getServedTimeattribute()
+    {
+        $served_time = '';
+        if($this->served_date)
+        {
+            $served_time   = Carbon::createFromFormat('Y-m-d H:i:s',$this->served_date)->format('h:i A');
+        }
+        return $served_time;
     }
 }
