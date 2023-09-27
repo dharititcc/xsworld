@@ -3,6 +3,7 @@
 use App\Billing\Stripe;
 use App\Exceptions\GeneralException;
 use App\Models\User;
+use App\Models\UserDevices;
 use App\Repositories\BaseRepository;
 use File;
 use Illuminate\Support\Arr;
@@ -357,7 +358,17 @@ class UserRepository extends BaseRepository
         throw new GeneralException('Card id is required.');
     }
 
-    public function storeDevice(User $user, array $input)
+    /**
+     * Method storeDevice
+     *
+     * @param User $user [explicite description]
+     * @param array $input [explicite description]
+     *
+     * @return \App\Models\UserDevices
+     *
+     * @throws \App\Exceptions\GeneralException
+     */
+    public function storeDevice(User $user, array $input): UserDevices
     {
         if( isset($input['fcm_token']) )
         {
