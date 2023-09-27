@@ -10,6 +10,7 @@ use App\Http\Resources\UserResource;
 use App\Models\User;
 use App\Models\UserDevices;
 use App\Repositories\UserRepository;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -284,10 +285,11 @@ class AuthController extends APIController
         $status = Password::sendResetLink(
             $request->only('email')
         );
-                return $this->respond([
-                    'status' => true,
-                    'message'=> 'Mail send successfully Please check your mail.'
-                ]);
+
+        return $this->respond([
+            'status' => true,
+            'message'=> 'Mail send successfully Please check your mail.'
+        ]);
     }
 
     /**
@@ -470,6 +472,9 @@ class AuthController extends APIController
         ];
 
         $user = $this->repository->create($dataArr);
+
+        // verification email send and send verification code
+        event(new Registered($user));
 
         if( isset($user->id) )
         {
