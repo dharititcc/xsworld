@@ -108,7 +108,8 @@ class BarRepository extends BaseRepository
         $order       = $this->orderQuery()
         ->where('type', Order::ORDER)
         ->whereIn('status', [Order::COMPLETED])
-        ->orderBy('id','desc')
+        ->orderBy('completion_date', 'asc')
+        ->orderBy('id', 'asc')
         ->get();
 
         return $order;
