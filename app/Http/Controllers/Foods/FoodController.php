@@ -35,7 +35,7 @@ class FoodController extends Controller
             {    //not available
                 $data =  $this->updateItemAvailable($request->get('disable'), 0);
             }
-            $data = RestaurantItem::query()
+            $data = RestaurantItem::query()->groupBy('name')
                     ->with(['category', 'restaurant','variations'])
                     ->whereHas('restaurant', function($query) use($restaurant)
                     {
@@ -61,7 +61,7 @@ class FoodController extends Controller
                         $data = $data->Textsearch(e($request->get('search_main')),"search");
 
                     }
-                    $data = $data->get();
+                    $data = $data->latest()->get();
             return Datatables::of($data)
                 ->make(true);
         }
@@ -98,7 +98,7 @@ class FoodController extends Controller
             $profileImage = date('YmdHis') . "." . $image->getClientOriginalExtension();
             $image->move($destinationPath, $profileImage);
         }
-        $categories = explode(',',$request->get('category_id'));
+        $categories = $request->get('category_id');
 
         foreach ($categories as $key => $value)
         {
@@ -109,13 +109,12 @@ class FoodController extends Controller
                 "price"                 => $request->get('price'),
                 "ingredients"           => $request->get('ingredients'),
                 "country_of_origin"     => $request->get('country_of_origin'),
-                "type_of_drink"         => $request->get('type_of_drink'),
                 "year_of_production"    => $request->get('year_of_production'),
                 "photo"                 => $request->get('name'),
                 "is_variable"           => $request->get('is_variable'),
                 "is_featured"           => $request->get('is_featured'),
                 "is_available"          => 1,
-                "type"                  => 2,
+                "type"                  => RestaurantItem::ITEM,
                 "restaurant_id"         => $restaurant->id
             ];
             $newRestaurantItem = RestaurantItem::create($drinkArr);
@@ -133,9 +132,26 @@ class FoodController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(RestaurantItem $food)
     {
-        //
+        $categories = RestaurantItem::query()->select('category_id')->where('restaurant_id', $food->restaurant_id)->where('type', RestaurantItem::ITEM)->where('name', $food->name)->groupBy('category_id')->pluck('category_id')->toArray();
+
+        $data = [
+            'name'          => $food->name,
+            'price'         => $food->price,
+            'categories'    => $categories,
+            'image'         => $food->attachment ? asset('storage/items/'.$food->attachment->stored_name) : '',
+            'restaurant_id' => $food->restaurant_id,
+            'ingredients'   => $food->ingredients,
+            'country_of_origin' => $food->country_of_origin,
+            'year_of_production'    => $food->year_of_production,
+            'description'   => $food->description,
+        ];
+
+        return response()->json([
+            'status' => true,
+            'data'   => $data
+        ]);
     }
 
     /**
@@ -156,9 +172,184 @@ class FoodController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, RestaurantItem $food)
     {
-        //
+        $restaurant = session('restaurant')->loadMissing(['main_categories', 'main_categories.children']);
+        $image = $request->file('photo');
+        $profileImage ="";
+        if ($image = $request->file('photo'))
+        {
+            $destinationPath = public_path('/storage/items');
+            $profileImage = date('YmdHis') . "." . $image->getClientOriginalExtension();
+            $image->move($destinationPath, $profileImage);
+        }
+
+        //category
+        $category = $request->get('category_id');
+
+        // get old Food list
+        $oldCategories = RestaurantItem::where('restaurant_id', $food->restaurant_id)->where('type', RestaurantItem::ITEM)->where('name', $food->name)->get();
+        
+        foreach($oldCategories as $del_cal_item)
+        {
+            // dd($del_cal_item);
+            $del_cal_item->delete();
+        }
+        
+        
+        if( !empty( $category ) )
+        {
+            $oldCategories = RestaurantItem::onlyTrashed()->where('restaurant_id', $food->restaurant_id)->where('type', RestaurantItem::ITEM)->where('name', $food->name)->whereIn('category_id', $category)->restore();
+            foreach( $category as $cat )
+            {
+                // dd($cat);
+                // check if item exist
+                
+                $oldCategories = RestaurantItem::where('restaurant_id', $food->restaurant_id)->where('type', RestaurantItem::ITEM)->where('name', $food->name)->where('category_id', $cat)->first();
+                // dd($oldCategories);
+                
+                $oldCategories->restore();
+                if( isset( $oldCategories ) )
+                {
+                    // restore and update
+                    
+
+                    // update logic
+                    foreach($oldCategories as $old_cat)
+                    {
+
+                        $old_cat->name = $request->get('name');
+                        $old_cat->price = $request->get('price');
+                        $old_cat->category_id = $cat;
+    
+                        $old_cat->description           = $request->get('description');
+                        $old_cat->ingredients           = $request->get('ingredients');
+                        $old_cat->country_of_origin     = $request->get('country_of_origin');
+                        $old_cat->year_of_production    = $request->get('year_of_production');
+                        $old_cat->is_variable           = $request->get('is_variable');
+                        $old_cat->is_featured           = $request->get('is_featured');
+                        $old_cat->save();
+                        $old_cat->attachment()->create([
+                            'stored_name'   => $profileImage,
+                            'original_name' => $profileImage,
+                            'attachmentable_id' => $old_cat->id,
+                        ]);
+                    }
+
+                    // $oldCategories->update([
+
+                    // ]);
+                }
+                else
+                {
+                    $foodArr = [
+                        "name"                  => $request->get('name'),
+                        "category_id"           => $cat,
+                        "description"           => $request->get('description'),
+                        "price"                 => $request->get('price'),
+                        "ingredients"           => $request->get('ingredients'),
+                        "country_of_origin"     => $request->get('country_of_origin'),
+                        "year_of_production"    => $request->get('year_of_production'),
+                        "photo"                 => $request->get('name'),
+                        "is_variable"           => $request->get('is_variable'),
+                        "is_featured"           => $request->get('is_featured'),
+                        "is_available"          => 1,
+                        "type"                  => RestaurantItem::ITEM,
+                        "restaurant_id"         => $restaurant->id
+                    ];
+                    $newRestaurantItem = RestaurantItem::create($foodArr);
+                    $newRestaurantItem->attachment()->create([
+                        'stored_name'   => $profileImage,
+                        'original_name' => $profileImage
+                    ]);
+                }
+            }
+            return true;
+        }
+        dd('exit');
+
+        // if( !empty( $changeArr ) )
+        // {
+        //     $items = RestaurantItem::where('restaurant_id', $food->restaurant_id)->where('type', RestaurantItem::ITEM)->where('name', $food->name)->whereIn('category_id', $changeArr)->get();
+
+        //     if( $items->count() )
+        //     {
+        //         foreach( $items as $item )
+        //         {
+        //             // delete
+        //             $item->delete();
+        //         }
+        //     }
+        // }
+
+        // if( !empty( $category ) )
+        // {
+        //     foreach( $category as $cat )
+        //     {
+        //         // dd($cat);
+        //         $oldFood = RestaurantItem::where('restaurant_id', $food->restaurant_id)
+        //                     ->where('type', RestaurantItem::ITEM)
+        //                     ->where('category_id', $cat)
+        //                     ->whereNull('type_of_drink')
+        //                     ->first();
+
+
+                
+        //         if( isset( $oldFood->id ) )
+        //         {
+        //             dd($oldFood);
+        //             // update
+        //             $oldFood->name = $request->get('name');
+        //             $oldFood->price = $request->get('price');
+        //             $oldFood->category_id = $cat;
+
+        //             $oldFood->description           = $request->get('description');
+        //             $oldFood->ingredients           = $request->get('ingredients');
+        //             $oldFood->country_of_origin     = $request->get('country_of_origin');
+        //             $oldFood->year_of_production    = $request->get('year_of_production');
+        //             $oldFood->is_variable           = $request->get('is_variable');
+        //             $oldFood->is_featured           = $request->get('is_featured');
+        //             $oldFood->save();
+
+        //             $oldFood->attachment()->create([
+        //                 'stored_name'   => $profileImage,
+        //                 'original_name' => $profileImage,
+        //                 'attachmentable_id' => $oldFood->id,
+        //             ]);
+        //             // dd($oldFood);
+        //         }
+        //         else
+        //         {
+        //             dd('else');
+        //             // insert
+        //             $newDrink = RestaurantItem::create(
+        //                 [
+
+        //                     "name"                  => $request->get('name'),
+        //                     "category_id"           => $cat,
+        //                     "description"           => $request->get('description'),
+        //                     "price"                 => $request->get('price'),
+        //                     "ingredients"           => $request->get('ingredients'),
+        //                     "country_of_origin"     => $request->get('country_of_origin'),
+        //                     "year_of_production"    => $request->get('year_of_production'),
+        //                     "is_variable"           => $request->get('is_variable'),
+        //                     "is_featured"           => $request->get('is_featured'),
+        //                     "is_available"          => 1,
+        //                     "type"                  => RestaurantItem::ITEM,
+        //                     "restaurant_id"         => $restaurant->id
+        //                 ]
+        //             );
+
+        //             $newDrink->attachment()->create([
+        //                 'stored_name'   => $profileImage,
+        //                 'original_name' => $profileImage,
+        //                 'attachmentable_id' => $newDrink->id,
+        //             ]);
+        //         }
+        //     }
+
+        //     return true;
+        // }
     }
 
     /**

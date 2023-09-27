@@ -63,7 +63,7 @@ class DrinkController extends Controller
                         $data = $data->Textsearch(e($request->get('search_main')),"search");
 
                     }
-                    $data = $data->get();
+                    $data = $data->orderByDesc('id')->get();
             return Datatables::of($data)
                 ->make(true);
         }
@@ -252,7 +252,6 @@ class DrinkController extends Controller
                 }
                 else
                 {
-                    dd('Hii');
                     // insert
                     $newDrink = RestaurantItem::create(
                         [
