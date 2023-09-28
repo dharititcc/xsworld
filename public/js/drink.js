@@ -101,8 +101,8 @@
             category:           jQuery('.drink_cat'),
             drinkModalAnchor:   jQuery('.drink_modal'),
             drinkForm:          jQuery('#drinkpopup'),
-            drinkModalTitle:    jQuery('model_title'),
-            drinkSubmitBtn:     jQuery('submitBtn'),
+            drinkModalTitle:    jQuery('.model_title'),
+            drinkSubmitBtn:     jQuery('#submitBtn'),
             drinkModalBtn:      jQuery('.drink_popup_modal'),
         },
 
@@ -243,7 +243,7 @@
                     
                 if(drinkId == undefined)
                 {
-                    context.selectors.drinkModalTitle.html('Manually ');
+                    context.selectors.drinkModalTitle.html('Manually Add');
                     context.addDrinkFormValidation();
                     context.selectors.drinkForm.attr('action', moduleConfig.drinkStore);
 
