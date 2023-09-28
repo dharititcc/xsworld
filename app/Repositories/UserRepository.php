@@ -5,6 +5,7 @@ use App\Events\RegisterEvent;
 use App\Exceptions\GeneralException;
 use App\Models\User;
 use App\Models\UserDevices;
+use App\Models\UsersVerifyMobile;
 use App\Repositories\BaseRepository;
 use File;
 use Stripe\Source;
@@ -380,5 +381,44 @@ class UserRepository extends BaseRepository
         }
 
         throw new GeneralException('Failed to store device.');
+    }
+
+    /**
+     * Method sendOtp
+     *
+     * @param array $input [explicite description]
+     *
+     * @return void
+     *
+     * @throws \App\Exceptions\GeneralException
+     */
+    public function sendOtp(array $input)
+    {
+        $user = User::where(['country_code' => $input['country_code'], 'phone' =>$input['mobile_no'] ])->first();
+
+        if(isset($user->id))
+        {
+            $n        = 6;
+            $otp      = generateNumericOTP($n);
+            $user_sms = UsersVerifyMobile::where('otp',$otp)->first();
+            if($user_sms)
+            {
+                $otp  = generateNumericOTP($n);
+            }
+
+            $data['user_id']        = $user->id;
+            $data['country_code']   = $input['country_code'];
+            $data['mobile_no']      = $input['mobile_no'];
+            $data['otp']            = $otp;
+
+            $saveotp    = UsersVerifyMobile::create($data);
+            $mobile_no  = $input['country_code'].$input['mobile_no'];
+
+            // Send OTP to User
+            $send_otp   = sendTwilioCustomerSms($mobile_no,$otp);
+            return $send_otp;
+        }
+
+        throw new GeneralException('User not found.');
     }
 }

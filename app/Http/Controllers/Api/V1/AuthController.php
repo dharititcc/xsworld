@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Api\V1\Traits\Authenticate;
 use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\LoginRequest;
+use App\Http\Requests\SendOtpRequest;
 use App\Http\Requests\SocialRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
@@ -537,5 +538,19 @@ class AuthController extends APIController
             'token'     =>  $token,
             'item'      =>  new UserResource($user),
         ]);
+    }
+
+    /**
+     * Method sendOtp
+     *
+     * @param SendOtpRequest $request [explicite description]
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function sendOtp(SendOtpRequest $request): JsonResponse
+    {
+        $otp   = $this->repository->sendOtp($request->validated());
+
+        // return $this->respondSuccess('Order data found', new OrderResource($order_data));
     }
 }
