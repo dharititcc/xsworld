@@ -27,6 +27,8 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'v1', 'as' => 'api.v1.'], fun
         Route::post('register', 'AuthController@postRegister')->name('auth.register');
         // {api/v1/auth/social-register}
         Route::post('social-register', 'AuthController@socialRegister')->name('auth.socialregister');
+        // {api/v1/auth/send-otp}
+        Route::post('send-otp', 'AuthController@sendOtp')->name('auth.sendOtp');
         // {api/v1/users/password/reset}
         Route::patch('password/reset', 'AuthController@resetPassword')->name('user.resetPassword');
     });

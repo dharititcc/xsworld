@@ -25,10 +25,9 @@ class SocialRequest extends FormRequest
      */
     public function rules()
     {
-        return [
+        $rules = [
             'first_name'            => 'required|string',
             'last_name'             => 'required|string',
-            'email'                 => 'required|email',
             'phone'                 => 'required|unique:users,phone',
             'birth_date'            => 'required|date_format:Y-m-d',
             'platform'              => 'required',
@@ -43,5 +42,16 @@ class SocialRequest extends FormRequest
                                             Rule::in(User::EMAIL, User::PHONE, User::GOOGLE, User::FACEBOOK,User::APPLE)
                                         ]
         ];
+
+        if (request()->registration_type == User::APPLE)
+        {
+            $rules['social_id']      = 'required';
+        }
+
+        if( in_array(request()->registration_type, [ User::GOOGLE, User::FACEBOOK, User::EMAIL]))
+        {
+            $rules['email'] = 'required|email';
+        }
+        return $rules;
     }
 }

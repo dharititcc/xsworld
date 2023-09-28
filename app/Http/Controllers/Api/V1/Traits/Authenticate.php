@@ -85,6 +85,8 @@ trait Authenticate
                     return Auth::attempt($this->credentials($request));
                     break;
                 case User::APPLE:
+                    // validation
+                    $this->validateSocialId($request);
                     $user = User::where('social_id', $request->social_id)->first();
                     if( $user instanceof \App\Models\User && isset( $user->id ) )
                     {
@@ -222,6 +224,20 @@ trait Authenticate
         $user->save();
 
         return $user;
+    }
+
+    /**
+     * Method validateSocialId
+     *
+     * @param $request $request [explicite description]
+     *
+     * @return void
+     */
+    public function validateSocialId($request)
+    {
+        $request->validate([
+            'social_id' => 'required|string'
+        ]);
     }
 
 }

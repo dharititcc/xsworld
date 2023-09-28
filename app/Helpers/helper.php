@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use Twilio\Rest\Client;
 
 /**
  * Henerate UUID.
@@ -230,5 +231,64 @@ if (! function_exists('generateUniqueModelSlug')) {
 
         // Recursive call to the function unless a unique counter is generated
         return generateUniqueModelSlug($model, $slugAttribute, $slugField, $counter);
+    }
+}
+
+if (! function_exists('sendTwilioCustomerSms')) {
+    /**
+     * Method sendTwilioCustomerSms
+     *
+     * @param $mobile_no $mobile_no [explicite description]
+     * @param $otp $otp [explicite description]
+     *
+     * @return void
+     */
+    function sendTwilioCustomerSms($mobile_no,$otp)
+    {
+        try {
+            $token          = getenv("TWILIO_AUTH_TOKEN");
+            $twilio_sid     = getenv("TWILIO_ACCOUNT_SID");
+            $twilio_number  = getenv("TWILIO_PHONE_NUMBER");
+            $send_sms       = new Client($twilio_sid, $token);
+
+            $data = $send_sms->messages->create(
+                // Where to send a text message (your cell phone?)
+                $mobile_no,
+                array(
+                    'from' => $twilio_number,
+                    'body' => 'Your One Time Password for verify account'.$otp
+                ),
+                );
+            return 'send sms successfully';
+        } catch (Exception $e) {
+            return $this->respondWithError($e->getMessage());
+        }
+    }
+}
+
+if (! function_exists('generateNumericOTP')) {
+    // Function to generate OTP
+    function generateNumericOTP($n)
+    {
+        // Taking a generator string that consists of
+        // all the numeric digits
+        $generator = "1357902468";
+
+        // Iterating for n-times and pick a single character
+        // from generator and append it to $result
+
+        // Login for generating a random character from generator
+        //     ---generate a random number
+        //     ---take modulus of same with length of generator (say i)
+        //     ---append the character at place (i) from generator to result
+
+        $result = "";
+
+        for ($i = 1; $i <= $n; $i++) {
+            $result .= substr($generator, rand() % strlen($generator), 1);
+        }
+
+        // Returning the result
+        return $result;
     }
 }
