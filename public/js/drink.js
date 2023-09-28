@@ -164,10 +164,12 @@
                     price       = parent.find('input[name="variation_price"]');
 
                 context.selectors.drinkModal.find('.modal-body').find('.variety').append(`
-                    <a href="#" class="grey-brd-box item-box remove">
-                        <aside>${name.val()}</aside>
-                        <aside>${price.val()}</aside>
-                    </a>
+                    <div class="grey-brd-box item-box remove">
+                        <button><i class="icon-minus"></i></button>
+                        <aside> ${name.val()}
+                            <span>(${price.val()})</span>
+                        </aside>
+                    </div>
                 `);
 
                 context.selectors.drinkModal.find('form').append(`
