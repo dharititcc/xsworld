@@ -190,14 +190,13 @@ class DrinkController extends Controller
         //category
         $category = $request->get('category_id');
 
-        //get old Food list
+        //get old Drink list
         $oldCategories = RestaurantItem::where('restaurant_id', $drink->restaurant_id)->where('type', RestaurantItem::ITEM)->where('name', $drink->name)->get();
         foreach($oldCategories as $del_cal_item)
         {
             // dd($del_cal_item);
             $del_cal_item->delete();
         }
-        
         
         if( !empty( $category ) )
         {

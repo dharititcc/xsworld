@@ -152,7 +152,7 @@
                                     <span>($12.50)</span>
                                 </aside>
                             </div> --}}
-                            <a href="#" class="grey-brd-box item-box add" data-bs-toggle="modal"
+                            <a href="#" class="grey-brd-box item-box add add_variations" data-bs-toggle="modal"
                                 data-bs-target="#addDrink">
                                 <aside>+ Add Variation </aside>
                             </a>

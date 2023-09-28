@@ -195,7 +195,6 @@ class FoodController extends Controller
             $del_cal_item->delete();
         }
         
-        
         if( !empty( $category ) )
         {
             $oldCategory = RestaurantItem::onlyTrashed()->where('restaurant_id', $food->restaurant_id)->where('type', RestaurantItem::ITEM)->where('name', $food->name)->whereIn('category_id', $category)->restore();

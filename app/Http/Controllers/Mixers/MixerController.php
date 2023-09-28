@@ -153,53 +153,27 @@ class MixerController extends Controller
             $destinationPath = public_path('/storage/mixers');
             $profileImage = date('YmdHis') . "." . $image->getClientOriginalExtension();
             $image->move($destinationPath, $profileImage);
-            // unlink('/storage/mixers/'.$mixer->photo);
         }
 
         //category
         $category = $request->get('category');
 
         // get old mixers list
-        $oldCategories = RestaurantItem::where('restaurant_id', $mixer->restaurant_id)->where('type', RestaurantItem::MIXER)->where('name', $mixer->name)->get()->pluck('category_id')->toArray();
-        $changeArr = [];
-
-        if( !empty( $oldCategories ) )
+        $oldCategories = RestaurantItem::where('restaurant_id', $mixer->restaurant_id)->where('type', RestaurantItem::MIXER)->where('name', $mixer->name)->get();
+        foreach($oldCategories as $del_cal_item)
         {
-            foreach( $oldCategories as $oldCat )
-            {
-                if( !in_array($oldCat, $category) )
-                {
-                    $changeArr[] = $oldCat;
-                }
-            }
+            $del_cal_item->delete();
         }
-
-        if( !empty( $changeArr ) )
-        {
-            $items = RestaurantItem::where('restaurant_id', $mixer->restaurant_id)->where('type', RestaurantItem::MIXER)->where('name', $mixer->name)->whereIn('category_id', $changeArr)->get();
-
-            if( $items->count() )
-            {
-                foreach( $items as $item )
-                {
-                    // delete
-                    $item->delete();
-                }
-            }
-        }
-
+        
         if( !empty( $category ) )
         {
+            $oldCategory = RestaurantItem::onlyTrashed()->where('restaurant_id', $mixer->restaurant_id)->where('type', RestaurantItem::MIXER)->where('name', $mixer->name)->whereIn('category_id', $category)->restore();
             foreach( $category as $cat )
             {
-                $oldMixer = RestaurantItem::where('restaurant_id', $mixer->restaurant_id)
-                            ->where('type', RestaurantItem::MIXER)
-                            ->where('category_id', $cat)
-                            ->first();
-
-                if( isset( $oldMixer->id ) )
+                // check if item exist
+                $oldMixer = RestaurantItem::where('restaurant_id', $mixer->restaurant_id)->where('type', RestaurantItem::MIXER)->where('name', $mixer->name)->where('category_id', $cat)->first();
+                if( isset( $oldMixer ) )
                 {
-                    // update
                     $oldMixer->name = $request->get('name');
                     $oldMixer->price = $request->get('price');
                     $oldMixer->category_id = $cat;
@@ -213,7 +187,6 @@ class MixerController extends Controller
                 }
                 else
                 {
-                    // insert
                     $newMixer = RestaurantItem::create(
                         [
                             'name'              => $request->get('name'),
@@ -232,9 +205,8 @@ class MixerController extends Controller
                     ]);
                 }
             }
-
-            return true;
         }
+        return true;
     }
 
     /**
