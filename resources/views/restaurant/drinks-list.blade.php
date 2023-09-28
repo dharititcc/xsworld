@@ -57,7 +57,7 @@
 <script src="{{asset('js/enableSweetalert.js')}}"></script>
 <script src="{{asset('js/disableSweetalert.js')}}"></script>
     <!-- Global popup -->
-    <div class="modal fade" id="wd930" tabindex="0" aria-hidden="true">
+    <div class="modal fade" id="wd930" tabindex="0" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
         <div class="modal-dialog modal-dialog-centered modal-xl">
           <form name="adddrink" id="drinkpopup" method="post" >
             @csrf
@@ -152,8 +152,7 @@
                                     <span>($12.50)</span>
                                 </aside>
                             </div> --}}
-                            <a href="#" class="grey-brd-box item-box add add_variations" data-bs-toggle="modal"
-                                data-bs-target="#addDrink">
+                            <a href="#" class="grey-brd-box item-box add add_variations">
                                 <aside>+ Add Variation </aside>
                             </a>
                         </div>
@@ -176,16 +175,16 @@
                 <div class="modal-body">
                     <div style="min-height: 300px;">
                         <div class="form-group mb-4">
-                            <input type="text" class="form-control vari2" placeholder="Variation Name">
+                            <input type="text" name="variation_name" class="form-control vari2 variation_field" placeholder="Variation Name">
                         </div>
                         <div class="form-group mb-4">
-                            <input type="text" class="form-control vari2" placeholder="Variation Price">
+                            <input type="text" class="form-control vari2 variation_field" name="variation_price" placeholder="Variation Price">
                         </div>
-                        <div class="form-group">
+                        {{-- <div class="form-group">
                             <input type="text" class="form-control vari2" placeholder="Condition?">
-                        </div>
+                        </div> --}}
                     </div>
-                    <button class="bor-btn w-100 font-26" type="button">Save</button>
+                    <button class="bor-btn w-100 font-26" type="button" id="add_variation_btn">Save</button>
                 </div>
             </div>
         </div>

@@ -104,6 +104,9 @@
             drinkModalTitle:    jQuery('.model_title'),
             drinkSubmitBtn:     jQuery('#submitBtn'),
             drinkModalBtn:      jQuery('.drink_popup_modal'),
+            drinkVariationBtn:  jQuery('.add_variations'),
+            drinkVariationModal:jQuery('#addDrink'),
+            addVariationBtn:    jQuery('#add_variation_btn')
         },
 
         init: function (){
@@ -121,7 +124,64 @@
 
             context.openDrinkModal();
             context.closeDrinkModal();
+            context.openVariationModal();
+            context.closeVariationModal();
             XS.Common.fileReaderBind();
+            context.addVariation();
+        },
+
+        openVariationModal: function()
+        {
+            var context = this;
+
+            context.selectors.drinkVariationBtn.on('click', function(e)
+            {
+                e.preventDefault();
+
+                var $this = $(this);
+
+                context.selectors.drinkVariationModal.modal('show');
+            });
+        },
+
+        closeVariationModal: function()
+        {
+            // code...
+        },
+
+        addVariation: function()
+        {
+            // code...
+            var context = this;
+
+            context.selectors.addVariationBtn.on('click', function(e)
+            {
+                e.preventDefault();
+
+                var $this       = $(this),
+                    parent      = $this.closest('.modal-body'),
+                    name        = parent.find('input[name="variation_name"]'),
+                    price       = parent.find('input[name="variation_price"]');
+
+                context.selectors.drinkModal.find('.modal-body').find('.variety').append(`
+                    <a href="#" class="grey-brd-box item-box remove">
+                        <aside>${name.val()}</aside>
+                        <aside>${price.val()}</aside>
+                    </a>
+                `);
+
+                context.selectors.drinkModal.find('form').append(`
+                    <input type="hidden" name="drink_variation_name[]" class="variation_hidden" value="${name.val()}" />
+                    <input type="hidden" name="drink_variation_price[]" class="variation_hidden" value="${price.val()}" />
+                `);
+
+                context.selectors.drinkVariationModal.modal('hide');
+
+                context.selectors.drinkVariationModal.find('.modal-body').find('.variation_field').each(function()
+                {
+                    $(this).val('');
+                });
+            });
         },
 
         categoryFilter: function(){
@@ -203,6 +263,7 @@
 
         productTypeFilter: function()
         {
+            var context = this;
             jQuery('.product_type').on('click', function(e)
             {
                 var $this       = jQuery(this),
@@ -221,6 +282,17 @@
                     $('#product_type').val(0);
                     document.getElementById("price").style.visibility='visible';
                     $(".prd-variation").css("display", "none");
+
+                    // remove hidden variation
+                    context.selectors.drinkModal.find('form').find('.variation_hidden').each(function()
+                    {
+                        $(this).remove();
+                    });
+
+                    context.selectors.drinkModal.find('.modal-body').find('.variety').find('.remove').each(function()
+                    {
+                        $(this).remove();
+                    });
                 }
 
                 $this.addClass('active');
@@ -240,7 +312,7 @@
                     productType = $this.data('product_type');
                     $('#product_type').val(0);
                     $('#is_featured').val(0);
-                    
+
                 if(drinkId == undefined)
                 {
                     context.selectors.drinkModalTitle.html('Manually Add');
@@ -287,6 +359,10 @@
                 context.selectors.drinkForm.removeAttr('action');
                 $this.find('.pip').remove();
                 $this.find('.cstm-catgory').find('input[name="category_id[]"]').prop('checked', false);
+                context.selectors.drinkModal.find('.modal-body').find('.variety').find('.remove').each(function()
+                {
+                    $(this).remove();
+                });
             });
         },
 
