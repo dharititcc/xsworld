@@ -259,9 +259,9 @@ class OrderRepository extends BaseRepository
     {
         $user        = auth()->user();
 
-        $user->loadMissing(['latest_order']);
+        $user->loadMissing(['latest_order', 'orders']);
 
-        return $user->latest_order;
+        return $user->orders()->whereIn('status', [Order::ACCEPTED, Order::PENDNIG, Order::COMPLETED])->orderBy('id', 'desc')->first();
     }
 
     /**

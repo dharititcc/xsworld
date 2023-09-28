@@ -1,12 +1,12 @@
 <?php namespace App\Repositories;
 
 use App\Billing\Stripe;
+use App\Events\RegisterEvent;
 use App\Exceptions\GeneralException;
 use App\Models\User;
 use App\Models\UserDevices;
 use App\Repositories\BaseRepository;
 use File;
-use Illuminate\Support\Arr;
 use Stripe\Source;
 use Stripe\Token;
 
@@ -149,6 +149,9 @@ class UserRepository extends BaseRepository
             $user = User::create($data);
             if( $data['user_type'] == User::CUSTOMER )
             {
+                // verification email send and send verification code
+                event(new RegisterEvent($user));
+
                 $stripe     = new Stripe();
                 $customer   = $stripe->createCustomer($data);
                 $str['stripe_customer_id'] = $customer->id;
