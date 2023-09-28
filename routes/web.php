@@ -85,4 +85,15 @@ Route::group(['prefix' => 'restaurants', 'as' => 'restaurants.', 'middleware' =>
 
 });
 
+Route::middleware(['guest'])->group(function()
+{
+    Route::group(['namespace' => 'Auth', 'prefix' => 'auth', 'as' => 'auth.'], function()
+    {
+        // verify email
+        Route::get('verify/{token}', 'XSWorldVerificationController@verify')->name('verify-email');
+
+        Route::get('verification-success/{token}', 'XSWorldVerificationController@verificationSuccess')->name('verification-success');
+    });
+});
+
 

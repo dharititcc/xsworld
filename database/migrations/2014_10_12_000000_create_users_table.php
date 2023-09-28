@@ -37,6 +37,7 @@ class CreateUsersTable extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('fcm_token')->nullable();
             $table->string('username')->nullable();
+            $table->string('verification_code', 100)->nullable();
             $table->rememberToken();
             $table->timestamps();
 
