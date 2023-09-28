@@ -187,9 +187,8 @@ class FoodController extends Controller
         //category
         $category = $request->get('category_id');
 
-        // get old Food list
+        //get old Food list
         $oldCategories = RestaurantItem::where('restaurant_id', $food->restaurant_id)->where('type', RestaurantItem::ITEM)->where('name', $food->name)->get();
-        
         foreach($oldCategories as $del_cal_item)
         {
             // dd($del_cal_item);
@@ -199,46 +198,29 @@ class FoodController extends Controller
         
         if( !empty( $category ) )
         {
-            $oldCategories = RestaurantItem::onlyTrashed()->where('restaurant_id', $food->restaurant_id)->where('type', RestaurantItem::ITEM)->where('name', $food->name)->whereIn('category_id', $category)->restore();
+            $oldCategory = RestaurantItem::onlyTrashed()->where('restaurant_id', $food->restaurant_id)->where('type', RestaurantItem::ITEM)->where('name', $food->name)->whereIn('category_id', $category)->restore();
             foreach( $category as $cat )
             {
-                // dd($cat);
                 // check if item exist
-                
-                $oldCategories = RestaurantItem::where('restaurant_id', $food->restaurant_id)->where('type', RestaurantItem::ITEM)->where('name', $food->name)->where('category_id', $cat)->first();
-                // dd($oldCategories);
-                
-                $oldCategories->restore();
-                if( isset( $oldCategories ) )
+                $old_cat = RestaurantItem::where('restaurant_id', $food->restaurant_id)->where('type', RestaurantItem::ITEM)->where('name', $food->name)->where('category_id', $cat)->first();
+                if( isset( $old_cat ) )
                 {
-                    // restore and update
-                    
+                    $old_cat->name = $request->get('name');
+                    $old_cat->price = $request->get('price');
+                    $old_cat->category_id = $cat;
 
-                    // update logic
-                    foreach($oldCategories as $old_cat)
-                    {
-
-                        $old_cat->name = $request->get('name');
-                        $old_cat->price = $request->get('price');
-                        $old_cat->category_id = $cat;
-    
-                        $old_cat->description           = $request->get('description');
-                        $old_cat->ingredients           = $request->get('ingredients');
-                        $old_cat->country_of_origin     = $request->get('country_of_origin');
-                        $old_cat->year_of_production    = $request->get('year_of_production');
-                        $old_cat->is_variable           = $request->get('is_variable');
-                        $old_cat->is_featured           = $request->get('is_featured');
-                        $old_cat->save();
-                        $old_cat->attachment()->create([
-                            'stored_name'   => $profileImage,
-                            'original_name' => $profileImage,
-                            'attachmentable_id' => $old_cat->id,
-                        ]);
-                    }
-
-                    // $oldCategories->update([
-
-                    // ]);
+                    $old_cat->description           = $request->get('description');
+                    $old_cat->ingredients           = $request->get('ingredients');
+                    $old_cat->country_of_origin     = $request->get('country_of_origin');
+                    $old_cat->year_of_production    = $request->get('year_of_production');
+                    $old_cat->is_variable           = $request->get('is_variable');
+                    $old_cat->is_featured           = $request->get('is_featured');
+                    $old_cat->save();
+                    $old_cat->attachment()->create([
+                        'stored_name'   => $profileImage,
+                        'original_name' => $profileImage,
+                        'attachmentable_id' => $old_cat->id,
+                    ]);
                 }
                 else
                 {
@@ -264,92 +246,8 @@ class FoodController extends Controller
                     ]);
                 }
             }
-            return true;
         }
-        dd('exit');
-
-        // if( !empty( $changeArr ) )
-        // {
-        //     $items = RestaurantItem::where('restaurant_id', $food->restaurant_id)->where('type', RestaurantItem::ITEM)->where('name', $food->name)->whereIn('category_id', $changeArr)->get();
-
-        //     if( $items->count() )
-        //     {
-        //         foreach( $items as $item )
-        //         {
-        //             // delete
-        //             $item->delete();
-        //         }
-        //     }
-        // }
-
-        // if( !empty( $category ) )
-        // {
-        //     foreach( $category as $cat )
-        //     {
-        //         // dd($cat);
-        //         $oldFood = RestaurantItem::where('restaurant_id', $food->restaurant_id)
-        //                     ->where('type', RestaurantItem::ITEM)
-        //                     ->where('category_id', $cat)
-        //                     ->whereNull('type_of_drink')
-        //                     ->first();
-
-
-                
-        //         if( isset( $oldFood->id ) )
-        //         {
-        //             dd($oldFood);
-        //             // update
-        //             $oldFood->name = $request->get('name');
-        //             $oldFood->price = $request->get('price');
-        //             $oldFood->category_id = $cat;
-
-        //             $oldFood->description           = $request->get('description');
-        //             $oldFood->ingredients           = $request->get('ingredients');
-        //             $oldFood->country_of_origin     = $request->get('country_of_origin');
-        //             $oldFood->year_of_production    = $request->get('year_of_production');
-        //             $oldFood->is_variable           = $request->get('is_variable');
-        //             $oldFood->is_featured           = $request->get('is_featured');
-        //             $oldFood->save();
-
-        //             $oldFood->attachment()->create([
-        //                 'stored_name'   => $profileImage,
-        //                 'original_name' => $profileImage,
-        //                 'attachmentable_id' => $oldFood->id,
-        //             ]);
-        //             // dd($oldFood);
-        //         }
-        //         else
-        //         {
-        //             dd('else');
-        //             // insert
-        //             $newDrink = RestaurantItem::create(
-        //                 [
-
-        //                     "name"                  => $request->get('name'),
-        //                     "category_id"           => $cat,
-        //                     "description"           => $request->get('description'),
-        //                     "price"                 => $request->get('price'),
-        //                     "ingredients"           => $request->get('ingredients'),
-        //                     "country_of_origin"     => $request->get('country_of_origin'),
-        //                     "year_of_production"    => $request->get('year_of_production'),
-        //                     "is_variable"           => $request->get('is_variable'),
-        //                     "is_featured"           => $request->get('is_featured'),
-        //                     "is_available"          => 1,
-        //                     "type"                  => RestaurantItem::ITEM,
-        //                     "restaurant_id"         => $restaurant->id
-        //                 ]
-        //             );
-
-        //             $newDrink->attachment()->create([
-        //                 'stored_name'   => $profileImage,
-        //                 'original_name' => $profileImage,
-        //                 'attachmentable_id' => $newDrink->id,
-        //             ]);
-        //         }
-        //     }
-
-        //     return true;
-        // }
+        return true;
     }
 
     /**

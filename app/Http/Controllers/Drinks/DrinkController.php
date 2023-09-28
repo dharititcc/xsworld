@@ -190,98 +190,69 @@ class DrinkController extends Controller
         //category
         $category = $request->get('category_id');
 
-        // get old Drink list
-        $oldCategories = RestaurantItem::where('restaurant_id', $drink->restaurant_id)->where('type', RestaurantItem::ITEM)->where('name', $drink->name)->get()->pluck('category_id')->toArray();
-        $changeArr = [];
-
-        if( !empty( $oldCategories ) )
+        //get old Food list
+        $oldCategories = RestaurantItem::where('restaurant_id', $drink->restaurant_id)->where('type', RestaurantItem::ITEM)->where('name', $drink->name)->get();
+        foreach($oldCategories as $del_cal_item)
         {
-            foreach( $oldCategories as $oldCat )
-            {
-                if( !in_array($oldCat, $category) )
-                {
-                    $changeArr[] = $oldCat;
-                }
-            }
+            // dd($del_cal_item);
+            $del_cal_item->delete();
         }
-
-        if( !empty( $changeArr ) )
-        {
-            $items = RestaurantItem::where('restaurant_id', $drink->restaurant_id)->where('type', RestaurantItem::ITEM)->where('name', $drink->name)->whereIn('category_id', $changeArr)->get();
-
-            if( $items->count() )
-            {
-                foreach( $items as $item )
-                {
-                    // delete
-                    $item->delete();
-                }
-            }
-        }
-
+        
+        
         if( !empty( $category ) )
         {
+            $oldCategory = RestaurantItem::onlyTrashed()->where('restaurant_id', $drink->restaurant_id)->where('type', RestaurantItem::ITEM)->where('name', $drink->name)->whereIn('category_id', $category)->restore();
             foreach( $category as $cat )
             {
-                $oldDrink = RestaurantItem::where('restaurant_id', $drink->restaurant_id)
-                            ->where('type', RestaurantItem::ITEM)
-                            ->where('category_id', $cat)
-                            ->first();
-
-                if( isset( $oldDrink->id ) )
+                // check if item exist
+                $old_cat = RestaurantItem::where('restaurant_id', $drink->restaurant_id)->where('type', RestaurantItem::ITEM)->where('name', $drink->name)->where('category_id', $cat)->first();
+                if( isset( $old_cat ) )
                 {
-                    // update
-                    $oldDrink->name = $request->get('name');
-                    $oldDrink->price = $request->get('price');
-                    $oldDrink->category_id = $cat;
+                    $old_cat->name = $request->get('name');
+                    $old_cat->price = $request->get('price');
+                    $old_cat->category_id = $cat;
 
-                    $oldDrink->description           = $request->get('description');
-                    $oldDrink->ingredients           = $request->get('ingredients');
-                    $oldDrink->country_of_origin     = $request->get('country_of_origin');
-                    $oldDrink->type_of_drink         = $request->get('type_of_drink');
-                    $oldDrink->year_of_production    = $request->get('year_of_production');
-                    $oldDrink->is_variable           = $request->get('is_variable');
-                    $oldDrink->is_featured           = $request->get('is_featured');
-                    $oldDrink->save();
-
-                    $oldDrink->attachment()->create([
+                    $old_cat->description           = $request->get('description');
+                    $old_cat->ingredients           = $request->get('ingredients');
+                    $old_cat->country_of_origin     = $request->get('country_of_origin');
+                    $old_cat->type_of_drink         = $request->get('type_of_drink');
+                    $old_cat->year_of_production    = $request->get('year_of_production');
+                    $old_cat->is_variable           = $request->get('is_variable');
+                    $old_cat->is_featured           = $request->get('is_featured');
+                    $old_cat->save();
+                    $old_cat->attachment()->create([
                         'stored_name'   => $profileImage,
                         'original_name' => $profileImage,
-                        'attachmentable_id' => $oldDrink->id,
+                        'attachmentable_id' => $old_cat->id,
                     ]);
                 }
                 else
                 {
-                    // insert
-                    $newDrink = RestaurantItem::create(
-                        [
-
-                            "name"                  => $request->get('name'),
-                            "category_id"           => $cat,
-                            "description"           => $request->get('description'),
-                            "price"                 => $request->get('price'),
-                            "ingredients"           => $request->get('ingredients'),
-                            "country_of_origin"     => $request->get('country_of_origin'),
-                            "type_of_drink"         => $request->get('type_of_drink'),
-                            "year_of_production"    => $request->get('year_of_production'),
-                            "is_variable"           => $request->get('is_variable'),
-                            "is_featured"           => $request->get('is_featured'),
-                            "is_available"          => 1,
-                            "type"                  => RestaurantItem::ITEM,
-                            "restaurant_id"         => $restaurant->id
-                        ]
-                    );
-
-                    $newDrink->attachment()->create([
+                    $drinkArr = [
+                        "name"                  => $request->get('name'),
+                        "category_id"           => $cat,
+                        "description"           => $request->get('description'),
+                        "price"                 => $request->get('price'),
+                        "ingredients"           => $request->get('ingredients'),
+                        "country_of_origin"     => $request->get('country_of_origin'),
+                        "type_of_drink"         => $request->get('type_of_drink'),
+                        "year_of_production"    => $request->get('year_of_production'),
+                        "photo"                 => $request->get('name'),
+                        "is_variable"           => $request->get('is_variable'),
+                        "is_featured"           => $request->get('is_featured'),
+                        "is_available"          => 1,
+                        "type"                  => RestaurantItem::ITEM,
+                        "restaurant_id"         => $restaurant->id
+                    ];
+                    $newRestaurantItem = RestaurantItem::create($drinkArr);
+                    $newRestaurantItem->attachment()->create([
                         'stored_name'   => $profileImage,
-                        'original_name' => $profileImage,
-                        'attachmentable_id' => $newDrink->id,
+                        'original_name' => $profileImage
                     ]);
                 }
             }
-
-            return true;
         }
+        return true;
     }
 
     /**

@@ -102,8 +102,8 @@
             category:           jQuery('.food_cat'),
             foodModalAnchor:    jQuery('.food_modal'),
             foodForm:           jQuery('#drinkpopup'),
-            foodModalTitle:     jQuery('model_title'),
-            foodSubmitBtn:      jQuery('submitBtn'),
+            foodModalTitle:     jQuery('.model_title'),
+            foodSubmitBtn:      jQuery('#submitBtn'),
             foodModalBtn:       jQuery('.drink_popup_modal'),
         },
 
@@ -245,7 +245,7 @@
                     
                 if(foodId == undefined)
                 {
-                    context.selectors.foodModalTitle.html('Manually ');
+                    context.selectors.foodModalTitle.html('Manually Add');
                     context.addFoodFormValidation();
                     context.selectors.foodForm.attr('action', moduleConfig.addFood);
 
