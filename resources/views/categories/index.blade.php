@@ -26,11 +26,11 @@
                                     <input name="_method" type="hidden" value="DELETE">
                                     <button type="submit" class="show_confirm" data-toggle="tooltip" title='Delete'><i class="icon-trash"></i></button>
                                 </form>
-                                
+
                                 {{-- <button onclick="return deleteConform({{ $child->id }});"><i
                                         class="icon-trash"></i></button> --}}
                                 {{-- <a  onclick="return deleteConform('Are you sure?')" href="#"><i class="icon-trash"></i></a> --}}
-                                <figure onClick="updateCategory({{ $child->id }})" data-type="Edit" data-parent_id="{{ $category->id }}" data-parent="{{ $category->name }}" class="category_model"><img src="{{ $child->image }}"
+                                <figure onClick="updateCategory({{ $child->id }})" data-child_id="{{ $child->id }}" data-type="Edit" data-parent_id="{{ $category->id }}" data-parent="{{ $category->name }}" class="category_model"><img src="{{ $child->image }}"
                                         alt="{{ $child->name }}">
                                     <figcaption><span> {{ $child->name }}</span></figcaption>
                                 </figure>
@@ -381,10 +381,19 @@
             })
                 .then((willDelete) => {
                     if (willDelete) {
-                        var category = [];
-                        $.each($("input[name='category']:checked"), function(i) {
-                            category[i] = $(this).val();
-                        });
+                        var category = [],
+                            form     = $(this).closest('form');
+
+                        if( form.get(0) )
+                        {
+                            category.push(form.closest('.catg-box').find('figure').data('child_id'));
+                        }
+                        else
+                        {
+                            $.each($("input[name='category']:checked"), function(i) {
+                                category[i] = $(this).val();
+                            });
+                        }
                         console.log(category);
                         $.ajax({
                             headers: {
@@ -396,6 +405,14 @@
                                 category
                             },
                             success: function(response) {
+                                if( category.length > 1 )
+                                {
+                                    alert('Categories deleted successfully.');
+                                }
+                                else
+                                {
+                                    alert('Category deleted successfully.');
+                                }
                                 location.reload(true);
                             }
                         });
