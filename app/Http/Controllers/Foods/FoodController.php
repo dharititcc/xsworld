@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Foods;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\RestaurantItem;
+use App\Models\RestaurantVariation;
 use DataTables;
 
 class FoodController extends Controller
@@ -118,6 +119,30 @@ class FoodController extends Controller
                 "restaurant_id"         => $restaurant->id
             ];
             $newRestaurantItem = RestaurantItem::create($drinkArr);
+
+            $variationArr = [];
+            if($drinkArr['is_variable'] == 1)
+            {
+                foreach($request->drink_variation_name as $keys => $drink_variation_name)
+                {
+                    $variationArr[$keys]['name'] = $drink_variation_name;
+                }
+                foreach($request->drink_variation_price as $keys => $drink_variation_price)
+                {
+                    $variationArr[$keys]['price'] = $drink_variation_price;
+                }
+
+                foreach($variationArr as $key => $variation)
+                {
+                    RestaurantVariation::create([
+                        'name'                  => $variation['name'],
+                        'price'                 => $variation['price'],
+                        'restaurant_item_id'    => $newRestaurantItem->id ,
+                    ]);
+                }
+            }
+
+
             $newRestaurantItem->attachment()->create([
                 'stored_name'   => $profileImage,
                 'original_name' => $profileImage
@@ -135,7 +160,7 @@ class FoodController extends Controller
     public function show(RestaurantItem $food)
     {
         $categories = RestaurantItem::query()->select('category_id')->where('restaurant_id', $food->restaurant_id)->where('type', RestaurantItem::ITEM)->where('name', $food->name)->groupBy('category_id')->pluck('category_id')->toArray();
-
+        $restaurantVariation = RestaurantVariation::select('name','price')->where('restaurant_item_id',$food->id)->get()->toArray();
         $data = [
             'name'          => $food->name,
             'price'         => $food->price,
@@ -146,6 +171,7 @@ class FoodController extends Controller
             'country_of_origin' => $food->country_of_origin,
             'year_of_production'    => $food->year_of_production,
             'description'   => $food->description,
+            'variation'     => !empty($restaurantVariation) ? $restaurantVariation : [],
         ];
 
         return response()->json([

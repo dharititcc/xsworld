@@ -59,7 +59,7 @@
 <script src="{{asset('js/disableSweetalert.js')}}"></script>
 @parent
 <!-- Global popup -->
-<div class="modal fade" id="wd930" tabindex="0" aria-hidden="true">
+<div class="modal fade" id="wd930" tabindex="0" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
     <div class="modal-dialog modal-dialog-centered modal-xl">
         <form name="adddrink" id="drinkpopup" method="post">
             <div class="modal-content">
@@ -78,8 +78,8 @@
                     <div class="row">
                         <div class="col-md-4">
                             <div class="tab-btn">
-                                <a href="#" class="bor-btn product_type active" data-product_type="0">Simple</a>
-                                <a href="#" class="bor-btn product_type" data-product_type="1">Variable</a>
+                                <a href="javascript:void(0)" class="bor-btn product_type active" data-product_type="0">Simple</a>
+                                <a href="javascript:void(0)" class="bor-btn product_type" data-product_type="1">Variable</a>
                             </div>
                             {{-- <div class="grey-brd-box d-flex featured-img">
                               <a href="#" class="add-edit"><i class="icon-plus"></i></a>
@@ -135,7 +135,7 @@
                     <div class="prd-variation" style="display: none">
                         <div class="head">
                             <h2 class="yellow">Food Variations</h2>
-                            <div class="add-remove"><a href="#" class="bor-btn plus" type="button"><i class="icon-plus"></i></a> <a href="#" class="bor-btn minus" type="button"><i class="icon-minus"></i></a></div>
+                            <div class="add-remove"><a href="#" class="bor-btn plus remove_variation" type="button"><i class="icon-plus"></i></a> <a href="#" class="bor-btn minus" type="button"><i class="icon-minus"></i></a></div>
                         </div>
                         <div class="variety grid colmn-7">
                             {{-- <div class="grey-brd-box item-box">
@@ -144,7 +144,7 @@
                                   <span>($12.50)</span>
                               </aside>
                           </div> --}}
-                            <a href="#" class="grey-brd-box item-box add" data-bs-toggle="modal" data-bs-target="#addDrink">
+                            <a href="javascript:void(0)" class="grey-brd-box item-box add add_variations">
                                 <aside>+ Add Variation </aside>
                             </a>
                         </div>
@@ -166,16 +166,16 @@
             <div class="modal-body">
                 <div style="min-height: 300px;">
                     <div class="form-group mb-4">
-                        <input type="text" class="form-control vari2" placeholder="Variation Name">
+                        <input type="text" name="variation_name" class="form-control vari2 variation_field" placeholder="Variation Name">
                     </div>
                     <div class="form-group mb-4">
-                        <input type="text" class="form-control vari2" placeholder="Variation Price">
+                        <input type="text" class="form-control vari2 variation_field" name="variation_price" placeholder="Variation Price">
                     </div>
-                    <div class="form-group">
+                    {{-- <div class="form-group">
                         <input type="text" class="form-control vari2" placeholder="Condition?">
-                    </div>
+                    </div> --}}
                 </div>
-                <button class="bor-btn w-100 font-26" type="button">Save</button>
+                <button class="bor-btn w-100 font-26" type="button" id="add_variation_btn">Save</button>
             </div>
         </div>
     </div>

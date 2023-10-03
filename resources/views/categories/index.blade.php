@@ -354,23 +354,23 @@
             });
         });
 
-        function deleteConform(id) {
-            if (!confirm("Are You Sure to delete this 'Category' and 'All Items'?")) {
-                event.preventDefault();
-            } else {
-                $.ajax({
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    },
-                    url: "categories/" + id,
-                    type: "DELETE",
-                    success: function(response) {
-                        alert('Delete Category is deleted successfully');
-                        location.reload(true);
-                    }
-                });
-            }
-        }
+        // function deleteConform(id) {
+        //     if (!confirm("Are You Sure to delete this 'Category' and 'All Items'?")) {
+        //         event.preventDefault();
+        //     } else {
+        //         $.ajax({
+        //             headers: {
+        //                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        //             },
+        //             url: "categories/" + id,
+        //             type: "DELETE",
+        //             success: function(response) {
+        //                 alert('Delete Category is deleted successfully');
+        //                 location.reload(true);
+        //             }
+        //         });
+        //     }
+        // }
         $('.show_confirm').click(function(event) {
             event.preventDefault();
             swal({

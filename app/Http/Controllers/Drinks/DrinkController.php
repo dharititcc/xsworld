@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\RestaurantItem;
 use App\Models\Category;
 use App\Models\Restaurant;
+use App\Models\RestaurantVariation;
 use DataTables;
 
 class DrinkController extends Controller
@@ -118,7 +119,29 @@ class DrinkController extends Controller
                 "type"                  => RestaurantItem::ITEM,
                 "restaurant_id"         => $restaurant->id
             ];
+
             $newRestaurantItem = RestaurantItem::create($drinkArr);
+            $variationArr = [];
+            if($drinkArr['is_variable'] == 1)
+            {
+                foreach($request->drink_variation_name as $keys => $drink_variation_name)
+                {
+                    $variationArr[$keys]['name'] = $drink_variation_name;
+                }
+                foreach($request->drink_variation_price as $keys => $drink_variation_price)
+                {
+                    $variationArr[$keys]['price'] = $drink_variation_price;
+                }
+
+                foreach($variationArr as $key => $variation)
+                {
+                    RestaurantVariation::create([
+                        'name'                  => $variation['name'],
+                        'price'                 => $variation['price'],
+                        'restaurant_item_id'    => $newRestaurantItem->id ,
+                    ]);
+                }
+            }
             $newRestaurantItem->attachment()->create([
                 'stored_name'   => $profileImage,
                 'original_name' => $profileImage
@@ -138,6 +161,7 @@ class DrinkController extends Controller
     {
         $categories = RestaurantItem::query()->select('category_id')->where('restaurant_id', $drink->restaurant_id)->where('type', RestaurantItem::ITEM)->where('name', $drink->name)->groupBy('category_id')->pluck('category_id')->toArray();
 
+        $restaurantVariation = RestaurantVariation::select('name','price')->where('restaurant_item_id',$drink->id)->get()->toArray();
         $data = [
             'name'          => $drink->name,
             'price'         => $drink->price,
@@ -149,6 +173,8 @@ class DrinkController extends Controller
             'year_of_production'    => $drink->year_of_production,
             'description'   => $drink->description,
             'type_of_drink' => $drink->type_of_drink,
+            'is_variable'   => $drink->is_variable,
+            'variation'     => !empty($restaurantVariation) ? $restaurantVariation : [],
         ];
 
         return response()->json([
@@ -248,6 +274,27 @@ class DrinkController extends Controller
                         'stored_name'   => $profileImage,
                         'original_name' => $profileImage
                     ]);
+                }
+                $variationArr = [];
+                if($drinkArr['is_variable'] == 1)
+                {
+                    foreach($request->drink_variation_name as $keys => $drink_variation_name)
+                    {
+                        $variationArr[$keys]['name'] = $drink_variation_name;
+                    }
+                    foreach($request->drink_variation_price as $keys => $drink_variation_price)
+                    {
+                        $variationArr[$keys]['price'] = $drink_variation_price;
+                    }
+
+                    foreach($variationArr as $key => $variation)
+                    {
+                        RestaurantVariation::create([
+                            'name'                  => $variation['name'],
+                            'price'                 => $variation['price'],
+                            'restaurant_item_id'    => $newRestaurantItem->id ,
+                        ]);
+                    }
                 }
             }
         }

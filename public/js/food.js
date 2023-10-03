@@ -105,6 +105,9 @@
             foodModalTitle:     jQuery('.model_title'),
             foodSubmitBtn:      jQuery('#submitBtn'),
             foodModalBtn:       jQuery('.drink_popup_modal'),
+            foodVariationBtn:   jQuery('.add_variations'),
+            foodVariationModal: jQuery('#addDrink'),
+            addVariationBtn:   jQuery('#add_variation_btn'),
         },
 
         init: function (){
@@ -117,12 +120,62 @@
             context.makeDatatable();
 
             context.productTypeFilter();
+            context.openVariationModal();
+            context.closeVariationModal();
 
             context.isFavorite();
 
             context.openFoodModal();
             context.closeFoodModal();
             XS.Common.fileReaderBind();
+            context.addVariation();
+        },
+
+        openVariationModal: function()
+        {
+            var context = this;
+            context.selectors.foodVariationBtn.on('click', function(e) {
+                e.preventDefault();
+                var $this = $(this);
+                context.selectors.foodVariationModal.modal('show');
+            });
+        },
+
+        closeVariationModal: function()
+        {
+            // code...
+        },
+
+        addVariation: function()
+        {
+            var context = this;
+            context.selectors.addVariationBtn.on('click', function(e) {
+                e.preventDefault();
+
+                var $this       = $(this),
+                    parent      = $this.closest('.modal-body'),
+                    name        = parent.find('input[name="variation_name"]'),
+                    price       = parent.find('input[name="variation_price"]');
+
+                context.selectors.foodModal.find('.modal-body').find('.variety').append(`
+                    <div class="grey-brd-box item-box remove">
+                        <button href="javascript:void(0);"><i class="icon-minus"></i></button>
+                        <aside>${name.val()}
+                            <span>${price.val()}</span>
+                        </aside>
+                    </div>
+                `);
+
+                context.selectors.foodModal.find('form').append(`
+                    <input type="hidden" name="drink_variation_name[]" class="variation_hidden" value="${name.val()}"/>
+                    <input type="hidden" name="drink_variation_price[]" class="variation_hidden" value="${price.val()}"/>
+                `);
+
+                context.selectors.foodVariationModal.modal('hide');
+                context.selectors.foodVariationModal.find('.modal-body').find('.variation_field').each(function() {
+                    $(this).val('');
+                });
+            });
         },
 
         categoryFilter: function(){
@@ -214,7 +267,7 @@
                 if( productType == 1 )
                 {
                     $('#product_type').val(1);
-                    document.getElementById("price").style.visibility='hidden';
+                    // document.getElementById("price").style.visibility='hidden';
                     $('.prd-variation').removeAttr("style");
                 }
                 else
@@ -222,6 +275,15 @@
                     $('#product_type').val(0);
                     document.getElementById("price").style.visibility='visible';
                     $(".prd-variation").css("display", "none");
+
+                    // remove hidden variation
+                    context.selectors.foodModal.find('form').find('.variation_hidden').each(function() {
+                        $(this).remove();
+                    });
+
+                    context.selectors.foodModal.find('.modal-body').find('.variety').find('.remove').each(function() {
+                        $(this).remove();
+                    });
                 }
 
                 $this.addClass('active');
@@ -289,6 +351,10 @@
                 context.selectors.foodForm.removeAttr('action');
                 $this.find('.pip').remove();
                 $this.find('.cstm-catgory').find('input[name="category_id[]"]').prop('checked', false);
+
+                context.selectors.foodModal.find('.modal-body').find('.variety').find('.remove').each(function() {
+                    $(this).remove();
+                });
             });
         },
 
@@ -445,12 +511,34 @@
                     $('input[name="category_id[]"]').val(res.data.categories);
                     $('#price').val(res.data.price);
 
+                    $('.product_type').each(function() {
+                        var $this = $(this);
+                        $(this).removeClass('active');
+
+                        if($this.data('product_type') == res.data.is_variable)
+                        {
+                            $(this).addClass('active').trigger('click');
+                        }
+                    });
+
                     var image = `
                         <div class="pip">
                             <img class="imageThumb" src="${ res.data.image != "" ? res.data.image : ''}" title="" />
                             <i class="icon-trash remove"></i>
                         </div>
                     `;
+
+                    $.each(res.data.variation,function(val) {
+                        context.selectors.drinkModal.find('.modal-body').find('.variety').append(
+                            `<div class="grey-brd-box item-box ">
+                                <button href="javascript:void(0);" class="remove" type="button"><i class="icon-minus"></i></button>
+                                <aside> ${val.name}
+                                    <span>(${val.price})</span>
+                                </aside>
+                            </div>`
+                        );
+                    });
+
 
                     if( res.data.image != "" )
                     {

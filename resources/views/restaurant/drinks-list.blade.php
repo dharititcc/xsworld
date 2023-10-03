@@ -141,8 +141,8 @@
                     <div class="prd-variation" style="display: none">
                         <div class="head">
                             <h2 class="yellow">Drink Variations</h2>
-                            <div class="add-remove"><a href="#" class="bor-btn plus" type="button"><i
-                                        class="icon-plus"></i></a> <a href="#" class="bor-btn minus"
+                            <div class="add-remove"><a href="javascript:void(0);" class="bor-btn plus remove_variation" type="button"><i
+                                        class="icon-plus"></i></a> <a href="javascript:void(0);" class="bor-btn minus"
                                     type="button"><i class="icon-minus"></i></a></div>
                         </div>
                         <div class="variety grid colmn-7">

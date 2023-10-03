@@ -128,6 +128,7 @@
             context.closeVariationModal();
             XS.Common.fileReaderBind();
             context.addVariation();
+            context.removeVariation();
         },
 
         openVariationModal: function()
@@ -149,6 +150,15 @@
             // code...
         },
 
+        removeVariation: function()
+        {
+            var context = this;
+            context.selectors.drinkModal.find('.modal-body').find('.variety').on("click",'.remove', function(e) {
+                e.preventDefault();
+                $(this).closest('.item-box').remove();
+            });
+        },
+
         addVariation: function()
         {
             // code...
@@ -164,8 +174,8 @@
                     price       = parent.find('input[name="variation_price"]');
 
                 context.selectors.drinkModal.find('.modal-body').find('.variety').append(`
-                    <div class="grey-brd-box item-box remove">
-                        <button><i class="icon-minus"></i></button>
+                    <div class="grey-brd-box item-box">
+                        <button href="javascript:void(0);" class="remove" type="button"><i class="icon-minus"></i></button>
                         <aside> ${name.val()}
                             <span>(${price.val()})</span>
                         </aside>
@@ -270,13 +280,14 @@
             {
                 var $this       = jQuery(this),
                     productType = $this.data('product_type');
+                    // alert(productType)
 
                     jQuery('.product_type').removeClass('active');
 
                 if( productType == 1 )
                 {
                     $('#product_type').val(1);
-                    document.getElementById("price").style.visibility='hidden';
+                    // document.getElementById("price").style.visibility='hidden';
                     $('.prd-variation').removeAttr("style");
                 }
                 else
@@ -510,7 +521,7 @@
 
         getDrinkData: function(id)
         {
-            context = this;
+            var context = this;
             $.ajax({
                 url: moduleConfig.drinkGet.replace(':ID',id),
                 type: 'GET',
@@ -525,12 +536,39 @@
                     $('input[name="category_id[]"]').val(res.data.categories);
                     $('#price').val(res.data.price);
 
+                    $('.product_type').each(function(){
+                        var $this = $(this);
+                        $(this).removeClass('active');
+
+                        if( $this.data('product_type') == res.data.is_variable )
+                        {
+                            $(this).addClass('active').trigger('click');
+                        }
+                    });
+
+
                     var image = `
                         <div class="pip">
                             <img class="imageThumb" src="${ res.data.image != "" ? res.data.image : ''}" title="" />
                             <i class="icon-trash remove"></i>
                         </div>
                     `;
+
+                    $.each(res.data.variation,function(key, val)
+                    {
+                        context.selectors.drinkModal.find('.modal-body').find('.variety').append(
+                            `<div class="grey-brd-box item-box ">
+                                <button href="javascript:void(0);" class="remove" type="button"><i class="icon-minus"></i></button>
+                                <aside> ${val.name}
+                                    <span>(${val.price})</span>
+                                </aside>
+                            </div>`
+                        );
+                    });
+
+
+                    
+
 
                     if( res.data.image != "" )
                     {
