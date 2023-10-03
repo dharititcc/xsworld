@@ -32,6 +32,7 @@ class Order extends Model
     const PARTIAL_REFUND                = 7;
     const FULL_REFUND                   = 8;
     const DELAY_ORDER                   = 9;
+    const CUSTOMER_CANCELED             = 10;
 
     const ORDER_STATUS = [
         self::PENDNIG                   => 'Pending',
@@ -44,6 +45,7 @@ class Order extends Model
         self::PARTIAL_REFUND            => 'Partially Refund',
         self::FULL_REFUND               => 'Full Refund',
         self::DELAY_ORDER               => 'Delay Order',
+        self::CUSTOMER_CANCELED         => 'Cancelled by customer'
     ];
 
     /**

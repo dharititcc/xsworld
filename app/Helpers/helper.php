@@ -1,5 +1,6 @@
 <?php
 
+use App\Exceptions\GeneralException;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use Twilio\Rest\Client;
@@ -261,7 +262,8 @@ if (! function_exists('sendTwilioCustomerSms')) {
                 );
             return 'send sms successfully';
         } catch (Exception $e) {
-            return $this->respondWithError($e->getMessage());
+            // return $this->respondWithError($e->getMessage());
+            throw new GeneralException($e->getMessage());
         }
     }
 }
