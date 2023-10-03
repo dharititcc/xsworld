@@ -555,7 +555,8 @@ class AuthController extends APIController
 
         return $this->respond([
             'status'    =>  true,
-            'message'   =>  'Verification link has been sent to the email.',
+            'message'   =>  'OTP send succesfully',
+            'token'     =>  $otp,
         ]);
     }
 

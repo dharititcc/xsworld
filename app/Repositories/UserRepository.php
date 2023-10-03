@@ -415,8 +415,8 @@ class UserRepository extends BaseRepository
             $mobile_no  = $input['country_code'].$input['mobile_no'];
 
             // Send OTP to User
-            $send_otp   = sendTwilioCustomerSms($mobile_no,$otp);
-            return $send_otp;
+            // $send_otp   = sendTwilioCustomerSms($mobile_no,$otp);
+            return $otp;
         }
 
         throw new GeneralException('User not found.');
