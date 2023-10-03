@@ -422,7 +422,7 @@ class OrderRepository extends BaseRepository
         return $order;
     }
 
-    function updateOrder(array $data) : Order
+    function updateOrderStatus(array $data) : Order
     {
         $order_id          = $data['order_id'] ? $data['order_id'] : null;
         $status            = $data['status'] ? $data['status'] : null;

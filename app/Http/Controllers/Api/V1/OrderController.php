@@ -272,9 +272,9 @@ class OrderController extends APIController
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function orderUpdate(CustomerOrderRequest $request)
+    public function orderStatusUpdate(CustomerOrderRequest $request)
     {
-        $currentOrder      = $this->repository->updateOrder($request->validated());
+        $currentOrder      = $this->repository->updateOrderStatus($request->validated());
 
         if(isset( $currentOrder->id ))
         {
