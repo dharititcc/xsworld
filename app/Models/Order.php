@@ -70,6 +70,7 @@ class Order extends Model
         'currency_id',
         'apply_time',
         'accepted_date',
+        'cancel_date',
         'served_date',
         'completion_date',
         'total',

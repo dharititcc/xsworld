@@ -421,4 +421,27 @@ class OrderRepository extends BaseRepository
 
         return $order;
     }
+
+    function updateOrder(array $data) : Order
+    {
+        $order_id          = $data['order_id'] ? $data['order_id'] : null;
+        $status            = $data['status'] ? $data['status'] : null;
+        $order             = Order::findOrFail($order_id);
+        $updateArr         = [];
+
+        if(isset($order->id))
+        {
+            if($status == Order::CUSTOMER_CANCELED)
+            {
+                $updateArr['cancel_date']   = Carbon::now();
+                $updateArr['status']        = $status;
+            }
+            $order->update($updateArr);
+        }
+
+        $order->refresh();
+        $order->loadMissing(['items']);
+
+        return $order;
+    }
 }

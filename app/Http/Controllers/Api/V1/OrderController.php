@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Exceptions\GeneralException;
 use App\Http\Requests\AddtocartRequest;
 use App\Http\Requests\CartDeleteRequest;
+use App\Http\Requests\CustomerOrderRequest;
 use App\Http\Requests\OrderDeleteItemRequest;
 use App\Http\Requests\OrderUpdateRequest;
 use App\Http\Requests\PlaceOrderRequest;
@@ -259,6 +260,25 @@ class OrderController extends APIController
         if(isset( $currentOrder->id ))
         {
             return $this->respondSuccess('order data found', new OrderResource($currentOrder));
+        }
+
+        return $this->respondWithError('Your order is empty.');
+    }
+
+    /**
+     * Method orderUpdate
+     *
+     * @param CustomerOrderRequest $request [explicite description]
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function orderUpdate(CustomerOrderRequest $request)
+    {
+        $currentOrder      = $this->repository->updateOrder($request->validated());
+
+        if(isset( $currentOrder->id ))
+        {
+            return $this->respondSuccess('order is cancelled');
         }
 
         return $this->respondWithError('Your order is empty.');
