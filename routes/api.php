@@ -29,6 +29,8 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'v1', 'as' => 'api.v1.'], fun
         Route::post('social-register', 'AuthController@socialRegister')->name('auth.socialregister');
         // {api/v1/auth/send-otp}
         Route::post('send-otp', 'AuthController@sendOtp')->name('auth.sendOtp');
+        // {api/v1/auth/resend-link}
+        Route::post('resend-link', 'AuthController@resendLink')->name('auth.resendLink');
         // {api/v1/users/password/reset}
         Route::patch('password/reset', 'AuthController@resetPassword')->name('user.resetPassword');
     });
@@ -69,6 +71,8 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'v1', 'as' => 'api.v1.'], fun
         Route::post('/deletecart', 'OrderController@deleteCart')->name('deletecart');
         // {api/v1/placeorder}
         Route::post('/placeorder', 'OrderController@placeOrder')->name('placeorder');
+        // {api/v1/orderstatusupdate}
+        Route::post('/orderstatusupdate', 'OrderController@orderStatusUpdate')->name('orderStatusUpdate');
     });
 
     Route::group(['prefix' => 'users','middleware' => 'auth:api'], function ()

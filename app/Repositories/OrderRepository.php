@@ -294,7 +294,7 @@ class OrderRepository extends BaseRepository
         $user->loadMissing(['latest_cart', 'latest_cart.restaurant', 'latest_cart.order_items']);
 
         $cart       = [
-            'cart_count'    => isset($user->latest_cart->order_items) ? $user->latest_cart->order_items->count() : 0,
+            'cart_count'    => isset($user->latest_cart->order_items) ? $user->latest_cart->order_items->sum('quantity') : 0,
             'restaurant_id' => $user->latest_cart->restaurant->id ?? 0,
             'order_id'      => $user->latest_cart->id ?? 0
         ];
@@ -416,6 +416,29 @@ class OrderRepository extends BaseRepository
 
             $order->update($updateArr);
         }
+        $order->refresh();
+        $order->loadMissing(['items']);
+
+        return $order;
+    }
+
+    function updateOrderStatus(array $data) : Order
+    {
+        $order_id          = $data['order_id'] ? $data['order_id'] : null;
+        $status            = $data['status'] ? $data['status'] : null;
+        $order             = Order::findOrFail($order_id);
+        $updateArr         = [];
+
+        if(isset($order->id))
+        {
+            if($status == Order::CUSTOMER_CANCELED)
+            {
+                $updateArr['cancel_date']   = Carbon::now();
+                $updateArr['status']        = $status;
+            }
+            $order->update($updateArr);
+        }
+
         $order->refresh();
         $order->loadMissing(['items']);
 

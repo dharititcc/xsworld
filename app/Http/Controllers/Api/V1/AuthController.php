@@ -10,6 +10,7 @@ use App\Http\Requests\SocialRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use App\Repositories\UserRepository;
+use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -476,7 +477,7 @@ class AuthController extends APIController
         {
             return $this->respond([
                 'status' => true,
-                'message'=> 'Registration successfully. Now please check your email/phone to verify your account.'
+                'message'=> 'Registration successfully. Now please check your email to verify your account.'
             ]);
         }
 
@@ -509,6 +510,7 @@ class AuthController extends APIController
             'application_version'   => $request->application_version,
             'model'                 => $request->model,
             'user_type'             => User::CUSTOMER,
+            'email_verified_at'     => Carbon::now(),
             'social_id'             => $request->social_id
         ];
 
@@ -551,6 +553,28 @@ class AuthController extends APIController
     {
         $otp   = $this->repository->sendOtp($request->validated());
 
-        // return $this->respondSuccess('Order data found', new OrderResource($order_data));
+        return $this->respond([
+            'status'    =>  true,
+            'message'   =>  'OTP send succesfully',
+            'token'     =>  $otp,
+        ]);
+    }
+
+    /**
+     * Method resendLink
+     *
+     * @param Request $request [explicite description]
+     *
+     * @return JsonResponse
+     */
+    public function resendLink(Request $request) : JsonResponse
+    {
+        $input      = $request->all();
+        $resend     = $this->repository->resendLink($input);
+
+        return $this->respond([
+            'status'    =>  true,
+            'message'   =>  'Verification link has been sent to the email.',
+        ]);
     }
 }

@@ -345,4 +345,25 @@ class Stripe
             throw new GeneralException($e->getError()->message);
         }
     }
+
+    /**
+     * Method refundCreate
+     *
+     * @param string $charge [explicite description]
+     *
+     * @return Charge
+     */
+    public function refundCreate(string $charge) : Charge
+    {
+        try {
+            return $this->stripe->refunds->create(
+                $charge,
+                []
+            );
+        }
+        catch(ApiErrorException $e)
+        {
+            throw new GeneralException($e->getError()->message);
+        }
+    }
 }

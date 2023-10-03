@@ -30,6 +30,7 @@ class CreateOrders extends Migration
             $table->text('cancel_reason')->nullable();
             $table->unsignedTinyInteger('apply_time')->nullable();
             $table->timestamp('accepted_date')->nullable();
+            $table->timestamp('cancel_date')->nullable();
             $table->timestamp('served_date')->nullable();
             $table->timestamp('completion_date')->nullable();
             $table->decimal('total', 14,2)->default(0);
