@@ -354,23 +354,6 @@
             });
         });
 
-        // function deleteConform(id) {
-        //     if (!confirm("Are You Sure to delete this 'Category' and 'All Items'?")) {
-        //         event.preventDefault();
-        //     } else {
-        //         $.ajax({
-        //             headers: {
-        //                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        //             },
-        //             url: "categories/" + id,
-        //             type: "DELETE",
-        //             success: function(response) {
-        //                 alert('Delete Category is deleted successfully');
-        //                 location.reload(true);
-        //             }
-        //         });
-        //     }
-        // }
         $('.show_confirm').click(function(event) {
             event.preventDefault();
             swal({
@@ -419,40 +402,5 @@
                     }
                 });
         });
-        // $(function() {
-        //     $('#bulkdelete').click(function(e) {
-        //         if (!confirm("Are You Sure to delete this 'Categories' and 'All Items'?")) {
-        //             event.preventDefault();
-        //         } else {
-        //             e.preventDefault();
-        //             //   $.confirmModal("<label>Are You Sure to delete this 'Categories' and 'All Items' ?</label>"), function(el) 
-        //             //   {
-        //             // var val = [];
-        //             // // <input type="checkbox" name="category[]" id="category" value="{{ $child->id }}">
-        //             //     $('#category:checkbox:checked').each(function(i){
-        //             //     val[i] = $(this).val();
-        //             //     });
-        //             var category = [];
-        //             $.each($("input[name='category']:checked"), function(i) {
-        //                 category[i] = $(this).val();
-        //             });
-        //             console.log(category);
-        //             $.ajax({
-        //                 headers: {
-        //                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        //                 },
-        //                 url: "categories/multidelete",
-        //                 type: "POST",
-        //                 data: {
-        //                     category
-        //                 },
-        //                 success: function(response) {
-        //                     alert('Categories are deleted successfully');
-        //                     location.reload(true);
-        //                 }
-        //             });
-        //         }
-        //     });
-        // });
     </script>
 @endsection

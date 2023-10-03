@@ -148,7 +148,10 @@ class CategoryController extends Controller
         foreach ($category as $key => $value) {
             //dd($value);
             $delete = Category::find($value);
-            $delete->items()->delete();
+            if( $delete->items->count() )
+            {
+                $delete->items()->delete();
+            }
             $delete->delete();
         }
 
