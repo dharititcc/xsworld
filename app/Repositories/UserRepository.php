@@ -421,4 +421,22 @@ class UserRepository extends BaseRepository
 
         throw new GeneralException('User not found.');
     }
+
+    /**
+     * Method resendLink
+     *
+     * @param array $input [explicite description]
+     *
+     * @return User
+     */
+    public function resendLink(array $input) : User
+    {
+        $user = User::where(['email' => $input['email'] ,'user_type' => User::CUSTOMER ])->first();
+        if(isset($user->id))
+        {
+            event(new RegisterEvent($user));
+            return $user;
+        }
+        throw new GeneralException('User not found.');
+    }
 }

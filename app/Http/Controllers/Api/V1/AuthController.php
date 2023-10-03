@@ -476,7 +476,7 @@ class AuthController extends APIController
         {
             return $this->respond([
                 'status' => true,
-                'message'=> 'Registration successfully. Now please check your email/phone to verify your account.'
+                'message'=> 'Registration successfully. Now please check your email to verify your account.'
             ]);
         }
 
@@ -552,5 +552,23 @@ class AuthController extends APIController
         $otp   = $this->repository->sendOtp($request->validated());
 
         // return $this->respondSuccess('Order data found', new OrderResource($order_data));
+    }
+
+    /**
+     * Method resendLink
+     *
+     * @param Request $request [explicite description]
+     *
+     * @return JsonResponse
+     */
+    public function resendLink(Request $request) : JsonResponse
+    {
+        $input      = $request->all();
+        $resend     = $this->repository->resendLink($input);
+
+        return $this->respond([
+            'status'    =>  true,
+            'message'   =>  'Verification link has been sent to the email.',
+        ]);
     }
 }
