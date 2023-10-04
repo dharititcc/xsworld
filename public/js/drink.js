@@ -567,9 +567,6 @@
                     });
 
 
-                    
-
-
                     if( res.data.image != "" )
                     {
                         $(".image_box").children('.pip').remove();

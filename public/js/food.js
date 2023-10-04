@@ -107,7 +107,7 @@
             foodModalBtn:       jQuery('.drink_popup_modal'),
             foodVariationBtn:   jQuery('.add_variations'),
             foodVariationModal: jQuery('#addDrink'),
-            addVariationBtn:   jQuery('#add_variation_btn'),
+            addVariationBtn:    jQuery('#add_variation_btn'),
         },
 
         init: function (){
@@ -129,6 +129,7 @@
             context.closeFoodModal();
             XS.Common.fileReaderBind();
             context.addVariation();
+            context.removeVariation();
         },
 
         openVariationModal: function()
@@ -144,6 +145,15 @@
         closeVariationModal: function()
         {
             // code...
+        },
+
+        removeVariation: function()
+        {
+            var context = this;
+            context.selectors.foodModal.find('.modal-body').find('.variety').on("click",'.remove', function(e) {
+                e.preventDefault();
+                $(this).closest('.item-box').remove();
+            });
         },
 
         addVariation: function()
@@ -511,15 +521,16 @@
                     $('input[name="category_id[]"]').val(res.data.categories);
                     $('#price').val(res.data.price);
 
-                    $('.product_type').each(function() {
+                    $('.product_type').each(function(){
                         var $this = $(this);
                         $(this).removeClass('active');
 
-                        if($this.data('product_type') == res.data.is_variable)
+                        if( $this.data('product_type') == res.data.is_variable )
                         {
                             $(this).addClass('active').trigger('click');
                         }
                     });
+
 
                     var image = `
                         <div class="pip">
@@ -528,8 +539,9 @@
                         </div>
                     `;
 
-                    $.each(res.data.variation,function(val) {
-                        context.selectors.drinkModal.find('.modal-body').find('.variety').append(
+                    $.each(res.data.variation,function(key, val)
+                    {
+                        context.selectors.foodModal.find('.modal-body').find('.variety').append(
                             `<div class="grey-brd-box item-box ">
                                 <button href="javascript:void(0);" class="remove" type="button"><i class="icon-minus"></i></button>
                                 <aside> ${val.name}

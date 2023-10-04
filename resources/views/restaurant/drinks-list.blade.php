@@ -152,7 +152,7 @@
                                     <span>($12.50)</span>
                                 </aside>
                             </div> --}}
-                            <a href="#" class="grey-brd-box item-box add add_variations">
+                            <a href="javascript:void(0);" class="grey-brd-box item-box add add_variations">
                                 <aside>+ Add Variation </aside>
                             </a>
                         </div>

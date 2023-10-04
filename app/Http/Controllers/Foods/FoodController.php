@@ -161,6 +161,7 @@ class FoodController extends Controller
     {
         $categories = RestaurantItem::query()->select('category_id')->where('restaurant_id', $food->restaurant_id)->where('type', RestaurantItem::ITEM)->where('name', $food->name)->groupBy('category_id')->pluck('category_id')->toArray();
         $restaurantVariation = RestaurantVariation::select('name','price')->where('restaurant_item_id',$food->id)->get()->toArray();
+        // dd($food);
         $data = [
             'name'          => $food->name,
             'price'         => $food->price,
@@ -171,6 +172,7 @@ class FoodController extends Controller
             'country_of_origin' => $food->country_of_origin,
             'year_of_production'    => $food->year_of_production,
             'description'   => $food->description,
+            'is_variable'   => $food->is_variable,
             'variation'     => !empty($restaurantVariation) ? $restaurantVariation : [],
         ];
 
