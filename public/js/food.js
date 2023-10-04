@@ -130,6 +130,24 @@
             XS.Common.fileReaderBind();
             context.addVariation();
             context.removeVariation();
+            context.filterCategoryChange();
+        },
+
+        filterCategoryChange: function()
+        {
+            var context = this;
+            // single category selection
+            jQuery('.cstm-catgory').find('input:checkbox').on('change', function()
+            {
+                var $this = $(this);
+
+                jQuery('.cstm-catgory').find('input:checkbox').each(function()
+                {
+                    $(this).prop('checked', false);
+                });
+
+                $this.prop('checked', true);
+            });
         },
 
         openVariationModal: function()
@@ -152,7 +170,13 @@
             var context = this;
             context.selectors.foodModal.find('.modal-body').find('.variety').on("click",'.remove', function(e) {
                 e.preventDefault();
-                $(this).closest('.item-box').remove();
+                var element     = $(this).closest('.item-box'),
+                    className   = element.attr('class'),
+                    classArray  = className.split(' ');
+
+                element.remove();
+
+                context.selectors.foodModal.find(`div.${classArray[2]}`).remove();
             });
         },
 
@@ -167,25 +191,36 @@
                     name        = parent.find('input[name="variation_name"]'),
                     price       = parent.find('input[name="variation_price"]');
 
-                context.selectors.foodModal.find('.modal-body').find('.variety').append(`
-                    <div class="grey-brd-box item-box remove">
-                        <button href="javascript:void(0);"><i class="icon-minus"></i></button>
-                        <aside>${name.val()}
-                            <span>${price.val()}</span>
-                        </aside>
-                    </div>
-                `);
-
-                context.selectors.foodModal.find('form').append(`
-                    <input type="hidden" name="drink_variation_name[]" class="variation_hidden" value="${name.val()}"/>
-                    <input type="hidden" name="drink_variation_price[]" class="variation_hidden" value="${price.val()}"/>
-                `);
+                context.addVariationBlock(name.val(), price.val());
 
                 context.selectors.foodVariationModal.modal('hide');
                 context.selectors.foodVariationModal.find('.modal-body').find('.variation_field').each(function() {
                     $(this).val('');
                 });
             });
+        },
+
+        addVariationBlock: function(name, price, index)
+        {
+            var context     = this,
+                className   = XS.Common.randomId(8);
+
+            context.selectors.foodModal.find('.modal-body').find('.variety')
+            .append(
+                `<div class="grey-brd-box item-box ${className}">
+                    <button href="javascript:void(0);" class="remove" type="button"><i class="icon-minus"></i></button>
+                    <aside> ${name}
+                        <span>(${price})</span>
+                    </aside>
+                </div>`
+            );
+
+            context.selectors.foodModal.find('form').append(`
+                <div class="${className}">
+                    <input type="hidden" name="drink_variation_name[]" class="variation_hidden" value="${name}" />
+                    <input type="hidden" name="drink_variation_price[]" class="variation_hidden" value="${price}" />
+                </div>
+            `);
         },
 
         categoryFilter: function(){
@@ -314,7 +349,7 @@
                     $('#product_type').val(0);
                     $('#is_featured').val(0);
                     console.log(foodId);
-                    
+
                 if(foodId == undefined)
                 {
                     context.selectors.foodModalTitle.html('Manually Add');
@@ -356,15 +391,13 @@
                 });
 
                 context.selectors.foodForm.validate().resetForm();
+                context.selectors.foodForm.get(0).reset();
                 context.selectors.foodForm.find('.error').removeClass('error');
                 context.selectors.foodForm.find('input[name="_method"]').remove();
                 context.selectors.foodForm.removeAttr('action');
+                context.selectors.foodForm.find('.modal-body').find('.variety').find('.item-box').not('.add_variations').remove();
                 $this.find('.pip').remove();
                 $this.find('.cstm-catgory').find('input[name="category_id[]"]').prop('checked', false);
-
-                context.selectors.foodModal.find('.modal-body').find('.variety').find('.remove').each(function() {
-                    $(this).remove();
-                });
             });
         },
 
@@ -398,7 +431,7 @@
                     country_of_origin: {
                         required: true,
                     },
-                    
+
                     year_of_production: {
                         required: true,
                     },
@@ -412,7 +445,7 @@
                         maxlength: "Your name maxlength should be 50 characters long."
                     },
                     price: {
-                        required: "please Enter Amount",
+                        required: "Please enter amount",
                         pattern: "Please enter a valid price format (e.g., 100.50).",
                     },
                     image: {
@@ -447,7 +480,7 @@
                     country_of_origin: {
                         required: true,
                     },
-                    
+
                     year_of_production: {
                         required: true,
                     },
@@ -461,10 +494,10 @@
                         maxlength: "Your name maxlength should be 50 characters long."
                     },
                     price: {
-                        required: "please Enter Amount",
+                        required: "Please enter amount",
                         pattern: "Please enter a valid price format (e.g., 100.50).",
                     },
-                    
+
                 },
                 submitHandler: function() {
                     console.log('edit');
@@ -482,7 +515,7 @@
             $.each($("input[name='category_id']:checked"), function(i) {
                 category[i] = $(context).val();
             });
-            
+
             $.ajax({
                 url: $(form).attr('action'),
                 type: "POST",
@@ -520,6 +553,7 @@
                     $('#description').val(res.data.description);
                     $('input[name="category_id[]"]').val(res.data.categories);
                     $('#price').val(res.data.price);
+                    context.selectors.foodForm.find('.modal-body').find('.variety').find('.item-box').not('.add_variations').remove();
 
                     $('.product_type').each(function(){
                         var $this = $(this);
@@ -539,17 +573,13 @@
                         </div>
                     `;
 
-                    $.each(res.data.variation,function(key, val)
+                    if( res.data.variation.length > 0 )
                     {
-                        context.selectors.foodModal.find('.modal-body').find('.variety').append(
-                            `<div class="grey-brd-box item-box ">
-                                <button href="javascript:void(0);" class="remove" type="button"><i class="icon-minus"></i></button>
-                                <aside> ${val.name}
-                                    <span>(${val.price})</span>
-                                </aside>
-                            </div>`
-                        );
-                    });
+                        $.each(res.data.variation,function(key, val)
+                        {
+                            context.addVariationBlock(val.name, val.price);
+                        });
+                    }
 
 
                     if( res.data.image != "" )
@@ -562,7 +592,6 @@
                         $(this).parent(".pip").remove();
                     });
                 },
-                
             });
         }
     }
