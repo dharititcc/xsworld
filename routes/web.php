@@ -63,6 +63,11 @@ Route::group(['prefix' => 'restaurants', 'as' => 'restaurants.', 'middleware' =>
         Route::resource('pickup', 'PickupZoneController');
     });
 
+    Route::group(['namespace' => 'Table'], function()
+    {
+        Route::resource('table', 'RestaurantTableController');
+    });
+
     Route::group(['namespace' => 'AccountManager'], function()
     {
         Route::resource('accountmanager', 'AccountManagerController');
