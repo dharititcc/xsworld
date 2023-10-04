@@ -18,11 +18,17 @@ class AddonsController extends Controller
     public function index(Request $request)
     {
         $restaurant = session('restaurant')->loadMissing(['main_categories']);
-        $category = $restaurant->main_categories()->with(['children'])->where('name', 'Food')->first();
-        if($category)
+        $foodCategory = $restaurant->main_categories()->with(['children'])->where('name', 'Food')->first();
+        if($foodCategory)
         {
-            $categories = $category->children;
-            $subcategory = $category->children->pluck('id');
+            $foodCategories = $foodCategory->children;
+            $foodSubCategory = $foodCategory->children->pluck('id');
+        }
+        $drinkCategory = $restaurant->main_categories()->with(['children'])->where('name', 'Drinks')->first();
+        if($drinkCategory)
+        {
+            $drinkCategories = $drinkCategory->children;
+            $drinkSubCategory = $drinkCategory->children->pluck('id');
         }
         if ($request->ajax())
         {
@@ -51,7 +57,10 @@ class AddonsController extends Controller
                 ->make(true);
         }
 
-        return view('restaurant.addon-list')->with('categories',$categories);
+        return view('restaurant.addon-list', [
+            'food_categories' => isset($foodCategories) ? $foodCategories : [],
+            'drink_categories'=> isset($drinkCategories) ? $drinkCategories : [],
+        ]);
     }
 
     /**

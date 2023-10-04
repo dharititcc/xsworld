@@ -58,7 +58,14 @@
                                 <input type="number" name="price" class="form-control vari2" placeholder="Addon Price">
                             </div>
                             <div class="list-catg">
-                                @foreach ($categories as $child)
+                                @foreach ($drink_categories as $child)
+                                    <label>
+                                        <?php  ?>
+                                        <input type="checkbox" name="category[]" id="category" value="{{ $child->id }}">
+                                        <span>{{ $child->name }}</span>
+                                    </label>
+                                @endforeach
+                                @foreach ($food_categories as $child)
                                     <label>
                                         <?php  ?>
                                         <input type="checkbox" name="category[]" id="category" value="{{ $child->id }}">
