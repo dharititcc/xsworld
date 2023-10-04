@@ -106,7 +106,7 @@
             drinkModalBtn:      jQuery('.drink_popup_modal'),
             drinkVariationBtn:  jQuery('.add_variations'),
             drinkVariationModal:jQuery('#addDrink'),
-            addVariationBtn:    jQuery('#add_variation_btn')
+            addVariationBtn:    jQuery('#add_variation_btn'),
         },
 
         init: function (){
@@ -129,6 +129,24 @@
             XS.Common.fileReaderBind();
             context.addVariation();
             context.removeVariation();
+            context.filterCategoryChange();
+        },
+
+        filterCategoryChange: function()
+        {
+            var context = this;
+            // single category selection
+            jQuery('.cstm-catgory').find('input:checkbox').on('change', function()
+            {
+                var $this  = $(this);
+
+                jQuery('.cstm-catgory').find('input:checkbox').each(function()
+                {
+                    $(this).prop('checked', false);
+                });
+
+                $this.prop('checked', true);
+            });
         },
 
         openVariationModal: function()
@@ -155,7 +173,13 @@
             var context = this;
             context.selectors.drinkModal.find('.modal-body').find('.variety').on("click",'.remove', function(e) {
                 e.preventDefault();
-                $(this).closest('.item-box').remove();
+                var element     = $(this).closest('.item-box'),
+                    className   = element.attr('class'),
+                    classArray  = className.split(' ');
+
+                element.remove();
+
+                context.selectors.drinkModal.find(`div.${classArray[2]}`).remove();
             });
         },
 
@@ -171,21 +195,10 @@
                 var $this       = $(this),
                     parent      = $this.closest('.modal-body'),
                     name        = parent.find('input[name="variation_name"]'),
-                    price       = parent.find('input[name="variation_price"]');
+                    price       = parent.find('input[name="variation_price"]'),
+                    countVariation = context.selectors.drinkModal.find('.modal-body').find('.variety').children().length;
 
-                context.selectors.drinkModal.find('.modal-body').find('.variety').append(`
-                    <div class="grey-brd-box item-box">
-                        <button href="javascript:void(0);" class="remove" type="button"><i class="icon-minus"></i></button>
-                        <aside> ${name.val()}
-                            <span>(${price.val()})</span>
-                        </aside>
-                    </div>
-                `);
-
-                context.selectors.drinkModal.find('form').append(`
-                    <input type="hidden" name="drink_variation_name[]" class="variation_hidden" value="${name.val()}" />
-                    <input type="hidden" name="drink_variation_price[]" class="variation_hidden" value="${price.val()}" />
-                `);
+                context.addVariationBlock(name.val(), price.val(), countVariation);
 
                 context.selectors.drinkVariationModal.modal('hide');
 
@@ -194,6 +207,29 @@
                     $(this).val('');
                 });
             });
+        },
+
+        addVariationBlock: function(name, price, index)
+        {
+            var context     = this,
+                className   = XS.Common.randomId(8);
+
+            context.selectors.drinkModal.find('.modal-body').find('.variety')
+            .append(
+                `<div class="grey-brd-box item-box ${className}">
+                    <button href="javascript:void(0);" class="remove" type="button"><i class="icon-minus"></i></button>
+                    <aside> ${name}
+                        <span>(${price})</span>
+                    </aside>
+                </div>`
+            );
+
+            context.selectors.drinkModal.find('form').append(`
+                <div class="${className}">
+                    <input type="hidden" name="drink_variation_name[]" class="variation_hidden" value="${name}" />
+                    <input type="hidden" name="drink_variation_price[]" class="variation_hidden" value="${price}" />
+                </div>
+            `);
         },
 
         categoryFilter: function(){
@@ -366,16 +402,15 @@
                     }
                 });
 
+                context.selectors.drinkForm.get(0).reset();
                 context.selectors.drinkForm.validate().resetForm();
                 context.selectors.drinkForm.find('.error').removeClass('error');
                 context.selectors.drinkForm.find('input[name="_method"]').remove();
                 context.selectors.drinkForm.removeAttr('action');
+                context.selectors.drinkModal.find('.modal-body').find('.variety').find('.item-box').not('.add_variations').remove();
                 $this.find('.pip').remove();
                 $this.find('.cstm-catgory').find('input[name="category_id[]"]').prop('checked', false);
-                context.selectors.drinkModal.find('.modal-body').find('.variety').find('.remove').each(function()
-                {
-                    $(this).remove();
-                });
+                context.selectors.drinkForm.find('.variation_hidden').remove();
             });
         },
 
@@ -425,7 +460,7 @@
                         maxlength: "Your name maxlength should be 50 characters long."
                     },
                     price: {
-                        required: "please Enter Amount",
+                        required: "Please enter amount",
                         pattern: "Please enter a valid price format (e.g., 100.50).",
                     },
                     image: {
@@ -476,10 +511,10 @@
                         maxlength: "Your name maxlength should be 50 characters long."
                     },
                     price: {
-                        required: "please Enter Amount",
+                        required: "Please enter amount",
                         pattern: "Please enter a valid price format (e.g., 100.50).",
                     },
-                    
+
                 },
                 submitHandler: function() {
                     console.log('edit');
@@ -497,7 +532,7 @@
             $.each($("input[name='category_id']:checked"), function(i) {
                 category[i] = $(context).val();
             });
-            
+
             $.ajax({
                 url: $(form).attr('action'),
                 type: "POST",
@@ -535,6 +570,7 @@
                     $('#description').val(res.data.description);
                     $('input[name="category_id[]"]').val(res.data.categories);
                     $('#price').val(res.data.price);
+                    context.selectors.drinkModal.find('.modal-body').find('.variety').find('.item-box').not('.add_variations').remove();
 
                     $('.product_type').each(function(){
                         var $this = $(this);
@@ -554,17 +590,13 @@
                         </div>
                     `;
 
-                    $.each(res.data.variation,function(key, val)
+                    if( res.data.variation.length > 0 )
                     {
-                        context.selectors.drinkModal.find('.modal-body').find('.variety').append(
-                            `<div class="grey-brd-box item-box ">
-                                <button href="javascript:void(0);" class="remove" type="button"><i class="icon-minus"></i></button>
-                                <aside> ${val.name}
-                                    <span>(${val.price})</span>
-                                </aside>
-                            </div>`
-                        );
-                    });
+                        $.each(res.data.variation,function(key, val)
+                        {
+                            context.addVariationBlock(val.name, val.price, key+1);
+                        });
+                    }
 
 
                     if( res.data.image != "" )
@@ -577,7 +609,6 @@
                         $(this).parent(".pip").remove();
                     });
                 },
-                
             });
         }
     }

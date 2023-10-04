@@ -13,6 +13,7 @@
         <a href="{{ route('restaurants.waiter.index') }}">Account Manager</a>
         <a href="#">Analytics</a>
         <a href="{{route('restaurants.pickup.index')}}">Pick-up Zones</a>
+        <a href="{{ route('restaurants.table.index') }}">Table Management</a>
         <a href="#">Bar Management</a>
         <a class="" href="{{ route('logout') }}"
                onclick="event.preventDefault();
