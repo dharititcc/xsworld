@@ -71,8 +71,8 @@ class LoginController extends Controller
             $user->loadMissing(['restaurants']);
 
             // restaurant
-            $restaurant = $user->restaurants->where('id', 1)->first();
-            // dd($restaurants);
+            $restaurant = $user->restaurants->first();
+            // dd($restaurant);
             // if( $restaurants->count() === 1 )
             // {
             //     $restaurant = $restaurants[0];

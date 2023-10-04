@@ -17,7 +17,7 @@ class CustomerSeeder extends Seeder
     public function run()
     {
         $newUser = User::create([
-            'id'                    => 3,
+            'id'                    => 18,
             'first_name'            => 'Milan',
             'last_name'             => 'Soni',
             'email'                 => 'milan@yopmail.com',

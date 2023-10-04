@@ -18,6 +18,7 @@ class RestaurantBarTenderSeeder extends Seeder
     {
         $restaurantbartenderArr = [
             [
+                'id'                    => 19,
                 'first_name'            => 'John',
                 'last_name'             => 'Doe',
                 'email'                 => 'john@yopmail.com',
@@ -30,6 +31,7 @@ class RestaurantBarTenderSeeder extends Seeder
                 'email_verified_at'     => Carbon::now()->toDateTimeString()
             ],
             [
+                'id'                    => 20,
                 'first_name'            => 'Test',
                 'last_name'             => 'test2',
                 'email'                 => 'test@yopmail.com',
@@ -42,6 +44,7 @@ class RestaurantBarTenderSeeder extends Seeder
                 'email_verified_at'     => Carbon::now()->toDateTimeString()
             ],
             [
+                'id'                    => 21,
                 'first_name'            => 'Dharit',
                 'last_name'             => 'Maniyar',
                 'email'                 => 'dharit@yopmail.com',

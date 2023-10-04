@@ -217,6 +217,7 @@ class RestaurantSeeder extends Seeder
         if( !empty( $restaurantArr ) )
         {
             $counter = 1;
+            $owner   = 2;
             foreach( $restaurantArr as $restaurant )
             {
                 $newRestaurant = Restaurant::create($restaurant);
@@ -228,7 +229,7 @@ class RestaurantSeeder extends Seeder
                 ]);
 
                 // restaurant owner
-                $newRestaurant->owners()->attach(2);
+                $newRestaurant->owners()->attach($owner);
 
                 // Restaurant bartenders
                 if( $newRestaurant->id == 4 )
@@ -238,6 +239,7 @@ class RestaurantSeeder extends Seeder
                 }
 
                 $counter++;
+                $owner++;
             }
         }
 
