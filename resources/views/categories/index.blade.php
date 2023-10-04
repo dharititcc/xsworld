@@ -167,6 +167,9 @@
 
                 $this.find('#categorypopup').find('.pip').remove();
                 $this.find('#categorypopup').find('#category_id').val('');
+                var $alertas = $('#categorypopup');
+                $alertas.validate().resetForm();
+                $alertas.find('.error').removeClass('error');
             });
 
             if (window.File && window.FileList && window.FileReader) {
