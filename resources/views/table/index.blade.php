@@ -62,23 +62,25 @@
                     </div>
                     <div class="col-md-8">
                         <div class="grid colmn-2 gap30">
-                            <div class="table-design grey-brd-box">
-                                <div class="head"><label class="cst-check">
-                                        <input type="checkbox" value=""><span class="checkmark"></span></label>
-                                    <h2>Table #1</h2>
-                                </div>
-                                <div class="cnt">
-                                    <div class="qr-code"><img src="img/clarity_qr-code-line.png" alt=""></div>
-                                    <a href="javascript:void(0);" class="export-info" data-bs-toggle="modal"
-                                        data-bs-target="#export_qr_code">Export QR<br>Code</a>
+                            @foreach ($res_tables as $res_table)
+                                <div class="table-design grey-brd-box">
+                                    <div class="head"><label class="cst-check">
+                                            <input type="checkbox" value=""><span class="checkmark"></span></label>
+                                        <h2>{{$res_table->code}}</h2>
+                                    </div>
+                                    <div class="cnt">
+                                        <div class="qr-code"><img src="img/clarity_qr-code-line.png" alt=""></div>
+                                        <a href="javascript:void(0);" class="export-info" data-bs-toggle="modal"
+                                            data-bs-target="#export_qr_code">Export QR<br>Code</a>
 
+                                    </div>
+                                    <div class="ftr">
+                                        <a href="#" class="active green">Active</a>
+                                        <a href="#" class="disable">Disable</a>
+                                    </div>
                                 </div>
-                                <div class="ftr">
-                                    <a href="#" class="active green">Active</a>
-                                    <a href="#" class="disable">Disable</a>
-                                </div>
-                            </div>
-                            <div class="table-design grey-brd-box">
+                            @endforeach
+                            {{-- <div class="table-design grey-brd-box">
                                 <div class="head"><label class="cst-check">
                                         <input type="checkbox" value=""><span class="checkmark"></span></label>
                                     <h2>Table #2</h2>
@@ -105,7 +107,7 @@
                                     <a href="#" class="active green">Active</a>
                                     <a href="#" class="disable">Disable</a>
                                 </div>
-                            </div>
+                            </div> --}}
                             <div class="table-design grey-brd-box">
                                 <a href="javascript:void(0);" class="add-table-design "><i class="icon-plus"></i></a>
                             </div>

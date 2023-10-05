@@ -11,7 +11,9 @@ class RestaurantTableController extends Controller
 {
     public function index()
     {
-        return view('table.index');
+        $restaurant = session('restaurant');
+        $res_tables = RestaurantTable::where('restaurant_id',$restaurant->id)->get();
+        return view('table.index',compact('res_tables'));
     }
 
     public function create(Request $request)

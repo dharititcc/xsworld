@@ -90,6 +90,7 @@ Route::group(['prefix' => 'restaurants', 'as' => 'restaurants.', 'middleware' =>
 
 });
 
+Route::get('test', fn () => phpinfo());
 Route::middleware(['guest'])->group(function()
 {
     Route::group(['namespace' => 'Auth', 'prefix' => 'auth', 'as' => 'auth.'], function()
