@@ -14,7 +14,7 @@
         <img src="img/logo.svg" alt="" class="logo">
 
       <div class="form-group">
-        <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" placeholder="Email address" value="{{ old('email') }}" required autocomplete="email" autofocus>
+        <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" placeholder="Email" value="{{ old('email') }}" required autocomplete="email" autofocus>
 
                                 @error('email')
                                     <span class="invalid-feedback" role="alert">
@@ -24,7 +24,7 @@
       </div>
 
       <div class="form-group">
-        <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="current-password">
+        <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" placeholder="Password" required autocomplete="current-password">
 
                                 @error('password')
                                     <span class="invalid-feedback" role="alert">
@@ -36,11 +36,7 @@
 
       <div class="btn-box">
         <button class="btn btn-border w-100" type="submit">Login</button>
-
-        <div class="d-flex mt-4 justify-content-between bottom">
-        <button class="btn btn-border" type="button">Support</button>
-        <button class="btn btn-border" type="button">Register</button>
-      </div>
+        <button class="btn btn-border w-100 mt-4" type="button">Forgot Password</button>
       </div>
     </div>
   </form>
