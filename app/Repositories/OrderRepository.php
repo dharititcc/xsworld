@@ -267,18 +267,36 @@ class OrderRepository extends BaseRepository
     /**
      * Method getOrderdata
      *
+     * @param array $data [explicite description]
+     *
      * @return Collection
      */
-    function getOrderdata() : Collection
+    function getOrderdata(array $data) : Collection
     {
+        $page   = $data['page'] ? $data['page'] : 1;
+        $limit  = $data['limit'] ? $data['limit'] : 10;
+        $text   = $data['text'] ? $data['text'] : null;
+
+
         $user        = auth()->user();
-        $order       = Order::with([
+        $order       = Order::query()->with([
             'order_items',
             'order_items.addons',
             'order_items.mixer'
-        ])->where('user_id',$user->id)->where('type',Order::ORDER)->orderBy('id','desc')->get();
+        ])->where('user_id',$user->id)->where('type',Order::ORDER);
 
-        return $order;
+        if($text)
+        {
+            $order =  $order->where('id', $text);
+            // $order = $order->whereHas('restaurant', function ($query) use ($text)
+            // { $query->where('restaurant.name', 'like', '%'.$text.'%'); });
+        }
+        else
+        {
+            $order =  $order->limit($limit)->offset(($page - 1) * $limit)->orderBy('id','desc');
+        }
+        echo common()->formatSql($order);die;
+        return $order->get();
 
     }
 
