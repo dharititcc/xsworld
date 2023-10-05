@@ -68,6 +68,7 @@ Route::group(['prefix' => 'restaurants', 'as' => 'restaurants.', 'middleware' =>
     {
         Route::resource('table', 'RestaurantTableController');
         Route::get('status/update','RestaurantTableController@statusUpdate')->name('table-status');
+        Route::post('table/delete','RestaurantTableController@destroy')->name('table-destroy');
     });
 
     Route::group(['namespace' => 'AccountManager'], function()

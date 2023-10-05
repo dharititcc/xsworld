@@ -60,5 +60,16 @@ class RestaurantTableController extends Controller
         return response()->json(['success'=>'Status change successfully.']);
     }
 
+    public function show($id)
+    {
+        
+    }
+
+    public function destroy(Request $request)
+    {
+        dd($request->all());
+        $qrTablesDel = RestaurantTable::whereIn('id',$request->qrTables)->delete();
+    }
+
 
 }

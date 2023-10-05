@@ -188,6 +188,7 @@
         tableUpdate: "{!! route('restaurants.table.update', ':ID') !!}",
         tableGet: "{!! route('restaurants.table.show', ':ID') !!}",
         tableStatusUpdate: "{!! route('restaurants.table-status') !!}",
+        tableDelete: "{!! route('restaurants.table-destroy') !!}",
     };
     $(document).ready(function()
     {

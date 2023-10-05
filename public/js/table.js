@@ -150,6 +150,23 @@
                     qrTables= jQuery('.qr_select:checked').map(function(){ return $(this).val() }).get();
 
                 console.log(qrTables);
+                $.ajax({
+                    url:moduleConfig.tableDelete,
+                    type:'POST',
+                    dataType: "json",
+                    data: {'id':qrTables},
+                    processData: false,
+                    contentType: false,
+                    headers: {
+                        'X-CSRF-TOKEN': jQuery('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function(res) {
+                        console.log(res);
+                        alert('Table has been removed successfully');
+                        $this.closest('.ftr').find('.status').removeClass('green');
+                        $this.addClass('green');
+                    },
+                });
             });
         },
     }
