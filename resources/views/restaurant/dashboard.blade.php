@@ -8,7 +8,7 @@
             </div>
             <div class="outrbox">
                 <div class="row">
-                    <div class="col-md-4">
+                    <div class="col-lg-5 col-xl-4 act-grid-2">
                         <div class="grey-brd-box mb-4">
                             <div class="title">
                                 <h2>Opening Times</h2> <a href="#" class="edit">EDIT</a>
@@ -25,7 +25,7 @@
                                 </tbody></table>
                             </div>
                         </div>
-                        <div class="grey-brd-box">
+                        <div class="grey-brd-box m-lg-space">
                             <div class="title">
                                 <h2>Key Insights</h2> <a href="#" class="edit">Disable</a>
                             </div>
@@ -41,8 +41,8 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-8">
-                        <div class="grid colmn-3 h-100">
+                    <div class="col-lg-7 col-xl-8">
+                        <div class="grid colmn-3 h-100 m-h-100">
                             <a href="venue-management.html" class="grey-brd-box padbox text-center lable-box"><span>Venue Management</span></a>
                             <a href="#" class="grey-brd-box padbox text-center lable-box"><span>Analytics</span></a>
                             <a href="table-management.html" class="grey-brd-box padbox text-center lable-box"><span>Table Management</span></a>
@@ -51,6 +51,7 @@
                             <a href="{{ route('restaurants.mixers.index') }}" class="grey-brd-box padbox text-center lable-box"><span>Mixer Management</span></a>
                             <a href="{{ route('restaurants.categories.index') }}" class="grey-brd-box padbox text-center lable-box"><span>Category Management</span></a>
                             <a href="{{route('restaurants.pickup.index')}}" class="grey-brd-box padbox text-center lable-box"><span>Pick-up Zone Management</span></a>
+                            <a href="{{route('restaurants.addons.index')}}" class="grey-brd-box padbox text-center lable-box"><span>Addon Management</span></a>
                         </div>
                     </div>
                 </div>
