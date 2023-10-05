@@ -60,7 +60,7 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'v1', 'as' => 'api.v1.'], fun
         Route::get('/current-order', 'OrderController@currentOrder')->name('order.current-order');
         Route::get('/show/{order}', 'OrderController@show')->name('order.show');
         // {api/v1/users/orderhistory}
-        Route::get('/orderhistory', 'OrderController@orderHistory')->name('orderhistory');
+        Route::post('/orderhistory', 'OrderController@orderHistory')->name('orderhistory');
         // {api/v1/users/cart}
         Route::get('/cart', 'OrderController@cartCount')->name('cart');
         // {api/v1/cart/update}

@@ -7,6 +7,7 @@ use App\Http\Requests\AddtocartRequest;
 use App\Http\Requests\CartDeleteRequest;
 use App\Http\Requests\CustomerOrderRequest;
 use App\Http\Requests\OrderDeleteItemRequest;
+use App\Http\Requests\OrderHistoryRequest;
 use App\Http\Requests\OrderUpdateRequest;
 use App\Http\Requests\PlaceOrderRequest;
 use App\Http\Resources\OrderListResource;
@@ -158,9 +159,9 @@ class OrderController extends APIController
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    function orderHistory()
+    function orderHistory(OrderHistoryRequest $request)
     {
-        $order_data      = $this->repository->getOrderdata();
+        $order_data      = $this->repository->getOrderdata($request->validated());
 
         if($order_data)
         {
