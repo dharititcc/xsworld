@@ -21,6 +21,19 @@
         </div>
         <!-- Bootstrap core JS-->
         @include('layouts.restaurant.footer')
+        <script>
+            var pathname = window.location.pathname,
+                body     = document.getElementsByTagName('body')[0];
+
+            if( pathname == '/home' )
+            {
+                body.classList.add('home');
+            }
+            else
+            {
+                body.classList.remove('home')
+            }
+        </script>
         @yield('pagescript')
     </body>
 </html>

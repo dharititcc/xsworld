@@ -30,7 +30,7 @@
             <button class="bor-btn" id="disable">Disable Drink</button>
             <button class="bor-btn ms-3" id="enable">Enable Drink</button>
         </div>
-        <div class="data-table drinks scroll-y h-600">
+        <div class="data-table drinks scroll-y h-600 table-responsive">
             <table width="100%" class="drink_datatable">
                 <thead>
                     <tr valign="middle">
