@@ -34,11 +34,31 @@ class RestaurantTableController extends Controller
         ]);
         $qr_url = URL::current();
         // $qr_code_image = \QrCode::size(300)->generate($qr_url . '/'.$table->id);
-        $qr_code_image = \QrCode::size(500)
-            ->format('png')
-            ->generate($qr_url . '/'.$table->id, public_path('images/qrcode.png'));
+        // $qr_code_image = \QrCode::size(500)
+            // ->format('png')
+            // ->generate($qr_url . '/'.$table->id, public_path('images/qrcode.png'));
+
+        $qr_code_image =    \QrCode::size(212)
+            ->generate(
+                $qr_url . '/'.$table->id,
+            );
+
+        
+        // dd($qr_code_image);
+
         RestaurantTable::where('id',$table->id)->update(['qr_image' => $qr_code_image, 'qr_url' => $qr_url]);
         // dd($qr_code_image);
         return $table->refresh();
     }
+
+    public function statusUpdate(Request $request)
+    {
+        $restaurant = session('restaurant');
+        $res_tbl = RestaurantTable::find($request->id);
+        $res_tbl->status = $request->status;
+        $res_tbl->save();
+        return response()->json(['success'=>'Status change successfully.']);
+    }
+
+
 }

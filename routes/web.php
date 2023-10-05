@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AccountManager\Bar\BarPickZoneController;
+use App\Http\Controllers\Table\RestaurantTableController;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -66,6 +67,7 @@ Route::group(['prefix' => 'restaurants', 'as' => 'restaurants.', 'middleware' =>
     Route::group(['namespace' => 'Table'], function()
     {
         Route::resource('table', 'RestaurantTableController');
+        Route::get('status/update','RestaurantTableController@statusUpdate')->name('table-status');
     });
 
     Route::group(['namespace' => 'AccountManager'], function()

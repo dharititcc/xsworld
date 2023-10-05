@@ -8,6 +8,7 @@
             tableModal:        $("#tableModal"),
             tableForm:         $("#addtableform"),
             tableSubmitBtn:    $('#table_submitBtn'),
+            tableStatusBtn:    $('.status'),
 
         },
 
@@ -21,6 +22,7 @@
             var context = this;
             context.openTableModal();
             context.closeTableModal();
+            context.statusUpdate();
         },
 
         openTableModal: function()
@@ -85,6 +87,28 @@
                 submitHandler: function() {
                     context.submitTableForm(context.selectors.tableForm.get(0))
                 }
+            });
+        },
+
+        statusUpdate: function()
+        {
+            var context = this;
+            context.selectors.tableStatusBtn.on('click', function() {
+                var $this = $(this),
+                    id = $this.data('id'),
+                    status = $this.data('status');
+                $.ajax({
+                    url:moduleConfig.tableStatusUpdate,
+                    type:'GET',
+                    dataType: "json",
+                    data: {'status':status,'id':id},
+                    success: function(res) {
+                        console.log(res);
+                        alert('Table Status has been updated successfully');
+                        $this.closest('.ftr').find('.status').removeClass('green');
+                        $this.addClass('green');
+                    },
+                });
             });
         },
 
