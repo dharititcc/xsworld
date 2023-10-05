@@ -23,6 +23,7 @@
             context.openTableModal();
             context.closeTableModal();
             context.statusUpdate();
+            context.removeTables();
         },
 
         openTableModal: function()
@@ -83,7 +84,7 @@
                         maxlength: "Your name maxlength should be 50 characters long."
                     },
                 },
-                
+
                 submitHandler: function() {
                     context.submitTableForm(context.selectors.tableForm.get(0))
                 }
@@ -114,7 +115,6 @@
 
         submitTableForm: function(form)
         {
-            alert('submit');
             var context = this,
                 data    = new FormData(form);
 
@@ -138,6 +138,19 @@
                     XS.Common.btnProcessingStop(context.selectors.tableSubmitBtn);
                 }
             });
-        }
+        },
+
+        removeTables: function()
+        {
+            var context = this;
+
+            jQuery('.remove_tables').on('click', function()
+            {
+                var $this   = $(this),
+                    qrTables= jQuery('.qr_select:checked').map(function(){ return $(this).val() }).get();
+
+                console.log(qrTables);
+            });
+        },
     }
 })();

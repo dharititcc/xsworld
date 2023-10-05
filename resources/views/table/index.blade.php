@@ -11,8 +11,8 @@
                         <div class="d-flex flex-column sticky-sec scroll-y">
                             <div class="tbl-mng-btn">
                                 <a href="javascript:void(0);" class="grey-brd-box padbox text-center lable-box table_popup_modal"><span>Add Table</span></a>
-                                <a href="#"
-                                    class="grey-brd-box padbox text-center lable-box mt-3 btn-red"><span>Remove Table
+                                <a href="javascript:void(0);"
+                                    class="grey-brd-box padbox text-center lable-box mt-3 btn-red remove_tables"><span>Remove Table
                                     </span></a>
                             </div>
                             <div class="key-mng">
@@ -65,7 +65,7 @@
                             @foreach ($res_tables as $res_table)
                                 <div class="table-design grey-brd-box">
                                     <div class="head"><label class="cst-check">
-                                            <input type="checkbox" value=""><span class="checkmark"></span></label>
+                                            <input type="checkbox" class="qr_select" value="{{ $res_table->id }}"><span class="checkmark"></span></label>
                                         <h2>{{$res_table->code}}</h2>
                                     </div>
                                     <div class="cnt">
@@ -75,8 +75,8 @@
 
                                     </div>
                                     <div class="ftr">
-                                        <a href="javascript:void(0);" class="active @if($res_table->status == 1)  green @endif status" data-status="1"  data-id={{$res_table->id}}>Active</a>
-                                        <a href="javascript:void(0);" class="disable @if($res_table->status == 0)  green @endif status" data-status="0" data-id={{$res_table->id}}>Disable</a>
+                                        <a href="javascript:void(0);" class="active @if($res_table->status == 1)  green @endif status" data-status="1"  data-id="{{$res_table->id}}">Active</a>
+                                        <a href="javascript:void(0);" class="disable @if($res_table->status == 0)  green @endif status" data-status="0" data-id="{{$res_table->id}}">Disable</a>
                                     </div>
                                 </div>
                             @endforeach
