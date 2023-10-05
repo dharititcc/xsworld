@@ -153,7 +153,7 @@ class AuthController extends APIController
         $input          = $request->all();
         $authenticated  = $this->authenticate($request);
 
-        if( is_bool($authenticated) )
+        if( $authenticated === true )
         {
             $user = auth()->user();
 
