@@ -10,4 +10,7 @@ class RestaurantTable extends Model
 {
     use HasFactory, SoftDeletes;
     protected $guarded = [];
+
+    const ACTIVE =  1;
+    const DISABLE = 0;
 }

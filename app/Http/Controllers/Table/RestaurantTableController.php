@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\RestaurantTable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\URL;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Http\Client\Response;
 
 class RestaurantTableController extends Controller
 {
@@ -13,14 +15,32 @@ class RestaurantTableController extends Controller
     {
         $restaurant = session('restaurant');
         $res_tables = RestaurantTable::where('restaurant_id',$restaurant->id)->get();
-        return view('table.index',compact('res_tables'));
+        $active_tbl = RestaurantTable::where(['restaurant_id' => $restaurant->id, 'status' =>RestaurantTable::ACTIVE])->count();
+        return view('table.index',compact('res_tables','active_tbl'));
     }
 
-    public function create(Request $request)
+    public function export_pdf(Request $request)
     {
+        $qr_code[] =$request->qr_code;
+        $restaurant = session('restaurant');
+        $pdf = PDF::loadView('pdf.qr_code', ['qr_code' => $qr_code]);
+        // Convert PDF to base64
+        $base64Pdf = base64_encode($pdf->output());
+        $headers = [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="qr_code.pdf"',
+        ];
 
+        return response()->json([
+            'success' => true,
+            'pdf' => $base64Pdf,
+        ], 200, $headers);
     }
 
+    public function exportQrCode(Request $request)
+    {
+        
+    }
 
     public function store(Request $request)
     {
@@ -42,9 +62,6 @@ class RestaurantTableController extends Controller
             ->generate(
                 $qr_url . '/'.$table->id,
             );
-
-        
-        // dd($qr_code_image);
 
         RestaurantTable::where('id',$table->id)->update(['qr_image' => $qr_code_image, 'qr_url' => $qr_url]);
         // dd($qr_code_image);

@@ -68,6 +68,8 @@ Route::group(['prefix' => 'restaurants', 'as' => 'restaurants.', 'middleware' =>
     {
         Route::resource('table', 'RestaurantTableController');
         Route::get('status/update','RestaurantTableController@statusUpdate')->name('table-status');
+        // Route::get('exportQrCode','RestaurantTableController@exportQrCode')->name('exportQrCode');
+        Route::post('export_pdf','RestaurantTableController@export_pdf')->name('table-export_pdf');
         Route::delete('table/delete','RestaurantTableController@destroy')->name('table-destroy');
     });
 
