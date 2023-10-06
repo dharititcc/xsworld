@@ -112,6 +112,19 @@ class PickupPoint extends Model
         return $query->where('type',$arg);
     }
 
+    /**
+     * Method ScopeType
+     *
+     * @param $query $query [explicite description]
+     * @param $arg $arg [explicite description]
+     *
+     * @return mixed
+     */
+    public function ScopeStatus($query,$arg)
+    {
+        return $query->where('status',$arg);
+    }
+
      /**
      * Method getStatusAttribute
      *

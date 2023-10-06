@@ -90,10 +90,13 @@ class RestaurantRepository extends BaseRepository
 
         $query = $this->restaurantQuery()->with([
             'categories',
-            'pickup_points',
             'main_categories',
             'attachment',
-            'country'
+            'country',
+            'pickup_points' => function($query)
+            {
+                return $query->status(1);
+            }
         ])
         ->select([
             'id',
