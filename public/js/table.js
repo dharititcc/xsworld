@@ -147,26 +147,37 @@
             jQuery('.remove_tables').on('click', function()
             {
                 var $this   = $(this),
-                    qrTables= jQuery('.qr_select:checked').map(function(){ return $(this).val() }).get();
+                    idsArr  = [];
+                    // qrTables= jQuery('.qr_select:checked').map(function(){ return $(this).val() }).get();
 
-                console.log(qrTables);
-                $.ajax({
-                    url:moduleConfig.tableDelete,
-                    type:'POST',
-                    dataType: "json",
-                    data: {'id':qrTables},
-                    processData: false,
-                    contentType: false,
-                    headers: {
-                        'X-CSRF-TOKEN': jQuery('meta[name="csrf-token"]').attr('content')
-                    },
-                    success: function(res) {
-                        console.log(res);
-                        alert('Table has been removed successfully');
-                        $this.closest('.ftr').find('.status').removeClass('green');
-                        $this.addClass('green');
-                    },
+                $('.qr_select:checked').each(function() {
+                    idsArr.push($(this).val());
                 });
+
+                if(idsArr.length <= 0) {
+                    alert("Please select atleast one record to delete.");
+                } else {
+                    if(confirm("Are you sure, you want to delete the selected table?")){
+                        var strIds = idsArr.join(",");
+                        $.ajax({
+                            url:moduleConfig.tableDelete,
+                            type:'DELETE',
+                            data: 'ids='+strIds,
+                            headers: {
+                                'X-CSRF-TOKEN': jQuery('meta[name="csrf-token"]').attr('content')
+                            },
+                            success: function(res) {
+                                console.log(res);
+                                alert('Table has been removed successfully');
+                                $this.closest('.ftr').find('.status').removeClass('green');
+                                $this.addClass('green');
+                                location.reload(true);
+                            },
+                        });
+                    } else {
+                        $('.qr_select').prop('checked', false);
+                    }
+                }
             });
         },
     }

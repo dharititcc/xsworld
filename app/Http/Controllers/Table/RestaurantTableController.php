@@ -67,8 +67,8 @@ class RestaurantTableController extends Controller
 
     public function destroy(Request $request)
     {
-        dd($request->all());
-        $qrTablesDel = RestaurantTable::whereIn('id',$request->qrTables)->delete();
+        RestaurantTable::whereIn('id',explode(",",$request->ids))->delete();
+        return response()->json(['status'=>true,'message'=>"Table deleted successfully."]);
     }
 
 
