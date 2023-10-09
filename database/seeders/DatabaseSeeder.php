@@ -30,6 +30,7 @@ class DatabaseSeeder extends Seeder
             AddonsSeeder::class,
             MixtureSeeder::class,
             // OrderSeeder::class
+            DaySeeder::class,
         ]);
     }
 }
