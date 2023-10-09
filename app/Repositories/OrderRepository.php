@@ -291,7 +291,7 @@ class OrderRepository extends BaseRepository
         $user->loadMissing([
             'orders',
             'orders.order_items',
-            'orders.mixer',
+            'orders.order_mixer',
             'orders.restaurant'
         ]);
 
