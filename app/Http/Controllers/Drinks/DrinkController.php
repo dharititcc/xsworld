@@ -148,7 +148,6 @@ class DrinkController extends Controller
             ]);
         }
         return $newRestaurantItem->refresh();
-        //
     }
 
     /**
@@ -203,9 +202,10 @@ class DrinkController extends Controller
      */
     public function update(Request $request, RestaurantItem $drink)
     {
-        $restaurant = session('restaurant')->loadMissing(['main_categories', 'main_categories.children']);
-        $image = $request->file('photo');
-        $profileImage ="";
+        $variationArr   = [];
+        $restaurant     = session('restaurant')->loadMissing(['main_categories', 'main_categories.children']);
+        $image          = $request->file('photo');
+        $profileImage   = "";
         if ($image = $request->file('photo'))
         {
             $destinationPath = public_path('/storage/items');
@@ -216,88 +216,64 @@ class DrinkController extends Controller
         //category
         $category = $request->get('category_id');
 
-        //get old Drink list
-        $oldCategories = RestaurantItem::where('restaurant_id', $drink->restaurant_id)->where('type', RestaurantItem::ITEM)->where('name', $drink->name)->get();
-        foreach($oldCategories as $del_cal_item)
+        // delete all the variations of the restaurant item
+        if( $drink->variations->count() )
         {
-            // dd($del_cal_item);
-            $del_cal_item->delete();
+            $drink->variations()->delete();
         }
-        
-        if( !empty( $category ) )
+
+        $restaurantItem = [
+            'name'              => $request->name,
+            'description'       => $request->description,
+            'category_id'       => $request->category_id[0],
+            'type'              => RestaurantItem::ITEM,
+            'is_variable'       => $request->is_variable,
+            'price'             => $request->price,
+            'ingredients'       => $request->ingredients,
+            'country_of_origin' => $request->country_of_origin,
+            'year_of_production'=> $request->year_of_production,
+            'type_of_drink'     => $request->type_of_drink,
+            'is_featured'       => $request->is_featured
+        ];
+
+        // update restaurant item
+        $drink->update($restaurantItem);
+
+        // restaurant item variations
+        if( $request->is_variable == 1 )
         {
-            $oldCategory = RestaurantItem::onlyTrashed()->where('restaurant_id', $drink->restaurant_id)->where('type', RestaurantItem::ITEM)->where('name', $drink->name)->whereIn('category_id', $category)->restore();
-            foreach( $category as $cat )
+            // check variation array
+            $variationNameArr   = $request->drink_variation_name;
+            $variationPriceArr  = $request->drink_variation_price;
+
+            if( !empty( $variationNameArr ) )
             {
-                // check if item exist
-                $old_cat = RestaurantItem::where('restaurant_id', $drink->restaurant_id)->where('type', RestaurantItem::ITEM)->where('name', $drink->name)->where('category_id', $cat)->first();
-                if( isset( $old_cat ) )
+                foreach( $variationNameArr as $key => $variation )
                 {
-                    $old_cat->name = $request->get('name');
-                    $old_cat->price = $request->get('price');
-                    $old_cat->category_id = $cat;
+                    $name   = $variationNameArr[$key];
+                    $price  = $variationPriceArr[$key];
 
-                    $old_cat->description           = $request->get('description');
-                    $old_cat->ingredients           = $request->get('ingredients');
-                    $old_cat->country_of_origin     = $request->get('country_of_origin');
-                    $old_cat->type_of_drink         = $request->get('type_of_drink');
-                    $old_cat->year_of_production    = $request->get('year_of_production');
-                    $old_cat->is_variable           = $request->get('is_variable');
-                    $old_cat->is_featured           = $request->get('is_featured');
-                    $old_cat->save();
-                    $old_cat->attachment()->create([
-                        'stored_name'   => $profileImage,
-                        'original_name' => $profileImage,
-                        'attachmentable_id' => $old_cat->id,
-                    ]);
-                }
-                else
-                {
-                    $drinkArr = [
-                        "name"                  => $request->get('name'),
-                        "category_id"           => $cat,
-                        "description"           => $request->get('description'),
-                        "price"                 => $request->get('price'),
-                        "ingredients"           => $request->get('ingredients'),
-                        "country_of_origin"     => $request->get('country_of_origin'),
-                        "type_of_drink"         => $request->get('type_of_drink'),
-                        "year_of_production"    => $request->get('year_of_production'),
-                        "photo"                 => $request->get('name'),
-                        "is_variable"           => $request->get('is_variable'),
-                        "is_featured"           => $request->get('is_featured'),
-                        "is_available"          => 1,
-                        "type"                  => RestaurantItem::ITEM,
-                        "restaurant_id"         => $restaurant->id
-                    ];
-                    $newRestaurantItem = RestaurantItem::create($drinkArr);
-                    $newRestaurantItem->attachment()->create([
-                        'stored_name'   => $profileImage,
-                        'original_name' => $profileImage
-                    ]);
-                }
-                $variationArr = [];
-                if($drinkArr['is_variable'] == 1)
-                {
-                    foreach($request->drink_variation_name as $keys => $drink_variation_name)
-                    {
-                        $variationArr[$keys]['name'] = $drink_variation_name;
-                    }
-                    foreach($request->drink_variation_price as $keys => $drink_variation_price)
-                    {
-                        $variationArr[$keys]['price'] = $drink_variation_price;
-                    }
+                    // get restaurant item variation with same name and price withTrashed
+                    $variationItem = $drink->variations()->where('name', $name)->where('price', $price)->withTrashed()->first();
 
-                    foreach($variationArr as $key => $variation)
+                    if( isset( $variationItem->id ) )
                     {
-                        RestaurantVariation::create([
-                            'name'                  => $variation['name'],
-                            'price'                 => $variation['price'],
-                            'restaurant_item_id'    => $newRestaurantItem->id ,
-                        ]);
+                        $variationItem->restore();
+                    }
+                    else
+                    {
+                        $variationArr = [
+                            'name'      => $name,
+                            'price'     => $price
+                        ];
+
+                        // store restaurant item variation
+                        $drink->variations()->create($variationArr);
                     }
                 }
             }
         }
+
         return true;
     }
 
