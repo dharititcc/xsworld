@@ -245,7 +245,16 @@ class OrderRepository extends BaseRepository
     {
         $user        = auth()->user();
 
-        $user->loadMissing(['latest_cart']);
+        $user->loadMissing(
+            [
+                'latest_cart',
+                'latest_cart.restaurant',
+                'latest_cart.restaurant.pickup_points' => function($query)
+                {
+                    return $query->status(1);
+                }
+            ]
+        );
 
         return $user->latest_cart;
     }
@@ -273,31 +282,40 @@ class OrderRepository extends BaseRepository
      */
     function getOrderdata(array $data) : Collection
     {
-        $page   = $data['page'] ? $data['page'] : 1;
-        $limit  = $data['limit'] ? $data['limit'] : 10;
-        $text   = $data['text'] ? $data['text'] : null;
+        $page   = isset($data['page']) ? $data['page'] : 1;
+        $limit  = isset($data['limit']) ? $data['limit'] : 10;
+        $text   = isset($data['text']) ? $data['text'] : null;
 
+        $user   = auth()->user();
 
-        $user        = auth()->user();
-        $order       = Order::query()->with([
-            'order_items',
-            'order_items.addons',
-            'order_items.mixer'
-        ])->where('user_id',$user->id)->where('type',Order::ORDER);
+        $user->loadMissing([
+            'orders',
+            'orders.order_items',
+            'orders.mixer',
+            'orders.restaurant'
+        ]);
 
-        if($text)
+        $query = $user->orders()->where('type', Order::ORDER);
+
+        if( $text )
         {
-            $order =  $order->where('id', $text);
-            // $order = $order->whereHas('restaurant', function ($query) use ($text)
-            // { $query->where('restaurant.name', 'like', '%'.$text.'%'); });
+            $query->where(function($innerQuery) use($text)
+            {
+                $innerQuery->where('id', $text);
+                $innerQuery->orWhereHas('restaurant', function($resQuery) use($text)
+                {
+                    $resQuery->where('name', 'like', "%{$text}%");
+                });
+            });
         }
-        else
+        $query->limit($limit)->offset(($page - 1) * $limit)->orderBy('id','desc');
+        $data = $query->get();
+        if( $data->count() )
         {
-            $order =  $order->limit($limit)->offset(($page - 1) * $limit)->orderBy('id','desc');
+            return $data;
         }
-        echo common()->formatSql($order);die;
-        return $order->get();
 
+        throw new GeneralException('There is no order found.');
     }
 
     /**
