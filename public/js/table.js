@@ -227,19 +227,19 @@
                         headers: {
                             'X-CSRF-TOKEN': jQuery('meta[name="csrf-token"]').attr('content')
                         },
-                        dataType: 'native',
-                        xhrFields: {
-                          responseType: 'blob'
-                        },
+                        dataType: 'json',
+                        
                         success: function(res){
                           console.log(res);
-                            // var link=document.createElement('a');
-                            // link.href=window.URL.createObjectURL(blob);
-                            // link.download="Dossier_" + new Date() + ".pdf";
-                            // link.click();
-                            console.log(res);
-                            alert('QR code Exported successfully');
-                            $('.qr-code').modal('hide');
+                          var link = document.createElement("a");
+                          document.body.appendChild(link);
+                          link.setAttribute("type", "hidden");
+                          link.href = "data:application/pdf;base64," + res.pdf;
+                          link.download = "qr.pdf";
+                          link.click();
+                          document.body.removeChild(link);
+                          alert('QR code Exported successfully');
+                          $('.qr-code').modal('hide');
                         }
                       });
                 });

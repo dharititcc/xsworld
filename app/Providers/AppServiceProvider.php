@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Services\Access;
 use App\Services\Common;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -32,5 +33,6 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton('common', function ($app) {
             return new Common();
         });
+        Schema::defaultStringLength(191);
     }
 }

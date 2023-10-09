@@ -109,7 +109,7 @@
                                 </div>
                             </div> --}}
                             <div class="table-design grey-brd-box">
-                                <a href="javascript:void(0);" class="add-table-design "><i class="icon-plus"></i></a>
+                                <a href="javascript:void(0);" class="add-table-design table_popup_modal"><i class="icon-plus"></i></a>
                             </div>
                         </div>
                     </div>

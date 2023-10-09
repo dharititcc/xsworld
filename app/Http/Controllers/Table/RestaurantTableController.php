@@ -21,20 +21,26 @@ class RestaurantTableController extends Controller
 
     public function export_pdf(Request $request)
     {
-        $qr_code[] =$request->qr_code;
+        $qr_code =$request->qr_code;
         $restaurant = session('restaurant');
-        $pdf = PDF::loadView('pdf.qr_code', ['qr_code' => $qr_code]);
+        $base64  = base64_encode($qr_code);
+        $pdf = PDF::loadView('pdf.qr_code', ['qr_code' => $base64]);
         // Convert PDF to base64
+       
         $base64Pdf = base64_encode($pdf->output());
-        $headers = [
-            'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'attachment; filename="qr_code.pdf"',
-        ];
+        // $headers = [
+        //     'Content-Type' => 'application/pdf',
+        //     'Content-Disposition' => 'attachment; filename="qr_code.pdf"',
+        // ];
 
+        $header = header('Content-Type: text/html; charset=utf-8');
+        //     // dd($base64Pdf);
+        
         return response()->json([
             'success' => true,
             'pdf' => $base64Pdf,
-        ], 200, $headers);
+        ], 200, ['Content-Type' => 'application/pdf']);
+        
     }
 
     public function exportQrCode(Request $request)
