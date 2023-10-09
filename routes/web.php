@@ -93,6 +93,11 @@ Route::group(['prefix' => 'restaurants', 'as' => 'restaurants.', 'middleware' =>
         });
     });
 
+    Route::group(['namespace' => 'Venue'], function()
+    {
+        Route::resource('venue', 'VenueController');
+    });
+
 });
 
 Route::get('test', fn () => phpinfo());
