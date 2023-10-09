@@ -278,9 +278,9 @@ class OrderRepository extends BaseRepository
      *
      * @param array $data [explicite description]
      *
-     * @return Collection
+     * @return mixed
      */
-    function getOrderdata(array $data) : Collection
+    function getOrderdata(array $data) : array
     {
         $page   = isset($data['page']) ? $data['page'] : 1;
         $limit  = isset($data['limit']) ? $data['limit'] : 10;
@@ -308,10 +308,15 @@ class OrderRepository extends BaseRepository
                 });
             });
         }
+        $total = $query->count();
         $query->limit($limit)->offset(($page - 1) * $limit)->orderBy('id','desc');
         $data = $query->get();
         if( $data->count() )
         {
+            $data = [
+                'total_orders'   => $total,
+                'orders'         => $data
+            ];
             return $data;
         }
 
