@@ -24,6 +24,8 @@
             context.closeTableModal();
             context.statusUpdate();
             context.removeTables();
+            context.exportQRCode();
+            // context.exportPdf();
         },
 
         openTableModal: function()
@@ -147,10 +149,121 @@
             jQuery('.remove_tables').on('click', function()
             {
                 var $this   = $(this),
-                    qrTables= jQuery('.qr_select:checked').map(function(){ return $(this).val() }).get();
+                    idsArr  = [];
+                    // qrTables= jQuery('.qr_select:checked').map(function(){ return $(this).val() }).get();
 
-                console.log(qrTables);
+                $('.qr_select:checked').each(function() {
+                    idsArr.push($(this).val());
+                });
+
+                if(idsArr.length <= 0) {
+                    alert("Please select atleast one record to delete.");
+                } else {
+                    if(confirm("Are you sure, you want to delete the selected table?")){
+                        var strIds = idsArr.join(",");
+                        $.ajax({
+                            url:moduleConfig.tableDelete,
+                            type:'DELETE',
+                            data: 'ids='+strIds,
+                            headers: {
+                                'X-CSRF-TOKEN': jQuery('meta[name="csrf-token"]').attr('content')
+                            },
+                            success: function(res) {
+                                console.log(res);
+                                alert('Table has been removed successfully');
+                                $this.closest('.ftr').find('.status').removeClass('green');
+                                $this.addClass('green');
+                                location.reload(true);
+                            },
+                        });
+                    } else {
+                        $('.qr_select').prop('checked', false);
+                    }
+                }
             });
         },
+
+        exportQRCode: function()
+        {
+            var context = this;
+            $('.export-info').on("click", function() {
+                
+                var $this = $(this),
+                    id = $this.data('id'),
+                    qr = $this.closest('.cnt').find('svg').clone(),
+                    selectorQr = $('#export_qr_code').find('.qrcode');
+                
+                selectorQr.children().remove();
+
+                selectorQr.append(qr.get(0));
+                var qrCodeString = $this.closest('.cnt').find('svg')[0].outerHTML;
+                // console.log(qrCodeString);
+                
+                $('.export_pdf').on("click", function() {
+                    // $.ajax({
+                    //     url:moduleConfig.exportpdf,
+                    //     type:'POST',
+                    //     data: {'id': id, 'qr_code': qrCodeString},
+                    //     processData: false,
+                    //     contentType: false,
+                    //     headers: {
+                    //         'X-CSRF-TOKEN': jQuery('meta[name="csrf-token"]').attr('content')
+                    //     },
+                    //     success: function(res) {
+                    //         console.log(res);
+                    //         alert('QR code Exported successfully');
+                    //         $('.qr-code').modal('hide');
+                    //     },
+                    //     error: function(xhr, status, error) {
+                    //         console.error(xhr.responseText);
+                    //         alert('Error exporting QR code to PDF');
+                    //     },
+                    // });
+
+                    $.ajax({
+                        url:moduleConfig.exportpdf,
+                        type:'POST',
+                        data: {'id': id, 'qr_code': qrCodeString},
+                        headers: {
+                            'X-CSRF-TOKEN': jQuery('meta[name="csrf-token"]').attr('content')
+                        },
+                        dataType: 'native',
+                        xhrFields: {
+                          responseType: 'blob'
+                        },
+                        success: function(res){
+                          console.log(res);
+                            // var link=document.createElement('a');
+                            // link.href=window.URL.createObjectURL(blob);
+                            // link.download="Dossier_" + new Date() + ".pdf";
+                            // link.click();
+                            console.log(res);
+                            alert('QR code Exported successfully');
+                            $('.qr-code').modal('hide');
+                        }
+                      });
+                });
+                
+            });
+        },
+
+        // exportPdf: function()
+        // {
+        //     var context = this;
+        //     $('.export_pdf').on("click", function() {
+        //         alert('hii');
+        //         $.ajax({
+        //             url:moduleConfig.exportpdf,
+        //             type:'GET',
+        //             data: {'id':id},
+        //             success: function(res) {
+        //                 console.log(res);
+        //                 alert('Table Status has been updated successfully');
+        //                 $this.closest('.ftr').find('.status').removeClass('green');
+        //                 $this.addClass('green');
+        //             },
+        //         });
+        //     });
+        // },
     }
 })();
