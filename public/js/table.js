@@ -239,7 +239,7 @@
                           link.click();
                           document.body.removeChild(link);
                           alert('QR code Exported successfully');
-                          $('.qr-code').modal('hide');
+                          $('.qr-code-hide').modal('hide');
                         }
                       });
                 });

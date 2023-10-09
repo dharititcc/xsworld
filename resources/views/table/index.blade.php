@@ -154,7 +154,7 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
 
-                <div class="modal-body">
+                <div class="modal-body qr-code-hide">
                     <div style="min-height: 300px;">
                         <div class="mb-3 table-ids">
                             Table 1
