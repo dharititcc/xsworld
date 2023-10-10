@@ -18,6 +18,7 @@ class CreateCountries extends Migration
             $table->string('name');
             $table->string('code',5);
             $table->string('country_code',5);
+            $table->string('symbol');
             $table->timestamps();
         });
     }

@@ -30,6 +30,7 @@ class RestaurantItemsResource extends JsonResource
             'year_of_production'        => $this->year_of_production ?? '',
             'type_of_drink'             => $this->type_of_drink ?? '',
             'currency'                  => $this->restaurant->currency->code,
+            'symbol'                    => $this->restaurant->country->symbol,
             'is_featured'               => $this->is_featured,
             'image'                     => $this->attachment_url ?? '',
             'is_favourite'              => $this->count_user_favourite_item->count() ? 1 : 0,

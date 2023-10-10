@@ -40,6 +40,7 @@ class OrderResource extends JsonResource
             'completion_time'           => $this->completiontime ?? '',
             'served_time'               => $this->servedtime ?? '',
             'currency'                  => $this->restaurant->currency->code,
+            'symbol'                    => $this->restaurant->country->symbol,
             'card_id'                   => $this->card_id ?? '',
             'charge_id'                 => $this->charge_id ?? '',
             'total_items'               => $this->order_items->sum('quantity'),
