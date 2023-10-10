@@ -80,34 +80,28 @@ class MixerController extends Controller
      */
     public function store(Request $request)
     {
+        $newMixer   = null;
         $restaurant = session('restaurant')->loadMissing(['main_categories', 'main_categories.children']);
-        $image = $request->file('photo');
-        $profileImage ="";
-        if ($image = $request->file('photo'))
-        {
-            $destinationPath = public_path('/storage/mixers');
-            $profileImage = date('YmdHis') . "." . $image->getClientOriginalExtension();
-            $image->move($destinationPath, $profileImage);
-        }
-        //category
-        $category = $request->get('category');
+        $category   = $request->get('category');
+
         foreach ($category as $key => $value)
         {
-            $restaurantitem                       = new RestaurantItem();
-            $restaurantitem->name                 = $request->get('name');
-            $restaurantitem->price                = $request->get('price');
-            $restaurantitem->type                 = 3;
-            $restaurantitem->is_available         = 1;
-            $restaurantitem->category_id         = $value;
-            $restaurantitem->restaurant_id        = $restaurant->id;
-            $restaurantitem->save();
-            $restaurantitem->attachment()->create([
-                'stored_name'   => $profileImage,
-                'original_name' => $profileImage,
-                'attachmentable_id' => $restaurantitem->id,
+            $newMixer = RestaurantItem::create([
+                'name'          => $request->name,
+                'price'         => $request->price,
+                'type'          => RestaurantItem::MIXER,
+                'is_available'  => 1,
+                'category_id'   => $value,
+                'restaurant_id' => $restaurant->id
             ]);
+
+            if ($request->file('photo'))
+            {
+                $this->upload($request->file('photo'), $newMixer);
+            }
         }
-        return $restaurantitem;
+
+        return true;
     }
 
     /**
@@ -154,18 +148,8 @@ class MixerController extends Controller
      */
     public function update(Request $request, RestaurantItem $mixer)
     {
+        $category   = $request->get('category');
         $restaurant = session('restaurant')->loadMissing(['main_categories', 'main_categories.children']);
-        $image = $request->file('photo');
-        $profileImage ="";
-        if ($image = $request->file('photo'))
-        {
-            $destinationPath = public_path('/storage/mixers');
-            $profileImage = date('YmdHis') . "." . $image->getClientOriginalExtension();
-            $image->move($destinationPath, $profileImage);
-        }
-
-        //category
-        $category = $request->get('category');
 
         // get old mixers list
         $oldCategories = RestaurantItem::where('restaurant_id', $mixer->restaurant_id)->where('type', RestaurantItem::MIXER)->where('name', $mixer->name)->get();
@@ -173,7 +157,7 @@ class MixerController extends Controller
         {
             $del_cal_item->delete();
         }
-        
+
         if( !empty( $category ) )
         {
             $oldCategory = RestaurantItem::onlyTrashed()->where('restaurant_id', $mixer->restaurant_id)->where('type', RestaurantItem::MIXER)->where('name', $mixer->name)->whereIn('category_id', $category)->restore();
@@ -188,11 +172,10 @@ class MixerController extends Controller
                     $oldMixer->category_id = $cat;
                     $oldMixer->save();
 
-                    $oldMixer->attachment()->create([
-                        'stored_name'   => $profileImage,
-                        'original_name' => $profileImage,
-                        'attachmentable_id' => $oldMixer->id,
-                    ]);
+                    if ($request->file('photo'))
+                    {
+                        $this->upload($request->file('photo'), $oldMixer);
+                    }
                 }
                 else
                 {
@@ -207,11 +190,10 @@ class MixerController extends Controller
                         ]
                     );
 
-                    $newMixer->attachment()->create([
-                        'stored_name'   => $profileImage,
-                        'original_name' => $profileImage,
-                        'attachmentable_id' => $newMixer->id,
-                    ]);
+                    if ($request->file('photo'))
+                    {
+                        $this->upload($request->file('photo'), $newMixer);
+                    }
                 }
             }
         }
@@ -232,5 +214,28 @@ class MixerController extends Controller
     {
         $updateitems = RestaurantItem::whereIn("id", $data)->update(["is_available" => $value]);
         return $updateitems;
+    }
+
+    /**
+     * Method upload
+     *
+     * @param $file $file [explicite description]
+     * @param \App\Models\RestaurantItem $model [explicite description]
+     *
+     * @return void
+     */
+    private function upload($file, RestaurantItem $model)
+    {
+        //Move Uploaded File
+        $destinationPath = public_path(DIRECTORY_SEPARATOR.'storage'.DIRECTORY_SEPARATOR.'mixers');
+        $profileImage = date('YmdHis') . "." . $file->getClientOriginalExtension();
+        $file->move($destinationPath, $profileImage);
+
+        $model->attachment()->delete();
+
+        $model->attachment()->create([
+            'stored_name'   => $profileImage,
+            'original_name' => $profileImage
+        ]);
     }
 }

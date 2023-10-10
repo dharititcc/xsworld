@@ -42,16 +42,7 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        //dd($request->all());
         $restaurant = session('restaurant')->loadMissing(['main_categories', 'main_categories.children']);
-        $image = $request->file('photo');
-        $profileImage ="";
-        if ($image = $request->file('photo'))
-        {
-            $destinationPath = public_path('/storage/categories');
-            $profileImage = date('YmdHis') . "." . $image->getClientOriginalExtension();
-            $image->move($destinationPath, $profileImage);
-        }
         $categoryArr = [
             'name'          => $request->get('name'),
             'parent_id'     => $request->get('parent_id'),
@@ -59,11 +50,11 @@ class CategoryController extends Controller
         ];
 
         $newCategory = Category::create($categoryArr);
-        $newCategory->attachment()->create([
-            'stored_name'   => $profileImage,
-            'original_name' => $profileImage,
-            //'attachmentable_id' => $category->id,
-        ]);
+        $newCategory->refresh();
+        if ($request->hasFile('photo'))
+        {
+            $this->upload($request->file('photo'), $newCategory);
+        }
         return $newCategory->refresh();
     }
 
@@ -105,19 +96,10 @@ class CategoryController extends Controller
             ];
             $category->update($dataArr);
             $category->refresh();
-            $profileImage ="";
             if ($request->hasFile('photo'))
             {
-                $image = $request->file('photo');
-                $destinationPath = public_path('/storage/categories');
-                $profileImage = date('YmdHis') . "." . $image->getClientOriginalExtension();
-                $image->move($destinationPath, $profileImage);
-                $category->attachment()->update([
-                    'stored_name'   => $profileImage,
-                    'original_name' => $profileImage
-                ]);
+                $this->upload($request->file('photo'), $category);
             }
-
         }
         return $category;
     }
@@ -156,5 +138,28 @@ class CategoryController extends Controller
         }
 
         return redirect()->back();
+    }
+
+    /**
+     * Method upload
+     *
+     * @param $file $file [explicite description]
+     * @param \App\Models\Category $model [explicite description]
+     *
+     * @return void
+     */
+    private function upload($file, $model)
+    {
+        //Move Uploaded File
+        $destinationPath = public_path(DIRECTORY_SEPARATOR.'storage'.DIRECTORY_SEPARATOR.'categories');
+        $profileImage = date('YmdHis') . "." . $file->getClientOriginalExtension();
+        $file->move($destinationPath, $profileImage);
+
+        $model->attachment()->delete();
+
+        $model->attachment()->create([
+            'stored_name'   => $profileImage,
+            'original_name' => $profileImage
+        ]);
     }
 }
