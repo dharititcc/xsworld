@@ -91,14 +91,6 @@ class FoodController extends Controller
     {
         //dd($request->all());
         $restaurant = session('restaurant')->loadMissing(['main_categories', 'main_categories.children']);
-        $image = $request->file('photo');
-        $profileImage ="";
-        if ($image = $request->file('photo'))
-        {
-            $destinationPath = public_path('/storage/items');
-            $profileImage = date('YmdHis') . "." . $image->getClientOriginalExtension();
-            $image->move($destinationPath, $profileImage);
-        }
         $categories = $request->get('category_id');
 
         foreach ($categories as $key => $value)
@@ -143,10 +135,10 @@ class FoodController extends Controller
             }
 
 
-            $newRestaurantItem->attachment()->create([
-                'stored_name'   => $profileImage,
-                'original_name' => $profileImage
-            ]);
+            if ($request->hasFile('photo'))
+            {
+                $this->upload($request->file('photo'), $newRestaurantItem);
+            }
         }
         return $newRestaurantItem->refresh();
     }
@@ -203,15 +195,11 @@ class FoodController extends Controller
     public function update(Request $request, RestaurantItem $food)
     {
         $restaurant = session('restaurant')->loadMissing(['main_categories', 'main_categories.children']);
-        $image = $request->file('photo');
-        $profileImage ="";
-        if ($image = $request->file('photo'))
-        {
-            $destinationPath = public_path('/storage/items');
-            $profileImage = date('YmdHis') . "." . $image->getClientOriginalExtension();
-            $image->move($destinationPath, $profileImage);
-        }
 
+        if ($request->hasFile('photo'))
+        {
+            $this->upload($request->file('photo'), $food);
+        }
         // delete all the variations of the restaurant item
         if( $food->variations->count() )
         {
@@ -287,5 +275,28 @@ class FoodController extends Controller
     {
         $updateitems = RestaurantItem::whereIn("id", $data)->update(["is_available" => $value]);
         return $updateitems;
+    }
+
+    /**
+     * Method upload
+     *
+     * @param $file $file [explicite description]
+     * @param \App\Models\RestaurantItem $model [explicite description]
+     *
+     * @return void
+     */
+    private function upload($file, RestaurantItem $model)
+    {
+        //Move Uploaded File
+        $destinationPath = public_path(DIRECTORY_SEPARATOR.'storage'.DIRECTORY_SEPARATOR.'items');
+        $profileImage = date('YmdHis') . "." . $file->getClientOriginalExtension();
+        $file->move($destinationPath, $profileImage);
+
+        $model->attachment()->delete();
+
+        $model->attachment()->create([
+            'stored_name'   => $profileImage,
+            'original_name' => $profileImage
+        ]);
     }
 }
