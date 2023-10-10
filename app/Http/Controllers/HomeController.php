@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Restaurant;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -23,6 +24,13 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home');
+        // dd(session('restaurant'));
+        if( access()->isRestaurantOwner() )
+        {
+            return view('restaurant.dashboard');
+        }
+
+        // 404
+        abort(404);
     }
 }

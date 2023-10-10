@@ -1,11 +1,12 @@
 <?php namespace App\Http\Controllers\Api\V1\Traits;
 
+use App\Billing\Stripe;
 use App\Exceptions\GeneralException;
 use App\Models\User;
-use Exception;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 trait Authenticate
 {
@@ -16,9 +17,9 @@ trait Authenticate
      *
      * @param Request $request [explicite description]
      *
-     * @return bool
+     * @return bool|array
      */
-    public function authenticate(Request $request): bool
+    public function authenticate(Request $request)
     {
         return $this->getLoginType($request);
     }
@@ -28,7 +29,7 @@ trait Authenticate
      *
      * @param Request $request [explicite description]
      *
-     * @return bool
+     * @return bool|array
      * @throws \App\Exceptions\GeneralException
      */
     public function getLoginType(Request $request)
@@ -42,24 +43,33 @@ trait Authenticate
                     // validation
                     $this->validateEmail($request);
 
-                    $user = User::find($request->email);
-
+                    $user = User::where('email', $request->email)->first();
                     if( $user instanceof \App\Models\User && isset( $user->id ) )
                     {
                         auth()->login($user);
                         return true;
+                    }
+                    else
+                    {
+                        // insert
+                        return ['is_first_time' => 1];
                     }
                     break;
                 case User::FACEBOOK:
                     // validation
                     $this->validateEmail($request);
 
-                    $user = User::find($request->email);
+                    $user = User::where('email', $request->email)->first();
 
                     if( $user instanceof \App\Models\User && isset( $user->id ) )
                     {
                         auth()->login($user);
                         return true;
+                    }
+                    else
+                    {
+                        // insert
+                        return ['is_first_time' => 1];
                     }
                     break;
                 case User::PHONE:
@@ -68,9 +78,30 @@ trait Authenticate
 
                     return Auth::attempt($this->credentials($request));
                     break;
+                case User::USERNAME:
+                    // validation
+                    $this->validateUsername($request);
+
+                    return Auth::attempt($this->credentials($request));
+                    break;
+                case User::APPLE:
+                    // validation
+                    $this->validateSocialId($request);
+                    $user = User::where('social_id', $request->social_id)->first();
+                    if( $user instanceof \App\Models\User && isset( $user->id ) )
+                    {
+                        auth()->login($user);
+                        return true;
+                    }
+                    else
+                    {
+                        // insert
+                        return ['is_first_time' => 1];
+                    }
+                    break;
                 default:
                     // validation
-                    $this->validateLogin($request);
+                    $this->validateEmail($request);
                     return Auth::attempt($this->credentials($request));
                     break;
             }
@@ -90,6 +121,21 @@ trait Authenticate
     {
         $request->validate([
             'phone' => 'required|numeric',
+            'password' => 'required|string',
+        ]);
+    }
+
+    /**
+     * Method validateUsername
+     *
+     * @param Request $request [explicite description]
+     *
+     * @return void
+     */
+    public function validateUsername(Request $request)
+    {
+        $request->validate([
+            'username' => 'required|string',
             'password' => 'required|string',
         ]);
     }
@@ -118,10 +164,10 @@ trait Authenticate
     public function credentials(Request $request):array
     {
         // the value in the 'email' field in the request
-        $username = $request->get($this->username());
+        // $username = $request->get($this->username($request));
 
         // check if the value is a validate email address and assign the field name accordingly
-        $field = filter_var($username, FILTER_VALIDATE_EMAIL) ? $this->username()  : 'phone';
+        $field = $this->username($request);//filter_var($username, FILTER_VALIDATE_EMAIL) ? $this->username($request)  : 'phone';
 
         // return the credentials to be used to attempt login
         return [
@@ -135,9 +181,63 @@ trait Authenticate
      *
      * @return string
      */
-    public function username(): string
+    public function username(Request $request): string
     {
-        $field = filter_var(request()->input('email'), FILTER_VALIDATE_EMAIL) ? 'email' : 'phone';
-        return $field;
+        // $field = filter_var(request()->input('email'), FILTER_VALIDATE_EMAIL) ? 'email' : 'phone';
+        // return $field;
+        $type = intval($request->registration_type);
+        switch( $type )
+        {
+            case User::GOOGLE:
+                return 'email';
+                break;
+            case User::FACEBOOK:
+                return 'email';
+                break;
+            case User::PHONE:
+                return 'phone';
+                break;
+            case User::USERNAME:
+                return 'username';
+                break;
+            default:
+                return 'email';
+                break;
+        }
     }
+
+    /**
+     * Method insertUser
+     *
+     * @param array $data [explicite description]
+     *
+     * @return \App\Models\User
+     */
+    private function insertUser(array $data): User
+    {
+        $user = User::create($data);
+
+        $stripe                     = new Stripe();
+        $customer                   = $stripe->createCustomer($data);
+
+        $user->stripe_customer_id = $customer->id;
+        $user->save();
+
+        return $user;
+    }
+
+    /**
+     * Method validateSocialId
+     *
+     * @param $request $request [explicite description]
+     *
+     * @return void
+     */
+    public function validateSocialId($request)
+    {
+        $request->validate([
+            'social_id' => 'required|string'
+        ]);
+    }
+
 }

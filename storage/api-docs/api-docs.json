@@ -1,7 +1,7 @@
 {
     "openapi": "3.0.0",
     "info": {
-        "title": "LARAVEL REST API DOCUMENTATION",
+        "title": "XS World Documentation",
         "description": "L5 Swagger OpenApi description",
         "contact": {
             "email": "harshad@devsinindia.com"
@@ -12,11 +12,21 @@
         },
         "version": "1.0.0"
     },
+    "servers": [
+        {
+            "url": "http://127.0.0.1:8000",
+            "description": "Demo API Server"
+        },
+        {
+            "url": "https://express.itcc.net.au",
+            "description": "Staging API Server"
+        }
+    ],
     "paths": {
         "/api/v1/auth/login": {
             "post": {
                 "tags": [
-                    "Login"
+                    "Authentication"
                 ],
                 "summary": "Login",
                 "operationId": "5c1ade83886fc9458f48795a64e46c21",
@@ -24,6 +34,7 @@
                     {
                         "name": "email",
                         "in": "query",
+                        "description": "Email field is required when user tried to login with registration_type = 0/2/3",
                         "required": false,
                         "schema": {
                             "type": "string"
@@ -32,6 +43,7 @@
                     {
                         "name": "phone",
                         "in": "query",
+                        "description": "Phone field is required when user tried to login with registration_type = 1",
                         "required": false,
                         "schema": {
                             "type": "integer"
@@ -39,6 +51,14 @@
                     },
                     {
                         "name": "password",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "fcm_token",
                         "in": "query",
                         "required": true,
                         "schema": {
@@ -55,6 +75,14 @@
                     },
                     {
                         "name": "os_version",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "application_version",
                         "in": "query",
                         "required": true,
                         "schema": {
@@ -103,7 +131,7 @@
         "/api/v1/auth/logout": {
             "post": {
                 "tags": [
-                    "logout"
+                    "Authentication"
                 ],
                 "summary": "logout",
                 "operationId": "f6b8957b4c0b25636613a9f0512a8ba9",
@@ -129,16 +157,54 @@
                 }
             }
         },
+        "/api/v1/auth/password/reset": {
+            "patch": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "password/reset",
+                "operationId": "68c5313de5c6ca32b64b5a4777b0f524",
+                "parameters": [
+                    {
+                        "name": "email",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    }
+                }
+            }
+        },
         "/api/v1/auth/register": {
             "post": {
                 "tags": [
-                    "Register"
+                    "Authentication"
                 ],
                 "summary": "Register",
                 "operationId": "register",
                 "parameters": [
                     {
-                        "name": "name",
+                        "name": "first_name",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "last_name",
                         "in": "query",
                         "required": true,
                         "schema": {
@@ -162,6 +228,22 @@
                         }
                     },
                     {
+                        "name": "country_code",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "country",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
                         "name": "password",
                         "in": "query",
                         "required": true,
@@ -179,6 +261,14 @@
                     },
                     {
                         "name": "platform",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "application_version",
                         "in": "query",
                         "required": true,
                         "schema": {
@@ -216,6 +306,14 @@
                         "schema": {
                             "type": "string"
                         }
+                    },
+                    {
+                        "name": "address",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
                     }
                 ],
                 "responses": {
@@ -240,14 +338,482 @@
                 }
             }
         },
-        "/": {
+        "/api/v1/countries/get-countries": {
             "get": {
-                "description": "Home page",
+                "tags": [
+                    "Country"
+                ],
+                "summary": "Get Countries",
+                "operationId": "a37fca4b36469b8eb6930cd2c950547d",
                 "responses": {
-                    "default": {
-                        "description": "Welcome page"
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "not found"
+                    },
+                    "403": {
+                        "description": "Forbidden"
                     }
                 }
+            }
+        },
+        "/api/v1/restaurants": {
+            "post": {
+                "tags": [
+                    "Restaurants"
+                ],
+                "summary": "Get Near by Restaurants. Distance by default is 2.5K",
+                "operationId": "7a5f538fde1a75fc3a20c2f68b330ba1",
+                "parameters": [
+                    {
+                        "name": "restaurant_name",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "drink_name",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "distance",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "float"
+                        }
+                    },
+                    {
+                        "name": "latitude",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "longitude",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "not found"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/restaurants/featured": {
+            "post": {
+                "tags": [
+                    "Restaurants"
+                ],
+                "summary": "Get Restaurants Featured and user favourite items",
+                "operationId": "2ad16fa5cd862114ba25b4cdb061318e",
+                "parameters": [
+                    {
+                        "name": "restaurant_id",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "number"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "not found"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/restaurants/sub-categories": {
+            "post": {
+                "tags": [
+                    "Restaurants"
+                ],
+                "summary": "Get Sub categories by Restaurant and Category.",
+                "operationId": "12f20077a84970c302998bee1e468f87",
+                "parameters": [
+                    {
+                        "name": "restaurant_id",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "name": "category_id",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "number"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "not found"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/restaurants/items": {
+            "post": {
+                "tags": [
+                    "Restaurants"
+                ],
+                "summary": "Get Restaurants Items.",
+                "operationId": "61030e6d25fa11111024fe1c846ed17a",
+                "parameters": [
+                    {
+                        "name": "restaurant_id",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "name": "category_id",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    {
+                        "name": "application_version",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "not found"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/users/change-password": {
+            "patch": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "change-password",
+                "operationId": "dc035b9dac6cd589ab30a746d0dbb56f",
+                "parameters": [
+                    {
+                        "name": "old_password",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "new_password",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/users/favourite": {
+            "post": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "User's Favourite Items",
+                "operationId": "a7f99e4c5884c8ec20add04591bd47e0",
+                "parameters": [
+                    {
+                        "name": "restaurant_item_id",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "number"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/users/get-profile": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "get-profile",
+                "operationId": "get-profile",
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/users/update-profile": {
+            "post": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "update-profile",
+                "operationId": "03078e874a13ef89d41c46ee4650e397",
+                "parameters": [
+                    {
+                        "name": "first_name",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "last_name",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "phone",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "phone2",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "email",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "country_code",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "birth_date",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "address",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "profile_image",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "file"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "multipart/form-data": {}
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    }
+                },
+                "security": [
+                    {
+                        "bearer_token": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "bearer_token": {
+                "type": "apiKey",
+                "description": "Enter token in format (Bearer <token>)",
+                "name": "Authorization",
+                "in": "header"
             }
         }
     }

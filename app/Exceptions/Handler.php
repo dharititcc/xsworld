@@ -2,19 +2,14 @@
 
 namespace App\Exceptions;
 
-use App\Mail\ExceptionOccurredMail;
-use Carbon\Carbon;
 use ErrorException;
-use Exception;
 use Throwable;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Session\TokenMismatchException;
-use Mail;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
@@ -103,7 +98,6 @@ class Handler extends ExceptionHandler
             }
 
             if ($exception instanceof ErrorException) {
-                dd($exception->getMessage());
                 return $this->setStatusCode(500)->respondWithError("Internal Server Error, Please Try again.");
             }
 

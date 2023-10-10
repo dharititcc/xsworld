@@ -6,6 +6,9 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class OrderItem extends Model
 {
@@ -25,7 +28,11 @@ class OrderItem extends Model
      */
     protected $fillable = [
         'order_id',
-        'item_id',
+        'restaurant_item_id',
+        'variation_id',
+        'parent_item_id',
+        'quantity',
+        'price',
         'total',
         'type'
     ];
@@ -51,38 +58,32 @@ class OrderItem extends Model
     }
 
     /**
-     * Method scopeAddon
+     * The variation that belong to the RestaurantItem
      *
-     * @param \Illuminate\Database\Eloquent\Builder $query [explicite description]
-     *
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function scopeAddon(Builder $query): Builder
+    public function variation(): BelongsTo
     {
-        return $query->where('type', self::ADDON);
+        return $this->belongsTo(RestaurantVariation::class, 'variation_id', 'id');
     }
 
     /**
-     * Method scopeItem
+     * Get all of the addons for the OrderItem
      *
-     * @param \Illuminate\Database\Eloquent\Builder $query [explicite description]
-     *
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function scopeItem(Builder $query): Builder
+    public function addons(): HasMany
     {
-        return $query->where('type', self::ITEM);
+        return $this->hasMany(self::class, 'parent_item_id', 'id')->where('type', RestaurantItem::ADDON);
     }
 
     /**
-     * Method scopeMixer
+     * Get all of the mixer for the OrderItem
      *
-     * @param \Illuminate\Database\Eloquent\Builder $query [explicite description]
-     *
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
-    public function scopeMixer(Builder $query): Builder
+    public function mixer(): HasOne
     {
-        return $query->where('type', self::Mixer);
+        return $this->hasOne(self::class, 'parent_item_id', 'id')->where('type', RestaurantItem::MIXER);
     }
 }

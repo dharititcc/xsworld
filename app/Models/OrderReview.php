@@ -19,7 +19,8 @@ class OrderReview extends Model
      */
     protected $fillable = [
         'order_id',
-        'rating'
+        'rating',
+        'comment'
     ];
 
     /**

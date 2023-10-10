@@ -4,11 +4,18 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Api\V1\Traits\Authenticate;
 use App\Http\Requests\RegisterRequest;
+use App\Http\Requests\LoginRequest;
+use App\Http\Requests\SendOtpRequest;
+use App\Http\Requests\SocialRequest;
 use App\Http\Resources\UserResource;
+use App\Models\User;
 use App\Repositories\UserRepository;
 use Carbon\Carbon;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Str;
 
 /**
  * @group Authentication
@@ -39,7 +46,7 @@ class AuthController extends APIController
     /**
      * @OA\Post(
      ** path="/api/v1/auth/login",
-     *   tags={"Login"},
+     *   tags={"Authentication"},
      *   summary="Login",
      *
      *  @OA\Parameter(
@@ -48,7 +55,8 @@ class AuthController extends APIController
      *      required=false,
      *      @OA\Schema(
      *           type="string"
-     *      )
+     *      ),
+     *      description="Email field is required when user tried to login with registration_type = 0/2/3"
      *   ),
      *   @OA\Parameter(
      *       name="phone",
@@ -56,10 +64,19 @@ class AuthController extends APIController
      *      required=false,
      *      @OA\Schema(
      *           type="integer"
-     *      )
+     *      ),
+     *      description="Phone field is required when user tried to login with registration_type = 1"
      *   ),
      *   @OA\Parameter(
      *      name="password",
+     *      in="query",
+     *      required=true,
+     *      @OA\Schema(
+     *           type="string"
+     *      )
+     *   ),
+     *      @OA\Parameter(
+     *      name="fcm_token",
      *      in="query",
      *      required=true,
      *      @OA\Schema(
@@ -76,6 +93,14 @@ class AuthController extends APIController
      *   ),
      *      @OA\Parameter(
      *      name="os_version",
+     *      in="query",
+     *      required=true,
+     *      @OA\Schema(
+     *           type="string"
+     *      )
+     *   ),
+     *     @OA\Parameter(
+     *      name="application_version",
      *      in="query",
      *      required=true,
      *      @OA\Schema(
@@ -123,10 +148,12 @@ class AuthController extends APIController
      *      )
      *)
      **/
-    public function postLogin(Request $request)
+    public function postLogin(LoginRequest $request)
     {
-        $input = $request->all();
-        if( $this->authenticate($request) )
+        $input          = $request->all();
+        $authenticated  = $this->authenticate($request);
+
+        if( $authenticated === true )
         {
             $user = auth()->user();
 
@@ -136,20 +163,25 @@ class AuthController extends APIController
                 'os_version'            => $input['os_version'],
                 'application_version'   => $input['application_version'],
                 'model'                 => $input['model'],
+                'fcm_token'             => $input['fcm_token'],
             ];
+
+            $this->repository->storeDevice($user, ['fcm_token' => $input['fcm_token']]);
 
             $this->repository->update($dataArr, $user);
 
             $token  = $user->createToken('xs_world')->plainTextToken;
-            return $this->respond([
-                'status'    =>  true,
-                'message'   =>  'Login successful',
-                'token'     =>  $token,
-                'item'      =>  new UserResource($user),
+            return $this->loginResponse($token, $user);
+        }
+        else if( is_array($authenticated) )
+        {
+            return response()->json([
+                'status'        => true,
+                'is_first_time' => 1
             ]);
         }
 
-        return $this->respondInternalError('Invalid login credentials.');
+        return $this->respondWithError('Invalid login credentials.');
     }
 
     /**
@@ -166,7 +198,7 @@ class AuthController extends APIController
     /**
      * @OA\Post(
      ** path="/api/v1/auth/logout",
-     *   tags={"logout"},
+     *   tags={"Authentication"},
      *   summary="logout",
      *
      *   @OA\Response(
@@ -205,11 +237,61 @@ class AuthController extends APIController
         }
         catch (\Exception $e)
         {
-            return $this->respondInternalError($e->getMessage());
+            return $this->respondWithError($e->getMessage());
         }
 
         return $this->respondSuccess('Logged out successfully.');
     }
+
+    /**
+     * Method resetPassword
+     *
+     * @param \App\Http\Requests $request [explicite description]
+     *
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \App\Exceptions\GeneralException
+     */
+    /**
+     * @OA\PATCH(
+     ** path="/api/v1/auth/password/reset",
+     *   tags={"Authentication"},
+     *   summary="password/reset",
+     *
+     *     @OA\Parameter(
+     *      name="email",
+     *      in="query",
+     *      required=true,
+     *      @OA\Schema(
+     *           type="string"
+     *      )
+     * ),
+     *    @OA\Response(
+     *      response=200,
+     *       description="Success",
+     *      @OA\MediaType(
+     *           mediaType="application/json",
+     *      )
+     *   ),
+     *   @OA\Response(
+     *      response=401,
+     *       description="Unauthenticated"
+     *   ),
+     *)
+     **/
+    public function resetPassword(Request $request)
+    {
+        $request->validate(['email' => 'required|email|exists:users,email']);
+
+        $status = Password::sendResetLink(
+            $request->only('email')
+        );
+
+        return $this->respond([
+            'status' => true,
+            'message'=> 'Mail send successfully Please check your mail.'
+        ]);
+    }
+
     /**
      * Method postRegister
      *
@@ -220,12 +302,20 @@ class AuthController extends APIController
     /**
      * @OA\Post(
      ** path="/api/v1/auth/register",
-     *   tags={"Register"},
+     *   tags={"Authentication"},
      *   summary="Register",
      *   operationId="register",
      *
      *  @OA\Parameter(
-     *      name="name",
+     *      name="first_name",
+     *      in="query",
+     *      required=true,
+     *      @OA\Schema(
+     *           type="string"
+     *      )
+     *   ),
+     *  @OA\Parameter(
+     *      name="last_name",
      *      in="query",
      *      required=true,
      *      @OA\Schema(
@@ -249,6 +339,22 @@ class AuthController extends APIController
      *      )
      *   ),
      *   @OA\Parameter(
+     *       name="country_code",
+     *      in="query",
+     *      required=true,
+     *      @OA\Schema(
+     *           type="string"
+     *      )
+     *   ),
+     *   @OA\Parameter(
+     *       name="country",
+     *      in="query",
+     *      required=true,
+     *      @OA\Schema(
+     *           type="string"
+     *      )
+     *   ),
+     *   @OA\Parameter(
      *      name="password",
      *      in="query",
      *      required=true,
@@ -266,6 +372,14 @@ class AuthController extends APIController
      *   ),
      *      @OA\Parameter(
      *      name="platform",
+     *      in="query",
+     *      required=true,
+     *      @OA\Schema(
+     *           type="string"
+     *      )
+     *   ),
+     *      @OA\Parameter(
+     *      name="application_version",
      *      in="query",
      *      required=true,
      *      @OA\Schema(
@@ -304,6 +418,14 @@ class AuthController extends APIController
      *           type="string"
      *      )
      *   ),
+     *    @OA\Parameter(
+     *      name="address",
+     *      in="query",
+     *      required=true,
+     *      @OA\Schema(
+     *           type="string"
+     *      )
+     *   ),
      *   @OA\Response(
      *      response=200,
      *       description="Success",
@@ -332,16 +454,21 @@ class AuthController extends APIController
     public function postRegister(RegisterRequest $request)
     {
         $dataArr = [
-            'name'                  => $request->name,
+            'first_name'            => $request->first_name,
+            'last_name'             => $request->last_name,
             'email'                 => $request->email,
             'password'              => Hash::make($request->password),
             'phone'                 => $request->phone,
+            'country_code'          => $request->country_code,
+            'country_id'            => $request->country,
+            'address'               => $request->address,
             'registration_type'     => $request->registration_type,
-            'birth_date'            => Carbon::createFromFormat('Y-m-d', $request->birth_date),
+            'birth_date'            => $request->birth_date,
             'platform'              => $request->platform,
             'os_version'            => $request->os_version,
             'application_version'   => $request->application_version,
-            'model'                 => $request->model
+            'model'                 => $request->model,
+            'user_type'             => User::CUSTOMER
         ];
 
         $user = $this->repository->create($dataArr);
@@ -350,11 +477,104 @@ class AuthController extends APIController
         {
             return $this->respond([
                 'status' => true,
-                'message'=> 'Registration successfully.',
-                'item'   => new UserResource($user)
+                'message'=> 'Registration successfully. Now please check your email to verify your account.'
             ]);
         }
 
-        return $this->respondInternalError('Invalid Registration data.');
+        return $this->respondWithError('Invalid Registration data.');
+    }
+
+    /**
+     * Method socialRegister
+     *
+     * @param Request $request [explicite description]
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function socialRegister(SocialRequest $request)
+    {
+        $dataArr = [
+            'first_name'            => $request->first_name,
+            'last_name'             => $request->last_name ?? '',
+            'email'                 => $request->email,
+            'password'              => Hash::make(Str::random(6)),
+            'phone'                 => $request->phone ?? rand(),
+            'country_code'          => $request->country_code,
+            'country_id'            => $request->country,
+            // 'address'               => $request->address,
+            'registration_type'     => $request->registration_type,
+            'birth_date'            => $request->birth_date,
+            'platform'              => $request->platform,
+            'os_version'            => $request->os_version,
+            'fcm_token'             => $request->fcm_token ?? null,
+            'application_version'   => $request->application_version,
+            'model'                 => $request->model,
+            'user_type'             => User::CUSTOMER,
+            'email_verified_at'     => Carbon::now(),
+            'social_id'             => $request->social_id
+        ];
+
+        $user = $this->repository->Socialcreate($dataArr);
+
+        $user->refresh();
+
+        $this->repository->storeDevice($user, ['fcm_token' => $request->fcm_token]);
+
+        $token  = $user->createToken('xs_world')->plainTextToken;
+        return $this->loginResponse($token, $user);
+    }
+
+    /**
+     * Method loginResponse
+     *
+     * @param string $token [explicite description]
+     * @param User $user [explicite description]
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    private function loginResponse(string $token, User $user): JsonResponse
+    {
+        return $this->respond([
+            'status'    =>  true,
+            'message'   =>  'Login successful',
+            'token'     =>  $token,
+            'item'      =>  new UserResource($user),
+        ]);
+    }
+
+    /**
+     * Method sendOtp
+     *
+     * @param SendOtpRequest $request [explicite description]
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function sendOtp(SendOtpRequest $request): JsonResponse
+    {
+        $otp   = $this->repository->sendOtp($request->validated());
+
+        return $this->respond([
+            'status'    =>  true,
+            'message'   =>  'OTP send succesfully',
+            'token'     =>  $otp,
+        ]);
+    }
+
+    /**
+     * Method resendLink
+     *
+     * @param Request $request [explicite description]
+     *
+     * @return JsonResponse
+     */
+    public function resendLink(Request $request) : JsonResponse
+    {
+        $input      = $request->all();
+        $resend     = $this->repository->resendLink($input);
+
+        return $this->respond([
+            'status'    =>  true,
+            'message'   =>  'Verification link has been sent to the email.',
+        ]);
     }
 }

@@ -1,5 +1,9 @@
 <?php
 
+use App\Http\Controllers\AccountManager\Bar\BarPickZoneController;
+use App\Http\Controllers\Table\RestaurantTableController;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -12,11 +16,100 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
+Route::get('seed', function()
+{
+    Artisan::call('cache:clear');
+    Artisan::call('config:clear');
+    Artisan::call('view:clear');
+    Artisan::call('route:clear');
+    // Artisan::call('migrate');
+    // Artisan::call('passport:install');
 
+    dd('migrate:rollback');
+});
 Route::get('/', function () {
-    return view('welcome');
+    return redirect('/login');
 });
 
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+Route::group(['prefix' => 'restaurants', 'as' => 'restaurants.', 'middleware' => ['auth']], function ()
+{
+    Route::group(['namespace' => 'Categories'], function()
+    {
+        Route::resource('categories', 'CategoryController');
+        Route::post('categories/multidelete', 'CategoryController@deleteCategories')->name('delete/categories');
+    });
+    Route::group(['namespace' => 'Drinks'], function()
+    {
+        Route::resource('drinks', 'DrinkController');
+    });
+    Route::group(['namespace' => 'Foods'], function()
+    {
+        Route::resource('foods', 'FoodController');
+    });
+    Route::group(['namespace' => 'Mixers'], function()
+    {
+        Route::resource('mixers', 'MixerController');
+    });
+    Route::group(['namespace' => 'Addons'], function()
+    {
+        Route::resource('addons', 'AddonsController');
+    });
+
+    Route::group(['namespace' => 'Pickup'], function()
+    {
+        Route::resource('pickup', 'PickupZoneController');
+    });
+
+    Route::group(['namespace' => 'Table'], function()
+    {
+        Route::resource('table', 'RestaurantTableController');
+        Route::get('status/update','RestaurantTableController@statusUpdate')->name('table-status');
+        // Route::get('exportQrCode','RestaurantTableController@exportQrCode')->name('exportQrCode');
+        Route::post('export_pdf','RestaurantTableController@export_pdf')->name('table-export_pdf');
+        Route::delete('table/delete','RestaurantTableController@destroy')->name('table-destroy');
+    });
+
+    Route::group(['namespace' => 'AccountManager'], function()
+    {
+        Route::resource('accountmanager', 'AccountManagerController');
+        Route::group(['namespace' => 'Waiter'], function()
+        {
+            Route::resource('waiter', 'WaiterController');
+            Route::get('waiter/email','WaiterController@generateRandomString');
+        });
+
+        Route::group(['namespace' => 'Bar'], function()
+        {
+            Route::resource('barpickzone', 'BarPickZoneController');
+        });
+
+        Route::group(['namespace' => 'Kitchen'], function()
+        {
+            Route::resource('kitchen', 'KitchenController');
+        });
+    });
+
+    Route::group(['namespace' => 'Venue'], function()
+    {
+        Route::resource('venue', 'VenueController');
+    });
+
+});
+
+Route::get('test', fn () => phpinfo());
+Route::middleware(['guest'])->group(function()
+{
+    Route::group(['namespace' => 'Auth', 'prefix' => 'auth', 'as' => 'auth.'], function()
+    {
+        // verify email
+        Route::get('verify/{token}', 'XSWorldVerificationController@verify')->name('verify-email');
+
+        Route::get('verification-success/{token}', 'XSWorldVerificationController@verificationSuccess')->name('verification-success');
+    });
+});
+
+

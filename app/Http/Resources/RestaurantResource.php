@@ -15,16 +15,19 @@ class RestaurantResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'id'            => $this->id,
-            'name'          => $this->name,
-            'latitude'      => $this->latitude,
-            'longitude'     => $this->longitude,
-            'address'       => $this->address,
-            'phone'         => $this->phone ?? '',
-            'specialisation'=> $this->specialisation,
-            'distance'      => $this->distance,
-            'image'         => $this->image,
-            'item_types'    => isset($this->item_types) ? RestaurantItemTypes::collection($this->item_types) : []
+            'id'                => $this->id,
+            'name'              => $this->name,
+            'latitude'          => $this->latitude,
+            'longitude'         => $this->longitude,
+            'address'           => $this->address,
+            'phone'             => $this->phone ?? '',
+            'specialisation'    => $this->specialisation,
+            'distance'          => $this->distance,
+            'image'             => $this->image,
+            'rating'            => 4.5,
+            'categories'        => isset($this->main_categories) ? CategoryResource::collection($this->main_categories) : [],
+            'pickup_points'     => isset($this->pickup_points) ? PickUpPointResource::collection($this->pickup_points) : [],
+            // 'featured_items'    => RestaurantItemsResource::collection($this->featured_items),
         ];
     }
 }
