@@ -48,7 +48,8 @@ class VenueController extends Controller
      */
     public function show($id)
     {
-        //
+        $restaurant = session('restaurant');
+        
     }
 
     /**
