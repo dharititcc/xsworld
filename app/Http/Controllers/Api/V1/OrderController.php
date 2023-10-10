@@ -165,7 +165,11 @@ class OrderController extends APIController
 
         if($order_data)
         {
-            return $this->respondSuccess('Order data found', OrderListResource::collection($order_data));
+            $data = [
+            'total_orders'   => $order_data['total_orders'],
+            'orders'         => $order_data['total_orders'] ? OrderListResource::collection($order_data['orders']) :  ''
+        ];
+            return $this->respondSuccess('Order data found', $data);
         }
 
         return $this->respondWithError('Your order not found.');
