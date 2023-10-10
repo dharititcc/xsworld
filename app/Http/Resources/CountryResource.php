@@ -19,6 +19,7 @@ class CountryResource extends JsonResource
             'name'              => $this->name,
             'code'              => $this->code,
             'country_code'      => $this->country_code,
+            'symbol'            => $this->symbol
         ];
     }
 }

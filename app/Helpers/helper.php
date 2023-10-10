@@ -257,7 +257,7 @@ if (! function_exists('sendTwilioCustomerSms')) {
                 $mobile_no,
                 array(
                     'from' => $twilio_number,
-                    'body' => 'Your One Time Password for verify account'.$otp
+                    'body' => 'Your One Time Password for verify account '.$otp
                 ),
                 );
             return 'send sms successfully';
