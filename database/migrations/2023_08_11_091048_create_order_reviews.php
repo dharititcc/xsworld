@@ -16,6 +16,7 @@ class CreateOrderReviews extends Migration
         Schema::create('order_reviews', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('order_id');
+            $table->text('comment')->nullable();
             $table->tinyInteger('rating')->default(1)->comment('1-5 Rating');
             $table->timestamps();
 

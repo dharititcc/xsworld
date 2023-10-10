@@ -8,6 +8,7 @@ use App\Http\Requests\CartDeleteRequest;
 use App\Http\Requests\CustomerOrderRequest;
 use App\Http\Requests\OrderDeleteItemRequest;
 use App\Http\Requests\OrderHistoryRequest;
+use App\Http\Requests\OrderReviewRequest;
 use App\Http\Requests\OrderUpdateRequest;
 use App\Http\Requests\PlaceOrderRequest;
 use App\Http\Resources\OrderListResource;
@@ -287,5 +288,24 @@ class OrderController extends APIController
         }
 
         return $this->respondWithError('Your order is empty.');
+    }
+
+    /**
+     * Method orderReview
+     *
+     * @param OrderReviewRequest $request [explicite description]
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function orderReview(OrderReviewRequest $request)
+    {
+        $reviewOrder      = $this->repository->ReviewOrder($request->validated());
+
+        if(isset( $reviewOrder->id ))
+        {
+            return $this->respondSuccess('Order Feedback is received');
+        }
+
+        return $this->respondWithError('Feedback is not received.');
     }
 }

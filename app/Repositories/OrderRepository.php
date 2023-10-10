@@ -4,6 +4,7 @@ use App\Billing\Stripe;
 use App\Exceptions\GeneralException;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\OrderReview;
 use App\Models\Restaurant;
 use App\Models\RestaurantItem;
 use App\Models\User;
@@ -463,6 +464,13 @@ class OrderRepository extends BaseRepository
         return $order;
     }
 
+    /**
+     * Method updateOrderStatus
+     *
+     * @param array $data [explicite description]
+     *
+     * @return Order
+     */
     function updateOrderStatus(array $data) : Order
     {
         $order_id          = $data['order_id'] ? $data['order_id'] : null;
@@ -484,5 +492,29 @@ class OrderRepository extends BaseRepository
         $order->loadMissing(['items']);
 
         return $order;
+    }
+
+    function ReviewOrder(array $data) : OrderReview
+    {
+        $order_id   = isset($data['order_id']) ? $data['order_id'] : null;
+        $rating     = isset($data['rating']) ? $data['rating'] : null;
+        $comment    = isset($data['comment']) ? $data['comment'] : null;
+        $reviewArr  = [];
+
+        $reviewArr  = [
+            'order_id'  => $order_id,
+            'rating'    => $rating,
+            'comment'   => $comment
+        ];
+
+        $order   = Order::where('id' , $order_id)->first();
+
+        if(isset($order->id))
+        {
+            $reviewOrder = OrderReview::create($reviewArr);
+            return $reviewOrder;
+        }
+
+        throw new GeneralException('Order is not found.');
     }
 }
