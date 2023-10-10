@@ -4,19 +4,6 @@
 @endsection
 @section('content')
 
-    <div class="container-fluid">
-        <div class="btn-elemts">
-            <button class="btn" id="sidebarToggle"><i class="icon-menu"></i></button>
-            <span class="btn-title">Venue Management</span>
-        </div>
-        <h2>{{$restaurant->name}}</h2>
-        <div class="right-info-element justify-content-end">
-            <div class="member-registed">
-                <div class="member-id">Member #334311</div>
-                <div class="since-year">Registered since {{$restaurant->created_at->format('d-m-Y')}}</div>
-            </div>
-        </div>
-    </div>
     </nav>
     <!-- Page content-->
     <div class="container-fluid">
@@ -26,39 +13,73 @@
                     <div class="col-md-4">
                         <div class="grey-brd-box">
                             <div class="title">
-                                <h2>Opening Times</h2> <a href="#" class="edit">EDIT</a>
+                                <h2>Opening Times</h2> <a href="javascript:void(0);" class="edit venue_popup_modal ">EDIT</a>
                             </div>
                             <div class="padbox">
                                 <table class="opening-time">
-                                    <tr>
-                                        <th>Monday</th>
-                                        <td>12 PM - 10 PM</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Tuesday</th>
-                                        <td>12 PM - 10 PM</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Wednesday</th>
-                                        <td>12 PM - 10 PM</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Thursday</th>
-                                        <td>12 PM - 11:30 PM</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Friday</th>
-                                        <td>12PM - 2AM</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Saturday</th>
-                                        <td>12PM - 2AM</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Sunday</th>
-                                        <td>12PM - 2AM</td>
-                                    </tr>
+                                    <form name="addtimerform" id="addtimerform" method="post">
+                                        <tr>
+                                            <th>Monday</th>
+                                            <td><input class="start_time" style="display: none" name="start_time[]" type="time" value=""
+                                                    placeholder="Start Time"><input class="close_time"
+                                                    placeholder="Close TIme" style="display: none"  name="end_time[]" type="time" value="">
+                                                <label for="time" class="times">12 PM - 10 PM</label>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>Tuesday</th>
+                                            <td>
+                                                <input id="days_id" type="hidden" class="days_id" name="days_id" value="2" />
+                                                <input class="start_time" style="display: none" name="start_time[]" type="time" value=""
+                                                    placeholder="Start Time"><input class="close_time"
+                                                    placeholder="Close TIme"  style="display: none" name="end_time" type="time" value="">
+                                                <label for="time" class="times">12 PM - 10 PM</label>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>Wednesday</th>
+                                            <td><input class="start_time" style="display: none" name="start_time" type="time" value=""
+                                                    placeholder="Start Time"><input class="close_time"
+                                                    placeholder="Close TIme"  style="display: none" name="end_time" type="time" value="">
+                                                <label for="time" class="times">12 PM- 10 PM</label>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>Thursday</th>
+                                            <td><input class="start_time" style="display: none" name="start_time" type="time" value=""
+                                                    placeholder="Start Time"><input class="close_time"
+                                                    placeholder="Close TIme" style="display: none"  name="end_time" type="time" value="">
+                                                <label for="time" class="times">12 PM - 10 PM</label>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>Friday</th>
+                                            <td><input class="start_time" style="display: none" name="start_time" type="time" value=""
+                                                    placeholder="Start Time"><input class="close_time"
+                                                    placeholder="Close TIme"  style="display: none" name="end_time" type="time" value="">
+                                                <label for="time" class="times">12 PM - 10 PM</label>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>Saturday</th>
+                                            <td><input class="start_time" style="display: none" name="start_time" type="time" value=""
+                                                    placeholder="Start Time"><input class="close_time"
+                                                    placeholder="Close TIme"  style="display: none" name="end_time" type="time" value="">
+                                                <label for="time" class="times">12 PM - 10 PM</label>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>Sunday</th>
+                                            <td><input class="start_time" style="display: none" name="start_time" type="time" value=""
+                                                    placeholder="Start Time"><input class="close_time"
+                                                    placeholder="Close TIme"  style="display: none" name="end_time" type="time" value="">
+                                                <label for="time" class="times">12 PM - 10 PM</label>
+                                            </td>
+                                        </tr>
+                                    </form>
                                 </table>
+                                <button class="bor-btn w-100 font-26" id="venue_submitBtn" style="display: none" type="submit">Add Open
+                                    Timming</button>
 
                             </div>
                         </div>
@@ -112,7 +133,8 @@
                                 <div class="reviewbox">
                                     <div class="text-star">5 Star Avg</div>
                                     <div class="stars"><i class="icon-star"></i><i class="icon-star"></i><i
-                                            class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i></div>
+                                            class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i>
+                                    </div>
                                 </div>
                             </div>
                             <div class="scroll-y h-800">
@@ -128,8 +150,9 @@
                                             <td><i class="icon-ok-circled"></i> $81.00</td>
                                         </tr>
                                     </table>
-                                    <div class="complete mb-2">Complete <i class="icon-star"></i><i class="icon-star"></i><i
-                                            class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i></div>
+                                    <div class="complete mb-2">Complete <i class="icon-star"></i><i
+                                            class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i><i
+                                            class="icon-star"></i></div>
 
                                     <div class="d-flex justify-content-between align-items-end">
                                         <div class="rvnote">User written review can go here of it is an extended review the
@@ -150,8 +173,9 @@
                                             <td><i class="icon-ok-circled"></i> $81.00</td>
                                         </tr>
                                     </table>
-                                    <div class="complete mb-2">Complete <i class="icon-star"></i><i class="icon-star"></i><i
-                                            class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i></div>
+                                    <div class="complete mb-2">Complete <i class="icon-star"></i><i
+                                            class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i><i
+                                            class="icon-star"></i></div>
 
                                     <div class="d-flex justify-content-between align-items-end">
                                         <div class="rvnote">User written review can go here of it is an extended review the
@@ -302,29 +326,28 @@
                                 <h2>Venue Identity</h2> <a href="#" class="edit">EDIT</a>
                             </div>
                             <div class="padbox">
-                                <figure class="venue-fig"><img src="{{$restaurant->image}}" alt=""></figure>
+                                <figure class="venue-fig"><img src="{{ $restaurant->image }}" alt=""></figure>
                             </div>
                         </div>
                         <a href="#"
                             class="grey-brd-box padbox text-center lable-box mt-3"><span>Analytics</span></a>
-                        <a href="{{ route('restaurants.waiter.index') }}" class="grey-brd-box padbox text-center lable-box mt-3 {{ Route::is('restaurants.waiter.*') ? 'active' : '' }}"><span>Account
+                        <a href="{{ route('restaurants.waiter.index') }}"
+                            class="grey-brd-box padbox text-center lable-box mt-3 {{ Route::is('restaurants.waiter.*') ? 'active' : '' }}"><span>Account
                                 Management</span></a>
-                        <a href="{{ route('restaurants.drinks.index') }}"  class="grey-brd-box padbox text-center lable-box mt-3 {{ Route::is('restaurants.drinks.*') ? 'active' : '' }}"><span>Drinks
+                        <a href="{{ route('restaurants.drinks.index') }}"
+                            class="grey-brd-box padbox text-center lable-box mt-3 {{ Route::is('restaurants.drinks.*') ? 'active' : '' }}"><span>Drinks
                                 Management</span></a>
-                        <a href="{{ route('restaurants.mixers.index') }}"  class="grey-brd-box padbox text-center lable-box mt-3 {{ Route::is('restaurants.mixers.*') ? 'active' : '' }}"
+                        <a href="{{ route('restaurants.mixers.index') }}"
+                            class="grey-brd-box padbox text-center lable-box mt-3 {{ Route::is('restaurants.mixers.*') ? 'active' : '' }}"
                             data-bs-toggle="modal" data-bs-target="#exampleModal"><span>Mixer Management</span></a>
-                        <a href="{{route('restaurants.pickup.index')}}"  class="grey-brd-box padbox text-center lable-box mt-3 {{ Route::is('restaurants.pickup.*') ? 'active' : '' }}"><span>Pick-up
+                        <a href="{{ route('restaurants.pickup.index') }}"
+                            class="grey-brd-box padbox text-center lable-box mt-3 {{ Route::is('restaurants.pickup.*') ? 'active' : '' }}"><span>Pick-up
                                 Zones</span></a>
                     </div>
 
                 </div>
             </div>
         </main>
-
-
-
-    </div>
-    </div>
     </div>
 
     <!-- Global popup -->
@@ -347,10 +370,23 @@
                     </div>
                     <button class="bor-btn w-100 font-26" type="button">Save</button>
                 </div>
-
             </div>
         </div>
     </div>
+
 @endsection
 
 @section('pagescript')
+    <script src="{{ asset('js/venue.js') }}"></script>
+    <script>
+        var moduleConfig = {
+        venueStore: "{!! route('restaurants.venue.store') !!}",
+        venueUpdate: "{!! route('restaurants.venue.update', ':ID') !!}",
+        venueGet: "{!! route('restaurants.venue.show', ':ID') !!}",
+
+    };
+        $(document).ready(function() {
+            XS.Venue.init();
+        });
+    </script>
+@endsection

@@ -37,7 +37,7 @@ class VenueController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        dd($request->all());
     }
 
     /**
@@ -49,7 +49,7 @@ class VenueController extends Controller
     public function show($id)
     {
         $restaurant = session('restaurant');
-        
+
     }
 
     /**
