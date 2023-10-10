@@ -494,6 +494,14 @@ class OrderRepository extends BaseRepository
         return $order;
     }
 
+    /**
+     * Method ReviewOrder
+     *
+     * @param array $data [explicite description]
+     *
+     * @return OrderReview
+     * @throws \App\Exceptions\GeneralException
+     */
     function ReviewOrder(array $data) : OrderReview
     {
         $order_id   = isset($data['order_id']) ? $data['order_id'] : null;
