@@ -24,7 +24,7 @@ class MixerController extends Controller
             $drinkCategories = $drinkCategory->children;
             $drinkSubCategory = $drinkCategory->children->pluck('id');
         }
-        $foodCategory  = $restaurant->main_categories()->with(['children'])->where('name', 'Drinks')->first();
+        $foodCategory  = $restaurant->main_categories()->with(['children'])->where('name', 'Food')->first();
         if($foodCategory)
         {
             $foodCategories = $foodCategory->children;
@@ -82,8 +82,21 @@ class MixerController extends Controller
     {
         $newMixer   = null;
         $restaurant = session('restaurant')->loadMissing(['main_categories', 'main_categories.children']);
+<<<<<<< Updated upstream
         $category   = $request->get('category');
 
+=======
+        $image = $request->file('photo');
+        $profileImage ="";
+        if ($image = $request->file('photo'))
+        {
+            $destinationPath = 'storage/mixers';
+            $profileImage = date('YmdHis') . "." . $image->getClientOriginalExtension();
+            $image->move($destinationPath, $profileImage);
+        }
+        //category
+        $category = $request->get('category');
+>>>>>>> Stashed changes
         foreach ($category as $key => $value)
         {
             $newMixer = RestaurantItem::create([
@@ -150,6 +163,20 @@ class MixerController extends Controller
     {
         $category   = $request->get('category');
         $restaurant = session('restaurant')->loadMissing(['main_categories', 'main_categories.children']);
+<<<<<<< Updated upstream
+=======
+        $image = $request->file('photo');
+        $profileImage ="";
+        if ($image = $request->file('photo'))
+        {
+            $destinationPath = 'storage/mixers';
+            $profileImage = date('YmdHis') . "." . $image->getClientOriginalExtension();
+            $image->move($destinationPath, $profileImage);
+        }
+
+        //category
+        $category = $request->get('category');
+>>>>>>> Stashed changes
 
         // get old mixers list
         $oldCategories = RestaurantItem::where('restaurant_id', $mixer->restaurant_id)->where('type', RestaurantItem::MIXER)->where('name', $mixer->name)->get();
