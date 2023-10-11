@@ -134,9 +134,9 @@ class DrinkController extends Controller
                     ]);
                 }
             }
-            if ($request->hasFile('photo'))
+            if ($request->hasFile('image'))
             {
-                $this->upload($request->file('photo'), $newRestaurantItem);
+                $this->upload($request->file('image'), $newRestaurantItem);
             }
         }
         return $newRestaurantItem->refresh();
@@ -196,9 +196,9 @@ class DrinkController extends Controller
     {
         $variationArr   = [];
         $restaurant     = session('restaurant')->loadMissing(['main_categories', 'main_categories.children']);
-        if ($request->file('photo'))
+        if ($request->hasFile('image'))
         {
-            $this->upload($request->file('photo'), $drink);
+            $this->upload($request->file('image'), $drink);
         }
 
         //category

@@ -82,21 +82,8 @@ class MixerController extends Controller
     {
         $newMixer   = null;
         $restaurant = session('restaurant')->loadMissing(['main_categories', 'main_categories.children']);
-<<<<<<< Updated upstream
         $category   = $request->get('category');
 
-=======
-        $image = $request->file('photo');
-        $profileImage ="";
-        if ($image = $request->file('photo'))
-        {
-            $destinationPath = 'storage/mixers';
-            $profileImage = date('YmdHis') . "." . $image->getClientOriginalExtension();
-            $image->move($destinationPath, $profileImage);
-        }
-        //category
-        $category = $request->get('category');
->>>>>>> Stashed changes
         foreach ($category as $key => $value)
         {
             $newMixer = RestaurantItem::create([
@@ -163,20 +150,7 @@ class MixerController extends Controller
     {
         $category   = $request->get('category');
         $restaurant = session('restaurant')->loadMissing(['main_categories', 'main_categories.children']);
-<<<<<<< Updated upstream
-=======
-        $image = $request->file('photo');
-        $profileImage ="";
-        if ($image = $request->file('photo'))
-        {
-            $destinationPath = 'storage/mixers';
-            $profileImage = date('YmdHis') . "." . $image->getClientOriginalExtension();
-            $image->move($destinationPath, $profileImage);
-        }
-
-        //category
-        $category = $request->get('category');
->>>>>>> Stashed changes
+        $category   = $request->get('category');
 
         // get old mixers list
         $oldCategories = RestaurantItem::where('restaurant_id', $mixer->restaurant_id)->where('type', RestaurantItem::MIXER)->where('name', $mixer->name)->get();
@@ -198,11 +172,6 @@ class MixerController extends Controller
                     $oldMixer->price = $request->get('price');
                     $oldMixer->category_id = $cat;
                     $oldMixer->save();
-
-                    if ($request->file('photo'))
-                    {
-                        $this->upload($request->file('photo'), $oldMixer);
-                    }
                 }
                 else
                 {
@@ -216,11 +185,6 @@ class MixerController extends Controller
                             'restaurant_id'     => $restaurant->id
                         ]
                     );
-
-                    if ($request->file('photo'))
-                    {
-                        $this->upload($request->file('photo'), $newMixer);
-                    }
                 }
             }
         }
@@ -241,28 +205,5 @@ class MixerController extends Controller
     {
         $updateitems = RestaurantItem::whereIn("id", $data)->update(["is_available" => $value]);
         return $updateitems;
-    }
-
-    /**
-     * Method upload
-     *
-     * @param $file $file [explicite description]
-     * @param \App\Models\RestaurantItem $model [explicite description]
-     *
-     * @return void
-     */
-    private function upload($file, RestaurantItem $model)
-    {
-        //Move Uploaded File
-        $destinationPath = public_path(DIRECTORY_SEPARATOR.'storage'.DIRECTORY_SEPARATOR.'mixers');
-        $profileImage = date('YmdHis') . "." . $file->getClientOriginalExtension();
-        $file->move($destinationPath, $profileImage);
-
-        $model->attachment()->delete();
-
-        $model->attachment()->create([
-            'stored_name'   => $profileImage,
-            'original_name' => $profileImage
-        ]);
     }
 }

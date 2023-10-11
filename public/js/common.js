@@ -91,17 +91,11 @@ var XS = {}; // common variable used in all the files of the backend
          * @param {*} message
          */
         handleSwalError: function (message, clickStat = false) {
-            var swalDanger = Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: message,
+            swal({
+                title: `${message}`,
+                icon: "warning",
+                button: "Ok!",
             });
-
-            if (clickStat) {
-                swalDanger.then(function () {
-                    window.location.reload();
-                });
-            }
         },
 
         /**
@@ -350,20 +344,32 @@ var XS = {}; // common variable used in all the files of the backend
         {
             if (window.File && window.FileList && window.FileReader) {
                 $(".files").on("change", function(e) {
-                    var clickedButton = this,
-                        files = e.target.files,
-                        filesLength = files.length;
+                    var clickedButton   = this,
+                        files           = e.target.files,
+                        filesLength     = files.length;
+
                     for (var i = 0; i < filesLength; i++) {
                         var f = files[i],
                             fileReader = new FileReader();
-                        fileReader.onload = (function(e) {
-                            var file = e.target,
-                                thumbnail = `
+
+                        fileReader.onload = (function(e)
+                        {
+                            console.log('Hello');
+                            var file        = e.target,
+                                data        = fileReader.result,
+                                thumbnail   = `
                                     <div class="pip">
                                         <img class="imageThumb" src="${e.target.result}" title="${file.name}" />
                                         <i class="icon-trash remove"></i>
                                     </div>
                                 `;
+
+                            if (!data.match(/^data:image\//))
+                            {
+                                XS.Common.handleSwalError('Please select image only.');
+                                return false;
+                            }
+
                             $(thumbnail).insertAfter(clickedButton);
                             $(".remove").click(function() {
                                 $(this).parent(".pip").remove();

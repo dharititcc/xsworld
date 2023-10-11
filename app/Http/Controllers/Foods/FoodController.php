@@ -135,9 +135,9 @@ class FoodController extends Controller
             }
 
 
-            if ($request->hasFile('photo'))
+            if ($request->hasFile('image'))
             {
-                $this->upload($request->file('photo'), $newRestaurantItem);
+                $this->upload($request->file('image'), $newRestaurantItem);
             }
         }
         return $newRestaurantItem->refresh();
@@ -196,9 +196,9 @@ class FoodController extends Controller
     {
         $restaurant = session('restaurant')->loadMissing(['main_categories', 'main_categories.children']);
 
-        if ($request->hasFile('photo'))
+        if ($request->hasFile('image'))
         {
-            $this->upload($request->file('photo'), $food);
+            $this->upload($request->file('image'), $food);
         }
         // delete all the variations of the restaurant item
         if( $food->variations->count() )

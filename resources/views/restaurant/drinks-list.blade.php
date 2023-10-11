@@ -86,7 +86,7 @@
                                 <span class="img-text">Product Image</span>
                             </div> --}}
                             <div class="form-group grey-brd-box d-flex featured-img">
-                                <input id="upload" type="file" class="files" name="image" hidden/>
+                                <input id="upload" type="file" class="files" name="image" accept="image/*" hidden />
                                 <label for="upload"><span> Product Image</span> <i
                                         class="icon-plus"></i></label>
                             </div>

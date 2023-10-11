@@ -1,6 +1,7 @@
 <?php namespace App\Repositories;
 
 use App\Billing\Stripe;
+use App\Exceptions\GeneralException;
 use App\Models\Order;
 use App\Repositories\BaseRepository;
 use Carbon\Carbon;
@@ -76,22 +77,41 @@ class BarRepository extends BaseRepository
 
     /**
      * Method getCompletedOrder
+     * @param array $data
      *
-     * @return Collection
+     * @return array
+     * @throws \App\Exceptions\GeneralException
      */
-    public function getCompletedOrder() : Collection
+    public function getCompletedOrder(array $data) : array
     {
-        $user = auth()->user();
+        $page   = isset($data['page']) ? $data['page'] : 1;
+        $limit  = isset($data['limit']) ? $data['limit'] : 10;
+        $text   = isset($data['text']) ? $data['text'] : null;
+        $user   = auth()->user();
 
         $user->loadMissing(['pickup_point']);
 
         $order       = $this->orderQuery()
         ->where('type', Order::ORDER)
         ->whereIn('status', [Order::COMPLETED, Order::RESTAURANT_CANCELED, Order::RESTAURANT_TOXICATION, Order::CONFIRM_PICKUP])
-        ->orderBy('id','desc')
-        ->get();
+        ->orderBy('id','desc');
+        // ->get();
 
-        return $order;
+        $total = $order->count();
+        $order->limit($limit)->offset(($page - 1) * $limit)->orderBy('id','desc');
+
+        $orders = $order->get();
+        if( $orders->count() )
+        {
+            $orderData = [
+                'total_orders'   => $total,
+                'orders'         => $orders
+            ];
+
+            return $orderData;
+        }
+
+        throw new GeneralException('There is no order found.');
     }
 
     /**

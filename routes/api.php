@@ -122,9 +122,37 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'v1', 'as' => 'api.v1.'], fun
             // {api/v1/barorderhistory}
             Route::get('/barorderhistory', 'BarController@barOrderHistory')->name('barOrderHistory');
             // {api/v1/completedorderhistory}
-            Route::get('/completedorderhistory', 'BarController@completedorderhistory')->name('completedorderhistory');
+            Route::post('/completedorderhistory', 'BarController@completedorderhistory')->name('completedorderhistory');
             Route::get('/show/{order}', 'BarController@show')->name('bar.show');
             Route::post('/gostatus', 'BarController@gostatus')->name('barstatus');
+        });
+    });
+
+    Route::group(['namespace' => 'Kitchen', 'prefix' => 'kitchen'], function()
+    {
+        Route::group(['middleware' => ['guest']], function()
+        {
+            // {api/v1/kitchen/login}
+            Route::post('login', 'AuthController@postLogin')->name('kitchen.login');
+
+            // {api/v1/kitchen/password/reset}
+            Route::patch('password/reset', 'AuthController@resetPassword')->name('kitchen.resetPassword');
+        });
+
+        Route::group(['middleware' => 'auth:api'], function ()
+        {
+            // {api/v1/kitchen/logout}
+            Route::post('logout', 'AuthController@logout')->name('kitchen.logout');
+
+            // // orders
+            // // {api/v1/orderupdate}
+            // Route::post('/orderupdate', 'BarController@orderUpdate')->name('barOrderUpdate');
+            // // {api/v1/barorderhistory}
+            // Route::get('/barorderhistory', 'BarController@barOrderHistory')->name('barOrderHistory');
+            // // {api/v1/completedorderhistory}
+            // Route::post('/completedorderhistory', 'BarController@completedorderhistory')->name('completedorderhistory');
+            // Route::get('/show/{order}', 'BarController@show')->name('bar.show');
+            // Route::post('/gostatus', 'BarController@gostatus')->name('barstatus');
         });
     });
 });

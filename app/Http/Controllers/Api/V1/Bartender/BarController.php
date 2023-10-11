@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1\Bartender;
 
 use App\Exceptions\GeneralException;
 use App\Http\Controllers\Api\V1\APIController;
+use App\Http\Requests\OrderHistoryRequest;
 use App\Http\Requests\OrderUpdateRequest;
 use App\Http\Resources\BarOrderListingResource;
 use App\Http\Resources\OrderListResource;
@@ -53,15 +54,21 @@ class BarController extends APIController
     /**
      * Method completedorderhistory
      *
-     * @return void
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \App\Exceptions\GeneralException
      */
-    public function completedorderhistory()
+    public function completedorderhistory(OrderHistoryRequest $request)
     {
-        $completedOrder      = $this->repository->getCompletedOrder();
+        $completedOrder      = $this->repository->getCompletedOrder($request->validated());
 
-        if( $completedOrder->count() )
+        if( $completedOrder['orders']->count() )
         {
-            return $this->respondSuccess('Orders Found.', $completedOrder->count() ? OrderListResource::collection($completedOrder) : [],);
+            $historyArray = [
+                'total_orders'  => $completedOrder['total_orders'],
+                'orders'        => OrderListResource::collection($completedOrder['orders'])
+            ];
+
+            return $this->respondSuccess('Orders Found.', $historyArray);
         }
 
         throw new GeneralException('Order not found.');
