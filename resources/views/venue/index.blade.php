@@ -295,10 +295,14 @@
                     <div class="col-md-4">
                         <div class="grey-brd-box">
                             <div class="title">
-                                <h2>Venue Identity</h2> <a href="#" class="edit">EDIT</a>
+                                <h2>Venue Identity</h2> <a href="javascript:void(0);" class="edit venue_res_image">EDIT</a>
                             </div>
                             <div class="padbox">
-                                <figure class="venue-fig"><img src="{{ $restaurant->image }}" alt=""></figure>
+                                <form name="addimageform" id="addimageform" method="post">
+                                    <input id="img-upload" type="file" class="files" name="image"  style="display: none" accept="image/*" />
+                                    <figure class="venue-fig"><img src="{{ $restaurant->image }}" alt=""></figure>
+                                </form>
+                                <button class="bor-btn w-100 font-26" id="venueImg_submitBtn" style="display: none" type="submit">Upload Image</button>
                             </div>
                         </div>
                         <a href="#"
@@ -352,9 +356,9 @@
     <script src="{{ asset('js/venue.js') }}"></script>
     <script>
         var moduleConfig = {
-        venueStore: "{!! route('restaurants.venue.store') !!}",
-
-    };
+            venueStore: "{!! route('restaurants.venue.store') !!}",
+            resImageUpload: "{!! route('restaurants.res-image-upload') !!}"
+        };
         $(document).ready(function() {
             XS.Venue.init();
         });

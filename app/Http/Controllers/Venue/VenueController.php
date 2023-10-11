@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Venue;
 
 use App\Http\Controllers\Controller;
 use App\Models\Day;
+use App\Models\Restaurant;
 use Illuminate\Support\Facades\Validator;
 use App\Models\RestaurantTime;
 use Illuminate\Http\Request;
@@ -62,6 +63,34 @@ class VenueController extends Controller
             ]);
         }
         return $res_time->refresh();
+    }
+
+    private function upload($file, Restaurant $restaurants)
+    {
+        //Move Uploaded File
+        $destinationPath = public_path(DIRECTORY_SEPARATOR.'storage'.DIRECTORY_SEPARATOR.'restaurants');
+        $profileImage = date('YmdHis') . "." . $file->getClientOriginalExtension();
+        $file->move($destinationPath, $profileImage);
+
+        
+        $restaurants->attachment()->delete();
+
+        $restaurants->attachment()->create([
+            'stored_name'   => $profileImage,
+            'original_name' => $profileImage
+        ]);
+    }
+
+    public function imageUpload(Request $request)
+    {
+        $restaurant = session('restaurant');
+        // dd($request->all());
+        
+        if ($request->hasFile('image'))
+        {
+            $this->upload($request->file('image'), $restaurant);
+        }
+        return true;
     }
 
     /**
