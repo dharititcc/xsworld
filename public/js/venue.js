@@ -50,12 +50,12 @@
 
                     if( start.val() && !end.val() )
                     {
-                        $(`<span>Please add end time.<span/>`).insertAfter($this);
+                        $(`<span class="text-danger">Please add end time.<span/>`).insertAfter($this);
                     }
 
                     if( !start.val() && end.val() )
                     {
-                        $(`<span>Please add start time.<span/>`).insertAfter($this);
+                        $(`<span class="text-danger">Please add start time.<span/>`).insertAfter($this);
                     }
                 });
 
