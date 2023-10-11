@@ -36,7 +36,7 @@
 
       <div class="btn-box">
         <button class="btn btn-border w-100" type="submit">Login</button>
-        <button class="btn btn-border w-100 mt-4" type="button">Forgot Password</button>
+        <a href="{{ route('password.request') }}" class="btn btn-border w-100 mt-4" type="button">Forgot Password</a>
       </div>
     </div>
   </form>

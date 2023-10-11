@@ -82,7 +82,7 @@
                               <span class="img-text">Product Image</span>
                           </div> --}}
                             <div class="form-group grey-brd-box d-flex featured-img">
-                                <input id="upload" type="file" class="files" name="image" hidden />
+                                <input id="upload" type="file" class="files" name="image" accept="image/*" hidden />
                                 <label for="upload"><span> Product Image</span> <i class="icon-plus"></i></label>
                             </div>
                             <input type="text" name="price" id="price" class="form-control vari2 mb-3" placeholder="Enter Price">

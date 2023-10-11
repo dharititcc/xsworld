@@ -72,11 +72,6 @@
                                     </label>
                                 @endforeach
                             </div>
-                            <div class="form-group grey-brd-box custom-upload mb-5">
-                                <input id="upload" type="file" class="files d-none" name="image" />
-                                <label for="upload"><span> Add Mixer Feature Image (This can be changed).</span> <i
-                                        class="icon-plus"></i></label>
-                            </div>
                         </div>
                         <button class="bor-btn w-100 font-26" id="submitBtn" type="submit">Save</button>
                     </form>

@@ -89,7 +89,7 @@
                                 <input id="cat_id" type="hidden" class="cat_id" name="cat_id" />
                             </div>
                             <div class="form-group grey-brd-box custom-upload mb-5 image_box">
-                                <input id="upload" type="file" class="files" name="image" hidden/>
+                                <input id="upload" type="file" class="files" name="image" accept="image/*" hidden />
                                 <label for="upload"><span> Add Category Feature Image (This can be changed).</span> <i
                                         class="icon-plus"></i></label>
                             </div>
