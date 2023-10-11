@@ -48,6 +48,17 @@ class Restaurant extends Model
     ];
 
     /**
+     * Get all of the restaurant_time for the Restaurant
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function restaurant_time(): HasMany
+    {
+        return $this->hasMany(RestaurantTime::class, 'restaurant_id', 'id');
+    }
+    
+
+    /**
      * Method attachment
      *
      * @return \Illuminate\Database\Eloquent\Relations\MorphOne

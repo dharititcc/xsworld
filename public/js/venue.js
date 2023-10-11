@@ -21,14 +21,12 @@
             var context = this;
 
             context.editVenueModal();
-            // context.closeWaiterModal();
         },
 
         editVenueModal: function()
         {
             var context = this;
             context.selectors.venueModalBtn.on("click", function() {
-                alert('hii');
                 context.selectors.venueLabelTime.hide();
                 context.selectors.venueStartTime.removeAttr("style");
                 context.selectors.venueCloseTime.removeAttr("style");
@@ -37,7 +35,7 @@
             });
 
             context.selectors.venueSubmitBtn.on("click", function(e) {
-                e.preventdefault();
+                e.preventDefault();
                 var $this   = $(this),
                     data = new FormData(context.selectors.venueForm.get(0));
                 $.ajax({
@@ -55,6 +53,10 @@
                         context.selectors.venueStartTime.attr("style","display: none");
                         context.selectors.venueCloseTime.attr("style","display: none");
                         context.selectors.venueLabelTime.show();
+                        location.reload();
+                    },
+                    error:function(request, status, error) {
+                        console.log('Error');
                     },
                     complete: function()
                     {
