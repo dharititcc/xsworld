@@ -28,6 +28,9 @@ class CreateRestaurants extends Migration
             $table->text('address')->nullable();
             $table->unsignedBigInteger('phone')->nullable();
             $table->string('specialisation')->nullable();
+            $table->tinyInteger('type')->default(1)->comment('1=Restaurant, 2=Event');
+            $table->timestamp('start_date')->nullable();
+            $table->timestamp('end_date')->nullable();
             $table->tinyInteger('status')->default(1)->comment('0=Inactive, 1=Active');
             $table->timestamps();
 
