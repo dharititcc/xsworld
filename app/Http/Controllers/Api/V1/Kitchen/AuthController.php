@@ -143,7 +143,7 @@ class AuthController extends APIController
      *      )
      *)
      **/
-    public function postLogin(LoginRequest $request)
+    public function postLogin(BartenderLoginRequest $request)
     {
         $input = $request->all();
 
