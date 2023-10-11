@@ -25,12 +25,16 @@ class OrderItemResource extends JsonResource
                 'name'             => $this->restaurant_item->name,
                 'quantity'         => $this->quantity,
                 'price'            => $this->price,
+                'currency'         => $this->restaurant_item->restaurant->currency->code,
+                'symbol'           => $this->restaurant_item->restaurant->country->symbol,
                 'total'            => $this->total,
                 'type'             => $this->restaurant_item->item_type,
                 'variation'        => isset($this->variation_id) ? [
                     'id'        => $this->id,
                     'name'      => $this->variation->name,
                     'price'     => $this->price,
+                    'currency'  => $this->restaurant_item->restaurant->currency->code,
+                    'symbol'    => $this->restaurant_item->restaurant->country->symbol,
                     'quantity'  => $this->quantity,
                     'total'     => $this->total
                 ] : new stdClass,

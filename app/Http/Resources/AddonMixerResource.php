@@ -17,7 +17,9 @@ class AddonMixerResource extends JsonResource
         return [
             'id'            => $this->id,
             'name'          => $this->name,
-            'price'         => $this->price
+            'price'         => $this->price,
+            'currency'      => $this->restaurant->currency->code,
+            'symbol'        => $this->restaurant->country->symbol,
         ];
     }
 }

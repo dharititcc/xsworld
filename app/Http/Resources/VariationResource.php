@@ -18,6 +18,8 @@ class VariationResource extends JsonResource
             'id'              => $this->id,
             'name'            => $this->name,
             'price'           => $this->price,
+            'currency'        => $this->restaurant_item->restaurant->currency->code,
+            'symbol'          => $this->restaurant_item->restaurant->country->symbol,
             'quantity'        => $this->quantity
         ];
     }
