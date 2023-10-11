@@ -18,21 +18,7 @@
                             <div class="padbox">
                                 <table class="opening-time">
                                     <form name="addtimerform" id="addtimerform" method="post">
-                                        @if(count($res_times) > 0)
-                                           
-                                            @foreach ($res_times as $res_time)
-                                                <tr>
-                                                    <th>{{$res_time->day->name}}</th>
-                                                    <td>
-                                                        <input type="hidden" name="res_id" id="res_id" data-id = "{{$res_time->id}}">
-                                                        <input class="start_time" style="display: none" value="{{$res_time->start_time}}" name="start_time[{{$res_time->day->id}}]" type="time"
-                                                            placeholder="Start Time"><input class="close_time"
-                                                            placeholder="Close TIme" style="display: none"  name="end_time[{{$res_time->day->id}}]" type="time" value="{{$res_time->close_time}}">
-                                                        <label for="time" class="times">{{($res_time->start_time) ? $res_time->start_time . ' - '. $res_time->close_time : 'Close' }} </label>
-                                                    </td>
-                                                </tr>
-                                            @endforeach
-                                        @else
+                                        @if($res_times->count() === 0)
                                             @foreach ($days as $key => $day)
                                             <?php $key += 1; 
                                                 $id = session('restaurant');;
@@ -48,8 +34,20 @@
                                                     </td>
                                                 </tr>
                                             @endforeach
+                                        @else
+                                            @foreach ($res_times as $res_time)
+                                                <tr>
+                                                    <th>{{$res_time->day->name}}</th>
+                                                    <td>
+                                                        <input type="hidden" name="res_id" id="res_id" data-id = "{{$res_time->restaurant_id}}">
+                                                        <input class="start_time" style="display: none" value="{{$res_time->start_time}}" name="start_time[{{$res_time->day->id}}]" type="time"
+                                                            placeholder="Start Time"><input class="close_time"
+                                                            placeholder="Close TIme" style="display: none"  name="end_time[{{$res_time->day->id}}]" type="time" value="{{$res_time->close_time}}">
+                                                        <label for="time" class="times">{{($res_time->start_time) ? $res_time->start_time . ' - '. $res_time->close_time : 'Close' }} </label>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
                                         @endif
-
                                     </form>
                                 </table>
                                 <button class="bor-btn w-100 font-26" id="venue_submitBtn" style="display: none" type="submit">Add Open
@@ -355,8 +353,6 @@
     <script>
         var moduleConfig = {
         venueStore: "{!! route('restaurants.venue.store') !!}",
-        venueUpdate: "{!! route('restaurants.venue.update', ':ID') !!}",
-        venueGet: "{!! route('restaurants.venue.show', ':ID') !!}",
 
     };
         $(document).ready(function() {

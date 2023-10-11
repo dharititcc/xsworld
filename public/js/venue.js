@@ -53,6 +53,10 @@
                         context.selectors.venueStartTime.attr("style","display: none");
                         context.selectors.venueCloseTime.attr("style","display: none");
                         context.selectors.venueLabelTime.show();
+                        location.reload();
+                    },
+                    error:function(request, status, error) {
+                        console.log('Error');
                     },
                     complete: function()
                     {

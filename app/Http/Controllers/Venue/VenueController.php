@@ -18,10 +18,11 @@ class VenueController extends Controller
     public function index()
     {
         $restaurant = session('restaurant');
+        $restaurant->refresh();
         $days = Day::all();
         $restaurant->loadMissing(['restaurant_time']);
         $res_times = $restaurant->restaurant_time;
-        
+
         return view('venue.index',compact('restaurant','days','res_times'));
     }
 
@@ -45,7 +46,8 @@ class VenueController extends Controller
     {
         $restaurant = session('restaurant');
         $validator = Validator::make($request->all(), [
-            'close_time' => 'required_with:start_time',
+            'end_time' => 'required_with:start_time.*|array',
+            'end_time.*' => 'required_with:start_time.*',
         ]);
         foreach($request->start_time as $key => $time)
         {
@@ -53,9 +55,9 @@ class VenueController extends Controller
             $end    = $request->end_time[$key];
             $day_id = $key;
             $res_time = RestaurantTime::updateOrCreate([
-                'restaurant_id'     => $restaurant->id,],
-                ['days_id'           => $day_id,
-                'start_time'        => $start,
+                'restaurant_id'     => $restaurant->id,
+                'days_id'           => $day_id],
+                ['start_time'        => $start,
                 'close_time'        => $end,
             ]);
         }
