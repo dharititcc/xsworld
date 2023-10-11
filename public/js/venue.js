@@ -1,4 +1,4 @@
-(function () 
+(function ()
 {
     XS.Venue = {
         selectors: {
@@ -36,8 +36,34 @@
 
             context.selectors.venueSubmitBtn.on("click", function(e) {
                 e.preventDefault();
-                var $this   = $(this),
-                    data = new FormData(context.selectors.venueForm.get(0));
+                var $this       = $(this),
+                    data        = new FormData(context.selectors.venueForm.get(0)),
+                    timings     = jQuery('.opening_timing_table');
+
+                timings.find('span').remove();
+
+                timings.find('tr').each(function(index, val)
+                {
+                    var $this   = $(this),
+                        start   = $this.find('.start_time'),
+                        end     = $this.find('.close_time');
+
+                    if( start.val() && !end.val() )
+                    {
+                        $(`<span>Please add end time.<span/>`).insertAfter($this);
+                    }
+
+                    if( !start.val() && end.val() )
+                    {
+                        $(`<span>Please add start time.<span/>`).insertAfter($this);
+                    }
+                });
+
+                if( timings.find('span').length > 0 )
+                {
+                    return false;
+                }
+
                 $.ajax({
                     url:moduleConfig.venueStore,
                     type:'POST',
@@ -63,7 +89,6 @@
                         XS.Common.btnProcessingStop(context.selectors.waiterSubmitBtn);
                     }
                 });
-                
             })
         },
     }
