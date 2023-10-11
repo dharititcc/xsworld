@@ -18,64 +18,38 @@
                             <div class="padbox">
                                 <table class="opening-time">
                                     <form name="addtimerform" id="addtimerform" method="post">
-                                        <tr>
-                                            <th>Monday</th>
-                                            <td><input class="start_time" style="display: none" name="start_time[]" type="time" value=""
-                                                    placeholder="Start Time"><input class="close_time"
-                                                    placeholder="Close TIme" style="display: none"  name="end_time[]" type="time" value="">
-                                                <label for="time" class="times">12 PM - 10 PM</label>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <th>Tuesday</th>
-                                            <td>
-                                                <input id="days_id" type="hidden" class="days_id" name="days_id" value="2" />
-                                                <input class="start_time" style="display: none" name="start_time[]" type="time" value=""
-                                                    placeholder="Start Time"><input class="close_time"
-                                                    placeholder="Close TIme"  style="display: none" name="end_time" type="time" value="">
-                                                <label for="time" class="times">12 PM - 10 PM</label>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <th>Wednesday</th>
-                                            <td><input class="start_time" style="display: none" name="start_time" type="time" value=""
-                                                    placeholder="Start Time"><input class="close_time"
-                                                    placeholder="Close TIme"  style="display: none" name="end_time" type="time" value="">
-                                                <label for="time" class="times">12 PM- 10 PM</label>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <th>Thursday</th>
-                                            <td><input class="start_time" style="display: none" name="start_time" type="time" value=""
-                                                    placeholder="Start Time"><input class="close_time"
-                                                    placeholder="Close TIme" style="display: none"  name="end_time" type="time" value="">
-                                                <label for="time" class="times">12 PM - 10 PM</label>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <th>Friday</th>
-                                            <td><input class="start_time" style="display: none" name="start_time" type="time" value=""
-                                                    placeholder="Start Time"><input class="close_time"
-                                                    placeholder="Close TIme"  style="display: none" name="end_time" type="time" value="">
-                                                <label for="time" class="times">12 PM - 10 PM</label>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <th>Saturday</th>
-                                            <td><input class="start_time" style="display: none" name="start_time" type="time" value=""
-                                                    placeholder="Start Time"><input class="close_time"
-                                                    placeholder="Close TIme"  style="display: none" name="end_time" type="time" value="">
-                                                <label for="time" class="times">12 PM - 10 PM</label>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <th>Sunday</th>
-                                            <td><input class="start_time" style="display: none" name="start_time" type="time" value=""
-                                                    placeholder="Start Time"><input class="close_time"
-                                                    placeholder="Close TIme"  style="display: none" name="end_time" type="time" value="">
-                                                <label for="time" class="times">12 PM - 10 PM</label>
-                                            </td>
-                                        </tr>
+                                        @if(count($res_times) > 0)
+                                           
+                                            @foreach ($res_times as $res_time)
+                                                <tr>
+                                                    <th>{{$res_time->day->name}}</th>
+                                                    <td>
+                                                        <input type="hidden" name="res_id" id="res_id" data-id = "{{$res_time->id}}">
+                                                        <input class="start_time" style="display: none" value="{{$res_time->start_time}}" name="start_time[{{$res_time->day->id}}]" type="time"
+                                                            placeholder="Start Time"><input class="close_time"
+                                                            placeholder="Close TIme" style="display: none"  name="end_time[{{$res_time->day->id}}]" type="time" value="{{$res_time->close_time}}">
+                                                        <label for="time" class="times">{{($res_time->start_time) ? $res_time->start_time . ' - '. $res_time->close_time : 'Close' }} </label>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        @else
+                                            @foreach ($days as $key => $day)
+                                            <?php $key += 1; 
+                                                $id = session('restaurant');;
+                                            ?>
+                                                <tr>
+                                                    <th>{{$day->name}}</th>
+                                                    <td>
+                                                        <input type="hidden" name="res_id" id="res_id" data-id = "{{$id->id}}">
+                                                        <input class="start_time" style="display: none" data-day_id ="{{$key}}" value="{{$key}}" name="start_time[{{$key}}]" type="time" value=""
+                                                            placeholder="Start Time"><input class="close_time"
+                                                            placeholder="Close TIme" style="display: none"  name="end_time[{{$key}}]" type="time" value="">
+                                                        <label for="time" class="times">-</label>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        @endif
+
                                     </form>
                                 </table>
                                 <button class="bor-btn w-100 font-26" id="venue_submitBtn" style="display: none" type="submit">Add Open
