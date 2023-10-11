@@ -19,9 +19,14 @@ class Stripe
      *
      * @return void
      */
-    public function __construct()
+    public function __construct($currency = null)
     {
         $this->stripe = new StripeClient(config('stripe.secret'));
+
+        if( $currency )
+        {
+            $this->currency = $currency;
+        }
     }
 
     /**
