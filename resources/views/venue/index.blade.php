@@ -16,7 +16,7 @@
                                 <h2>Opening Times</h2> <a href="javascript:void(0);" class="edit venue_popup_modal ">EDIT</a>
                             </div>
                             <div class="padbox">
-                                <table class="opening-time">
+                                <table class="opening-time opening_timing_table">
                                     <form name="addtimerform" id="addtimerform" method="post">
                                         @if($res_times->count() === 0)
                                             @foreach ($days as $key => $day)
