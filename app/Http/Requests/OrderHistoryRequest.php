@@ -24,8 +24,8 @@ class OrderHistoryRequest extends FormRequest
     public function rules()
     {
         return [
-            'page'      => 'nullable',
-            'limit'     => 'nullable',
+            'page'      => 'required',
+            'limit'     => 'required',
             'text'      => 'nullable',
         ];
     }

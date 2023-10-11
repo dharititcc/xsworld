@@ -55,6 +55,7 @@ class BarController extends APIController
      * Method completedorderhistory
      *
      * @return \Illuminate\Http\JsonResponse
+     * @throws \App\Exceptions\GeneralException
      */
     public function completedorderhistory(OrderHistoryRequest $request)
     {

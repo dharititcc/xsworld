@@ -77,10 +77,12 @@ class BarRepository extends BaseRepository
 
     /**
      * Method getCompletedOrder
+     * @param array $data
      *
-     * @return Collection
+     * @return array
+     * @throws \App\Exceptions\GeneralException
      */
-    public function getCompletedOrder() : Collection
+    public function getCompletedOrder(array $data) : array
     {
         $page   = isset($data['page']) ? $data['page'] : 1;
         $limit  = isset($data['limit']) ? $data['limit'] : 10;
@@ -98,14 +100,15 @@ class BarRepository extends BaseRepository
         $total = $order->count();
         $order->limit($limit)->offset(($page - 1) * $limit)->orderBy('id','desc');
 
-        $data = $order->get();
-        if( $data->count() )
+        $orders = $order->get();
+        if( $orders->count() )
         {
-            $data = [
+            $orderData = [
                 'total_orders'   => $total,
-                'orders'         => $data
+                'orders'         => $orders
             ];
-            return $data;
+
+            return $orderData;
         }
 
         throw new GeneralException('There is no order found.');
