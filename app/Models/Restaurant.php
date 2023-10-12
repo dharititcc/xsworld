@@ -17,6 +17,9 @@ class Restaurant extends Model
 
     protected $table = 'restaurants';
 
+    const RESTAURANT = 1;
+    const EVENT      = 2;
+
     /**
      * The attributes that are mass assignable.
      *

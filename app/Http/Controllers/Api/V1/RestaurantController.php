@@ -9,6 +9,7 @@ use App\Http\Requests\RestaurantSubCategoryReuest;
 use App\Http\Resources\CategoryResource;
 use App\Http\Resources\RestaurantItemsResource;
 use App\Http\Resources\RestaurantResource;
+use App\Models\Restaurant;
 use App\Repositories\RestaurantRepository;
 
 class RestaurantController extends APIController
@@ -112,7 +113,9 @@ class RestaurantController extends APIController
      **/
     public function index(RestaurantFilterApiRequest $request)
     {
-        $restaurants        = $this->repository->getRestaurants($request->validated());
+        $data               = $request->validated();
+        $data['type']       = Restaurant::RESTAURANT;
+        $restaurants        = $this->repository->getRestaurants($data);
 
         if( $restaurants->count() )
         {
