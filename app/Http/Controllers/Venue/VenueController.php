@@ -3,6 +3,10 @@
 namespace App\Http\Controllers\Venue;
 
 use App\Http\Controllers\Controller;
+use App\Models\Day;
+use App\Models\Restaurant;
+use Illuminate\Support\Facades\Validator;
+use App\Models\RestaurantTime;
 use Illuminate\Http\Request;
 
 class VenueController extends Controller
@@ -15,8 +19,12 @@ class VenueController extends Controller
     public function index()
     {
         $restaurant = session('restaurant');
-        
-        return view('venue.index',compact('restaurant'));
+        $restaurant->refresh();
+        $days = Day::all();
+        $restaurant->loadMissing(['restaurant_time']);
+        $res_times = $restaurant->restaurant_time;
+
+        return view('venue.index',compact('restaurant','days','res_times'));
     }
 
     /**
@@ -37,7 +45,52 @@ class VenueController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $restaurant = session('restaurant');
+        $validator = Validator::make($request->all(), [
+            'end_time' => 'required_with:start_time.*|array',
+            'end_time.*' => 'required_with:start_time.*',
+        ]);
+        foreach($request->start_time as $key => $time)
+        {
+            $start  = $time;
+            $end    = $request->end_time[$key];
+            $day_id = $key;
+            $res_time = RestaurantTime::updateOrCreate([
+                'restaurant_id'     => $restaurant->id,
+                'days_id'           => $day_id],
+                ['start_time'        => $start,
+                'close_time'        => $end,
+            ]);
+        }
+        return $res_time->refresh();
+    }
+
+    private function upload($file, Restaurant $restaurants)
+    {
+        //Move Uploaded File
+        $destinationPath = public_path(DIRECTORY_SEPARATOR.'storage'.DIRECTORY_SEPARATOR.'restaurants');
+        $profileImage = date('YmdHis') . "." . $file->getClientOriginalExtension();
+        $file->move($destinationPath, $profileImage);
+
+        
+        $restaurants->attachment()->delete();
+
+        $restaurants->attachment()->create([
+            'stored_name'   => $profileImage,
+            'original_name' => $profileImage
+        ]);
+    }
+
+    public function imageUpload(Request $request)
+    {
+        $restaurant = session('restaurant');
+        // dd($request->all());
+        
+        if ($request->hasFile('image'))
+        {
+            $this->upload($request->file('image'), $restaurant);
+        }
+        return true;
     }
 
     /**
@@ -48,7 +101,7 @@ class VenueController extends Controller
      */
     public function show($id)
     {
-        //
+        
     }
 
     /**

@@ -89,7 +89,7 @@
                                 <input id="cat_id" type="hidden" class="cat_id" name="cat_id" />
                             </div>
                             <div class="form-group grey-brd-box custom-upload mb-5 image_box">
-                                <input id="upload" type="file" class="files" name="image" hidden/>
+                                <input id="upload" type="file" class="files" name="image" accept="image/*" hidden />
                                 <label for="upload"><span> Add Category Feature Image (This can be changed).</span> <i
                                         class="icon-plus"></i></label>
                             </div>
@@ -142,6 +142,8 @@
         };
         $(document).ready(function() {
             var modal = $("#exampleModal");
+
+            XS.Common.fileReaderBind();
             // modal open pop up
             $('.category_model').on('click', function(e)
             {
@@ -172,33 +174,6 @@
                 $alertas.find('.error').removeClass('error');
             });
 
-            if (window.File && window.FileList && window.FileReader) {
-                $(".files").on("change", function(e) {
-                    var clickedButton = this,
-                        files = e.target.files,
-                        filesLength = files.length;
-                    for (var i = 0; i < filesLength; i++) {
-                        var f = files[i],
-                            fileReader = new FileReader();
-                        fileReader.onload = (function(e) {
-                            var file = e.target,
-                                thumbnail = `
-                                    <div class="pip">
-                                        <img class="imageThumb" src="${e.target.result}" title="${file.name}" />
-                                        <i class="icon-trash remove"></i>
-                                    </div>
-                                `;
-                            $(thumbnail).insertAfter(clickedButton);
-                            $(".remove").click(function() {
-                                $(this).parent(".pip").remove();
-                            });
-                        });
-                        fileReader.readAsDataURL(f);
-                    }
-                });
-            } else {
-                alert("Your browser doesn't support to File API")
-            }
             $('#sidebarToggle1').on('click', function(e) {
                 e.preventDefault();
 

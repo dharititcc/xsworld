@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Day;
 use App\Models\Restaurant;
+use App\Models\RestaurantTable;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -27,7 +29,14 @@ class HomeController extends Controller
         // dd(session('restaurant'));
         if( access()->isRestaurantOwner() )
         {
-            return view('restaurant.dashboard');
+            $restaurant = session('restaurant');
+            $restaurant->refresh();
+            $res_tables = RestaurantTable::where('restaurant_id',$restaurant->id)->get();
+            $active_tbl = RestaurantTable::where(['restaurant_id' => $restaurant->id, 'status' =>RestaurantTable::ACTIVE])->count();
+            $days = Day::all();
+            $restaurant->loadMissing(['restaurant_time']);
+            $res_times = $restaurant->restaurant_time;
+            return view('restaurant.dashboard',compact('res_tables','active_tbl','days','res_times'));
         }
 
         // 404

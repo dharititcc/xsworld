@@ -17,8 +17,8 @@ class CreateRestaurantTimesTable extends Migration
             $table->id();
             $table->unsignedBigInteger('restaurant_id');
             $table->unsignedBigInteger('days_id');
-            $table->time('start_time');
-            $table->time('close_time');
+            $table->time('start_time')->nullable();
+            $table->time('close_time')->nullable();
             $table->foreign('restaurant_id')->references('id')->on('restaurants');
             $table->foreign('days_id')->references('id')->on('days');
             $table->softDeletes();

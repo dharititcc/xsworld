@@ -4,19 +4,6 @@
 @endsection
 @section('content')
 
-    <div class="container-fluid">
-        <div class="btn-elemts">
-            <button class="btn" id="sidebarToggle"><i class="icon-menu"></i></button>
-            <span class="btn-title">Venue Management</span>
-        </div>
-        <h2>{{$restaurant->name}}</h2>
-        <div class="right-info-element justify-content-end">
-            <div class="member-registed">
-                <div class="member-id">Member #334311</div>
-                <div class="since-year">Registered since {{$restaurant->created_at->format('d-m-Y')}}</div>
-            </div>
-        </div>
-    </div>
     </nav>
     <!-- Page content-->
     <div class="container-fluid">
@@ -26,39 +13,45 @@
                     <div class="col-md-4">
                         <div class="grey-brd-box">
                             <div class="title">
-                                <h2>Opening Times</h2> <a href="#" class="edit">EDIT</a>
+                                <h2>Opening Times</h2> <a href="javascript:void(0);" class="edit venue_popup_modal ">EDIT</a>
                             </div>
                             <div class="padbox">
-                                <table class="opening-time">
-                                    <tr>
-                                        <th>Monday</th>
-                                        <td>12 PM - 10 PM</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Tuesday</th>
-                                        <td>12 PM - 10 PM</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Wednesday</th>
-                                        <td>12 PM - 10 PM</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Thursday</th>
-                                        <td>12 PM - 11:30 PM</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Friday</th>
-                                        <td>12PM - 2AM</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Saturday</th>
-                                        <td>12PM - 2AM</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Sunday</th>
-                                        <td>12PM - 2AM</td>
-                                    </tr>
+                                <table class="opening-time opening_timing_table">
+                                    <form name="addtimerform" id="addtimerform" method="post">
+                                        @if($res_times->count() === 0)
+                                            @foreach ($days as $key => $day)
+                                            <?php $key += 1; 
+                                                $id = session('restaurant');;
+                                            ?>
+                                                <tr>
+                                                    <th>{{$day->name}}</th>
+                                                    <td>
+                                                        <input type="hidden" name="res_id" id="res_id" data-id = "{{$id->id}}">
+                                                        <input class="start_time" style="display: none" data-day_id ="{{$key}}" value="{{$key}}" name="start_time[{{$key}}]" type="time" value=""
+                                                            placeholder="Start Time"><input class="close_time"
+                                                            placeholder="Close TIme" style="display: none"  name="end_time[{{$key}}]" type="time" value="">
+                                                        <label for="time" class="times">-</label>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        @else
+                                            @foreach ($res_times as $res_time)
+                                                <tr>
+                                                    <th>{{$res_time->day->name}}</th>
+                                                    <td>
+                                                        <input type="hidden" name="res_id" id="res_id" data-id = "{{$res_time->restaurant_id}}">
+                                                        <input class="start_time" style="display: none" value="{{$res_time->start_time}}" name="start_time[{{$res_time->day->id}}]" type="time"
+                                                            placeholder="Start Time"><input class="close_time"
+                                                            placeholder="Close TIme" style="display: none"  name="end_time[{{$res_time->day->id}}]" type="time" value="{{$res_time->close_time}}">
+                                                        <label for="time" class="times">{{($res_time->start_time) ? $res_time->start_time . ' - '. $res_time->close_time : 'Close' }} </label>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        @endif
+                                    </form>
                                 </table>
+                                <button class="bor-btn w-100 font-26" id="venue_submitBtn" style="display: none" type="submit">Add Open
+                                    Timming</button>
 
                             </div>
                         </div>
@@ -112,7 +105,8 @@
                                 <div class="reviewbox">
                                     <div class="text-star">5 Star Avg</div>
                                     <div class="stars"><i class="icon-star"></i><i class="icon-star"></i><i
-                                            class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i></div>
+                                            class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i>
+                                    </div>
                                 </div>
                             </div>
                             <div class="scroll-y h-800">
@@ -128,8 +122,9 @@
                                             <td><i class="icon-ok-circled"></i> $81.00</td>
                                         </tr>
                                     </table>
-                                    <div class="complete mb-2">Complete <i class="icon-star"></i><i class="icon-star"></i><i
-                                            class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i></div>
+                                    <div class="complete mb-2">Complete <i class="icon-star"></i><i
+                                            class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i><i
+                                            class="icon-star"></i></div>
 
                                     <div class="d-flex justify-content-between align-items-end">
                                         <div class="rvnote">User written review can go here of it is an extended review the
@@ -150,8 +145,9 @@
                                             <td><i class="icon-ok-circled"></i> $81.00</td>
                                         </tr>
                                     </table>
-                                    <div class="complete mb-2">Complete <i class="icon-star"></i><i class="icon-star"></i><i
-                                            class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i></div>
+                                    <div class="complete mb-2">Complete <i class="icon-star"></i><i
+                                            class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i><i
+                                            class="icon-star"></i></div>
 
                                     <div class="d-flex justify-content-between align-items-end">
                                         <div class="rvnote">User written review can go here of it is an extended review the
@@ -299,32 +295,35 @@
                     <div class="col-md-4">
                         <div class="grey-brd-box">
                             <div class="title">
-                                <h2>Venue Identity</h2> <a href="#" class="edit">EDIT</a>
+                                <h2>Venue Identity</h2> <a href="javascript:void(0);" class="edit venue_res_image">EDIT</a>
                             </div>
                             <div class="padbox">
-                                <figure class="venue-fig"><img src="{{$restaurant->image}}" alt=""></figure>
+                                <form name="addimageform" id="addimageform" method="post">
+                                    <input id="img-upload" type="file" class="files" name="image"  style="display: none" accept="image/*" />
+                                    <figure class="venue-fig"><img src="{{ $restaurant->image }}" alt=""></figure>
+                                </form>
+                                <button class="bor-btn w-100 font-26" id="venueImg_submitBtn" style="display: none" type="submit">Upload Image</button>
                             </div>
                         </div>
                         <a href="#"
                             class="grey-brd-box padbox text-center lable-box mt-3"><span>Analytics</span></a>
-                        <a href="{{ route('restaurants.waiter.index') }}" class="grey-brd-box padbox text-center lable-box mt-3 {{ Route::is('restaurants.waiter.*') ? 'active' : '' }}"><span>Account
+                        <a href="{{ route('restaurants.waiter.index') }}"
+                            class="grey-brd-box padbox text-center lable-box mt-3 {{ Route::is('restaurants.waiter.*') ? 'active' : '' }}"><span>Account
                                 Management</span></a>
-                        <a href="{{ route('restaurants.drinks.index') }}"  class="grey-brd-box padbox text-center lable-box mt-3 {{ Route::is('restaurants.drinks.*') ? 'active' : '' }}"><span>Drinks
+                        <a href="{{ route('restaurants.drinks.index') }}"
+                            class="grey-brd-box padbox text-center lable-box mt-3 {{ Route::is('restaurants.drinks.*') ? 'active' : '' }}"><span>Drinks
                                 Management</span></a>
-                        <a href="{{ route('restaurants.mixers.index') }}"  class="grey-brd-box padbox text-center lable-box mt-3 {{ Route::is('restaurants.mixers.*') ? 'active' : '' }}"
+                        <a href="{{ route('restaurants.mixers.index') }}"
+                            class="grey-brd-box padbox text-center lable-box mt-3 {{ Route::is('restaurants.mixers.*') ? 'active' : '' }}"
                             data-bs-toggle="modal" data-bs-target="#exampleModal"><span>Mixer Management</span></a>
-                        <a href="{{route('restaurants.pickup.index')}}"  class="grey-brd-box padbox text-center lable-box mt-3 {{ Route::is('restaurants.pickup.*') ? 'active' : '' }}"><span>Pick-up
+                        <a href="{{ route('restaurants.pickup.index') }}"
+                            class="grey-brd-box padbox text-center lable-box mt-3 {{ Route::is('restaurants.pickup.*') ? 'active' : '' }}"><span>Pick-up
                                 Zones</span></a>
                     </div>
 
                 </div>
             </div>
         </main>
-
-
-
-    </div>
-    </div>
     </div>
 
     <!-- Global popup -->
@@ -347,10 +346,21 @@
                     </div>
                     <button class="bor-btn w-100 font-26" type="button">Save</button>
                 </div>
-
             </div>
         </div>
     </div>
+
 @endsection
 
 @section('pagescript')
+    <script src="{{ asset('js/venue.js') }}"></script>
+    <script>
+        var moduleConfig = {
+            venueStore: "{!! route('restaurants.venue.store') !!}",
+            resImageUpload: "{!! route('restaurants.res-image-upload') !!}"
+        };
+        $(document).ready(function() {
+            XS.Venue.init();
+        });
+    </script>
+@endsection

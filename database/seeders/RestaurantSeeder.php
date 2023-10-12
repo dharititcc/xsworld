@@ -31,7 +31,8 @@ class RestaurantSeeder extends Seeder
                 'phone'             => '61732291200',
                 'specialisation'    => 'Bar',
                 'currency_id'       => 3,
-                'country_id'        => 3
+                'country_id'        => 3,
+                'type'              => 1
             ],
             [
                 'name'              => 'The Court Hotel',
@@ -44,7 +45,8 @@ class RestaurantSeeder extends Seeder
                 'phone'             => '61882125511',
                 'specialisation'    => 'Bar',
                 'currency_id'       => 3,
-                'country_id'        => 3
+                'country_id'        => 3,
+                'type'              => 1
             ],
             [
                 'name'              => 'Metro City',
@@ -57,7 +59,8 @@ class RestaurantSeeder extends Seeder
                 'phone'             => '61883100210',
                 'specialisation'    => 'Bar',
                 'currency_id'       => 3,
-                'country_id'        => 3
+                'country_id'        => 3,
+                'type'              => 1
             ],
             [
                 'name'              => 'Butterfly 73',
@@ -69,7 +72,8 @@ class RestaurantSeeder extends Seeder
                 'postcode'          => '2010',
                 'specialisation'    => 'Bar',
                 'currency_id'       => 3,
-                'country_id'        => 3
+                'country_id'        => 3,
+                'type'              => 1
             ],
             [
                 'name'              => 'Employees Only Bar',
@@ -82,7 +86,8 @@ class RestaurantSeeder extends Seeder
                 'phone'             => '61280847490',
                 'specialisation'    => 'Bar',
                 'currency_id'       => 3,
-                'country_id'        => 3
+                'country_id'        => 3,
+                'type'              => 1
             ],
             [
                 'name'              => 'Royal Lounge',
@@ -95,7 +100,8 @@ class RestaurantSeeder extends Seeder
                 'phone'             => '61280847490',
                 'specialisation'    => 'Bar',
                 'currency_id'       => 3,
-                'country_id'        => 3
+                'country_id'        => 3,
+                'type'              => 1
             ],
             [
                 'name'              => "Grandma's Bar",
@@ -108,7 +114,8 @@ class RestaurantSeeder extends Seeder
                 'phone'             => '61292643004',
                 'specialisation'    => 'Bar',
                 'currency_id'       => 3,
-                'country_id'        => 3
+                'country_id'        => 3,
+                'type'              => 1
             ],
             [
                 'name'              => "Boilermaker House",
@@ -121,7 +128,8 @@ class RestaurantSeeder extends Seeder
                 'phone'             => '61383939367',
                 'specialisation'    => 'Bar',
                 'currency_id'       => 3,
-                'country_id'        => 3
+                'country_id'        => 3,
+                'type'              => 1
             ],
             [
                 'name'              => "Earl's Juke Joint",
@@ -133,7 +141,8 @@ class RestaurantSeeder extends Seeder
                 'postcode'          => '2042',
                 'specialisation'    => 'Bar',
                 'currency_id'       => 3,
-                'country_id'        => 3
+                'country_id'        => 3,
+                'type'              => 1
             ],
             [
                 'name'              => "Cantina OK!",
@@ -145,7 +154,8 @@ class RestaurantSeeder extends Seeder
                 'postcode'          => '2000',
                 'specialisation'    => 'Bar',
                 'currency_id'       => 3,
-                'country_id'        => 3
+                'country_id'        => 3,
+                'type'              => 1
             ],
             [
                 'name'              => "Cabana Bar",
@@ -158,7 +168,8 @@ class RestaurantSeeder extends Seeder
                 'phone'             => '61292156000',
                 'specialisation'    => 'Bar',
                 'currency_id'       => 3,
-                'country_id'        => 3
+                'country_id'        => 3,
+                'type'              => 1
             ],
             [
                 'name'              => "Establishment Bar",
@@ -172,7 +183,8 @@ class RestaurantSeeder extends Seeder
                 'phone'             => '61291147310',
                 'specialisation'    => 'Bar',
                 'currency_id'       => 3,
-                'country_id'        => 3
+                'country_id'        => 3,
+                'type'              => 1
             ],
             [
                 'name'              => "Old Mates Place",
@@ -184,7 +196,8 @@ class RestaurantSeeder extends Seeder
                 'postcode'          => '2000',
                 'specialisation'    => 'Bar',
                 'currency_id'       => 3,
-                'country_id'        => 3
+                'country_id'        => 3,
+                'type'              => 1
             ],
             [
                 'name'              => "Molly",
@@ -198,7 +211,8 @@ class RestaurantSeeder extends Seeder
                 'phone'             => '61261798973',
                 'specialisation'    => 'Bar',
                 'currency_id'       => 3,
-                'country_id'        => 3
+                'country_id'        => 3,
+                'type'              => 1
             ],
             [
                 'name'              => "The Lobo",
@@ -210,7 +224,8 @@ class RestaurantSeeder extends Seeder
                 'postcode'          => '2000',
                 'specialisation'    => 'Bar',
                 'currency_id'       => 3,
-                'country_id'        => 3
+                'country_id'        => 3,
+                'type'              => 1
             ],
         ];
 
