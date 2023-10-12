@@ -180,6 +180,16 @@ class Order extends Model
     }
 
     /**
+     * Get all of the reviews for the Order
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(OrderReview::class, 'order_id', 'id');
+    }
+
+    /**
      * Method order_mixer
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasOne
