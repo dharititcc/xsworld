@@ -426,9 +426,10 @@ class OrderRepository extends BaseRepository
             if($order->total == $credit_amount)
             {
                 $updateArr = [
-                    'type'              => Order::ORDER,
-                    'pickup_point_id'   => $pickup_point_id,
-                    'credit_amount'     => $credit_amount
+                    'type'                  => Order::ORDER,
+                    'pickup_point_id'       => $pickup_point_id,
+                    'credit_amount'         => $credit_amount,
+                    'restaurant_table_id'   => $table_id
                 ];
             }
 
@@ -452,7 +453,8 @@ class OrderRepository extends BaseRepository
                     'card_id'           => $card_id,
                     'charge_id'         => $payment_data->id,
                     'pickup_point_id'   => $pickup_point_id,
-                    'credit_amount'     => $credit_amount
+                    'credit_amount'     => $credit_amount,
+                    'restaurant_table_id'   => $table_id
                 ];
             }
 
