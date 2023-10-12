@@ -137,6 +137,11 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'v1', 'as' => 'api.v1.'], fun
 
             // {api/v1/kitchen/password/reset}
             Route::patch('password/reset', 'AuthController@resetPassword')->name('kitchen.resetPassword');
+
+            // {api/v1/kitchen/orderList}
+            Route::get('order/list','OrderController@orderList')->name('kitchen.order.list');
+            Route::post('order-update-status','OrderController@updateOrderStauts')->name('kitchen.order.update.status');
+
         });
 
         Route::group(['middleware' => 'auth:api'], function ()

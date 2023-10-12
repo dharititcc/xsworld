@@ -527,4 +527,15 @@ class OrderRepository extends BaseRepository
 
         throw new GeneralException('Order is not found.');
     }
+
+    function GetKitchenOrders(array $data)
+    {
+        $orderTbl = Order::whereIn('pickup_point_id',$data)->where('status',Order::ACCEPTED)->get();
+        if($orderTbl)
+        {
+            return $orderTbl;
+        } else {
+            throw new GeneralException('Order is not found.');
+        }
+    }
 }
