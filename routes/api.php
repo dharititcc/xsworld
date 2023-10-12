@@ -140,6 +140,7 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'v1', 'as' => 'api.v1.'], fun
 
             // {api/v1/kitchen/orderList}
             Route::get('order/list','OrderController@orderList')->name('kitchen.order.list');
+            Route::get('order-history','OrderController@orderHistory')->name('kitchen.order.history');
             Route::post('order-update-status','OrderController@updateOrderStauts')->name('kitchen.order.update.status');
 
         });
