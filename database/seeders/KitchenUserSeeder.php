@@ -2,6 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Models\KitchenPickPoint;
+use App\Models\PickupPoint;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
@@ -60,6 +62,19 @@ class KitchenUserSeeder extends Seeder
             foreach( $restaurantbartenderArr as $bartender )
             {
                 User::create($bartender);
+            }
+
+            $kitchenUser = User::where('user_type',User::KITCHEN)->inRandomOrder()->limit(1)->get();
+
+            $pickupPoint = PickupPoint::get();
+
+            foreach ($pickupPoint as $value) {
+                $kitchenpickupPoint = [
+                    'user_id'           => $kitchenUser[0]->id,
+                    'pickup_point_id'   => $value->id
+                ];
+
+                KitchenPickPoint::create($kitchenpickupPoint);
             }
         }
     }

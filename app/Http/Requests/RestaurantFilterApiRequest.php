@@ -29,6 +29,7 @@ class RestaurantFilterApiRequest extends FormRequest
             'distance'        => 'nullable|numeric',
             'latitude'        => 'required',
             'longitude'       => 'required',
+            'type'            => 'required',
         ];
     }
 }

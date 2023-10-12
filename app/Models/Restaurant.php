@@ -47,6 +47,8 @@ class Restaurant extends Model
         'updated_at' => 'datetime'
     ];
 
+    protected $with = ['currency'];
+
     /**
      * Get all of the restaurant_time for the Restaurant
      *
@@ -56,7 +58,6 @@ class Restaurant extends Model
     {
         return $this->hasMany(RestaurantTime::class, 'restaurant_id', 'id');
     }
-    
 
     /**
      * Method attachment
