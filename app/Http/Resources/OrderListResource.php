@@ -27,6 +27,7 @@ class OrderListResource extends JsonResource
             'apply_time'                => $this->apply_time ?? 0,
             'created_date'              => Carbon::parse($this->created_at)->toDateTimeString(),
             'progress'                  => $this->progress ?? 0,
+            'rated'                     => $this->reviews->count(),
         ];
     }
 }
