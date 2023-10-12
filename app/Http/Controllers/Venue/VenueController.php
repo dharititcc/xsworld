@@ -24,7 +24,7 @@ class VenueController extends Controller
         $restaurant->loadMissing(['restaurant_time']);
         $res_times = $restaurant->restaurant_time;
 
-        return view('venue.index',compact('restaurant','days','res_times'));
+        return view('venue.index', compact('restaurant','days','res_times'));
     }
 
     /**
@@ -72,7 +72,6 @@ class VenueController extends Controller
         $profileImage = date('YmdHis') . "." . $file->getClientOriginalExtension();
         $file->move($destinationPath, $profileImage);
 
-        
         $restaurants->attachment()->delete();
 
         $restaurants->attachment()->create([

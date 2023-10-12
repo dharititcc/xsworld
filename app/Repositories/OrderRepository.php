@@ -290,13 +290,19 @@ class OrderRepository extends BaseRepository
         $user   = auth()->user();
 
         $user->loadMissing([
-            'orders',
-            'orders.order_items',
-            'orders.order_mixer',
-            'orders.restaurant'
+            'orders'
         ]);
 
-        $query = $user->orders()->where('type', Order::ORDER);
+        $query = $user
+        ->orders()
+        ->where('type', Order::ORDER)
+        ->with([
+            'user',
+            'reviews',
+            'order_items',
+            'order_mixer',
+            'restaurant'
+        ]);
 
         if( $text )
         {
@@ -417,6 +423,7 @@ class OrderRepository extends BaseRepository
         $table_id           = $data['table_id'] ? $data['table_id'] : null;
         $order              = Order::findOrFail($data['order_id']);
         $user               = auth()->user();
+        $devices            = $user->devices()->pluck('fcm_token')->toArray();
 
         $updateArr         = [];
         $paymentArr        = [];
@@ -460,8 +467,14 @@ class OrderRepository extends BaseRepository
 
             $order->update($updateArr);
         }
+
         $order->refresh();
         $order->loadMissing(['items']);
+        // TODO:
+        $title      = "Preparing Your order";
+        $message    = "Your Order is ".$order->id." placed";
+
+        $send_notification = sendNotification($title,$message,$devices);
 
         return $order;
     }
