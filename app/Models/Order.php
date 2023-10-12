@@ -59,6 +59,7 @@ class Order extends Model
         'restaurant_id',
         'restaurant_pickup_point_id',
         'pickup_point_id',
+        'restaurant_table_id',
         'pickup_point_user_id',
         'type',
         'status',
