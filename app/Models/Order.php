@@ -59,6 +59,7 @@ class Order extends Model
         'restaurant_id',
         'restaurant_pickup_point_id',
         'pickup_point_id',
+        'restaurant_table_id',
         'pickup_point_user_id',
         'type',
         'status',
@@ -177,6 +178,16 @@ class Order extends Model
     public function order_addons(): HasMany
     {
         return $this->hasMany(OrderItem::class, 'order_id', 'id')->where('type', RestaurantItem::ADDON);
+    }
+
+    /**
+     * Get all of the reviews for the Order
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(OrderReview::class, 'order_id', 'id');
     }
 
     /**

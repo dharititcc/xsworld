@@ -290,13 +290,19 @@ class OrderRepository extends BaseRepository
         $user   = auth()->user();
 
         $user->loadMissing([
-            'orders',
-            'orders.order_items',
-            'orders.order_mixer',
-            'orders.restaurant'
+            'orders'
         ]);
 
-        $query = $user->orders()->where('type', Order::ORDER);
+        $query = $user
+        ->orders()
+        ->where('type', Order::ORDER)
+        ->with([
+            'user',
+            'reviews',
+            'order_items',
+            'order_mixer',
+            'restaurant'
+        ]);
 
         if( $text )
         {
@@ -417,6 +423,7 @@ class OrderRepository extends BaseRepository
         $table_id           = $data['table_id'] ? $data['table_id'] : null;
         $order              = Order::findOrFail($data['order_id']);
         $user               = auth()->user();
+        $devices            = $user->devices()->pluck('fcm_token')->toArray();
 
         $updateArr         = [];
         $paymentArr        = [];
@@ -426,9 +433,10 @@ class OrderRepository extends BaseRepository
             if($order->total == $credit_amount)
             {
                 $updateArr = [
-                    'type'              => Order::ORDER,
-                    'pickup_point_id'   => $pickup_point_id,
-                    'credit_amount'     => $credit_amount
+                    'type'                  => Order::ORDER,
+                    'pickup_point_id'       => $pickup_point_id,
+                    'credit_amount'         => $credit_amount,
+                    'restaurant_table_id'   => $table_id
                 ];
             }
 
@@ -452,14 +460,21 @@ class OrderRepository extends BaseRepository
                     'card_id'           => $card_id,
                     'charge_id'         => $payment_data->id,
                     'pickup_point_id'   => $pickup_point_id,
-                    'credit_amount'     => $credit_amount
+                    'credit_amount'     => $credit_amount,
+                    'restaurant_table_id'   => $table_id
                 ];
             }
 
             $order->update($updateArr);
         }
+
         $order->refresh();
         $order->loadMissing(['items']);
+        // TODO:
+        $title      = "Preparing Your order";
+        $message    = "Your Order is ".$order->id." placed";
+
+        $send_notification = sendNotification($title,$message,$devices);
 
         return $order;
     }
@@ -524,5 +539,21 @@ class OrderRepository extends BaseRepository
         }
 
         throw new GeneralException('Order is not found.');
+    }
+
+    function GetKitchenOrders(array $data,$is_history=0)
+    {
+        $orders = Order::whereIn('pickup_point_id',$data);
+        if($is_history === 0) {
+            $orderTbl = $orders->where('status',Order::ACCEPTED)->get();
+        } else {
+            $orderTbl = $orders->whereIn('status',[Order::COMPLETED,Order::FULL_REFUND, Order::PARTIAL_REFUND, Order::RESTAURANT_CANCELED, Order::CUSTOMER_CANCELED])->get();
+        }
+        if($orderTbl)
+        {
+            return $orderTbl;
+        } else {
+            throw new GeneralException('Order is not found.');
+        }
     }
 }

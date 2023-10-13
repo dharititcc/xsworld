@@ -87,6 +87,7 @@ class RestaurantRepository extends BaseRepository
         $long           = isset( $data['longitude'] ) ? $data['longitude'] : null;
         $restaurantName = isset( $data['restaurant_name'] ) ? $data['restaurant_name'] : null;
         $drink_name     = isset( $data['drink_name'] ) ? $data['drink_name'] : null;
+        $type           = isset( $data['type'] ) ? $data['type'] : null;
 
         $query = $this->restaurantQuery()->with([
             'categories',
@@ -116,6 +117,11 @@ class RestaurantRepository extends BaseRepository
                 + sin(radians(" .$lat. ")) * sin(radians(restaurants.latitude))) AS distance")
         ]);
 
+        if( $type )
+        {
+            $query = $query->where('type', $type);
+        }
+
         if( $restaurantName )
         {
             $query = $this->filterRestautantName($query, $restaurantName);
@@ -141,7 +147,25 @@ class RestaurantRepository extends BaseRepository
      */
     public function getRestaurantItems(array $data):Collection
     {
-        $query = RestaurantItem::availableItem($data['is_available'])->with(['category', 'category.mixers', 'category.addons', 'attachment'])->where('restaurant_id', $data['restaurant_id'] )->where('category_id', $data['category_id'] )->where('type', RestaurantItem::ITEM);
+        $query = RestaurantItem::availableItem($data['is_available'])->with(
+            [
+                'category',
+                'restaurant',
+                // 'variations',
+                // 'category.mixers',
+                // 'category.addons',
+                // 'attachment',
+                // 'restaurant',
+                // 'restaurant.currency',
+                // 'restaurant.currency',
+                // 'variations.restaurant_item',
+                // 'variations.restaurant_item.restaurant',
+                // 'variations.restaurant_item.restaurant.currency'
+            ]
+        )
+        ->where('restaurant_id', $data['restaurant_id'] )
+        ->where('category_id', $data['category_id'] )
+        ->where('type', RestaurantItem::ITEM);
 
         return $query->get();
     }

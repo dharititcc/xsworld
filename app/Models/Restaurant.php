@@ -17,6 +17,9 @@ class Restaurant extends Model
 
     protected $table = 'restaurants';
 
+    const RESTAURANT = 1;
+    const EVENT      = 2;
+
     /**
      * The attributes that are mass assignable.
      *
@@ -47,6 +50,8 @@ class Restaurant extends Model
         'updated_at' => 'datetime'
     ];
 
+    protected $with = ['currency'];
+
     /**
      * Get all of the restaurant_time for the Restaurant
      *
@@ -56,7 +61,6 @@ class Restaurant extends Model
     {
         return $this->hasMany(RestaurantTime::class, 'restaurant_id', 'id');
     }
-    
 
     /**
      * Method attachment
