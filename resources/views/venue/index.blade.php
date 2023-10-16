@@ -23,11 +23,11 @@
                                             <?php $key += 1;
                                                 $id = session('restaurant');
                                             ?>
-                                                @include('venue.partials.opening-times', ['id' => $id->id, 'key' => $key, 'name' => $name])
+                                                @include('venue.partials.opening-times', ['id' => $id->id, 'key' => $key, 'name' => $day->name])
                                             @endforeach
                                         @else
                                             @foreach ($res_times as $res_time)
-                                                @include('venue.partials.opening-times', ['id' => $res_time->restaurant_id, 'key' => $res_time->day->id, 'name' => $name, 'res_time' => $res_time])
+                                                @include('venue.partials.opening-times', ['id' => $res_time->restaurant_id, 'key' => $res_time->day->id, 'name' => $res_time->day->name, 'res_time' => $res_time])
                                             @endforeach
                                         @endif
                                     </form>
