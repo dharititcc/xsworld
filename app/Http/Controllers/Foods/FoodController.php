@@ -40,7 +40,7 @@ class FoodController extends Controller
                     ->with(['category', 'restaurant','variations'])
                     ->whereHas('restaurant', function($query) use($restaurant)
                     {
-                        return $query->where('id', $restaurant->id)->where('type',2);
+                        return $query->where('restaurants.id', $restaurant->id)->where('restaurant_items.type',RestaurantItem::ITEM);
                     });
                     if(empty($request->get('category')))
                     {
@@ -62,7 +62,9 @@ class FoodController extends Controller
                         $data = $data->Textsearch(e($request->get('search_main')),"search");
 
                     }
-                    $data = $data->latest()->get();
+                    // echo common()->formatSql($data);die;
+                    $data = $data->orderByDesc('id')->get();
+
             return Datatables::of($data)
                 ->make(true);
         }
@@ -89,7 +91,6 @@ class FoodController extends Controller
      */
     public function store(Request $request)
     {
-        //dd($request->all());
         $restaurant = session('restaurant')->loadMissing(['main_categories', 'main_categories.children']);
         $categories = $request->get('category_id');
 
@@ -153,7 +154,6 @@ class FoodController extends Controller
     {
         $categories = RestaurantItem::query()->select('category_id')->where('restaurant_id', $food->restaurant_id)->where('type', RestaurantItem::ITEM)->where('name', $food->name)->groupBy('category_id')->pluck('category_id')->toArray();
         $restaurantVariation = RestaurantVariation::select('name','price')->where('restaurant_item_id',$food->id)->get()->toArray();
-        // dd($food);
         $data = [
             'name'          => $food->name,
             'price'         => $food->price,

@@ -269,7 +269,7 @@
                 processing: true,
                 serverSide: true,
                 searching: false,
-                order: [[1, 'asc']],
+                // order: [[0, 'desc']],
                 ajax: {
                     url: moduleConfig.getAccessibles,
                     type: 'get',

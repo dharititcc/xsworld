@@ -190,6 +190,8 @@
         </div>
     </div>
 <script src="{{ asset('js/drink.js') }}"></script>
+<script src="{{ asset('js/enableSweetalert.js') }}"></script>
+<script src="{{ asset('js/disableSweetalert.js') }}"></script>
 <script type="text/javascript">
     var moduleConfig = {
         tableAjax: "{!! route('restaurants.drinks.index') !!}",
