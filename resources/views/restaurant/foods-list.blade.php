@@ -178,8 +178,6 @@
 </div>
 @endsection
 @section('pagescript')
-<script src="{{asset('js/enableSweetalert.js')}}"></script>
-<script src="{{asset('js/disableSweetalert.js')}}"></script>
 @parent
 
 <script src="{{ asset('js/food.js')}}"></script>

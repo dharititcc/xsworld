@@ -51,11 +51,7 @@
             </table>
         </div>
     </div>
-@endsection
-@section('pagescript')
-@parent
-<script src="{{asset('js/enableSweetalert.js')}}"></script>
-<script src="{{asset('js/disableSweetalert.js')}}"></script>
+
     <!-- Global popup -->
     <div class="modal fade" id="wd930" tabindex="0" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
         <div class="modal-dialog modal-dialog-centered modal-xl">
@@ -189,9 +185,10 @@
             </div>
         </div>
     </div>
+@endsection
+@section('pagescript')
+@parent
 <script src="{{ asset('js/drink.js') }}"></script>
-<script src="{{ asset('js/enableSweetalert.js') }}"></script>
-<script src="{{ asset('js/disableSweetalert.js') }}"></script>
 <script type="text/javascript">
     var moduleConfig = {
         tableAjax: "{!! route('restaurants.drinks.index') !!}",

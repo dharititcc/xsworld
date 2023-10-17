@@ -130,6 +130,8 @@
             context.addVariation();
             context.removeVariation();
             context.filterCategoryChange();
+            XS.Common.enableSweetAlert(context.table);
+            XS.Common.disableSweetAlert(context.table);
         },
 
         filterCategoryChange: function()
@@ -269,11 +271,11 @@
         },
 
         makeDatatable: function (){
-            var context = this;
+            var context     = this;            
 
             context.categoryFilter();
             context.searchFilter();
-
+            
             context.table = context.selectors.drinkTable.DataTable({
                 processing: true,
                 serverSide: true,
@@ -284,8 +286,11 @@
                     type: 'get',
                     data: function(data)
                     {
-                        data.category   = jQuery('.drink_cat.active').data('category_id'),
-                        data.search_main= context.selectors.search.val()
+                        var checkboxes = $.map($('input[name="id"]:checked'), function(c){return c.value; });
+                        data.category       = jQuery('.drink_cat.active').data('category_id'),
+                        data.search_main    = context.selectors.search.val(),
+                        data.enable         = $('#enable').get(0).classList.contains('enable_clicked') ? checkboxes : [],
+                        data.disable        = $('#disable').get(0).classList.contains('disable_clicked') ? checkboxes : []
                     },
                 },
                 columns: context.tableColumns

@@ -131,6 +131,8 @@
             context.addVariation();
             context.removeVariation();
             context.filterCategoryChange();
+            XS.Common.enableSweetAlert(context.table);
+            XS.Common.disableSweetAlert(context.table);
         },
 
         filterCategoryChange: function()
@@ -275,8 +277,11 @@
                     type: 'get',
                     data: function(data)
                     {
-                        data.category   = jQuery('.food_cat.active').data('category_id'),
-                        data.search_main= context.selectors.search.val()
+                        var checkboxes = $.map($('input[name="id"]:checked'), function(c){return c.value; });
+                        data.category       = jQuery('.food_cat.active').data('category_id'),
+                        data.search_main    = context.selectors.search.val(),
+                        data.enable         = $('#enable').get(0).classList.contains('enable_clicked') ? checkboxes : [],
+                        data.disable        = $('#disable').get(0).classList.contains('disable_clicked') ? checkboxes : []
                     },
                 },
                 columns: context.tableColumns

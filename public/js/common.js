@@ -285,6 +285,80 @@ var XS = {}; // common variable used in all the files of the backend
             tinymce.init(options);
         },
 
+        enableSweetAlert: function(table)
+        {            
+            $('#enable').click(function(event) {
+                var $this   = $(this),
+                    form    = $(this).closest("form"),
+                    data    = [],
+                    i       = 0;
+                event.preventDefault();
+
+                $this.addClass('enable_clicked');
+            
+                // check if atleast one item selected
+                if( $('.checkboxitem:checked').length == 0 )
+                {
+                    swal({
+                        title: `Please select atleast one item?`,
+                        icon: "warning",
+                        button: "Ok!",
+                    });
+                    return false;
+                }
+            
+                swal({
+                    title: `Are you sure you want to Enable this Records?`,
+                    icon: "warning",
+                    buttons: true,
+                    dangerMode: true,
+                })
+                .then((willDelete) => {
+                    if (willDelete) {
+                        table.ajax.reload();
+                        $this.removeClass('enable_clicked');
+                    }
+                });
+            });
+        },
+
+        disableSweetAlert: function(table)
+        {            
+            $('#disable').click(function(event) {
+                var $this   = $(this),
+                    form    = $(this).closest("form"),
+                    data    = [],
+                    i       = 0;
+                event.preventDefault();
+
+                $this.addClass('disable_clicked');
+            
+                // check if atleast one item selected
+                if( $('.checkboxitem:checked').length == 0 )
+                {
+                    swal({
+                        title: `Please select atleast one item?`,
+                        icon: "warning",
+                        button: "Ok!",
+                    });
+                    return false;
+                }
+            
+                swal({
+                    title: `Are you sure you want to Disable this Records?`,
+                    icon: "warning",
+                    buttons: true,
+                    dangerMode: true,
+                })
+                .then((willDelete) => {
+                    if (willDelete) {
+                        table.ajax.reload();
+                    }
+                    $this.removeClass('disable_clicked');
+                });
+            });
+        },
+
         reinitSortableTinymce: function()
         {
             const templRequestDiv = document.getElementById('tempRequestDiv');
