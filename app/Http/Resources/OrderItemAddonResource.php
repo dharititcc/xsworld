@@ -19,7 +19,7 @@ class OrderItemAddonResource extends JsonResource
             // 'order_id'              => $this->order_id,
             'restaurant_item_id'    => $this->restaurant_item_id,
             'name'                  => $this->restaurant_item->name,
-            'quantity'              => $this->quantity,
+            'quantity'              => (int) $this->quantity,
             'price'                 => $this->price,
             'currency'              => $this->restaurant_item->restaurant->currency->code,
             'symbol'                => $this->restaurant_item->restaurant->country->symbol,

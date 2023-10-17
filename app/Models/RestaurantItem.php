@@ -67,7 +67,10 @@ class RestaurantItem extends Model
     protected $casts = [
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
-        'deleted_at' => 'datetime'
+        'deleted_at' => 'datetime',
+        'is_variable'=> 'int',
+        'is_featured'=> 'int',
+        'quantity'   => 'int',
     ];
 
     /**

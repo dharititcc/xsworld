@@ -19,7 +19,7 @@ class PickUpPointResource extends JsonResource
             'name'      => $this->name,
             'image'     => $this->image,
             'status'    => $this->pickupstatus,
-            'status_no' => $this->status
+            'status_no' => (int) $this->status
         ];
     }
 }
