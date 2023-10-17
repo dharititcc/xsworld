@@ -23,7 +23,7 @@ class OrderItemResource extends JsonResource
             $response = [
                 'id'               => $this->id,
                 'name'             => $this->restaurant_item->name,
-                'quantity'         => $this->quantity,
+                'quantity'         => (int) $this->quantity,
                 'price'            => $this->price,
                 'currency'         => $this->restaurant_item->restaurant->currency->code,
                 'symbol'           => $this->restaurant_item->restaurant->country->symbol,
@@ -35,7 +35,7 @@ class OrderItemResource extends JsonResource
                     'price'     => $this->price,
                     'currency'  => $this->restaurant_item->restaurant->currency->code,
                     'symbol'    => $this->restaurant_item->restaurant->country->symbol,
-                    'quantity'  => $this->quantity,
+                    'quantity'  => (int) $this->quantity,
                     'total'     => $this->total
                 ] : new stdClass,
                 'addons'            => isset($this->addons) ? OrderItemAddonResource::collection($this->addons) : [],
