@@ -50,7 +50,7 @@ class Access
      */
     public function isAdmin()
     {
-        return $this->user()->user_type === User::ADMIN;
+        return $this->user()->user_type == User::ADMIN;
     }
 
     /**
@@ -60,7 +60,7 @@ class Access
      */
     public function isRestaurantOwner()
     {
-        return $this->user()->user_type === User::RESTAURANT_OWNER;
+        return $this->user()->user_type == User::RESTAURANT_OWNER;
     }
 
     /**
@@ -70,7 +70,7 @@ class Access
      */
     public function isBartender()
     {
-        return $this->user()->user_type === User::BARTENDER;
+        return $this->user()->user_type == User::BARTENDER;
     }
 
     /**
@@ -80,6 +80,6 @@ class Access
      */
     public function isCustomer()
     {
-        return $this->user()->user_type === User::CUSTOMER;
+        return $this->user()->user_type == User::CUSTOMER;
     }
 }
