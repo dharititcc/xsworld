@@ -280,7 +280,7 @@ class DrinkController extends Controller
     public function favoriteStatusUpdate(Request $request)
     {
         $restaurant = session('restaurant');
-        dd($request->all());
+        // dd($request->all());
         $res_featured = RestaurantItem::find($request->id);
         $res_featured->is_featured = $request->is_featured;
         $res_featured->save();

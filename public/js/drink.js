@@ -69,10 +69,7 @@
             "defaultContent": "",
             "bSortable": false,
             render: function (data, type, row) {
-                // if (row.is_featured == 1) {
-                //     return '<a href="javascript:void(0)" class="favorite" data-is_featured="1" data-id="${row.id}"></a>'
-                // }
-                return `<a href="javascript:void(0)" class="favorite ${row.is_featured == 0 ? 'null' : ''} "  data-is_featured="1" data-id="${row.id}"></a>`
+                return `<a href="javascript:void(0)" class="favorite ${row.is_featured == 0 ? 'null' : ''} "  data-is_featured="${row.is_featured == 0 ? 1 : 0}" data-id="${row.id}"></a>`
             }
         },
         {
@@ -302,14 +299,15 @@
         favoriteStatusUpdate: function()
         {
             var context = this;
-            $('.drink_datatable').on('click', context.selectors.favoriteBtn, function() {
-                var $this = $(this),
-                    parent      = $this.closest('.drink_datatable'),
-                    id = parent.find('.drink_datatable').data('id'),
-                    is_featured = parent.find('.drink_datatable').data('is_featured');
+            $('.drink_datatable').on('click', '.favorite', function() {
+                var $this       = $(this),
+                    id          = $this.data('id'),
+                    is_featured = $this.data('is_featured');
 
                 console.log(id);
                 console.log(is_featured);
+
+                // return;
                 $.ajax({
                     url:moduleConfig.favoriteStatusUpdate,
                     type:'POST',
@@ -321,6 +319,8 @@
                     success: function(res) {
                         console.log(res);
                         alert('favorite Status has been updated successfully');
+
+                        context.table.ajax.reload();
                     },
                 });
             });
