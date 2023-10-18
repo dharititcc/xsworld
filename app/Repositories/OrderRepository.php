@@ -249,6 +249,7 @@ class OrderRepository extends BaseRepository
         $user->loadMissing(
             [
                 'latest_cart',
+                'latest_cart.order_items',
                 'latest_cart.restaurant',
                 'latest_cart.restaurant.pickup_points' => function($query)
                 {
