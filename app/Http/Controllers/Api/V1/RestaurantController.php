@@ -126,6 +126,27 @@ class RestaurantController extends APIController
     }
 
     /**
+     * Method events
+     *
+     * @param RestaurantFilterApiRequest $request [explicite description]
+     *
+     * @return void
+     */
+    public function events(RestaurantFilterApiRequest $request)
+    {
+        $data               = $request->validated();
+        $data['type']       = Restaurant::EVENT;
+        $events             = $this->repository->getRestaurants($data);
+
+        if( $events->count() )
+        {
+            return $this->respondSuccess('Events Found.', RestaurantResource::collection($events));
+        }
+
+        return $this->respondWithError('Events not found.');
+    }
+
+    /**
      * Method index
      *
      * @param \App\Http\Requests\RestaurantFeaturedRequest $request [explicite description]

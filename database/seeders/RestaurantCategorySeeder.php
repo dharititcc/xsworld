@@ -281,6 +281,76 @@ class RestaurantCategorySeeder extends Seeder
                         ]);
                     }
                 }
+
+                if( $restaurant->id == 16 )
+                {
+                    if( !empty( $categories ) )
+                    {
+                        $newCategory = $restaurant->categories()->create($categories[1]);
+
+                        // attachments
+                        $newCategory->attachment()->create([
+                            'stored_name'   => str_replace(' ', '_', strtolower($category['name'])).'.jpg',
+                            'original_name' => str_replace(' ', '_', strtolower($category['name'])).'.jpg'
+                        ]);
+                    }
+                }
+
+                if( $restaurant->id == 17 )
+                {
+                    if( !empty( $categories ) )
+                    {
+                        $newCategory = $restaurant->categories()->create($categories[1]);
+
+                        // attachments
+                        $newCategory->attachment()->create([
+                            'stored_name'   => str_replace(' ', '_', strtolower($category['name'])).'.jpg',
+                            'original_name' => str_replace(' ', '_', strtolower($category['name'])).'.jpg'
+                        ]);
+                    }
+                }
+
+                if( $restaurant->id == 18 )
+                {
+                    if( !empty( $categories ) )
+                    {
+                        $newCategory = $restaurant->categories()->create($categories[1]);
+
+                        // attachments
+                        $newCategory->attachment()->create([
+                            'stored_name'   => str_replace(' ', '_', strtolower($category['name'])).'.jpg',
+                            'original_name' => str_replace(' ', '_', strtolower($category['name'])).'.jpg'
+                        ]);
+                    }
+                }
+
+                if( $restaurant->id == 19 )
+                {
+                    if( !empty( $categories ) )
+                    {
+                        $newCategory = $restaurant->categories()->create($categories[1]);
+
+                        // attachments
+                        $newCategory->attachment()->create([
+                            'stored_name'   => str_replace(' ', '_', strtolower($category['name'])).'.jpg',
+                            'original_name' => str_replace(' ', '_', strtolower($category['name'])).'.jpg'
+                        ]);
+                    }
+                }
+
+                if( $restaurant->id == 20 )
+                {
+                    if( !empty( $categories ) )
+                    {
+                        $newCategory = $restaurant->categories()->create($categories[1]);
+
+                        // attachments
+                        $newCategory->attachment()->create([
+                            'stored_name'   => str_replace(' ', '_', strtolower($category['name'])).'.jpg',
+                            'original_name' => str_replace(' ', '_', strtolower($category['name'])).'.jpg'
+                        ]);
+                    }
+                }
             }
         }
 

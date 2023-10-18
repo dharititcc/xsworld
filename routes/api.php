@@ -45,6 +45,8 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'v1', 'as' => 'api.v1.'], fun
     {
         // vanue list{api/v1/restaurants}
         Route::post('/restaurants', 'RestaurantController@index')->name('restaurant.index');
+        // event list{api/v1/restaurants}
+        Route::post('/events', 'RestaurantController@events')->name('restaurant.events');
         // restaurant featured list{api/v1/restaurants/featured}
         Route::post('/restaurants/featured', 'RestaurantController@featured')->name('restaurant.featured');
         // restaurant item type list{api/v1/restaurants/sub-categories}

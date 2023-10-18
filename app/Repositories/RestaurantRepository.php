@@ -6,6 +6,7 @@ use App\Models\RestaurantItem;
 use App\Models\User;
 use App\Models\UserFavouriteItem;
 use App\Repositories\BaseRepository;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
@@ -111,15 +112,19 @@ class RestaurantRepository extends BaseRepository
             'postcode',
             'country_id',
             'phone',
+            'start_date',
+            'end_date',
             'specialisation',
             DB::raw("6371 * acos(cos(radians(" . $lat . "))
                 * cos(radians(restaurants.latitude)) * cos(radians(restaurants.longitude) - radians(" . $long . "))
                 + sin(radians(" .$lat. ")) * sin(radians(restaurants.latitude))) AS distance")
         ]);
 
-        if( $type )
+        if( $type == 2 )
         {
-            $query = $query->where('type', $type);
+            $today = Carbon::now()->toDateTimeString();
+            $query = $query->whereDate('start_date', '<=' , $today);
+            $query = $query->whereDate('end_date', '>=', $today);
         }
 
         if( $restaurantName )
@@ -131,6 +136,7 @@ class RestaurantRepository extends BaseRepository
         {
             $query = $this->filterItem($query, $drink_name);
         }
+        $query = $query->where('type', $type);
         $query = $this->filterRadius($query, $data);
         $query = $query->orderBy('distance');
 

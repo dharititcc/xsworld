@@ -745,6 +745,231 @@ class RestaurantSubCategorySeeder extends Seeder
                         }
                     }
                 }
+
+                if( $restaurant->id == 16 )
+                {
+                    if( !empty( $categories ) )
+                    {
+                        foreach( $categories as $category )
+                        {
+                            if( $category->name === 'Drinks' )
+                            {
+                                if( !empty( $drinksCategories ) )
+                                {
+                                    foreach( $drinksCategories as $subcategory )
+                                    {
+                                        $subcategory['parent_id']   = $category->id;
+                                        $newCategory                = $restaurant->categories()->create($subcategory);
+
+                                        // attachment
+                                        $newCategory->attachment()->create([
+                                            'stored_name'   => str_replace(' ', '_', strtolower($subcategory['name'])).'.jpg',
+                                            'original_name' => str_replace(' ', '_', strtolower($subcategory['name'])).'.jpg',
+                                        ]);
+                                    }
+                                }
+                            }
+
+                            if( $category->name === 'Food' )
+                            {
+                                if( !empty( $foodCategories ) )
+                                {
+                                    foreach( $foodCategories as $foodSubCategory )
+                                    {
+                                        $foodSubCategory['parent_id']   = $category->id;
+                                        $newCategory                    = $restaurant->categories()->create($foodSubCategory);
+
+                                        // attachment
+                                        $newCategory->attachment()->create([
+                                            'stored_name'   => str_replace(' ', '_', strtolower($foodSubCategory['name'])).'.jpg',
+                                            'original_name' => str_replace(' ', '_', strtolower($foodSubCategory['name'])).'.jpg',
+                                        ]);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if( $restaurant->id == 17 )
+                {
+                    if( !empty( $categories ) )
+                    {
+                        foreach( $categories as $category )
+                        {
+                            if( $category->name === 'Drinks' )
+                            {
+                                if( !empty( $drinksCategories ) )
+                                {
+                                    foreach( $drinksCategories as $subcategory )
+                                    {
+                                        $subcategory['parent_id']   = $category->id;
+                                        $newCategory                = $restaurant->categories()->create($subcategory);
+
+                                        // attachment
+                                        $newCategory->attachment()->create([
+                                            'stored_name'   => str_replace(' ', '_', strtolower($subcategory['name'])).'.jpg',
+                                            'original_name' => str_replace(' ', '_', strtolower($subcategory['name'])).'.jpg',
+                                        ]);
+                                    }
+                                }
+                            }
+
+                            if( $category->name === 'Food' )
+                            {
+                                if( !empty( $foodCategories ) )
+                                {
+                                    foreach( $foodCategories as $foodSubCategory )
+                                    {
+                                        $foodSubCategory['parent_id']   = $category->id;
+                                        $newCategory                    = $restaurant->categories()->create($foodSubCategory);
+
+                                        // attachment
+                                        $newCategory->attachment()->create([
+                                            'stored_name'   => str_replace(' ', '_', strtolower($foodSubCategory['name'])).'.jpg',
+                                            'original_name' => str_replace(' ', '_', strtolower($foodSubCategory['name'])).'.jpg',
+                                        ]);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if( $restaurant->id == 18 )
+                {
+                    if( !empty( $categories ) )
+                    {
+                        foreach( $categories as $category )
+                        {
+                            if( $category->name === 'Drinks' )
+                            {
+                                if( !empty( $drinksCategories ) )
+                                {
+                                    foreach( $drinksCategories as $subcategory )
+                                    {
+                                        $subcategory['parent_id']   = $category->id;
+                                        $newCategory                = $restaurant->categories()->create($subcategory);
+
+                                        // attachment
+                                        $newCategory->attachment()->create([
+                                            'stored_name'   => str_replace(' ', '_', strtolower($subcategory['name'])).'.jpg',
+                                            'original_name' => str_replace(' ', '_', strtolower($subcategory['name'])).'.jpg',
+                                        ]);
+                                    }
+                                }
+                            }
+
+                            if( $category->name === 'Food' )
+                            {
+                                if( !empty( $foodCategories ) )
+                                {
+                                    foreach( $foodCategories as $foodSubCategory )
+                                    {
+                                        $foodSubCategory['parent_id']   = $category->id;
+                                        $newCategory                    = $restaurant->categories()->create($foodSubCategory);
+
+                                        // attachment
+                                        $newCategory->attachment()->create([
+                                            'stored_name'   => str_replace(' ', '_', strtolower($foodSubCategory['name'])).'.jpg',
+                                            'original_name' => str_replace(' ', '_', strtolower($foodSubCategory['name'])).'.jpg',
+                                        ]);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if( $restaurant->id == 19 )
+                {
+                    if( !empty( $categories ) )
+                    {
+                        foreach( $categories as $category )
+                        {
+                            if( $category->name === 'Drinks' )
+                            {
+                                if( !empty( $drinksCategories ) )
+                                {
+                                    foreach( $drinksCategories as $subcategory )
+                                    {
+                                        $subcategory['parent_id']   = $category->id;
+                                        $newCategory                = $restaurant->categories()->create($subcategory);
+
+                                        // attachment
+                                        $newCategory->attachment()->create([
+                                            'stored_name'   => str_replace(' ', '_', strtolower($subcategory['name'])).'.jpg',
+                                            'original_name' => str_replace(' ', '_', strtolower($subcategory['name'])).'.jpg',
+                                        ]);
+                                    }
+                                }
+                            }
+
+                            if( $category->name === 'Food' )
+                            {
+                                if( !empty( $foodCategories ) )
+                                {
+                                    foreach( $foodCategories as $foodSubCategory )
+                                    {
+                                        $foodSubCategory['parent_id']   = $category->id;
+                                        $newCategory                    = $restaurant->categories()->create($foodSubCategory);
+
+                                        // attachment
+                                        $newCategory->attachment()->create([
+                                            'stored_name'   => str_replace(' ', '_', strtolower($foodSubCategory['name'])).'.jpg',
+                                            'original_name' => str_replace(' ', '_', strtolower($foodSubCategory['name'])).'.jpg',
+                                        ]);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if( $restaurant->id == 20 )
+                {
+                    if( !empty( $categories ) )
+                    {
+                        foreach( $categories as $category )
+                        {
+                            if( $category->name === 'Drinks' )
+                            {
+                                if( !empty( $drinksCategories ) )
+                                {
+                                    foreach( $drinksCategories as $subcategory )
+                                    {
+                                        $subcategory['parent_id']   = $category->id;
+                                        $newCategory                = $restaurant->categories()->create($subcategory);
+
+                                        // attachment
+                                        $newCategory->attachment()->create([
+                                            'stored_name'   => str_replace(' ', '_', strtolower($subcategory['name'])).'.jpg',
+                                            'original_name' => str_replace(' ', '_', strtolower($subcategory['name'])).'.jpg',
+                                        ]);
+                                    }
+                                }
+                            }
+
+                            if( $category->name === 'Food' )
+                            {
+                                if( !empty( $foodCategories ) )
+                                {
+                                    foreach( $foodCategories as $foodSubCategory )
+                                    {
+                                        $foodSubCategory['parent_id']   = $category->id;
+                                        $newCategory                    = $restaurant->categories()->create($foodSubCategory);
+
+                                        // attachment
+                                        $newCategory->attachment()->create([
+                                            'stored_name'   => str_replace(' ', '_', strtolower($foodSubCategory['name'])).'.jpg',
+                                            'original_name' => str_replace(' ', '_', strtolower($foodSubCategory['name'])).'.jpg',
+                                        ]);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
 

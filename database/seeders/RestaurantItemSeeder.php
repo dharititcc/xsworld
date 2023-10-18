@@ -32,7 +32,8 @@ class RestaurantItemSeeder extends Seeder
                 'ingredients'           => 'Pinot Noir. 50 to 55%',
                 'country_of_origin'     => 'France',
                 'year_of_production'    => '1772',
-                'type_of_drink'         => 'Champagne & Sparkling'
+                'type_of_drink'         => 'Champagne & Sparkling',
+                'is_available'          => 1
             ],
             [
                 'name'                  => 'Pommery Brut Royal',
@@ -43,7 +44,8 @@ class RestaurantItemSeeder extends Seeder
                 'ingredients'           => 'Chardonnay, Pinot Noir and Pinot Meunier grapes',
                 'country_of_origin'     => 'France',
                 'year_of_production'    => '1836',
-                'type_of_drink'         => 'Champagne & Sparkling'
+                'type_of_drink'         => 'Champagne & Sparkling',
+                'is_available'          => 1
             ]
         ];
 
@@ -57,7 +59,8 @@ class RestaurantItemSeeder extends Seeder
                 'ingredients'           => 'cocoa, roasted cacao powder, and natural chocolate & caramel flavours',
                 'country_of_origin'     => 'Adelaide, South Australia',
                 'year_of_production'    => '2014',
-                'type_of_drink'         => 'wine'
+                'type_of_drink'         => 'wine',
+                'is_available'          => 1
             ],
             [
                 'name'                  => 'Rasteau',
@@ -68,7 +71,8 @@ class RestaurantItemSeeder extends Seeder
                 'ingredients'           => 'Grenache Noir, Gris and blanc',
                 'country_of_origin'     => 'southern Rhône valley',
                 'year_of_production'    => '1934',
-                'type_of_drink'         => 'wine'
+                'type_of_drink'         => 'wine',
+                'is_available'          => 1
             ]
         ];
 
@@ -82,7 +86,8 @@ class RestaurantItemSeeder extends Seeder
                 'ingredients'           => 'raw cane juice, white or brown cane sugar, cane syrup, evaporated cane sugar and cane molasses',
                 'country_of_origin'     => 'Latin America',
                 'year_of_production'    => '1934',
-                'type_of_drink'         => 'Spirit'
+                'type_of_drink'         => 'Spirit',
+                'is_available'          => 1
             ],
             [
                 'name'                  => 'Whisky Range',
@@ -93,7 +98,8 @@ class RestaurantItemSeeder extends Seeder
                 'ingredients'           => '45 ml Johnnie Walker Black Label 180 ml club soda ',
                 'country_of_origin'     => 'Latin America',
                 'year_of_production'    => '1934',
-                'type_of_drink'         => 'Spirit'
+                'type_of_drink'         => 'Spirit',
+                'is_available'          => 1
             ]
         ];
 
@@ -107,7 +113,8 @@ class RestaurantItemSeeder extends Seeder
                 'ingredients'           => '45 ml Johnnie Walker Black Label 180 ml club soda ',
                 'country_of_origin'     => 'Latin America',
                 'year_of_production'    => '1934',
-                'type_of_drink'         => 'Spirit'
+                'type_of_drink'         => 'Spirit',
+                'is_available'          => 1
             ],
             [
                 'name'                  => 'The Loop Mania',
@@ -118,7 +125,8 @@ class RestaurantItemSeeder extends Seeder
                 'ingredients'           => '45 ml Johnnie Walker Black Label 180 ml club soda ',
                 'country_of_origin'     => 'Latin America',
                 'year_of_production'    => '1934',
-                'type_of_drink'         => 'Spirit'
+                'type_of_drink'         => 'Spirit',
+                'is_available'          => 1
             ]
         ];
 
@@ -133,7 +141,8 @@ class RestaurantItemSeeder extends Seeder
                 'ingredients'           => '45 ml Johnnie Walker Black Label 180 ml club soda ',
                 'country_of_origin'     => 'Latin America',
                 'year_of_production'    => '1934',
-                'type_of_drink'         => 'Spirit'
+                'type_of_drink'         => 'Spirit',
+                'is_available'          => 1
             ],
             [
                 'name'                  => '805 Draft',
@@ -145,7 +154,8 @@ class RestaurantItemSeeder extends Seeder
                 'ingredients'           => '45 ml Johnnie Walker Black Label 180 ml club soda ',
                 'country_of_origin'     => 'Latin America',
                 'year_of_production'    => '1934',
-                'type_of_drink'         => 'Spirit'
+                'type_of_drink'         => 'Spirit',
+                'is_available'          => 1
             ],
             [
                 'name'                  => 'Kailis Sunset',
@@ -157,7 +167,8 @@ class RestaurantItemSeeder extends Seeder
                 'ingredients'           => '45 ml Johnnie Walker Black Label 180 ml club soda ',
                 'country_of_origin'     => 'Latin America',
                 'year_of_production'    => '1934',
-                'type_of_drink'         => 'Spirit'
+                'type_of_drink'         => 'Spirit',
+                'is_available'          => 1
             ],
             [
                 'name'                  => 'The Loop Mania',
@@ -169,7 +180,8 @@ class RestaurantItemSeeder extends Seeder
                 'ingredients'           => '45 ml Johnnie Walker Black Label 180 ml club soda ',
                 'country_of_origin'     => 'Latin America',
                 'year_of_production'    => '1934',
-                'type_of_drink'         => 'Spirit'
+                'type_of_drink'         => 'Spirit',
+                'is_available'          => 1
             ],
             [
                 'name'                  => 'Heineken',
@@ -181,7 +193,8 @@ class RestaurantItemSeeder extends Seeder
                 'ingredients'           => '45 ml Johnnie Walker Black Label 180 ml club soda ',
                 'country_of_origin'     => 'Latin America',
                 'year_of_production'    => '1934',
-                'type_of_drink'         => 'Spirit'
+                'type_of_drink'         => 'Spirit',
+                'is_available'          => 1
             ]
         ];
 
@@ -195,7 +208,8 @@ class RestaurantItemSeeder extends Seeder
                 'ingredients'           => '45 ml Johnnie Walker Black Label 180 ml club soda ',
                 'country_of_origin'     => 'Latin America',
                 'year_of_production'    => '1934',
-                'type_of_drink'         => 'Spirit'
+                'type_of_drink'         => 'Spirit',
+                'is_available'          => 1
             ],
             [
                 'name'                  => 'Antipasto Platter',
@@ -206,7 +220,8 @@ class RestaurantItemSeeder extends Seeder
                 'ingredients'           => '45 ml Johnnie Walker Black Label 180 ml club soda ',
                 'country_of_origin'     => 'Latin America',
                 'year_of_production'    => '1934',
-                'type_of_drink'         => 'Spirit'
+                'type_of_drink'         => 'Spirit',
+                'is_available'          => 1
             ],
             [
                 'name'                  => 'Candied tomatoes on basil leaves',
@@ -217,7 +232,8 @@ class RestaurantItemSeeder extends Seeder
                 'ingredients'           => '45 ml Johnnie Walker Black Label 180 ml club soda ',
                 'country_of_origin'     => 'Latin America',
                 'year_of_production'    => '1934',
-                'type_of_drink'         => 'Spirit'
+                'type_of_drink'         => 'Spirit',
+                'is_available'          => 1
             ]
         ];
 
@@ -231,7 +247,8 @@ class RestaurantItemSeeder extends Seeder
                 'ingredients'           => '45 ml Johnnie Walker Black Label 180 ml club soda ',
                 'country_of_origin'     => 'Latin America',
                 'year_of_production'    => '1934',
-                'type_of_drink'         => 'Spirit'
+                'type_of_drink'         => 'Spirit',
+                'is_available'          => 1
             ],
             [
                 'name'                  => 'Lamington',
@@ -242,7 +259,8 @@ class RestaurantItemSeeder extends Seeder
                 'ingredients'           => '45 ml Johnnie Walker Black Label 180 ml club soda ',
                 'country_of_origin'     => 'Latin America',
                 'year_of_production'    => '1934',
-                'type_of_drink'         => 'Spirit'
+                'type_of_drink'         => 'Spirit',
+                'is_available'          => 1
             ],
             [
                 'name'                  => 'Meat Pie',
@@ -253,7 +271,8 @@ class RestaurantItemSeeder extends Seeder
                 'ingredients'           => '45 ml Johnnie Walker Black Label 180 ml club soda ',
                 'country_of_origin'     => 'Latin America',
                 'year_of_production'    => '1934',
-                'type_of_drink'         => 'Spirit'
+                'type_of_drink'         => 'Spirit',
+                'is_available'          => 1
             ],
             [
                 'name'                  => 'Spaghetti Bolongnese',
@@ -264,7 +283,8 @@ class RestaurantItemSeeder extends Seeder
                 'ingredients'           => '45 ml Johnnie Walker Black Label 180 ml club soda ',
                 'country_of_origin'     => 'Latin America',
                 'year_of_production'    => '1934',
-                'type_of_drink'         => 'Spirit'
+                'type_of_drink'         => 'Spirit',
+                'is_available'          => 1
             ],
         ];
 
@@ -278,7 +298,8 @@ class RestaurantItemSeeder extends Seeder
                 'ingredients'           => '45 ml Johnnie Walker Black Label 180 ml club soda ',
                 'country_of_origin'     => 'Latin America',
                 'year_of_production'    => '1934',
-                'type_of_drink'         => 'Spirit'
+                'type_of_drink'         => 'Spirit',
+                'is_available'          => 1
             ],
             [
                 'name'                  => 'Cos salad with buttermilk dressing and jalapeno crumb',
@@ -289,7 +310,8 @@ class RestaurantItemSeeder extends Seeder
                 'ingredients'           => '45 ml Johnnie Walker Black Label 180 ml club soda ',
                 'country_of_origin'     => 'Latin America',
                 'year_of_production'    => '1934',
-                'type_of_drink'         => 'Spirit'
+                'type_of_drink'         => 'Spirit',
+                'is_available'          => 1
             ],
             [
                 'name'                  => 'Chorizo and sweet potato salad',
@@ -300,7 +322,8 @@ class RestaurantItemSeeder extends Seeder
                 'ingredients'           => '45 ml Johnnie Walker Black Label 180 ml club soda ',
                 'country_of_origin'     => 'Latin America',
                 'year_of_production'    => '1934',
-                'type_of_drink'         => 'Spirit'
+                'type_of_drink'         => 'Spirit',
+                'is_available'          => 1
             ],
             [
                 'name'                  => 'Green bean, fig and feta salad',
@@ -311,7 +334,8 @@ class RestaurantItemSeeder extends Seeder
                 'ingredients'           => '45 ml Johnnie Walker Black Label 180 ml club soda ',
                 'country_of_origin'     => 'Latin America',
                 'year_of_production'    => '1934',
-                'type_of_drink'         => 'Spirit'
+                'type_of_drink'         => 'Spirit',
+                'is_available'          => 1
             ]
         ];
 
@@ -325,7 +349,8 @@ class RestaurantItemSeeder extends Seeder
                 'ingredients'           => '45 ml Johnnie Walker Black Label 180 ml club soda ',
                 'country_of_origin'     => 'Latin America',
                 'year_of_production'    => '1934',
-                'type_of_drink'         => 'Spirit'
+                'type_of_drink'         => 'Spirit',
+                'is_available'          => 1
             ],
             [
                 'name'                  => 'Roasted beetroot tart with whipped ricotta',
@@ -336,7 +361,8 @@ class RestaurantItemSeeder extends Seeder
                 'ingredients'           => '45 ml Johnnie Walker Black Label 180 ml club soda ',
                 'country_of_origin'     => 'Latin America',
                 'year_of_production'    => '1934',
-                'type_of_drink'         => 'Spirit'
+                'type_of_drink'         => 'Spirit',
+                'is_available'          => 1
             ],
             [
                 'name'                  => 'Egg, bacon and tomato tart',
@@ -347,7 +373,8 @@ class RestaurantItemSeeder extends Seeder
                 'ingredients'           => '45 ml Johnnie Walker Black Label 180 ml club soda ',
                 'country_of_origin'     => 'Latin America',
                 'year_of_production'    => '1934',
-                'type_of_drink'         => 'Spirit'
+                'type_of_drink'         => 'Spirit',
+                'is_available'          => 1
             ]
         ];
 
@@ -4489,6 +4516,1481 @@ class RestaurantItemSeeder extends Seeder
                 }
 
                 if( $restaurant->id == 15 )
+                {
+                    if( !empty( $categories ) )
+                    {
+                        foreach( $categories as $category )
+                        {
+                            if( $category->name === 'Drinks' )
+                            {
+                                $subcategories = $category->children;
+                                if( !empty( $subcategories->count() ) )
+                                {
+                                    foreach( $subcategories as $subcategory )
+                                    {
+                                        if( $subcategory->name == 'Spirits' )
+                                        {
+                                            foreach( $spiritItems as $spirit )
+                                            {
+                                                $spirit['restaurant_id'] = $restaurant->id;
+                                                $image = $spirit['image'];
+                                                unset($spirit['image']);
+                                                $spirit['is_featured'] = 1;
+                                                $spirit['category_id'] = $subcategory->id;
+                                                $newItem = RestaurantItem::create($spirit);
+
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Single Shot',
+                                                        'price'=> 10
+                                                    ],
+                                                    [
+                                                        'name' => 'Double Shot',
+                                                        'price'=> 20
+                                                    ]
+                                                ];
+
+                                                foreach( $variationsArr as $variation )
+                                                {
+                                                    $newItem->variations()->create($variation);
+                                                }
+
+                                                // attachment
+                                                $newItem->attachment()->create([
+                                                    'original_name' => $image,
+                                                    'stored_name'   => $image
+                                                ]);
+                                            }
+                                        }
+
+                                        if( $subcategory->name == 'Cocktails' )
+                                        {
+                                            foreach( $cocktailItems as $cocktail )
+                                            {
+                                                $cocktail['restaurant_id'] = $restaurant->id;
+                                                $image = $cocktail['image'];
+                                                unset($cocktail['image']);
+                                                $cocktail['is_featured'] = 1;
+                                                $cocktail['category_id'] = $subcategory->id;
+                                                $newItem = RestaurantItem::create($cocktail);
+
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Single Shot',
+                                                        'price'=> 10
+                                                    ],
+                                                    [
+                                                        'name' => 'Double Shot',
+                                                        'price'=> 20
+                                                    ],
+                                                    [
+                                                        'name' => 'Glass',
+                                                        'price'=> 30
+                                                    ]
+                                                ];
+
+                                                foreach( $variationsArr as $variation )
+                                                {
+                                                    $newItem->variations()->create($variation);
+                                                }
+
+                                                // attachment
+                                                $newItem->attachment()->create([
+                                                    'original_name' => $image,
+                                                    'stored_name'   => $image
+                                                ]);
+                                            }
+                                        }
+
+                                        if( $subcategory->name == 'Beers' )
+                                        {
+                                            foreach( $beersItems as $beer )
+                                            {
+                                                $beer['restaurant_id'] = $restaurant->id;
+                                                $image = $beer['image'];
+                                                unset($beer['image']);
+                                                $beer['is_featured'] = 1;
+                                                $beer['category_id'] = $subcategory->id;
+                                                $newItem = RestaurantItem::create($beer);
+
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Glass',
+                                                        'price'=> 10
+                                                    ],
+                                                    [
+                                                        'name' => 'Bottle',
+                                                        'price'=> 35
+                                                    ],
+                                                    [
+                                                        'name' => 'Jug',
+                                                        'price'=> 50
+                                                    ],
+                                                    [
+                                                        'name' => 'Pint',
+                                                        'price'=> 75
+                                                    ]
+                                                ];
+
+                                                foreach( $variationsArr as $variation )
+                                                {
+                                                    $newItem->variations()->create($variation);
+                                                }
+
+                                                // attachment
+                                                $newItem->attachment()->create([
+                                                    'original_name' => $image,
+                                                    'stored_name'   => $image
+                                                ]);
+                                            }
+                                        }
+
+                                        if( $subcategory->name == 'Wines' )
+                                        {
+                                            foreach( $wineItems as $wine )
+                                            {
+                                                $wine['restaurant_id'] = $restaurant->id;
+                                                $image = $wine['image'];
+                                                unset($wine['image']);
+                                                $wine['is_featured'] = 1;
+                                                $wine['category_id'] = $subcategory->id;
+                                                $newItem = RestaurantItem::create($wine);
+
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Single Shot',
+                                                        'price'=> 10
+                                                    ],
+                                                    [
+                                                        'name' => 'Double Shot',
+                                                        'price'=> 20
+                                                    ],
+                                                    [
+                                                        'name' => 'Glass',
+                                                        'price'=> 30
+                                                    ],
+                                                    [
+                                                        'name' => 'Bottle',
+                                                        'price'=> 50
+                                                    ]
+                                                ];
+
+                                                // attachment
+                                                $newItem->attachment()->create([
+                                                    'original_name' => $image,
+                                                    'stored_name'   => $image
+                                                ]);
+                                            }
+                                        }
+
+                                        if( $subcategory->name == 'Champagne' )
+                                        {
+                                            foreach( $champagneItems as $champagne )
+                                            {
+                                                $champagne['restaurant_id'] = $restaurant->id;
+                                                $image = $champagne['image'];
+                                                unset($champagne['image']);
+                                                $champagne['is_featured'] = 1;
+                                                $champagne['category_id'] = $subcategory->id;
+                                                $newItem = RestaurantItem::create($champagne);
+
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Glass',
+                                                        'price'=> 30
+                                                    ],
+                                                    [
+                                                        'name' => 'Bottle',
+                                                        'price'=> 50
+                                                    ]
+                                                ];
+
+                                                // attachment
+                                                $newItem->attachment()->create([
+                                                    'original_name' => $image,
+                                                    'stored_name'   => $image
+                                                ]);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                            if( $category->name === 'Food' )
+                            {
+                                $subcategories = $category->children;
+                                if( !empty( $subcategories->count() ) )
+                                {
+                                    foreach( $subcategories as $subcategory )
+                                    {
+                                        if( $subcategory->name == 'Entree' )
+                                        {
+                                            foreach( $entreeItems as $entree )
+                                            {
+                                                $entree['restaurant_id'] = $restaurant->id;
+                                                $image = $entree['image'];
+                                                unset($entree['image']);
+                                                $entree['is_featured'] = 1;
+                                                $entree['category_id'] = $subcategory->id;
+                                                $newItem = RestaurantItem::create($entree);
+
+                                                // attachment
+                                                $newItem->attachment()->create([
+                                                    'original_name' => $image,
+                                                    'stored_name'   => $image
+                                                ]);
+                                            }
+                                        }
+
+                                        if( $subcategory->name == 'Mains' )
+                                        {
+                                            foreach( $mainsItems as $main )
+                                            {
+                                                $main['restaurant_id'] = $restaurant->id;
+                                                $image = $main['image'];
+                                                unset($main['image']);
+                                                $main['is_featured'] = 1;
+                                                $main['category_id'] = $subcategory->id;
+                                                $newItem = RestaurantItem::create($main);
+
+                                                // attachment
+                                                $newItem->attachment()->create([
+                                                    'original_name' => $image,
+                                                    'stored_name'   => $image
+                                                ]);
+                                            }
+                                        }
+
+                                        if( $subcategory->name == 'Chefs Special' )
+                                        {
+                                            foreach( $chefItems as $chef )
+                                            {
+                                                $chef['restaurant_id'] = $restaurant->id;
+                                                $image = $chef['image'];
+                                                unset($chef['image']);
+                                                $chef['is_featured'] = 1;
+                                                $chef['category_id'] = $subcategory->id;
+                                                $newItem = RestaurantItem::create($chef);
+
+                                                // attachment
+                                                $newItem->attachment()->create([
+                                                    'original_name' => $image,
+                                                    'stored_name'   => $image
+                                                ]);
+                                            }
+                                        }
+
+                                        if( $subcategory->name == 'Sides' )
+                                        {
+                                            foreach( $sidesItems as $side )
+                                            {
+                                                $side['restaurant_id'] = $restaurant->id;
+                                                $image = $side['image'];
+                                                unset($side['image']);
+                                                $side['is_featured'] = 1;
+                                                $side['category_id'] = $subcategory->id;
+                                                $newItem = RestaurantItem::create($side);
+
+                                                // attachment
+                                                $newItem->attachment()->create([
+                                                    'original_name' => $image,
+                                                    'stored_name'   => $image
+                                                ]);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if( $restaurant->id == 16 )
+                {
+                    if( !empty( $categories ) )
+                    {
+                        foreach( $categories as $category )
+                        {
+                            if( $category->name === 'Drinks' )
+                            {
+                                $subcategories = $category->children;
+                                if( !empty( $subcategories->count() ) )
+                                {
+                                    foreach( $subcategories as $subcategory )
+                                    {
+                                        if( $subcategory->name == 'Spirits' )
+                                        {
+                                            foreach( $spiritItems as $spirit )
+                                            {
+                                                $spirit['restaurant_id'] = $restaurant->id;
+                                                $image = $spirit['image'];
+                                                unset($spirit['image']);
+                                                $spirit['is_featured'] = 1;
+                                                $spirit['category_id'] = $subcategory->id;
+                                                $newItem = RestaurantItem::create($spirit);
+
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Single Shot',
+                                                        'price'=> 10
+                                                    ],
+                                                    [
+                                                        'name' => 'Double Shot',
+                                                        'price'=> 20
+                                                    ]
+                                                ];
+
+                                                foreach( $variationsArr as $variation )
+                                                {
+                                                    $newItem->variations()->create($variation);
+                                                }
+
+                                                // attachment
+                                                $newItem->attachment()->create([
+                                                    'original_name' => $image,
+                                                    'stored_name'   => $image
+                                                ]);
+                                            }
+                                        }
+
+                                        if( $subcategory->name == 'Cocktails' )
+                                        {
+                                            foreach( $cocktailItems as $cocktail )
+                                            {
+                                                $cocktail['restaurant_id'] = $restaurant->id;
+                                                $image = $cocktail['image'];
+                                                unset($cocktail['image']);
+                                                $cocktail['is_featured'] = 1;
+                                                $cocktail['category_id'] = $subcategory->id;
+                                                $newItem = RestaurantItem::create($cocktail);
+
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Single Shot',
+                                                        'price'=> 10
+                                                    ],
+                                                    [
+                                                        'name' => 'Double Shot',
+                                                        'price'=> 20
+                                                    ],
+                                                    [
+                                                        'name' => 'Glass',
+                                                        'price'=> 30
+                                                    ]
+                                                ];
+
+                                                foreach( $variationsArr as $variation )
+                                                {
+                                                    $newItem->variations()->create($variation);
+                                                }
+
+                                                // attachment
+                                                $newItem->attachment()->create([
+                                                    'original_name' => $image,
+                                                    'stored_name'   => $image
+                                                ]);
+                                            }
+                                        }
+
+                                        if( $subcategory->name == 'Beers' )
+                                        {
+                                            foreach( $beersItems as $beer )
+                                            {
+                                                $beer['restaurant_id'] = $restaurant->id;
+                                                $image = $beer['image'];
+                                                unset($beer['image']);
+                                                $beer['is_featured'] = 1;
+                                                $beer['category_id'] = $subcategory->id;
+                                                $newItem = RestaurantItem::create($beer);
+
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Glass',
+                                                        'price'=> 10
+                                                    ],
+                                                    [
+                                                        'name' => 'Bottle',
+                                                        'price'=> 35
+                                                    ],
+                                                    [
+                                                        'name' => 'Jug',
+                                                        'price'=> 50
+                                                    ],
+                                                    [
+                                                        'name' => 'Pint',
+                                                        'price'=> 75
+                                                    ]
+                                                ];
+
+                                                foreach( $variationsArr as $variation )
+                                                {
+                                                    $newItem->variations()->create($variation);
+                                                }
+
+                                                // attachment
+                                                $newItem->attachment()->create([
+                                                    'original_name' => $image,
+                                                    'stored_name'   => $image
+                                                ]);
+                                            }
+                                        }
+
+                                        if( $subcategory->name == 'Wines' )
+                                        {
+                                            foreach( $wineItems as $wine )
+                                            {
+                                                $wine['restaurant_id'] = $restaurant->id;
+                                                $image = $wine['image'];
+                                                unset($wine['image']);
+                                                $wine['is_featured'] = 1;
+                                                $wine['category_id'] = $subcategory->id;
+                                                $newItem = RestaurantItem::create($wine);
+
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Single Shot',
+                                                        'price'=> 10
+                                                    ],
+                                                    [
+                                                        'name' => 'Double Shot',
+                                                        'price'=> 20
+                                                    ],
+                                                    [
+                                                        'name' => 'Glass',
+                                                        'price'=> 30
+                                                    ],
+                                                    [
+                                                        'name' => 'Bottle',
+                                                        'price'=> 50
+                                                    ]
+                                                ];
+
+                                                // attachment
+                                                $newItem->attachment()->create([
+                                                    'original_name' => $image,
+                                                    'stored_name'   => $image
+                                                ]);
+                                            }
+                                        }
+
+                                        if( $subcategory->name == 'Champagne' )
+                                        {
+                                            foreach( $champagneItems as $champagne )
+                                            {
+                                                $champagne['restaurant_id'] = $restaurant->id;
+                                                $image = $champagne['image'];
+                                                unset($champagne['image']);
+                                                $champagne['is_featured'] = 1;
+                                                $champagne['category_id'] = $subcategory->id;
+                                                $newItem = RestaurantItem::create($champagne);
+
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Glass',
+                                                        'price'=> 30
+                                                    ],
+                                                    [
+                                                        'name' => 'Bottle',
+                                                        'price'=> 50
+                                                    ]
+                                                ];
+
+                                                // attachment
+                                                $newItem->attachment()->create([
+                                                    'original_name' => $image,
+                                                    'stored_name'   => $image
+                                                ]);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                            if( $category->name === 'Food' )
+                            {
+                                $subcategories = $category->children;
+                                if( !empty( $subcategories->count() ) )
+                                {
+                                    foreach( $subcategories as $subcategory )
+                                    {
+                                        if( $subcategory->name == 'Entree' )
+                                        {
+                                            foreach( $entreeItems as $entree )
+                                            {
+                                                $entree['restaurant_id'] = $restaurant->id;
+                                                $image = $entree['image'];
+                                                unset($entree['image']);
+                                                $entree['is_featured'] = 1;
+                                                $entree['category_id'] = $subcategory->id;
+                                                $newItem = RestaurantItem::create($entree);
+
+                                                // attachment
+                                                $newItem->attachment()->create([
+                                                    'original_name' => $image,
+                                                    'stored_name'   => $image
+                                                ]);
+                                            }
+                                        }
+
+                                        if( $subcategory->name == 'Mains' )
+                                        {
+                                            foreach( $mainsItems as $main )
+                                            {
+                                                $main['restaurant_id'] = $restaurant->id;
+                                                $image = $main['image'];
+                                                unset($main['image']);
+                                                $main['is_featured'] = 1;
+                                                $main['category_id'] = $subcategory->id;
+                                                $newItem = RestaurantItem::create($main);
+
+                                                // attachment
+                                                $newItem->attachment()->create([
+                                                    'original_name' => $image,
+                                                    'stored_name'   => $image
+                                                ]);
+                                            }
+                                        }
+
+                                        if( $subcategory->name == 'Chefs Special' )
+                                        {
+                                            foreach( $chefItems as $chef )
+                                            {
+                                                $chef['restaurant_id'] = $restaurant->id;
+                                                $image = $chef['image'];
+                                                unset($chef['image']);
+                                                $chef['is_featured'] = 1;
+                                                $chef['category_id'] = $subcategory->id;
+                                                $newItem = RestaurantItem::create($chef);
+
+                                                // attachment
+                                                $newItem->attachment()->create([
+                                                    'original_name' => $image,
+                                                    'stored_name'   => $image
+                                                ]);
+                                            }
+                                        }
+
+                                        if( $subcategory->name == 'Sides' )
+                                        {
+                                            foreach( $sidesItems as $side )
+                                            {
+                                                $side['restaurant_id'] = $restaurant->id;
+                                                $image = $side['image'];
+                                                unset($side['image']);
+                                                $side['is_featured'] = 1;
+                                                $side['category_id'] = $subcategory->id;
+                                                $newItem = RestaurantItem::create($side);
+
+                                                // attachment
+                                                $newItem->attachment()->create([
+                                                    'original_name' => $image,
+                                                    'stored_name'   => $image
+                                                ]);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if( $restaurant->id == 17 )
+                {
+                    if( !empty( $categories ) )
+                    {
+                        foreach( $categories as $category )
+                        {
+                            if( $category->name === 'Drinks' )
+                            {
+                                $subcategories = $category->children;
+                                if( !empty( $subcategories->count() ) )
+                                {
+                                    foreach( $subcategories as $subcategory )
+                                    {
+                                        if( $subcategory->name == 'Spirits' )
+                                        {
+                                            foreach( $spiritItems as $spirit )
+                                            {
+                                                $spirit['restaurant_id'] = $restaurant->id;
+                                                $image = $spirit['image'];
+                                                unset($spirit['image']);
+                                                $spirit['is_featured'] = 1;
+                                                $spirit['category_id'] = $subcategory->id;
+                                                $newItem = RestaurantItem::create($spirit);
+
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Single Shot',
+                                                        'price'=> 10
+                                                    ],
+                                                    [
+                                                        'name' => 'Double Shot',
+                                                        'price'=> 20
+                                                    ]
+                                                ];
+
+                                                foreach( $variationsArr as $variation )
+                                                {
+                                                    $newItem->variations()->create($variation);
+                                                }
+
+                                                // attachment
+                                                $newItem->attachment()->create([
+                                                    'original_name' => $image,
+                                                    'stored_name'   => $image
+                                                ]);
+                                            }
+                                        }
+
+                                        if( $subcategory->name == 'Cocktails' )
+                                        {
+                                            foreach( $cocktailItems as $cocktail )
+                                            {
+                                                $cocktail['restaurant_id'] = $restaurant->id;
+                                                $image = $cocktail['image'];
+                                                unset($cocktail['image']);
+                                                $cocktail['is_featured'] = 1;
+                                                $cocktail['category_id'] = $subcategory->id;
+                                                $newItem = RestaurantItem::create($cocktail);
+
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Single Shot',
+                                                        'price'=> 10
+                                                    ],
+                                                    [
+                                                        'name' => 'Double Shot',
+                                                        'price'=> 20
+                                                    ],
+                                                    [
+                                                        'name' => 'Glass',
+                                                        'price'=> 30
+                                                    ]
+                                                ];
+
+                                                foreach( $variationsArr as $variation )
+                                                {
+                                                    $newItem->variations()->create($variation);
+                                                }
+
+                                                // attachment
+                                                $newItem->attachment()->create([
+                                                    'original_name' => $image,
+                                                    'stored_name'   => $image
+                                                ]);
+                                            }
+                                        }
+
+                                        if( $subcategory->name == 'Beers' )
+                                        {
+                                            foreach( $beersItems as $beer )
+                                            {
+                                                $beer['restaurant_id'] = $restaurant->id;
+                                                $image = $beer['image'];
+                                                unset($beer['image']);
+                                                $beer['is_featured'] = 1;
+                                                $beer['category_id'] = $subcategory->id;
+                                                $newItem = RestaurantItem::create($beer);
+
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Glass',
+                                                        'price'=> 10
+                                                    ],
+                                                    [
+                                                        'name' => 'Bottle',
+                                                        'price'=> 35
+                                                    ],
+                                                    [
+                                                        'name' => 'Jug',
+                                                        'price'=> 50
+                                                    ],
+                                                    [
+                                                        'name' => 'Pint',
+                                                        'price'=> 75
+                                                    ]
+                                                ];
+
+                                                foreach( $variationsArr as $variation )
+                                                {
+                                                    $newItem->variations()->create($variation);
+                                                }
+
+                                                // attachment
+                                                $newItem->attachment()->create([
+                                                    'original_name' => $image,
+                                                    'stored_name'   => $image
+                                                ]);
+                                            }
+                                        }
+
+                                        if( $subcategory->name == 'Wines' )
+                                        {
+                                            foreach( $wineItems as $wine )
+                                            {
+                                                $wine['restaurant_id'] = $restaurant->id;
+                                                $image = $wine['image'];
+                                                unset($wine['image']);
+                                                $wine['is_featured'] = 1;
+                                                $wine['category_id'] = $subcategory->id;
+                                                $newItem = RestaurantItem::create($wine);
+
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Single Shot',
+                                                        'price'=> 10
+                                                    ],
+                                                    [
+                                                        'name' => 'Double Shot',
+                                                        'price'=> 20
+                                                    ],
+                                                    [
+                                                        'name' => 'Glass',
+                                                        'price'=> 30
+                                                    ],
+                                                    [
+                                                        'name' => 'Bottle',
+                                                        'price'=> 50
+                                                    ]
+                                                ];
+
+                                                // attachment
+                                                $newItem->attachment()->create([
+                                                    'original_name' => $image,
+                                                    'stored_name'   => $image
+                                                ]);
+                                            }
+                                        }
+
+                                        if( $subcategory->name == 'Champagne' )
+                                        {
+                                            foreach( $champagneItems as $champagne )
+                                            {
+                                                $champagne['restaurant_id'] = $restaurant->id;
+                                                $image = $champagne['image'];
+                                                unset($champagne['image']);
+                                                $champagne['is_featured'] = 1;
+                                                $champagne['category_id'] = $subcategory->id;
+                                                $newItem = RestaurantItem::create($champagne);
+
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Glass',
+                                                        'price'=> 30
+                                                    ],
+                                                    [
+                                                        'name' => 'Bottle',
+                                                        'price'=> 50
+                                                    ]
+                                                ];
+
+                                                // attachment
+                                                $newItem->attachment()->create([
+                                                    'original_name' => $image,
+                                                    'stored_name'   => $image
+                                                ]);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                            if( $category->name === 'Food' )
+                            {
+                                $subcategories = $category->children;
+                                if( !empty( $subcategories->count() ) )
+                                {
+                                    foreach( $subcategories as $subcategory )
+                                    {
+                                        if( $subcategory->name == 'Entree' )
+                                        {
+                                            foreach( $entreeItems as $entree )
+                                            {
+                                                $entree['restaurant_id'] = $restaurant->id;
+                                                $image = $entree['image'];
+                                                unset($entree['image']);
+                                                $entree['is_featured'] = 1;
+                                                $entree['category_id'] = $subcategory->id;
+                                                $newItem = RestaurantItem::create($entree);
+
+                                                // attachment
+                                                $newItem->attachment()->create([
+                                                    'original_name' => $image,
+                                                    'stored_name'   => $image
+                                                ]);
+                                            }
+                                        }
+
+                                        if( $subcategory->name == 'Mains' )
+                                        {
+                                            foreach( $mainsItems as $main )
+                                            {
+                                                $main['restaurant_id'] = $restaurant->id;
+                                                $image = $main['image'];
+                                                unset($main['image']);
+                                                $main['is_featured'] = 1;
+                                                $main['category_id'] = $subcategory->id;
+                                                $newItem = RestaurantItem::create($main);
+
+                                                // attachment
+                                                $newItem->attachment()->create([
+                                                    'original_name' => $image,
+                                                    'stored_name'   => $image
+                                                ]);
+                                            }
+                                        }
+
+                                        if( $subcategory->name == 'Chefs Special' )
+                                        {
+                                            foreach( $chefItems as $chef )
+                                            {
+                                                $chef['restaurant_id'] = $restaurant->id;
+                                                $image = $chef['image'];
+                                                unset($chef['image']);
+                                                $chef['is_featured'] = 1;
+                                                $chef['category_id'] = $subcategory->id;
+                                                $newItem = RestaurantItem::create($chef);
+
+                                                // attachment
+                                                $newItem->attachment()->create([
+                                                    'original_name' => $image,
+                                                    'stored_name'   => $image
+                                                ]);
+                                            }
+                                        }
+
+                                        if( $subcategory->name == 'Sides' )
+                                        {
+                                            foreach( $sidesItems as $side )
+                                            {
+                                                $side['restaurant_id'] = $restaurant->id;
+                                                $image = $side['image'];
+                                                unset($side['image']);
+                                                $side['is_featured'] = 1;
+                                                $side['category_id'] = $subcategory->id;
+                                                $newItem = RestaurantItem::create($side);
+
+                                                // attachment
+                                                $newItem->attachment()->create([
+                                                    'original_name' => $image,
+                                                    'stored_name'   => $image
+                                                ]);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if( $restaurant->id == 18 )
+                {
+                    if( !empty( $categories ) )
+                    {
+                        foreach( $categories as $category )
+                        {
+                            if( $category->name === 'Drinks' )
+                            {
+                                $subcategories = $category->children;
+                                if( !empty( $subcategories->count() ) )
+                                {
+                                    foreach( $subcategories as $subcategory )
+                                    {
+                                        if( $subcategory->name == 'Spirits' )
+                                        {
+                                            foreach( $spiritItems as $spirit )
+                                            {
+                                                $spirit['restaurant_id'] = $restaurant->id;
+                                                $image = $spirit['image'];
+                                                unset($spirit['image']);
+                                                $spirit['is_featured'] = 1;
+                                                $spirit['category_id'] = $subcategory->id;
+                                                $newItem = RestaurantItem::create($spirit);
+
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Single Shot',
+                                                        'price'=> 10
+                                                    ],
+                                                    [
+                                                        'name' => 'Double Shot',
+                                                        'price'=> 20
+                                                    ]
+                                                ];
+
+                                                foreach( $variationsArr as $variation )
+                                                {
+                                                    $newItem->variations()->create($variation);
+                                                }
+
+                                                // attachment
+                                                $newItem->attachment()->create([
+                                                    'original_name' => $image,
+                                                    'stored_name'   => $image
+                                                ]);
+                                            }
+                                        }
+
+                                        if( $subcategory->name == 'Cocktails' )
+                                        {
+                                            foreach( $cocktailItems as $cocktail )
+                                            {
+                                                $cocktail['restaurant_id'] = $restaurant->id;
+                                                $image = $cocktail['image'];
+                                                unset($cocktail['image']);
+                                                $cocktail['is_featured'] = 1;
+                                                $cocktail['category_id'] = $subcategory->id;
+                                                $newItem = RestaurantItem::create($cocktail);
+
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Single Shot',
+                                                        'price'=> 10
+                                                    ],
+                                                    [
+                                                        'name' => 'Double Shot',
+                                                        'price'=> 20
+                                                    ],
+                                                    [
+                                                        'name' => 'Glass',
+                                                        'price'=> 30
+                                                    ]
+                                                ];
+
+                                                foreach( $variationsArr as $variation )
+                                                {
+                                                    $newItem->variations()->create($variation);
+                                                }
+
+                                                // attachment
+                                                $newItem->attachment()->create([
+                                                    'original_name' => $image,
+                                                    'stored_name'   => $image
+                                                ]);
+                                            }
+                                        }
+
+                                        if( $subcategory->name == 'Beers' )
+                                        {
+                                            foreach( $beersItems as $beer )
+                                            {
+                                                $beer['restaurant_id'] = $restaurant->id;
+                                                $image = $beer['image'];
+                                                unset($beer['image']);
+                                                $beer['is_featured'] = 1;
+                                                $beer['category_id'] = $subcategory->id;
+                                                $newItem = RestaurantItem::create($beer);
+
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Glass',
+                                                        'price'=> 10
+                                                    ],
+                                                    [
+                                                        'name' => 'Bottle',
+                                                        'price'=> 35
+                                                    ],
+                                                    [
+                                                        'name' => 'Jug',
+                                                        'price'=> 50
+                                                    ],
+                                                    [
+                                                        'name' => 'Pint',
+                                                        'price'=> 75
+                                                    ]
+                                                ];
+
+                                                foreach( $variationsArr as $variation )
+                                                {
+                                                    $newItem->variations()->create($variation);
+                                                }
+
+                                                // attachment
+                                                $newItem->attachment()->create([
+                                                    'original_name' => $image,
+                                                    'stored_name'   => $image
+                                                ]);
+                                            }
+                                        }
+
+                                        if( $subcategory->name == 'Wines' )
+                                        {
+                                            foreach( $wineItems as $wine )
+                                            {
+                                                $wine['restaurant_id'] = $restaurant->id;
+                                                $image = $wine['image'];
+                                                unset($wine['image']);
+                                                $wine['is_featured'] = 1;
+                                                $wine['category_id'] = $subcategory->id;
+                                                $newItem = RestaurantItem::create($wine);
+
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Single Shot',
+                                                        'price'=> 10
+                                                    ],
+                                                    [
+                                                        'name' => 'Double Shot',
+                                                        'price'=> 20
+                                                    ],
+                                                    [
+                                                        'name' => 'Glass',
+                                                        'price'=> 30
+                                                    ],
+                                                    [
+                                                        'name' => 'Bottle',
+                                                        'price'=> 50
+                                                    ]
+                                                ];
+
+                                                // attachment
+                                                $newItem->attachment()->create([
+                                                    'original_name' => $image,
+                                                    'stored_name'   => $image
+                                                ]);
+                                            }
+                                        }
+
+                                        if( $subcategory->name == 'Champagne' )
+                                        {
+                                            foreach( $champagneItems as $champagne )
+                                            {
+                                                $champagne['restaurant_id'] = $restaurant->id;
+                                                $image = $champagne['image'];
+                                                unset($champagne['image']);
+                                                $champagne['is_featured'] = 1;
+                                                $champagne['category_id'] = $subcategory->id;
+                                                $newItem = RestaurantItem::create($champagne);
+
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Glass',
+                                                        'price'=> 30
+                                                    ],
+                                                    [
+                                                        'name' => 'Bottle',
+                                                        'price'=> 50
+                                                    ]
+                                                ];
+
+                                                // attachment
+                                                $newItem->attachment()->create([
+                                                    'original_name' => $image,
+                                                    'stored_name'   => $image
+                                                ]);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                            if( $category->name === 'Food' )
+                            {
+                                $subcategories = $category->children;
+                                if( !empty( $subcategories->count() ) )
+                                {
+                                    foreach( $subcategories as $subcategory )
+                                    {
+                                        if( $subcategory->name == 'Entree' )
+                                        {
+                                            foreach( $entreeItems as $entree )
+                                            {
+                                                $entree['restaurant_id'] = $restaurant->id;
+                                                $image = $entree['image'];
+                                                unset($entree['image']);
+                                                $entree['is_featured'] = 1;
+                                                $entree['category_id'] = $subcategory->id;
+                                                $newItem = RestaurantItem::create($entree);
+
+                                                // attachment
+                                                $newItem->attachment()->create([
+                                                    'original_name' => $image,
+                                                    'stored_name'   => $image
+                                                ]);
+                                            }
+                                        }
+
+                                        if( $subcategory->name == 'Mains' )
+                                        {
+                                            foreach( $mainsItems as $main )
+                                            {
+                                                $main['restaurant_id'] = $restaurant->id;
+                                                $image = $main['image'];
+                                                unset($main['image']);
+                                                $main['is_featured'] = 1;
+                                                $main['category_id'] = $subcategory->id;
+                                                $newItem = RestaurantItem::create($main);
+
+                                                // attachment
+                                                $newItem->attachment()->create([
+                                                    'original_name' => $image,
+                                                    'stored_name'   => $image
+                                                ]);
+                                            }
+                                        }
+
+                                        if( $subcategory->name == 'Chefs Special' )
+                                        {
+                                            foreach( $chefItems as $chef )
+                                            {
+                                                $chef['restaurant_id'] = $restaurant->id;
+                                                $image = $chef['image'];
+                                                unset($chef['image']);
+                                                $chef['is_featured'] = 1;
+                                                $chef['category_id'] = $subcategory->id;
+                                                $newItem = RestaurantItem::create($chef);
+
+                                                // attachment
+                                                $newItem->attachment()->create([
+                                                    'original_name' => $image,
+                                                    'stored_name'   => $image
+                                                ]);
+                                            }
+                                        }
+
+                                        if( $subcategory->name == 'Sides' )
+                                        {
+                                            foreach( $sidesItems as $side )
+                                            {
+                                                $side['restaurant_id'] = $restaurant->id;
+                                                $image = $side['image'];
+                                                unset($side['image']);
+                                                $side['is_featured'] = 1;
+                                                $side['category_id'] = $subcategory->id;
+                                                $newItem = RestaurantItem::create($side);
+
+                                                // attachment
+                                                $newItem->attachment()->create([
+                                                    'original_name' => $image,
+                                                    'stored_name'   => $image
+                                                ]);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if( $restaurant->id == 19 )
+                {
+                    if( !empty( $categories ) )
+                    {
+                        foreach( $categories as $category )
+                        {
+                            if( $category->name === 'Drinks' )
+                            {
+                                $subcategories = $category->children;
+                                if( !empty( $subcategories->count() ) )
+                                {
+                                    foreach( $subcategories as $subcategory )
+                                    {
+                                        if( $subcategory->name == 'Spirits' )
+                                        {
+                                            foreach( $spiritItems as $spirit )
+                                            {
+                                                $spirit['restaurant_id'] = $restaurant->id;
+                                                $image = $spirit['image'];
+                                                unset($spirit['image']);
+                                                $spirit['is_featured'] = 1;
+                                                $spirit['category_id'] = $subcategory->id;
+                                                $newItem = RestaurantItem::create($spirit);
+
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Single Shot',
+                                                        'price'=> 10
+                                                    ],
+                                                    [
+                                                        'name' => 'Double Shot',
+                                                        'price'=> 20
+                                                    ]
+                                                ];
+
+                                                foreach( $variationsArr as $variation )
+                                                {
+                                                    $newItem->variations()->create($variation);
+                                                }
+
+                                                // attachment
+                                                $newItem->attachment()->create([
+                                                    'original_name' => $image,
+                                                    'stored_name'   => $image
+                                                ]);
+                                            }
+                                        }
+
+                                        if( $subcategory->name == 'Cocktails' )
+                                        {
+                                            foreach( $cocktailItems as $cocktail )
+                                            {
+                                                $cocktail['restaurant_id'] = $restaurant->id;
+                                                $image = $cocktail['image'];
+                                                unset($cocktail['image']);
+                                                $cocktail['is_featured'] = 1;
+                                                $cocktail['category_id'] = $subcategory->id;
+                                                $newItem = RestaurantItem::create($cocktail);
+
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Single Shot',
+                                                        'price'=> 10
+                                                    ],
+                                                    [
+                                                        'name' => 'Double Shot',
+                                                        'price'=> 20
+                                                    ],
+                                                    [
+                                                        'name' => 'Glass',
+                                                        'price'=> 30
+                                                    ]
+                                                ];
+
+                                                foreach( $variationsArr as $variation )
+                                                {
+                                                    $newItem->variations()->create($variation);
+                                                }
+
+                                                // attachment
+                                                $newItem->attachment()->create([
+                                                    'original_name' => $image,
+                                                    'stored_name'   => $image
+                                                ]);
+                                            }
+                                        }
+
+                                        if( $subcategory->name == 'Beers' )
+                                        {
+                                            foreach( $beersItems as $beer )
+                                            {
+                                                $beer['restaurant_id'] = $restaurant->id;
+                                                $image = $beer['image'];
+                                                unset($beer['image']);
+                                                $beer['is_featured'] = 1;
+                                                $beer['category_id'] = $subcategory->id;
+                                                $newItem = RestaurantItem::create($beer);
+
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Glass',
+                                                        'price'=> 10
+                                                    ],
+                                                    [
+                                                        'name' => 'Bottle',
+                                                        'price'=> 35
+                                                    ],
+                                                    [
+                                                        'name' => 'Jug',
+                                                        'price'=> 50
+                                                    ],
+                                                    [
+                                                        'name' => 'Pint',
+                                                        'price'=> 75
+                                                    ]
+                                                ];
+
+                                                foreach( $variationsArr as $variation )
+                                                {
+                                                    $newItem->variations()->create($variation);
+                                                }
+
+                                                // attachment
+                                                $newItem->attachment()->create([
+                                                    'original_name' => $image,
+                                                    'stored_name'   => $image
+                                                ]);
+                                            }
+                                        }
+
+                                        if( $subcategory->name == 'Wines' )
+                                        {
+                                            foreach( $wineItems as $wine )
+                                            {
+                                                $wine['restaurant_id'] = $restaurant->id;
+                                                $image = $wine['image'];
+                                                unset($wine['image']);
+                                                $wine['is_featured'] = 1;
+                                                $wine['category_id'] = $subcategory->id;
+                                                $newItem = RestaurantItem::create($wine);
+
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Single Shot',
+                                                        'price'=> 10
+                                                    ],
+                                                    [
+                                                        'name' => 'Double Shot',
+                                                        'price'=> 20
+                                                    ],
+                                                    [
+                                                        'name' => 'Glass',
+                                                        'price'=> 30
+                                                    ],
+                                                    [
+                                                        'name' => 'Bottle',
+                                                        'price'=> 50
+                                                    ]
+                                                ];
+
+                                                // attachment
+                                                $newItem->attachment()->create([
+                                                    'original_name' => $image,
+                                                    'stored_name'   => $image
+                                                ]);
+                                            }
+                                        }
+
+                                        if( $subcategory->name == 'Champagne' )
+                                        {
+                                            foreach( $champagneItems as $champagne )
+                                            {
+                                                $champagne['restaurant_id'] = $restaurant->id;
+                                                $image = $champagne['image'];
+                                                unset($champagne['image']);
+                                                $champagne['is_featured'] = 1;
+                                                $champagne['category_id'] = $subcategory->id;
+                                                $newItem = RestaurantItem::create($champagne);
+
+                                                // variations
+                                                $variationsArr = [
+                                                    [
+                                                        'name' => 'Glass',
+                                                        'price'=> 30
+                                                    ],
+                                                    [
+                                                        'name' => 'Bottle',
+                                                        'price'=> 50
+                                                    ]
+                                                ];
+
+                                                // attachment
+                                                $newItem->attachment()->create([
+                                                    'original_name' => $image,
+                                                    'stored_name'   => $image
+                                                ]);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                            if( $category->name === 'Food' )
+                            {
+                                $subcategories = $category->children;
+                                if( !empty( $subcategories->count() ) )
+                                {
+                                    foreach( $subcategories as $subcategory )
+                                    {
+                                        if( $subcategory->name == 'Entree' )
+                                        {
+                                            foreach( $entreeItems as $entree )
+                                            {
+                                                $entree['restaurant_id'] = $restaurant->id;
+                                                $image = $entree['image'];
+                                                unset($entree['image']);
+                                                $entree['is_featured'] = 1;
+                                                $entree['category_id'] = $subcategory->id;
+                                                $newItem = RestaurantItem::create($entree);
+
+                                                // attachment
+                                                $newItem->attachment()->create([
+                                                    'original_name' => $image,
+                                                    'stored_name'   => $image
+                                                ]);
+                                            }
+                                        }
+
+                                        if( $subcategory->name == 'Mains' )
+                                        {
+                                            foreach( $mainsItems as $main )
+                                            {
+                                                $main['restaurant_id'] = $restaurant->id;
+                                                $image = $main['image'];
+                                                unset($main['image']);
+                                                $main['is_featured'] = 1;
+                                                $main['category_id'] = $subcategory->id;
+                                                $newItem = RestaurantItem::create($main);
+
+                                                // attachment
+                                                $newItem->attachment()->create([
+                                                    'original_name' => $image,
+                                                    'stored_name'   => $image
+                                                ]);
+                                            }
+                                        }
+
+                                        if( $subcategory->name == 'Chefs Special' )
+                                        {
+                                            foreach( $chefItems as $chef )
+                                            {
+                                                $chef['restaurant_id'] = $restaurant->id;
+                                                $image = $chef['image'];
+                                                unset($chef['image']);
+                                                $chef['is_featured'] = 1;
+                                                $chef['category_id'] = $subcategory->id;
+                                                $newItem = RestaurantItem::create($chef);
+
+                                                // attachment
+                                                $newItem->attachment()->create([
+                                                    'original_name' => $image,
+                                                    'stored_name'   => $image
+                                                ]);
+                                            }
+                                        }
+
+                                        if( $subcategory->name == 'Sides' )
+                                        {
+                                            foreach( $sidesItems as $side )
+                                            {
+                                                $side['restaurant_id'] = $restaurant->id;
+                                                $image = $side['image'];
+                                                unset($side['image']);
+                                                $side['is_featured'] = 1;
+                                                $side['category_id'] = $subcategory->id;
+                                                $newItem = RestaurantItem::create($side);
+
+                                                // attachment
+                                                $newItem->attachment()->create([
+                                                    'original_name' => $image,
+                                                    'stored_name'   => $image
+                                                ]);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if( $restaurant->id == 20 )
                 {
                     if( !empty( $categories ) )
                     {
