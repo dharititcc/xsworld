@@ -29,7 +29,7 @@ class OrderItemResource extends JsonResource
                 'symbol'           => $this->restaurant_item->restaurant->country->symbol,
                 'total'            => $this->total,
                 'type'             => $this->restaurant_item->item_type,
-                'variation'        => isset($this->variation_id) ? [
+                'variation'        => isset($this->variation) ? [
                     'id'        => $this->id,
                     'name'      => $this->variation->name,
                     'price'     => $this->price,
