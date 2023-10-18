@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AccountManager\Bar\BarPickZoneController;
+use App\Http\Controllers\Drinks\DrinkController;
 use App\Http\Controllers\Table\RestaurantTableController;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
@@ -41,10 +42,12 @@ Route::group(['prefix' => 'restaurants', 'as' => 'restaurants.', 'middleware' =>
     {
         Route::resource('categories', 'CategoryController');
         Route::post('categories/multidelete', 'CategoryController@deleteCategories')->name('delete/categories');
+        Route::post('categoryName', 'CategoryController@categoryName')->name('categoryName');
     });
     Route::group(['namespace' => 'Drinks'], function()
     {
         Route::resource('drinks', 'DrinkController');
+        Route::post('favorite-status-update',[DrinkController::class,'favoriteStatusUpdate'])->name('favoriteStatusUpdate');
     });
     Route::group(['namespace' => 'Foods'], function()
     {

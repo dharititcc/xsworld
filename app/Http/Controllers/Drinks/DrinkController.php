@@ -276,6 +276,17 @@ class DrinkController extends Controller
         //
     }
 
+    
+    public function favoriteStatusUpdate(Request $request)
+    {
+        $restaurant = session('restaurant');
+        dd($request->all());
+        $res_featured = RestaurantItem::find($request->id);
+        $res_featured->is_featured = $request->is_featured;
+        $res_featured->save();
+        return response()->json(['success'=>'featured change successfully.']);
+    }
+
     public function updateItemAvailable($data, $value)
     {
         $updateitems = RestaurantItem::whereIn("id", $data)->update(["is_available" => $value]);

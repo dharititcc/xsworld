@@ -101,6 +101,39 @@
         </div>
     </div>
     <!-- Global popup -->
+
+    <!-- Add category popup -->
+    <div class="modal fade" id="cat_modal" data-crudetype="1" tabindex="-1" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header justify-content-start ">
+                    <button type="button" class="back" data-bs-dismiss="modal" aria-label="Close"><i
+                            class="icon-left"></i></button>
+                    <h2><span class="model_title">Add </span> Category</h2>
+                </div>
+                <div class="modal-body">
+                    <form name="addcategory" id="add_form_category" method="post" action="javascript:void(0)">
+                        @csrf
+                        <div style="min-height: 300px;">
+                            <div class="form-group mb-4">
+                                <div class="list-catg">
+                                </div>
+                            </div>
+                            <div class="form-group mb-4">
+                                <select class="cat_name form-control vari2" >Category List
+                                    <option value="">Food </option>
+                                    <option value="">Drinks </option>
+                                </select>
+                            </div>
+                        </div>
+                        <button class="bor-btn w-100 font-26" id="submitCatBtn" type="submit">Save</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Remove categories -->
     <div class="modal fade wd800" id="remove_Ctg" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
@@ -139,6 +172,7 @@
             'addCategory': "{!! route('restaurants.categories.store') !!}",
             'getCategory': "{!! route('restaurants.categories.show', ':ID') !!}",
             'updateCategory': "{!! route('restaurants.categories.update', ':ID') !!}",
+            'categoryName': "{!! route('restaurants.categoryName') !!}",
         };
         $(document).ready(function() {
             var modal = $("#exampleModal");
@@ -180,6 +214,43 @@
                 $('body').removeClass('sb-sidenav-toggled');
             });
         });
+
+    $('.add_category').on("click",function() {
+        $('#cat_modal').modal('show');
+    });
+
+    $('#submitCatBtn').on("click", function() {
+        $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+
+                $('#submitBtn').html('Please Wait...');
+                $("#submitBtn").attr("disabled", true);
+                
+                var data = new FormData(),
+                    cat_name = $( ".cat_name option:selected" ).text();
+
+                    console.log(cat_name);
+                data.append('name', cat_name);
+               
+                $.ajax({
+                    url: moduleConfig.categoryName,
+                    type: "POST",
+                    data: data,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        console.log(response);
+                        $('#submitBtn').html('Submit');
+                        $("#submitBtn").attr("disabled", false);
+                        alert('Category form has been submitted successfully');
+                        document.getElementById("add_form_category").reset();
+                        location.reload(true);
+                    }
+                });
+    });
         //if ($("#categorypopup").length > 0) {
     $('#submitBtn').click(function(e)
     {
@@ -190,7 +261,7 @@
                 rules: {
                     name: {
                         required: true,
-                        maxlength: 50
+                        maxlength: 20
                     },
                     image: {
                         required: true,
@@ -219,7 +290,7 @@
                 rules: {
                     name: {
                         required: true,
-                        maxlength: 50
+                        maxlength: 20
                     },
                     message: {
                         required: true

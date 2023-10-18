@@ -58,6 +58,16 @@ class CategoryController extends Controller
         return $newCategory->refresh();
     }
 
+    public function categoryName(Request $request)
+    {
+        $restaurant = session('restaurant')->loadMissing(['main_categories', 'main_categories.children']);
+        $newCategory = Category::updateOrCreate([
+            'restaurant_id' => $restaurant->id,
+            'name'          => $request->get('name'),
+        ]);
+        return $newCategory->refresh();
+    }
+
     /**
      * Display the specified resource.
      *
