@@ -475,7 +475,7 @@ class OrderRepository extends BaseRepository
         $title      = "Preparing Your order";
         $message    = "Your Order is ".$order->id." placed";
 
-        $send_notification = sendNotification($title,$message,$devices);
+        //$send_notification = sendNotification($title,$message,$devices);
 
         return $order;
     }
