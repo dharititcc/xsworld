@@ -195,6 +195,7 @@
         drinkStore: "{!! route('restaurants.drinks.store') !!}",
         drinkUpdate: "{!! route('restaurants.drinks.update', ':ID') !!}",
         drinkGet: "{!! route('restaurants.drinks.show', ':ID') !!}",
+        favoriteStatusUpdate: "{!! route('restaurants.favoriteStatusUpdate') !!}",
     };
 
     $(document).ready(function()
