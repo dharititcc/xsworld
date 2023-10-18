@@ -23,7 +23,7 @@ class OrderListResource extends JsonResource
             'amount'                    => $this->amount,
             'total'                     => number_format($this->total, 2),
             'status'                    => $this->order_status,
-            'status_no'                 => $this->status,
+            'status_no'                 => (int) $this->status,
             'apply_time'                => $this->apply_time ?? 0,
             'created_date'              => Carbon::parse($this->created_at)->toDateTimeString(),
             'progress'                  => $this->progress ?? 0,
