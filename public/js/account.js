@@ -268,9 +268,9 @@
                         required: "Please enter kitchen ID"
                     },
     
-                    pickup_points: {
-                        required: "please select pickup points"
-                    },
+                    // pickup_points: {
+                        // required: "please select pickup points"
+                    // },
                     
                     password: {
                         required: "Please enter Password"
@@ -293,10 +293,10 @@
                     }
                 },
                 messages: {
-                    pickup_points: {
-                        required: "please select pickup points",
+                    // pickup_points: {
+                        // required: "please select pickup points",
                         
-                    }
+                    // }
                 },
                 submitHandler: function() {
                     context.submitKitchenForm(context.selectors.kitchenForm.get(0));
@@ -310,9 +310,9 @@
                 data    = new FormData(form);
 
                 XS.Common.btnProcessingStart(context.selectors.kitchenSubmitBtn);
-                $.each($("#kitchen_point option:selected"), function(i) {
-                    kitchen_point[i] = $(this).val();
-                });
+                // $.each($("#kitchen_point option:selected"), function(i) {
+                //     kitchen_point[i] = $(this).val();
+                // });
                 $.ajax({
                     url:$(form).attr('action'),
                     type:'POST',
@@ -342,9 +342,9 @@
                 type: 'GET',
                 success: function(res) {
         
-                    $.each(res.pickup_point_name, function (key, val) {
-                        $('select option[value="'+val.id+'"]').attr("selected",true);
-                    });
+                    // $.each(res.pickup_point_name, function (key, val) {
+                    //     $('select option[value="'+val.id+'"]').attr("selected",true);
+                    // });
         
                     $('#kitchen_id').val(res.username);
                 },
