@@ -243,6 +243,8 @@
 
                 context.selectors.kitchenForm.removeAttr('action');
                 context.selectors.kitchenForm.find('input[type="hidden"]').remove();
+                context.selectors.kitchenId.attr('disabled', false);
+                context.selectors.kitchenId.val('');
             });
         },
 
@@ -258,7 +260,6 @@
                     kitchen_id: {
                         required:true,
                     },
-                    
                     password: {
                         required:true,
                     },
@@ -267,16 +268,13 @@
                     kitchen_id: {
                         required: "Please enter kitchen ID"
                     },
-    
                     // pickup_points: {
                         // required: "please select pickup points"
                     // },
-                    
                     password: {
                         required: "Please enter Password"
                     }
                 },
-                
                 submitHandler: function() {
                     context.submitKitchenForm(context.selectors.kitchenForm.get(0));
                 }
@@ -295,7 +293,6 @@
                 messages: {
                     // pickup_points: {
                         // required: "please select pickup points",
-                        
                     // }
                 },
                 submitHandler: function() {
@@ -341,11 +338,11 @@
                 url: moduleConfig.kitchenGet.replace(':ID',id),
                 type: 'GET',
                 success: function(res) {
-        
+
                     // $.each(res.pickup_point_name, function (key, val) {
                     //     $('select option[value="'+val.id+'"]').attr("selected",true);
                     // });
-        
+
                     $('#kitchen_id').val(res.username);
                 },
             });
@@ -410,7 +407,6 @@
                     barpick_id: {
                         required:true,
                     },
-                    
                     password: {
                         required:true,
                     },
@@ -419,16 +415,13 @@
                     barpick_id: {
                         required: "Please enter barpick ID"
                     },
-    
                     pickup_points: {
                         required: "please select pickup points"
                     },
-                    
                     password: {
                         required: "Please enter Password"
                     }
                 },
-                
                 submitHandler: function() {
                     context.submitBarForm(context.selectors.barForm.get(0))
                 }
@@ -448,7 +441,6 @@
                 messages: {
                     pickup_points: {
                         required: "please select pickup points",
-                        
                     }
                 },
                 submitHandler: function() {
@@ -495,18 +487,18 @@
                 url: moduleConfig.barpickGet.replace(':ID',id),
                 type: 'GET',
                 success: function(res) {
+                    $("#pickup_points").children().remove();
                     var pickupPoint = res.pickup_point,
                         options     = `
                             <option value="${pickupPoint.id}">${pickupPoint.name}</option>
                         `;
-        
+
                     $("#pickup_points").append(options);
                     $('#barpick_id').val(res.username);
                     $('#pickup_points').val(pickupPoint.id);
-        
                     $("#pickup_points option").each(function() {
                         $(this).siblings('[value="'+ this.value +'"]').remove();
-                      });
+                    });
                 },
             });
         },

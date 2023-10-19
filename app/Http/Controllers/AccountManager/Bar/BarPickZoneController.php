@@ -83,16 +83,13 @@ class BarPickZoneController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  User $barpickzone
      * @return \Illuminate\Http\Response
      */
-    public function show($user)
+    public function show(User $barpickzone)
     {
-        $user = User::find($user);
-        $user->pickup_point_name = $user->pickup_point->name;
-        $user->pickup_point = $user->pickup_point;
-        // dd($user->toArray());
-        return $user->toArray();
+        $barpickzone->loadMissing(['pickup_point']);
+        return $barpickzone;
     }
 
     /**

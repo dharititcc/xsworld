@@ -32,7 +32,6 @@ class CreateRestaurantItems extends Migration
             $table->softDeletes();
 
             $table->foreign('restaurant_id')->references('id')->on('restaurants')->onDelete('cascade');
-            $table->foreign('parent_id')->references('id')->on('restaurant_items')->onDelete('cascade');
             $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');
         });
     }

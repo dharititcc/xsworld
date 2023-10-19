@@ -71,8 +71,7 @@
                     @endforeach
 
 
-                    <a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#addkitchen"
-                        class="catg-box add overly kitchen kitchen_popup_modal">
+                    <a href="javascript:void(0);" class="catg-box add overly kitchen kitchen_popup_modal">
                         <figure><i class="icon-plus"> </i></figure>
                         <!--<input type="text" required="" autofocus=""> -->
                     </a>
@@ -111,8 +110,7 @@
 
 
 
-                    <a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#addBarzone"
-                        class="catg-box add overly barzone barpickzone_popup_modal">
+                    <a href="javascript:void(0);" class="catg-box add overly barzone barpickzone_popup_modal">
                         <figure><i class="icon-plus"> </i></figure>
 
                         <!--<input type="text" required="" autofocus=""> -->
