@@ -546,7 +546,7 @@ class OrderRepository extends BaseRepository
     {
         $orders = Order::whereIn('restaurant_id',$data);
         if($is_history === 0) {
-            $orderTbl = $orders->where('status',Order::ACCEPTED)->get();
+            $orderTbl = $orders->where('status',Order::ACCEPTED)->where('type',Order::ORDER)->get();
         } else {
             $orderTbl = $orders->whereIn('status',[Order::COMPLETED,Order::FULL_REFUND, Order::PARTIAL_REFUND, Order::RESTAURANT_CANCELED, Order::CUSTOMER_CANCELED])->get();
         }
