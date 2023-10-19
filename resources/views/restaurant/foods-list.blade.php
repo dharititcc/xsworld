@@ -186,6 +186,7 @@
         addFood: "{!! route('restaurants.foods.store') !!}",
         getFood: "{!! route('restaurants.foods.show', ':ID') !!}",
         updateFood: "{!! route('restaurants.foods.update', ':ID') !!}",
+        favoriteStatusUpdate: "{!! route('restaurants.favoriteStatusUpdate') !!}",
     };
     $(document).ready(function()
     {

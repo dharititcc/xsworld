@@ -165,6 +165,7 @@ class DrinkController extends Controller
             'description'   => $drink->description,
             'type_of_drink' => $drink->type_of_drink,
             'is_variable'   => $drink->is_variable,
+            'is_featured'   => $drink->is_featured,
             'variation'     => !empty($restaurantVariation) ? $restaurantVariation : [],
         ];
 
@@ -280,7 +281,6 @@ class DrinkController extends Controller
     public function favoriteStatusUpdate(Request $request)
     {
         $restaurant = session('restaurant');
-        // dd($request->all());
         $res_featured = RestaurantItem::find($request->id);
         $res_featured->is_featured = $request->is_featured;
         $res_featured->save();

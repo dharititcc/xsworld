@@ -303,11 +303,6 @@
                 var $this       = $(this),
                     id          = $this.data('id'),
                     is_featured = $this.data('is_featured');
-
-                console.log(id);
-                console.log(is_featured);
-
-                // return;
                 $.ajax({
                     url:moduleConfig.favoriteStatusUpdate,
                     type:'POST',
@@ -317,7 +312,6 @@
                     },
                     data: {'is_featured':is_featured,'id':id},
                     success: function(res) {
-                        console.log(res);
                         alert('favorite Status has been updated successfully');
 
                         context.table.ajax.reload();
@@ -333,6 +327,7 @@
                 var is_favorite = $(this).data('is_favorite');
                 if(is_favorite === 0){
                     $('.is_favorite').removeClass('null');
+                    $(this).attr('data-is_favorite',1);
                     $(this).data('is_favorite',1);
                     $('#is_featured').val(1);
                 }else{
@@ -603,6 +598,17 @@
                     $('#type_of_drink').val(res.data.type_of_drink);
                     $('#description').val(res.data.description);
                     $('input[name="category_id[]"]').val(res.data.categories);
+
+                    $('.is_favorite').attr('data-is_favorite', res.data.is_featured);
+
+                    if(res.data.is_featured == 1){
+                        $('.is_favorite').removeClass('null');
+                        $('.is_favorite').attr('data-is_favorite', res.data.is_featured);
+                    }else{
+                        $('.is_favorite').attr('data-is_favorite', 0);
+                        $('.is_favorite').addClass('null');
+                    }
+                    
                     $('#price').val(res.data.price);
                     context.selectors.drinkModal.find('.modal-body').find('.variety').find('.item-box').not('.add_variations').remove();
 

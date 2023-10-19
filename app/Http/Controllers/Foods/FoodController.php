@@ -165,6 +165,7 @@ class FoodController extends Controller
             'year_of_production'    => $food->year_of_production,
             'description'   => $food->description,
             'is_variable'   => $food->is_variable,
+            'is_featured'   => $food->is_featured,
             'variation'     => !empty($restaurantVariation) ? $restaurantVariation : [],
         ];
 

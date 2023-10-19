@@ -70,10 +70,7 @@
             "defaultContent": "",
             "bSortable": false,
             render: function (data, type, row) {
-                if (row.is_featured == 1) {
-                    return '<a href="javascript:void(0)" class="favorite"></a>'
-                }
-                return '<a href="javascript:void(0)" class="favorite null"></a>'
+                return `<a href="javascript:void(0)" class="favorite ${row.is_featured == 0 ? 'null' : ''}" data-is_featured="${row.is_featured == 0 ? 1 : 0}" data-id="${row.id}"></a>`
             }
         },
         {
@@ -130,6 +127,7 @@
             XS.Common.fileReaderBind();
             context.addVariation();
             context.removeVariation();
+            context.favoriteStatusUpdate();
             context.filterCategoryChange();
             XS.Common.enableSweetAlert(context.table);
             XS.Common.disableSweetAlert(context.table);
@@ -288,6 +286,34 @@
             });
         },
 
+        favoriteStatusUpdate: function()
+        {
+            var context = this;
+            $('.drink_datatable').on('click', '.favorite', function() {
+                alert('Hii');
+                var $this       = $(this),
+                    id          = $this.data('id'),
+                    is_featured = $this.data('is_featured');
+
+                $.ajax({
+                    url:moduleConfig.favoriteStatusUpdate,
+                    type:'POST',
+                    dataType: "json",
+                    headers: {
+                        'X-CSRF-TOKEN': jQuery('meta[name="csrf-token"]').attr('content'),
+                    },
+                    data: {'is_featured':is_featured,'id':id},
+                    success: function(res) {
+                        alert('favorite Status has been updated successfully');
+
+                        context.table.ajax.reload();
+                    },
+                });
+            });
+        },
+
+
+
         isFavorite: function()
         {
             $('.is_favorite').click(function(e)
@@ -295,7 +321,8 @@
                 var is_favorite = $(this).data('is_favorite');
                 if(is_favorite === 0){
                     $('.is_favorite').removeClass('null');
-                    $(this).data('is_favorite',1);
+                    $(this).attr('data-is_favorite',1);
+                    // $(this).data('is_favorite',1);
                     $('#is_featured').val(1);
                 }else{
                     $(this).data('is_favorite',0);
@@ -557,6 +584,16 @@
                     // $('#type_of_drink').val(res.data.type_of_drink);
                     $('#description').val(res.data.description);
                     $('input[name="category_id[]"]').val(res.data.categories);
+                    $('.is_favorite').attr('data-is_favorite', res.data.is_featured);
+
+                    if(res.data.is_featured == 1){
+                        $('.is_favorite').removeClass('null');
+                        $('.is_favorite').attr('data-is_favorite', res.data.is_featured);
+                    }else{
+                        $('.is_favorite').attr('data-is_favorite', 0);
+                        $('.is_favorite').addClass('null');
+                    }
+
                     $('#price').val(res.data.price);
                     context.selectors.foodForm.find('.modal-body').find('.variety').find('.item-box').not('.add_variations').remove();
 
