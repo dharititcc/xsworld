@@ -176,7 +176,7 @@
                 <div class="modal-body">
                     <form name="addkitchenform" id="addkitchenform" method="post">
                         @csrf
-                        <div style="min-height: 300px;">
+                        <div style="min-height: 200px;">
                             <div class="form-group mb-4">
                                 <input id="user_id" type="hidden" class="user_id" name="user_id" />
                                 <input type="text" name="kitchen_id" id="kitchen_id" class="form-control vari2"
@@ -188,7 +188,7 @@
                                     placeholder="Password">
                                 <span id="Errorpassword"></span>
                             </div>
-                            <div class="form-group">
+                            {{-- <div class="form-group">
                                 <label class="white-lable d-block text-center">Pickup Location</label>
                                 <select name="kitchen_point[]" id="kitchen_point" class="form-control vari2" multiple>
                                     <option>---</option>
@@ -197,7 +197,7 @@
                                     @endforeach
                                 </select>
 
-                            </div>
+                            </div> --}}
                         </div>
                         <button class="bor-btn w-100 font-26" id="kitchen_submitBtn" type="submit">Add Kitchen</button>
                 </div>
