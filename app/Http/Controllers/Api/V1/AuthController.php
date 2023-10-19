@@ -472,12 +472,15 @@ class AuthController extends APIController
         ];
 
         $user = $this->repository->create($dataArr);
+        $token  = $user->createToken('xs_world')->plainTextToken;
 
         if( isset($user->id) )
         {
             return $this->respond([
-                'status' => true,
-                'message'=> 'Registration successfully. Now please check your email to verify your account.'
+                'status'    => true,
+                'message'   => 'Registration successfully. Now please check your email to verify your account.',
+                'token'     =>  $token,
+                'item'      =>  new UserResource($user),
             ]);
         }
 
@@ -556,7 +559,6 @@ class AuthController extends APIController
         return $this->respond([
             'status'    =>  true,
             'message'   =>  'OTP send succesfully',
-            'id'     =>  $otp,
         ]);
     }
 

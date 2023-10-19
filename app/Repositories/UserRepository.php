@@ -450,12 +450,13 @@ class UserRepository extends BaseRepository
      */
     public function VerifyOtp(array $input) : mixed
     {
-        $users = UsersVerifyMobile::with('user')->where(['user_id' => $input['id'] ,'otp' => $input['otp'] ])->first();
+        $user = auth()->user();
+        $users = UsersVerifyMobile::with('user')->where(['user_id' => $user->id ,'otp' => $input['otp'] ])->first();
 
         if(isset($users->id))
         {
             $str['is_mobile_verify'] = 1;
-            $users->user()->update($str);
+            $user->update($str);
             return $users;
         }
         throw new GeneralException('OTP is invalid.');
