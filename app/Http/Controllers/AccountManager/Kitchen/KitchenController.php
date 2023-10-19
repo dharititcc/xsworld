@@ -4,6 +4,7 @@ namespace App\Http\Controllers\AccountManager\Kitchen;
 
 use App\Http\Controllers\Controller;
 use App\Models\KitchenPickPoint;
+use App\Models\RestaurantKitchen;
 use App\Models\RestaurantPickupPoint;
 use App\Models\User;
 use Illuminate\Support\Str;
@@ -61,6 +62,10 @@ class KitchenController extends Controller
             'country_code' => $countryCode,
             'phone' => $mobileNumber,
             'user_type' => User::KITCHEN,
+        ]);
+        RestaurantKitchen::create([
+            'restaurant_id' => $restaurant->id,
+            'user_id'       => $kitchenArr->id,
         ]);
         
         // dd($request->kitchen_point);
@@ -129,6 +134,7 @@ class KitchenController extends Controller
      */
     public function update(Request $request, User $kitchen)
     {
+        $restaurant = session('restaurant');
         $dataArr = [
             'password' => Hash::make($request->password),
         ];
@@ -142,6 +148,11 @@ class KitchenController extends Controller
         //         'pickup_point_id' => $kitchen_point,
         //     ]);
         // }
+
+        RestaurantKitchen::updateOrCreate([
+            'restaurant_id' => $restaurant->id,
+            'user_id'       => $kitchen->id,
+        ]);
         ($dataArr) ?? $kitchen->update($dataArr);
         
         return redirect()->back();

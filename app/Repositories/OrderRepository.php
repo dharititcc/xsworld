@@ -544,7 +544,7 @@ class OrderRepository extends BaseRepository
 
     function GetKitchenOrders(array $data,$is_history=0)
     {
-        $orders = Order::whereIn('pickup_point_id',$data);
+        $orders = Order::whereIn('restaurant_id',$data);
         if($is_history === 0) {
             $orderTbl = $orders->where('status',Order::ACCEPTED)->get();
         } else {

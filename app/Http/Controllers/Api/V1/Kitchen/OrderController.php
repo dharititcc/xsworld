@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\V1\Traits\OrderStatus;
 use App\Http\Resources\OrderListResource;
 use App\Http\Resources\OrderResource;
 use App\Models\KitchenPickPoint;
+use App\Models\RestaurantKitchen;
 use App\Repositories\OrderRepository;
 use Illuminate\Http\Request;
 
@@ -37,10 +38,12 @@ class OrderController extends APIController
     public function orderList()
     {
         $auth_kitchen = auth('api')->user();
-        $kitchen_pickup_points = KitchenPickPoint::where('user_id',$auth_kitchen->id)->select('pickup_point_id')->get()->toArray();
+        $kitchen_orders = RestaurantKitchen::where('user_id',$auth_kitchen->id)->select('restaurant_id')->get()->toArray();
+        // dd($kitchen_orders);
+        // $kitchen_pickup_points = KitchenPickPoint::where('user_id',$auth_kitchen->id)->select('pickup_point_id')->get()->toArray();
         // dd($kitchen_pickup_points);
 
-        $orderList = $this->repository->GetKitchenOrders($kitchen_pickup_points);
+        $orderList = $this->repository->GetKitchenOrders($kitchen_orders);
         if( $orderList->count() )
         {
             return $this->respondSuccess('Order Fetched successfully.', OrderResource::collection($orderList));
