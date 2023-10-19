@@ -23,6 +23,7 @@ class VenueController extends Controller
         $days = Day::all();
         $restaurant->loadMissing(['restaurant_time']);
         $res_times = $restaurant->restaurant_time;
+        $order_reviews = 
 
         return view('venue.index', compact('restaurant','days','res_times'));
     }

@@ -230,4 +230,14 @@ class User extends Authenticatable
 
         return $name;
     }
+
+    /**
+     * Get the kitchen associated with the User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function kitchen(): HasOne
+    {
+        return $this->hasOne(RestaurantKitchen::class, 'user_id', 'id');
+    }
 }

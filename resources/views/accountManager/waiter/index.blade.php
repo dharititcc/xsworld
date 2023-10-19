@@ -51,7 +51,7 @@
                         <div class="catg-box overly">
                             {{-- <button><i class="icon-trash"></i></button>
                             --}}
-                            <form method="POST" action="{{ route('restaurants.kitchen.destroy', $kitchen->id) }}">
+                            <form method="POST" action="{{ route('restaurants.kitchen.destroy', $kitchen->user->id) }}">
                                 @csrf
                                 <input name="_method" type="hidden" value="DELETE">
                                 <button type="submit" class="show_confirm" data-toggle="tooltip" title='Delete'><i
@@ -61,10 +61,10 @@
                             {{-- <button onclick="return deleteConform({{ $kitchen->id }});"><i
                                 class="icon-trash"></i></button> --}}
                             <figure data-type="Edit kitchen"
-                                data-parent_id="{{ $kitchen->id }}" data-parant="{{ $kitchen->first_name }}"
+                                data-parent_id="{{ $kitchen->user->id }}" data-parant="{{ $kitchen->user->first_name }}"
                                 class="kitchen_popup_modal">
 
-                                <figcaption><span>{{ $kitchen->username }}</span></figcaption>
+                                <figcaption><span>{{ $kitchen->user->username }}</span></figcaption>
                                 {{-- <figcaption><span>{{$kitchen->first_name}}</span></figcaption> --}}
                             </figure>
                         </div>

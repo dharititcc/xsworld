@@ -82,4 +82,9 @@ class OrderController extends APIController
 
         throw new GeneralException('There is no order found');
     }
+
+    public function orderDetails(Request $request)
+    {
+        
+    }
 }

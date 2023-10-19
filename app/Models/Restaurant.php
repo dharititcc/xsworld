@@ -53,6 +53,16 @@ class Restaurant extends Model
     protected $with = ['currency'];
 
     /**
+     * Get all of the kitchens for the Restaurant
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function kitchens(): HasMany
+    {
+        return $this->hasMany(RestaurantKitchen::class, 'restaurant_id', 'id');
+    }
+
+    /**
      * Get all of the restaurant_time for the Restaurant
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
