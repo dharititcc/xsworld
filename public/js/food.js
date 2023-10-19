@@ -290,7 +290,6 @@
         {
             var context = this;
             $('.drink_datatable').on('click', '.favorite', function() {
-                alert('Hii');
                 var $this       = $(this),
                     id          = $this.data('id'),
                     is_featured = $this.data('is_featured');
