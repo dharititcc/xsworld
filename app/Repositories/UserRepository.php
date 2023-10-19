@@ -8,6 +8,7 @@ use App\Models\UserDevices;
 use App\Models\UsersVerifyMobile;
 use App\Repositories\BaseRepository;
 use File;
+use Illuminate\Foundation\Mix;
 use Stripe\Source;
 use Stripe\Token;
 
@@ -394,7 +395,7 @@ class UserRepository extends BaseRepository
      */
     public function sendOtp(array $input)
     {
-        $user = User::where(['country_code' => $input['country_code'], 'phone' =>$input['mobile_no'] ])->first();
+        $user = User::where(['country_code' => $input['country_code'], 'phone' => $input['mobile_no'] ])->first();
 
         if(isset($user->id))
         {
@@ -416,7 +417,7 @@ class UserRepository extends BaseRepository
 
             // Send OTP to User
             $send_otp   = sendTwilioCustomerSms($mobile_no,$otp);
-            return $otp;
+            return $data['user_id'];
         }
 
         throw new GeneralException('User not found.');
@@ -438,5 +439,26 @@ class UserRepository extends BaseRepository
             return $user;
         }
         throw new GeneralException('User not found.');
+    }
+
+    /**
+     * Method VerifyOtp
+     *
+     * @param array $input [explicite description]
+     *
+     * @return mixed
+     */
+    public function VerifyOtp(array $input) : mixed
+    {
+        $users = UsersVerifyMobile::with('user')->where(['user_id' => $input['id'] ,'otp' => $input['otp'] ])->first();
+
+        if(isset($users->id))
+        {
+            $str['is_mobile_verify'] = 1;
+            $users->user()->update($str);
+            return $users;
+        }
+        throw new GeneralException('OTP is invalid.');
+
     }
 }

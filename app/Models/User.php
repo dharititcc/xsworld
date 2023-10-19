@@ -61,7 +61,8 @@ class User extends Authenticatable
         'model',
         'credit_points',
         'username',
-        'verification_code'
+        'verification_code',
+        'is_mobile_verify'
     ];
 
     /**
