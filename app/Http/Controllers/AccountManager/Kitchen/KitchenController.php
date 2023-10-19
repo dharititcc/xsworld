@@ -64,14 +64,14 @@ class KitchenController extends Controller
         ]);
         
         // dd($request->kitchen_point);
-        $kitchen_points = $request->kitchen_point;
-        foreach($kitchen_points as $kitchen_point)
-        {
-            KitchenPickPoint::create([
-                'user_id' => $kitchenArr->id,
-                'pickup_point_id' => $kitchen_point,
-            ]);
-        }
+        // $kitchen_points = $request->kitchen_point;
+        // foreach($kitchen_points as $kitchen_point)
+        // {
+        //     KitchenPickPoint::create([
+        //         'user_id' => $kitchenArr->id,
+        //         'pickup_point_id' => $kitchen_point,
+        //     ]);
+        // }
       
         // RestaurantPickupPoint::whereIn('id',$kitchen_points[0])->update(['user_id'=>$kitchenArr->id]);
         
@@ -98,12 +98,12 @@ class KitchenController extends Controller
     public function show($user)
     {
         $user = User::find($user);
-        foreach($user->kitchen_pickup_point as $kitchen_pickup_point)
-        {
-            $kitchen_point[] = $kitchen_pickup_point->restaurant_pickup_point;
+        // foreach($user->kitchen_pickup_point as $kitchen_pickup_point)
+        // {
+        //     $kitchen_point[] = $kitchen_pickup_point->restaurant_pickup_point;
 
-        }
-        $user->pickup_point_name = $kitchen_point;
+        // }
+        // $user->pickup_point_name = $kitchen_point;
         // $user->pickup_point = $user->pickup_point;
         // dd($user->toArray());
         return $user->toArray();
@@ -133,15 +133,15 @@ class KitchenController extends Controller
             'password' => Hash::make($request->password),
         ];
 
-        $kitchen_points = $request->kitchen_point;
-        KitchenPickPoint::where('user_id',$kitchen->id)->delete();
-        foreach($kitchen_points as $kitchen_point)
-        {
-            KitchenPickPoint::create([
-                'user_id' => $kitchen->id,
-                'pickup_point_id' => $kitchen_point,
-            ]);
-        }
+        // $kitchen_points = $request->kitchen_point;
+        // KitchenPickPoint::where('user_id',$kitchen->id)->delete();
+        // foreach($kitchen_points as $kitchen_point)
+        // {
+        //     KitchenPickPoint::create([
+        //         'user_id' => $kitchen->id,
+        //         'pickup_point_id' => $kitchen_point,
+        //     ]);
+        // }
         ($dataArr) ?? $kitchen->update($dataArr);
         
         return redirect()->back();
