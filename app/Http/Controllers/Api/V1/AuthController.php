@@ -556,8 +556,31 @@ class AuthController extends APIController
         return $this->respond([
             'status'    =>  true,
             'message'   =>  'OTP send succesfully',
-            'token'     =>  $otp,
+            'id'     =>  $otp,
         ]);
+    }
+
+    /**
+     * Method VerifyOtp
+     *
+     * @param Request $request [explicite description]
+     *
+     * @return JsonResponse
+     */
+    public function VerifyOtp(Request $request) : JsonResponse
+    {
+        $input  = $request->all();
+        $otp    = $this->repository->VerifyOtp($input);
+
+        if( isset($otp->id) )
+        {
+            return $this->respond([
+                'status'    =>  true,
+                'message'   =>  'OTP Match',
+            ]);
+        }
+        return $this->respondWithError('Invalid Registration data.');
+
     }
 
     /**

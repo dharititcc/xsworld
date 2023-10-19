@@ -17,7 +17,7 @@ class CreateUsersVerifyMobile extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->string('country_code');
-            $table->integer('mobile_no');
+            $table->bigInteger('mobile_no');
             $table->integer('otp');
             $table->timestamps();
 
