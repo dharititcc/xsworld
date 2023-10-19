@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Venue;
 
 use App\Http\Controllers\Controller;
 use App\Models\Day;
+use App\Models\OrderReview;
 use App\Models\Restaurant;
 use Illuminate\Support\Facades\Validator;
 use App\Models\RestaurantTime;
@@ -19,11 +20,13 @@ class VenueController extends Controller
     public function index()
     {
         $restaurant = session('restaurant');
+        $order_reviews = $restaurant->loadMissing(['orders','orders.reviews']);
+        // dd($order_reviews);
         $restaurant->refresh();
         $days = Day::all();
         $restaurant->loadMissing(['restaurant_time']);
         $res_times = $restaurant->restaurant_time;
-        $order_reviews = 
+        // $order_reviews = OrderReview::all();
 
         return view('venue.index', compact('restaurant','days','res_times'));
     }
