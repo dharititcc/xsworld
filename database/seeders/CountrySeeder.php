@@ -23,16 +23,19 @@ class CountrySeeder extends Seeder
                 'name'          => 'India',
                 'code'          => 'INR',
                 'country_code'  => '+91',
+                'symbol'        => '₹',
             ],
             [
                 'name'  => 'United States Of America',
                 'code'  => 'USD',
                 'country_code'  => '+1',
+                'symbol'        => '$',
             ],
             [
                 'name'  => 'Australia',
                 'code'  => 'AUD',
                 'country_code'  => '+61',
+                'symbol'        => '$',
             ]
         ];
 

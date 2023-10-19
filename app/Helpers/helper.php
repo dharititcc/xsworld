@@ -247,9 +247,9 @@ if (! function_exists('sendTwilioCustomerSms')) {
     function sendTwilioCustomerSms($mobile_no,$otp)
     {
         try {
-            $token          = getenv("TWILIO_AUTH_TOKEN");
-            $twilio_sid     = getenv("TWILIO_ACCOUNT_SID");
-            $twilio_number  = getenv("TWILIO_PHONE_NUMBER");
+            $token          = env("TWILIO_AUTH_TOKEN");
+            $twilio_sid     = env("TWILIO_ACCOUNT_SID");
+            $twilio_number  = env("TWILIO_PHONE_NUMBER");
             $send_sms       = new Client($twilio_sid, $token);
 
             $data = $send_sms->messages->create(
@@ -270,6 +270,13 @@ if (! function_exists('sendTwilioCustomerSms')) {
 
 if (! function_exists('generateNumericOTP')) {
     // Function to generate OTP
+    /**
+     * Method generateNumericOTP
+     *
+     * @param $n $n [explicite description]
+     *
+     * @return mixed
+     */
     function generateNumericOTP($n)
     {
         // Taking a generator string that consists of
@@ -292,5 +299,62 @@ if (! function_exists('generateNumericOTP')) {
 
         // Returning the result
         return $result;
+    }
+}
+
+if (! function_exists('sendNotification')) {
+    /**
+     * Method sendNotification
+     *
+     * @param String $title [explicite description]
+     * @param String $message [explicite description]
+     * @param array $tokens [explicite description]
+     *
+     * @return mixed
+     */
+    function sendNotification(String $title, String $message, array $tokens)
+    {
+
+        try {
+            $accesstoken = getenv("FCM_TOKEN");
+            $URL = 'https://fcm.googleapis.com/fcm/send';
+
+            $notification = [
+                'title'                 =>  $title,
+                'body'                  =>  $message,
+                'icon'                  =>  'myIcon',
+                'sound'                 => 'mySound',
+                // 'notification_type'  => $type,
+                'image'                 =>'',
+            ];
+
+            $extraNotificationData = ["data" => $notification];
+            $post_data = [
+                'registration_ids'    => $tokens, //multple token array
+                // 'to'                    => $tokens, //single token
+                'notification'          => $notification,
+                'data'                  => $extraNotificationData
+            ];
+
+            $crl = curl_init();
+
+            $headr = array();
+            $headr[] = 'Content-type: application/json';
+            $headr[] = 'Authorization: Bearer ' . $accesstoken;
+            curl_setopt($crl, CURLOPT_SSL_VERIFYPEER, false);
+
+            curl_setopt($crl, CURLOPT_URL, $URL);
+            curl_setopt($crl, CURLOPT_HTTPHEADER, $headr);
+
+            curl_setopt($crl, CURLOPT_POST, true);
+            curl_setopt($crl, CURLOPT_POSTFIELDS, json_encode($post_data));
+            curl_setopt($crl, CURLOPT_RETURNTRANSFER, true);
+
+            $rest = curl_exec($crl);
+            // dd($rest);
+            return true;
+        } catch (Exception $e) {
+            throw new GeneralException($e->getMessage());
+        }
     }
 }
