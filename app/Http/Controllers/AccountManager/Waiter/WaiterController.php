@@ -22,6 +22,7 @@ class WaiterController extends Controller
     public function index()
     {
         $restaurant = session('restaurant');
+        $restaurant->refresh();
 
         $restaurant->loadMissing(['kitchens']);
         $waiters = User::select('id','first_name','username','email')->where('user_type',User::WAITER)->get();
