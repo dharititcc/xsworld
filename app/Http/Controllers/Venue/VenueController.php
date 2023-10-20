@@ -20,15 +20,16 @@ class VenueController extends Controller
     public function index()
     {
         $restaurant = session('restaurant');
-        $order_reviews = $restaurant->loadMissing(['orders','orders.reviews']);
-        // dd($order_reviews);
         $restaurant->refresh();
+        $order_reviews = $restaurant->loadMissing(['orders','orders.reviews']);
+        $order_reviews = $order_reviews->orders->where('status',3);
+        // dd($order_reviews);
         $days = Day::all();
         $restaurant->loadMissing(['restaurant_time']);
         $res_times = $restaurant->restaurant_time;
         // $order_reviews = OrderReview::all();
 
-        return view('venue.index', compact('restaurant','days','res_times'));
+        return view('venue.index', compact('restaurant','days','res_times','order_reviews'));
     }
 
     /**

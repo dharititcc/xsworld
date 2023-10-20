@@ -92,7 +92,35 @@
                                 </div>
                             </div>
                             <div class="scroll-y h-800">
-                                <div class="line-gradient">
+                                @foreach ($order_reviews as $key => $orderReview)
+                                @php
+                                    // dd($orderReview->reviews[$key]->selectRaw('AVG(orders.reviews.rating) as ratings_average')->groupBy('order_id'));
+                                    $avg_rating = '';
+                                @endphp
+                                    <div class="line-gradient">
+                                        <table width="100%" class="reviewer mb-2">
+                                            <tr>
+                                                <td>{{ \Carbon\Carbon::parse($orderReview->created_at)->format('d/m
+                                                Y') }}</td>
+                                                <td>
+                                                    <div class="name">{{$orderReview->user->first_name}}</div>
+                                                    <div class="order">Order {{$orderReview->reviews[$key]->order_id}}</div>
+                                                </td>
+                                                <td><i class="icon-ok-circled"></i> ${{$orderReview->total}}</td>
+                                            </tr>
+                                        </table>
+                                        <div class="complete mb-2">Complete <i class="icon-star"></i><i
+                                                class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i><i
+                                                class="icon-star"></i></div>
+
+                                        <div class="d-flex justify-content-between align-items-end">
+                                            <div class="rvnote">{{$orderReview->reviews[$key]->comment}} </div>
+                                            <div class="ord-time">Order Time - {{ \Carbon\Carbon::parse($orderReview->created_at)->format('H:i') }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
+                                {{-- <div class="line-gradient">
                                     <table width="100%" class="reviewer mb-2">
                                         <tr>
                                             <td>12/09
@@ -132,29 +160,6 @@
                                             class="icon-star"></i></div>
 
                                     <div class="d-flex justify-content-between align-items-end">
-                                        <div class="rvnote">User written review can go here of it is an extended review the
-                                            box can drop down and the venue can see it. </div>
-                                        <div class="ord-time">Order Time - 09:43</div>
-                                    </div>
-
-                                </div>
-                                <div class="line-gradient">
-                                    <table width="100%" class="reviewer mb-2">
-                                        <tr>
-                                            <td>12/09
-                                                2023</td>
-                                            <td>
-                                                <div class="name">A. Smithson </div>
-                                                <div class="order">Order #227721</div>
-                                            </td>
-                                            <td><i class="icon-ok-circled"></i> $81.00</td>
-                                        </tr>
-                                    </table>
-                                    <div class="complete mb-2">Complete <i class="icon-star"></i><i
-                                            class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i><i
-                                            class="icon-star"></i></div>
-
-                                    <div class="d-flex justify-content-between align-items-end">
                                         <div class="rvnote">This user left no review.</div>
                                         <div class="ord-time">Order Time - 09:43</div>
                                     </div>
@@ -269,7 +274,7 @@
                                         <div class="ord-time">Order Time - 09:43</div>
                                     </div>
 
-                                </div>
+                                </div> --}}
                             </div>
 
                         </div>
