@@ -139,17 +139,17 @@
                             <div class="form-group mb-4">
                                 <input id="user_id" type="hidden" class="user_id" name="user_id" />
                                 <input type="text" name="waiter_id" id="waiter_id" class="form-control vari2"
-                                    placeholder="Waiter ID">
+                                    placeholder="Waiter ID" autocomplete="off">
                                 <span id="Errorid"></span>
                             </div>
                             <div class="form-group mb-4">
                                 <input type="text" name="first_name" id="waiter_name" class="form-control vari2"
-                                    placeholder="Waiter Name">
+                                    placeholder="Waiter Name" autocomplete="off">
                                 <span id="Errorname"></span>
                             </div>
                             <div class="form-group">
                                 <input type="password" name="password" id="password" class="form-control vari2"
-                                    placeholder="Password">
+                                    placeholder="Password" autocomplete="off">
                                 <span id="Errorpassword"></span>
                             </div>
                         </div>
@@ -178,12 +178,12 @@
                             <div class="form-group mb-4">
                                 <input id="user_id" type="hidden" class="user_id" name="user_id" />
                                 <input type="text" name="kitchen_id" id="kitchen_id" class="form-control vari2"
-                                    placeholder="Login ID">
+                                    placeholder="Login ID" autocomplete="off">
                                 <span id="Errorid"></span>
                             </div>
                             <div class="form-group mb-4">
                                 <input type="password" name="password" id="password" class="form-control vari2"
-                                    placeholder="Password">
+                                    placeholder="Password" autocomplete="off">
                                 <span id="Errorpassword"></span>
                             </div>
                             {{-- <div class="form-group">
@@ -221,12 +221,12 @@
                             <div class="form-group mb-4">
                                 <input id="user_id" type="hidden" class="user_id" name="user_id" />
                                 <input type="text" name="barpick_id" id="barpick_id" class="form-control vari2"
-                                    placeholder="Login ID">
+                                    placeholder="Login ID" autocomplete="off">
                                 <span id="Errorid"></span>
                             </div>
                             <div class="form-group mb-4">
                                 <input type="password" name="password" id="password" class="form-control vari2"
-                                    placeholder="Password">
+                                    placeholder="Password" autocomplete="off">
                                 <span id="Errorpassword"></span>
                             </div>
                             <div class="form-group">
