@@ -198,6 +198,11 @@ class BarRepository extends BaseRepository
                 $updateArr['status']            = $status;
             }
 
+            $title      = "Order is processing";
+            $message    = "Your Order is ".$order->id." placed";
+
+            //$send_notification = sendNotification($title,$message,$devices);
+
             $order->update($updateArr);
         }
 

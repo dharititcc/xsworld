@@ -5,6 +5,7 @@ use App\Exceptions\GeneralException;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\OrderReview;
+use App\Models\PickupPoint;
 use App\Models\Restaurant;
 use App\Models\RestaurantItem;
 use App\Models\User;
@@ -171,7 +172,6 @@ class OrderRepository extends BaseRepository
         $order['restaurant_id'] = $restaurant->id;
         $order['currency_id'] = $restaurant->currency_id;
 
-        // dd($order);
         $newOrder = Order::create($order);
 
         $newOrder->refresh();
@@ -420,7 +420,7 @@ class OrderRepository extends BaseRepository
         $card_id            = $data['card_id'] ? $data['card_id'] : null;
         $credit_amount      = $data['credit_amount'] ? $data['credit_amount'] : null;
         $amount             = $data['amount'] ? $data['amount'] : null;
-        $pickup_point_id    = $data['pickup_point_id'] ? $data['pickup_point_id'] : null;
+        $pickup_point_id    = $data['pickup_point_id'] ? PickupPoint::findorFail($data['pickup_point_id']) : null;
         $table_id           = $data['table_id'] ? $data['table_id'] : null;
         $order              = Order::findOrFail($data['order_id']);
         $user               = auth()->user();
@@ -435,7 +435,8 @@ class OrderRepository extends BaseRepository
             {
                 $updateArr = [
                     'type'                  => Order::ORDER,
-                    'pickup_point_id'       => $pickup_point_id,
+                    'pickup_point_id'       => $pickup_point_id->id,
+                    'pickup_point_user_id'  => $pickup_point_id->user_id,
                     'credit_amount'         => $credit_amount,
                     'restaurant_table_id'   => $table_id
                 ];
@@ -460,7 +461,8 @@ class OrderRepository extends BaseRepository
                     'type'              => Order::ORDER,
                     'card_id'           => $card_id,
                     'charge_id'         => $payment_data->id,
-                    'pickup_point_id'   => $pickup_point_id,
+                    'pickup_point_id'   => $pickup_point_id->id,
+                    'pickup_point_user_id'  => $pickup_point_id->user_id,
                     'credit_amount'     => $credit_amount,
                     'restaurant_table_id'   => $table_id
                 ];
@@ -471,7 +473,7 @@ class OrderRepository extends BaseRepository
 
         $order->refresh();
         $order->loadMissing(['items']);
-        // TODO:
+
         $title      = "Preparing Your order";
         $message    = "Your Order is ".$order->id." placed";
 
