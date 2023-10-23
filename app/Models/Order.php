@@ -34,6 +34,8 @@ class Order extends Model
     const FULL_REFUND                   = 8;
     const DELAY_ORDER                   = 9;
     const CUSTOMER_CANCELED             = 10;
+    const READYFORPICKUP                = 11;
+    const KITCHEN_CONFIRM               = 12;
 
     const ORDER_STATUS = [
         self::PENDNIG                   => 'Pending',
@@ -46,7 +48,9 @@ class Order extends Model
         self::PARTIAL_REFUND            => 'Partially Refund',
         self::FULL_REFUND               => 'Full Refund',
         self::DELAY_ORDER               => 'Delay Order',
-        self::CUSTOMER_CANCELED         => 'Cancelled by customer'
+        self::CUSTOMER_CANCELED         => 'Cancelled by customer',
+        self::READYFORPICKUP            => 'Kitchen ready for pickup',
+        self::KITCHEN_CONFIRM           => 'Kitchen confirm order',
     ];
 
     /**

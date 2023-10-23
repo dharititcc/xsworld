@@ -42,6 +42,7 @@
 
             context.openBarModal();
             context.closeBarModal();
+            context.pickupPointValidation();
 
 
         },
@@ -425,6 +426,21 @@
                 submitHandler: function() {
                     context.submitBarForm(context.selectors.barForm.get(0))
                 }
+            });
+        },
+
+        pickupPointValidation: function(){
+            alert("jii");
+            context.selectors.barSubmitBtn.submit(function (e) {
+                alert("hii");
+                // var pickup_points = $("#pickup_points");
+                if ($("#pickup_points").val() == "") {
+                    e.preventDefault();
+                    //If the "Please Select" option is selected display error.
+                    alert("Please select an option!");
+                    return false;
+                }
+                return true;
             });
         },
 
