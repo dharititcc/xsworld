@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1\Kitchen;
 use App\Exceptions\GeneralException;
 use App\Http\Controllers\Api\V1\APIController;
 use App\Http\Controllers\Api\V1\Traits\OrderStatus;
+use App\Http\Resources\BarOrderListingResource;
 use App\Http\Resources\OrderListResource;
 use App\Http\Resources\OrderResource;
 use App\Models\KitchenPickPoint;
@@ -39,16 +40,15 @@ class OrderController extends APIController
     {
         $auth_kitchen = auth('api')->user();
         $kitchen_orders = RestaurantKitchen::where('user_id',$auth_kitchen->id)->select('restaurant_id')->get()->toArray();
-        // dd($kitchen_orders);
         // $kitchen_pickup_points = KitchenPickPoint::where('user_id',$auth_kitchen->id)->select('pickup_point_id')->get()->toArray();
-        // dd($kitchen_pickup_points);
 
         $orderList = $this->repository->GetKitchenOrders($kitchen_orders);
-        if( $orderList->count() )
+        $barOrderList = $this->repository->getBarCollections($kitchen_orders);
+        if( $orderList->count() ||  $barOrderList->count())
         {
             $data = [
                 'confirmOrder'       => $orderList->count() ? OrderResource::collection($orderList) : [],
-                'CompletedOrders'      => $orderList->count() ? [] : [],
+                'CompletedOrders'      => $barOrderList->count() ? BarOrderListingResource::collection($barOrderList) : [],
             ];
             return $this->respondSuccess('Order Fetched successfully.', $data);
         }
@@ -87,8 +87,14 @@ class OrderController extends APIController
         throw new GeneralException('There is no order found');
     }
 
-    public function orderDetails(Request $request)
+    public function orderDetail(Request $request)
     {
-        
+        $order = $request->order_id;
+        $orderShow = $this->repository->getOrderById($order);
+        if($orderShow)
+        {
+            return $this->respondSuccess('Order Details Fetched successfully.', new OrderResource($orderShow));
+        }
+        throw new GeneralException('There is no order found');
     }
 }

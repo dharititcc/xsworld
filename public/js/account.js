@@ -430,9 +430,7 @@
         },
 
         pickupPointValidation: function(){
-            alert("jii");
             context.selectors.barSubmitBtn.submit(function (e) {
-                alert("hii");
                 // var pickup_points = $("#pickup_points");
                 if ($("#pickup_points").val() == "") {
                     e.preventDefault();

@@ -11,6 +11,7 @@ use App\Models\RestaurantItem;
 use App\Models\User;
 use App\Repositories\BaseRepository;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 
 /**
@@ -558,5 +559,22 @@ class OrderRepository extends BaseRepository
         } else {
             throw new GeneralException('Order is not found.');
         }
+    }
+
+    public function getBarCollections(array $data) : Collection
+    {
+        $orders = Order::whereIn('restaurant_id',$data)
+        ->where('type', Order::ORDER)
+        ->where('status', [Order::READYFORPICKUP])
+        ->orderByDesc('id')
+        ->get();
+
+        return $orders;
+    }
+
+    public function getOrderById($id)
+    {
+        $order = Order::findOrFail($id);
+        return $order;
     }
 }
