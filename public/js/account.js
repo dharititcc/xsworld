@@ -391,7 +391,11 @@
             {
                 context.selectors.barForm.validate().resetForm();
                 context.selectors.barForm.find('.error').removeClass('error');
-
+                context.selectors.barId.attr('disabled',false);
+                $('#barpick_id').val('');
+                $('#password').val('');
+                $("#pickup_points").children().remove();
+                $('#pickup_points').val('');
                 context.selectors.barForm.removeAttr('action');
                 context.selectors.barForm.find('input[type="hidden"]').remove();
             });
