@@ -25,17 +25,19 @@ class WaiterController extends Controller
         $restaurant->refresh();
 
         $restaurant->loadMissing(['kitchens']);
-        $waiters = User::select('id','first_name','username','email')->where('user_type',User::WAITER)->get();
-        $barpickzones = User::select('id','first_name','username','email')->where('user_type',User::BARTENDER)->get();
+        $waiters        = User::select('id','first_name','username','email')->where('user_type',User::WAITER)->get();
+        // $barpickzones = User::select('id','first_name','username','email')->where('user_type',User::BARTENDER)->get();
         // $kitchens = User::select('id','first_name','username','email')->where('user_type',User::KITCHEN)->get();
-        $pickup_points = RestaurantPickupPoint::restaurantget($restaurant->id)->whereNull('user_id')->get();
+        $barpickzones   = $restaurant->pickup_points()->with(['user'])->whereHas('user')->get();
+        // dd($barpickzones);
+        $pickup_points  = RestaurantPickupPoint::restaurantget($restaurant->id)->whereNull('user_id')->get();
 
         return view('accountManager.waiter.index',[
-            'waiters' => $waiters,
+            'waiters'       => $waiters,
             'pickup_points' => $pickup_points,
-            'barpickzones' => $barpickzones,
+            'barpickzones'  => $barpickzones,
             // 'kitchen_pickpoints' => $kitchen_pickpoints,
-            'kitchens' => $restaurant->kitchens,
+            'kitchens'      => $restaurant->kitchens,
         ]);
     }
 

@@ -88,21 +88,21 @@
                         <div class="catg-box overly">
                             {{-- <button><i class="icon-trash"></i></button>
                             --}}
-                            <form method="POST" action="{{ route('restaurants.barpickzone.destroy', $barpickzone->id) }}">
+                            <form method="POST" action="{{ route('restaurants.barpickzone.destroy', $barpickzone->user->id) }}">
                                 @csrf
                                 <input name="_method" type="hidden" value="DELETE">
                                 <button type="submit" class="show_confirm" data-toggle="tooltip" title='Delete'><i
                                         class="icon-trash"></i></button>
                             </form>
 
-                            {{-- <button onclick="return deleteConform({{ $barpickzone->id }});"><i
+                            {{-- <button onclick="return deleteConform({{ $barpickzone->user->id }});"><i
                                 class="icon-trash"></i></button> --}}
-                            <figure onclick="getBarpickzone({{ $barpickzone->id }})" data-type="Edit Barpickzone"
-                                data-parent_id="{{ $barpickzone->id }}" data-parant="{{ $barpickzone->first_name }}"
+                            <figure onclick="getBarpickzone({{ $barpickzone->user->id }})" data-type="Edit Barpickzone"
+                                data-parent_id="{{ $barpickzone->user->id }}" data-parant="{{ $barpickzone->user->first_name }}"
                                 class="barpickzone_popup_modal">
 
-                                <figcaption><span>{{ $barpickzone->username }}</span></figcaption>
-                                {{-- <figcaption><span>{{$barpickzone->first_name}}</span></figcaption> --}}
+                                <figcaption><span>{{ $barpickzone->user->username }}</span></figcaption>
+                                {{-- <figcaption><span>{{$barpickzone->user->first_name}}</span></figcaption> --}}
                             </figure>
                         </div>
                     @endforeach
