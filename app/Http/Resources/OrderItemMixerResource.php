@@ -17,7 +17,7 @@ class OrderItemMixerResource extends JsonResource
         return [
             'id'                    => $this->id,
             // 'order_id'              => $this->order_id,
-            'restaurant_item_id'    => $this->restaurant_item_id,
+            'restaurant_item_id'    => (int) $this->restaurant_item_id,
             'name'                  => $this->restaurant_item->name,
             'quantity'              => (int) $this->quantity,
             'price'                 => $this->price,
