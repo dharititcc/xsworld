@@ -24,7 +24,7 @@ class RestaurantResource extends JsonResource
             'specialisation'    => $this->specialisation,
             'distance'          => (float) $this->distance,
             'image'             => $this->image,
-            'rating'            => 4.5,
+            'rating'            => $this->average_rating,
             'start_date'        => $this->start_date ?? '',
             'end_date'          => $this->end_date ?? '',
             'categories'        => isset($this->main_categories) ? CategoryResource::collection($this->main_categories) : [],
