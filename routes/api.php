@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\Api\V1\Kitchen\AuthController;
+use App\Http\Controllers\Api\V1\Waiter\AuthController as WaiterAuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -171,12 +171,12 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'v1', 'as' => 'api.v1.'], fun
     Route::group(['namespace' => 'Waiter', 'prefix' => 'waiter'], function(){
         Route::group(['middleware' => ['guest']], function() {
              // {api/v1/waiter/login}
-            Route::post('login', [AuthController::class,'postLogin'])->name('waiter.login');
+            Route::post('login', [WaiterAuthController::class,'postLogin'])->name('waiter.login');
         });
 
         Route::group(['middleware' => 'auth:api'], function() {
             // {api/v1/waiter/logout}
-            Route::post('logout', [AuthController::class, 'logout'] )->name('kitchen.logout');
+            Route::post('logout', [WaiterAuthController::class, 'logout'] )->name('kitchen.logout');
         });
     });
 });
