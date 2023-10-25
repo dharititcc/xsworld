@@ -254,7 +254,7 @@ class OrderRepository extends BaseRepository
                 'latest_cart.restaurant',
                 'latest_cart.restaurant.pickup_points' => function($query)
                 {
-                    return $query->status(1);
+                    return $query->status(PickupPoint::ONLINE);
                 }
             ]
         );
@@ -459,12 +459,12 @@ class OrderRepository extends BaseRepository
                 $payment_data   = $stripe->createCharge($paymentArr);
 
                 $updateArr = [
-                    'type'              => Order::ORDER,
-                    'card_id'           => $card_id,
-                    'charge_id'         => $payment_data->id,
-                    'pickup_point_id'   => $pickup_point_id->id,
+                    'type'                  => Order::ORDER,
+                    'card_id'               => $card_id,
+                    'charge_id'             => $payment_data->id,
+                    'pickup_point_id'       => $pickup_point_id->id,
                     'pickup_point_user_id'  => $pickup_point_id->user_id,
-                    'credit_amount'     => $credit_amount,
+                    'credit_amount'         => $credit_amount,
                     'restaurant_table_id'   => $table_id
                 ];
             }
@@ -476,9 +476,10 @@ class OrderRepository extends BaseRepository
         $order->loadMissing(['items']);
 
         $title      = "Preparing Your order";
-        $message    = "Your Order is ".$order->id." placed";
+        $message    = "Your Order is #".$order->id." placed";
+        $orderid    = $order->id;
 
-        //$send_notification = sendNotification($title,$message,$devices);
+        $send_notification = sendNotification($title,$message,$devices,$orderid);
 
         return $order;
     }
@@ -496,6 +497,8 @@ class OrderRepository extends BaseRepository
         $status            = $data['status'] ? $data['status'] : null;
         $order             = Order::findOrFail($order_id);
         $updateArr         = [];
+        $user              = auth()->user();
+        $devices           = $user->devices()->pluck('fcm_token')->toArray();
 
         if(isset($order->id))
         {
@@ -504,7 +507,13 @@ class OrderRepository extends BaseRepository
                 $updateArr['cancel_date']   = Carbon::now();
                 $updateArr['status']        = $status;
             }
+
             $order->update($updateArr);
+
+            $title      = "Order is cancelled";
+            $message    = "Your Order is #".$order->id." cancelled";
+
+            $send_notification = sendNotification($title,$message,$devices,$order_id);
         }
 
         $order->refresh();
@@ -551,7 +560,7 @@ class OrderRepository extends BaseRepository
         if($is_history === 0) {
             $orderTbl = $orders->where('status',Order::ACCEPTED)->where('type',Order::ORDER)->get();
         } else {
-            $orderTbl = $orders->whereIn('status',[Order::COMPLETED,Order::FULL_REFUND, Order::PARTIAL_REFUND, Order::RESTAURANT_CANCELED, Order::CUSTOMER_CANCELED])->where('type',Order::ORDER)->get();
+            $orderTbl = $orders->whereIn('status',[Order::COMPLETED,Order::FULL_REFUND, Order::PARTIAL_REFUND, Order::RESTAURANT_CANCELED, Order::CUSTOMER_CANCELED, Order::KITCHEN_CONFIRM])->where('type',Order::ORDER)->get();
         }
         if($orderTbl)
         {
@@ -576,5 +585,15 @@ class OrderRepository extends BaseRepository
     {
         $order = Order::findOrFail($id);
         return $order;
+    }
+
+
+    public function updateStatus(array $data)
+    {
+        $user   = auth()->user();
+        // dd($user->restaurant_kitchen());
+        $user->restaurant_kitchen()->update($data);
+        $user->refresh();
+        return $user;
     }
 }

@@ -82,4 +82,26 @@ class Access
     {
         return $this->user()->user_type == User::CUSTOMER;
     }
+
+    /**
+     * Method isKitchen
+     *
+     * @return bool
+     */
+    public function isKitchen()
+    {
+        return $this->user()->user_type == User::KITCHEN;
+    }
+
+    /**
+     * Method isWaiter
+     *
+     * @return bool
+     */
+    public function isWaiter()
+    {
+        return $this->user()->user_type == User::WAITER;
+    }
+
+
 }
