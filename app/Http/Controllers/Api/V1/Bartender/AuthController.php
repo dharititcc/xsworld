@@ -149,6 +149,11 @@ class AuthController extends APIController
         {
             $user = auth()->user();
 
+            if( !access()->isBartender() )
+            {
+                return $this->respondWithError('Invalid login credentials. Please use bar credentials.');
+            }
+
             $user->loadMissing(['pickup_point']);
 
             // update all other data
