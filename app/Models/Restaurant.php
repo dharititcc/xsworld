@@ -241,7 +241,8 @@ class Restaurant extends Model
      */
     public function getAverageRatingAttribute()
     {
-        return $this->ratings()->average('rating');
+        $rating = $this->ratings()->average('rating');
+        return $rating ? $rating : 0;
     }
 
     /**
