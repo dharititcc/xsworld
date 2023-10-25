@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\UpdateWaiterRequest;
 use App\Http\Resources\UserResource;
 use App\Models\RestaurantPickupPoint;
+use App\Models\RestaurantWaiter;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -25,7 +26,8 @@ class WaiterController extends Controller
         $restaurant->refresh();
 
         $restaurant->loadMissing(['kitchens']);
-        $waiters        = User::select('id','first_name','username','email')->where('user_type',User::WAITER)->get();
+        // $waiters        = User::select('id','first_name','username','email')->where('user_type',User::WAITER)->get();
+        $waiters        = $restaurant->waiters()->with(['user'])->whereHas('user')->get();
         // $barpickzones = User::select('id','first_name','username','email')->where('user_type',User::BARTENDER)->get();
         // $kitchens = User::select('id','first_name','username','email')->where('user_type',User::KITCHEN)->get();
         $barpickzones   = $restaurant->pickup_points()->with(['user'])->whereHas('user')->get();
@@ -84,6 +86,11 @@ class WaiterController extends Controller
             'phone' => $mobileNumber,
             'user_type' => User::WAITER,
         ]);
+
+        RestaurantWaiter::create([
+            'restaurant_id' => $restaurant->id,
+            'user_id'       => $waiterArr->id,
+        ]);
         
         return $waiterArr->refresh();
     }
@@ -133,12 +140,18 @@ class WaiterController extends Controller
      */
     public function update(Request $request, User $waiter)
     {
+        $restaurant = session('restaurant');
         $dataArr = [
             'first_name' => $request->first_name,
             'password' => Hash::make($request->password),
         ];
-        $waiter->update($dataArr);
+        RestaurantWaiter::updateOrCreate([
+            'restaurant_id' => $restaurant->id,
+            'user_id'       => $waiter->id,
+        ]);
+        ($dataArr) ?? $waiter->update($dataArr);
         $waiter->refresh();
+        return redirect()->back();
     }
 
     /**

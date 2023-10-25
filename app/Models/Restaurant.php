@@ -64,6 +64,16 @@ class Restaurant extends Model
     }
 
     /**
+     * Get all of the waiters for the Restaurant
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function waiters(): HasMany
+    {
+        return $this->hasMany(RestaurantWaiter::class, 'restaurant_id', 'id');
+    }
+
+    /**
      * Get all of the orders for the Restaurant
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
