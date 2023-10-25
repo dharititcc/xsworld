@@ -510,8 +510,8 @@ class OrderRepository extends BaseRepository
 
             $order->update($updateArr);
 
-            $title      = "Preparing Your order";
-            $message    = "Your Order is #".$order->id." placed";
+            $title      = "Order is cancelled";
+            $message    = "Your Order is #".$order->id." cancelled";
 
             $send_notification = sendNotification($title,$message,$devices,$order_id);
         }
