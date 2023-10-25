@@ -600,7 +600,7 @@ table.dataTable thead th{ padding: 1.1rem .4rem;}
   .m-xl-space{ margin-bottom: 1.5em;}
 
   .table-design .export-info{font-size:calc(100% + .03em)}  
-  .table-design .qr-code img{width: 17vh; height: 17vh;} 
+  .table-design .qr-code img, .table-design .qr-code svg{width: 17vh; height: 17vh;}
 
   /* .bor-btn{font-size: calc(100% + .15em); padding: 0.2em 0.6em;} */   
   .drinks-info { max-width: 40%; }

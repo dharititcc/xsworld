@@ -25,9 +25,9 @@ class UpdateWaiterRequest extends FormRequest
     {
         $user = auth()->user();
         return [
-            'first_name' => 'required',
-            'password' => 'min:8',
-           'waiter_id' => 'required|unique:users,username,'
+            'first_name'    => 'required',
+            'password'      => 'min:8',
+            'waiter_id'     => 'required|unique:users,username,'
         ];
     }
 }
