@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <title>Table Management | XS World</title>
+        <!-- Favicon-->
+        <link rel="icon" type="image/x-icon" href="img/favicon.ico" />
+        <!-- Core theme CSS (includes Bootstrap)-->
+        <link href="css/styles.css" rel="stylesheet" />
+        <link href="css/custom.css" rel="stylesheet" />  
+        <link href="css/fontello.css" rel="stylesheet" />        
+    </head>
+    <body>
+        <div class="d-flex" id="wrapper">
+            <!-- Sidebar-->
+            <div id="sidebar-wrapper">
+                <div class="sidebar-header"><label> Court Hotel Management</label> <a href="#" class="setting"> <i class="icon-settings-thin"></i></a></div>
+                <div class="sidebar-title"><button type="button" id="sidebarToggle1"><i class="icon-left"></i></button> <img src="img/xsworld.png" alt="" class="logo"></div>
+                <figure><img src="img/rectangle.jpg" alt=""></figure>
+                <div class="list-group">
+                    <a href="index.html">Dashboard</a>
+                    <a href="add-drinks.html">Add Drinks</a>
+                    <a href="drinks-list.html">Drinks List</a>
+                    <a href="#">Mixer Management</a>
+                    <a href="#">Analytics</a>
+                    <a href="#">Pick-up Zones</a>
+                    <a href="#">Bar Management</a>
+                    <a href="#">Logout</a>
+                </div>
+                <div class="sidebar-footer"><label> what will it be today?</label> <span class="year">2023</span></div>
+            </div>
+            <!-- Page content wrapper-->
+            <div id="page-content-wrapper">
+                <!-- Top navigation-->
+                <nav class="navbar navbar-expand-lg custom-nav bord">
+                    <div class="container-fluid">
+                        <div class="btn-elemts">
+                            <button class="btn" id="sidebarToggle"><i class="icon-menu"></i></button> 
+                            <span class="btn-title">Table Management</span> 
+                        </div>
+                        <h2>Court Hotel</h2>
+                        <div class="right-info-element"> </div>
+                        
+                    </div>
+                </nav>
+                <!-- Page content-->
+                <div class="container-fluid">
+                    <main>
+                        <div class="outrbox"> 
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="d-flex flex-column sticky-sec scroll-y">
+                                        <div class="tbl-mng-btn">
+                                            <a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#exampleModal" class="grey-brd-box padbox text-center lable-box"><span>Add Table</span></a>
+                                            <a href="#" class="grey-brd-box padbox text-center lable-box mt-3 btn-red"><span>Remove Table </span></a>
+                                        </div>
+                                        <div class="key-mng">
+                                            <table width="100%">
+                                                <tr><th><h2 class="yellow">Key Insights</h2></th><td><a href="#">Disable</a></td></tr>
+                                                <tr><th height="20"></th><td></td></tr>
+                                                <tr><th>Total Tables</th><td> 3</td></tr>
+                                                <tr><th>Active Tables</th><td> 3</td></tr>
+                                                <tr><th>Occupied Tables</th><td>2 </td></tr>
+                                                <tr><th>Reserved Tables</th><td> 0</td></tr>
+                                                <tr><th>Staffed Tables</th><td> 2</td></tr>                                                
+                                            </table>
+                                        </div>
+                                        <div class="gldnline-sepr"></div>
+                                        
+                                            <a href="#" class="grey-brd-box padbox text-center lable-box"><span>Mixer Management</span></a>
+                                            <a href="#" class="grey-brd-box padbox text-center lable-box mt-3"><span>Pick-up Zones</span></a>
+                                            <a href="#" class="grey-brd-box padbox text-center lable-box mt-3"><span>Drinks List</span></a>
+                                        
+                                    </div>
+                                </div>
+                                <div class="col-md-8">
+                                    <div class="grid colmn-2 gap30">
+                                        <div class="table-design grey-brd-box">
+                                            <div class="head"><label class="cst-check">
+                                                <input type="checkbox" value=""><span class="checkmark"></span></label>
+                                                <h2>Table #1</h2></div>
+                                            <div class="cnt">
+                                                <div class="qr-code"><img src="img/clarity_qr-code-line.png" alt=""></div>
+                                                <a href="javascript:void(0);" class="export-info" data-bs-toggle="modal" data-bs-target="#export_qr_code">Export QR<br>Code</a>
+                                                
+                                            </div>
+                                            <div class="ftr">
+                                                <a href="#" class="active green">Active</a>
+                                                <a href="#" class="disable">Disable</a>
+                                            </div>
+                                        </div>
+                                        <div class="table-design grey-brd-box">
+                                            <div class="head"><label class="cst-check">
+                                                <input type="checkbox" value=""><span class="checkmark"></span></label>
+                                                <h2>Table #2</h2></div>
+                                            <div class="cnt">
+                                                <div class="qr-code"><img src="img/clarity_qr-code-line.png" alt=""></div>
+                                                <a href="#" class="export-info">Export QR<br>Code</a>
+                                            </div>
+                                            <div class="ftr">
+                                                <a href="#" class="active">Active</a>
+                                                <a href="#" class="disable red">Disable</a>
+                                            </div>
+                                        </div>
+                                        <div class="table-design grey-brd-box del-table">
+                                            <div class="head"><label class="cst-check">
+                                                <input type="checkbox" value=""><span class="checkmark"></span></label>
+                                                <h2>Table #3</h2></div>
+                                            <div class="cnt">
+                                                <div class="qr-code"><img src="img/clarity_qr-code-line.png" alt=""></div>
+                                                <a href="#" class="export-info">Export QR<br>Code</a>
+                                            </div>
+                                            <div class="ftr">
+                                                <a href="#" class="active green">Active</a>
+                                                <a href="#" class="disable">Disable</a>
+                                            </div>
+                                        </div>
+                                        <div class="table-design grey-brd-box">
+                                            <a href="#" class="add-table-design"><i class="icon-plus"></i></a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                        </div>
+                    </main>
+                </div>
+            </div>
+        </div>
+        
+         <!-- Global popup -->
+         <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content">
+                <div class="modal-header justify-content-start ">
+                    <button type="button" class="back" data-bs-dismiss="modal" aria-label="Close"><i class="icon-left"></i></button>
+                    <h2>Add New Table</h2>
+                </div>
+                <div class="modal-body">
+                   <div style="min-height: 300px;">
+                        <div class="form-group mb-4">
+                            <input type="text" class="form-control vari2" placeholder="Table Name">
+                        </div>
+                        <div class="form-group">
+                            <input type="text" class="form-control vari2" placeholder="Table Code">
+                        </div>
+                    </div>
+                      <button class="bor-btn w-100 font-26" type="button">Add</button>
+                </div>
+               
+              </div>
+            </div>
+          </div>
+
+        <!-- another popup-->
+         
+        <div class="modal fade qr-code-pop" id="export_qr_code" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content">
+                
+                <div class="modal-body">
+                   <div style="min-height: 300px;">
+                        <div class="mb-3 table-ids">
+                            Table 1
+                        </div>
+                       <figure class="qrcode">
+                            <img src="img/qr-code.jpg" alt="">
+                       </figure>
+
+                       <div class="text-center x-logo"><img src="img/x-logo.png" alt=""></div>
+                       
+                    </div>
+                     
+                    <div class="d-flex ftr">
+                        <button class="bor-btn " type="button">Export As</button>
+                        <button class="bor-btn " type="button">Print</button>
+                    </div>
+                </div>
+               
+              </div>
+            </div>
+          </div>
+        <!-- Global popup -->
+        <!-- Bootstrap core JS-->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Core theme JS-->
+        <script src="js/scripts.js"></script>
+    </body>
+</html>

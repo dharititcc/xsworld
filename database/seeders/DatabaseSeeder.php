@@ -2,6 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Models\Currency;
+use App\Models\Restaurant;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -15,11 +17,22 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             AdminUserSeeder::class,
-            RestaurantUserSeeder::class,
+            RestaurantOwnerSeeder::class,
             CustomerSeeder::class,
-            ItemTypeSeeder::class,
-            ItemSeeder::class,
-            RestaurantSeeder::class
+            RestaurantBarTenderSeeder::class,
+            CountrySeeder::class,
+            CurrencySeeder::class,
+            RestaurantSeeder::class,
+            EventSeeder::class,
+            RestaurantCategorySeeder::class,
+            RestaurantSubCategorySeeder::class,
+            RestaurantPickupPointSeeder::class,
+            RestaurantItemSeeder::class,
+            AddonsSeeder::class,
+            MixtureSeeder::class,
+            // OrderSeeder::class,
+            DaySeeder::class,
+            KitchenUserSeeder::class
         ]);
     }
 }

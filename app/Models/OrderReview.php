@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class OrderReview extends Model
 {
@@ -18,7 +19,8 @@ class OrderReview extends Model
      */
     protected $fillable = [
         'order_id',
-        'rating'
+        'rating',
+        'comment'
     ];
 
     /**
@@ -30,4 +32,14 @@ class OrderReview extends Model
         'created_at' => 'datetime',
         'updated_at' => 'datetime'
     ];
+
+    /**
+     * Get the order that owns the OrderReview
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function order(): BelongsTo
+    {
+        return $this->belongsTo(Order::class, 'order_id', 'id');
+    }
 }

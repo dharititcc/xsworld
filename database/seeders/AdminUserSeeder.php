@@ -19,11 +19,12 @@ class AdminUserSeeder extends Seeder
         $adminUser = new User();
         $user = $adminUser->create([
             'id'                    => 1,
-            'name'                  => 'Vrushank Shah',
+            'first_name'            => 'Vrushank',
+            'last_name'             => 'Shah',
             'email'                 => 'vrushank@appmart.com.au',
             'password'              => Hash::make('password'),
-            'phone1'                => '61430147853',
-            'user_type'             => 3,
+            'phone'                 => '430147853',
+            'user_type'             => User::ADMIN,
             'created_at' 	        => Carbon::now()->toDateTimeString(),
             'updated_at' 	        => Carbon::now()->toDateTimeString(),
             'email_verified_at'     => Carbon::now()->toDateTimeString()
