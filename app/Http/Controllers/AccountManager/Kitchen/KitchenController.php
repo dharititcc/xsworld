@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers\AccountManager\Kitchen;
 
+use App\Exceptions\GeneralException;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\KitchenAddUpdateRequest;
 use App\Models\KitchenPickPoint;
 use App\Models\RestaurantKitchen;
 use App\Models\RestaurantPickupPoint;
@@ -36,10 +38,10 @@ class KitchenController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Http\Requests\KitchenAddUpdateRequest $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(KitchenAddUpdateRequest $request)
     {
         $restaurant = session('restaurant');
         // dd($request->all());

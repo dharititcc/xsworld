@@ -93,9 +93,12 @@
             var context = this,
                 form    = context.selectors.waiterForm;
 
+            form.validate().resetForm();
             form.find('[name="waiter_id"]').removeAttr('disabled').val('');
             form.find('[name="first_name"]').val('');
             form.find('[name="password"]').val('');
+
+            context.selectors.waiterSubmitBtn.html('Add Waiter');
         },
 
         addWaiterFormValidation: function(){
@@ -184,6 +187,20 @@
                     document.getElementById('addwaiterform').reset();
                     location.reload(true);
                 },
+                error: function(jqXHR, exception)
+                {
+                    console.log(jqXHR.status);
+                    if( jqXHR.status === 422 )
+                    {
+                        const {error}   = jqXHR.responseJSON;
+                        const {message} = error;
+
+                        $.each(message, function(index, val)
+                        {
+                            context.selectors.waiterForm.find(`[name="${index}"]`).after(`<label class="error">${val[0]}</label>`);
+                        });
+                    }
+                },
                 complete: function()
                 {
                     XS.Common.btnProcessingStop(context.selectors.waiterSubmitBtn);
@@ -251,6 +268,7 @@
                 context.selectors.kitchenForm.find('input[type="hidden"]').remove();
                 context.selectors.kitchenId.attr('disabled', false);
                 context.selectors.kitchenId.val('');
+                context.selectors.kitchenSubmitBtn.html('Add Kitchen');
             });
         },
 
@@ -329,6 +347,20 @@
                         alert('Kitchen has been submitted successfully');
                         document.getElementById('addkitchenform').reset();
                         location.reload(true);
+                    },
+                    error: function(jqXHR, exception)
+                    {
+                        console.log(jqXHR.status);
+                        if( jqXHR.status === 422 )
+                        {
+                            const {error}   = jqXHR.responseJSON;
+                            const {message} = error;
+
+                            $.each(message, function(index, val)
+                            {
+                                context.selectors.kitchenForm.find(`[name="${index}"]`).after(`<label class="error">${val[0]}</label>`);
+                            });
+                        }
                     },
                     complete: function()
                     {
@@ -411,6 +443,7 @@
                 $('#pickup_points').val('');
                 context.selectors.barForm.removeAttr('action');
                 context.selectors.barForm.find('input[type="hidden"]').remove();
+                context.selectors.barSubmitBtn.html('Add Bar');
             });
         },
 
@@ -504,6 +537,20 @@
                     alert('Bar pick zone has been submitted successfully');
                     document.getElementById('addbarpickform').reset();
                     location.reload(true);
+                },
+                error: function(jqXHR, exception)
+                {
+                    console.log(jqXHR.status);
+                    if( jqXHR.status === 422 )
+                    {
+                        const {error}   = jqXHR.responseJSON;
+                        const {message} = error;
+
+                        $.each(message, function(index, val)
+                        {
+                            context.selectors.barForm.find(`[name="${index}"]`).after(`<label class="error">${val[0]}</label>`);
+                        });
+                    }
                 },
                 complete: function()
                 {
