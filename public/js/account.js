@@ -4,6 +4,7 @@
         selectors: {
             waiterModalBtn:     $(".waiter_popup_modal"),
             waiterId:           $('#waiter_id'),
+            waiterName:         $('#waiter_id'),
             waiterModalTitle:   $('.waiter_model_title'),
             waiterModal:        $("#waiterModal"),
             waiterForm:         $("#addwaiterform"),
@@ -43,8 +44,6 @@
             context.openBarModal();
             context.closeBarModal();
             context.pickupPointValidation();
-
-
         },
 
         openWaiterModal: function()
@@ -85,12 +84,18 @@
 
             context.selectors.waiterModal.on('hide.bs.modal', function()
             {
-                context.selectors.waiterForm.validate().resetForm();
-                context.selectors.waiterForm.find('.error').removeClass('error');
-
-                context.selectors.waiterForm.removeAttr('action');
-                context.selectors.waiterForm.find('input[type="hidden"]').remove();
+                context.resetWaiterModal();
             });
+        },
+
+        resetWaiterModal: function()
+        {
+            var context = this,
+                form    = context.selectors.waiterForm;
+
+            form.find('[name="waiter_id"]').removeAttr('disabled').val('');
+            form.find('[name="first_name"]').val('');
+            form.find('[name="password"]').val('');
         },
 
         addWaiterFormValidation: function(){
@@ -360,13 +365,17 @@
                 e.preventDefault();
 
                 var $this       = $(this),
-                    barId    = $this.data('parent_id');
-                console.log(barId);
+                    barId       = $this.data('parent_id'),
+                    pickupZones = $.parseJSON(moduleConfig.availableBarPickupZones);
+
+                $("#pickup_points").children().remove();
+
                 if( barId == undefined )
                 {
                     context.selectors.barModalTitle.html('Add ');
                     context.addBarFormValidation();
                     context.selectors.barForm.attr('action', moduleConfig.barpickStore);
+                    context.getAvailablePickupPoints();
                 }
                 else
                 {
@@ -375,7 +384,11 @@
                     context.editBarFormValidation();
                     context.selectors.barForm.attr('action', moduleConfig.barpickUpdate.replace(':ID', barId));
                     context.selectors.barId.attr('disabled',true);
-                    context.getBarData(barId);
+                    context.getAvailablePickupPoints();
+
+                    setTimeout(function(){
+                        context.getBarData(barId);
+                    });
                     context.selectors.barForm.append(`<input type="hidden" name="_method" value="PUT" />`);
                 }
 
@@ -393,8 +406,8 @@
                 context.selectors.barForm.find('.error').removeClass('error');
                 context.selectors.barId.attr('disabled',false);
                 $('#barpick_id').val('');
-                $('#password').val('');
-                $("#pickup_points").children().remove();
+                context.selectors.barForm.find('[name="password"]').val();
+                // $("#pickup_points").children().remove();
                 $('#pickup_points').val('');
                 context.selectors.barForm.removeAttr('action');
                 context.selectors.barForm.find('input[type="hidden"]').remove();
@@ -434,6 +447,7 @@
         },
 
         pickupPointValidation: function(){
+            var context = this;
             context.selectors.barSubmitBtn.submit(function (e) {
                 // var pickup_points = $("#pickup_points");
                 if ($("#pickup_points").val() == "") {
@@ -505,7 +519,7 @@
                 url: moduleConfig.barpickGet.replace(':ID',id),
                 type: 'GET',
                 success: function(res) {
-                    $("#pickup_points").children().remove();
+                    // $("#pickup_points").children().remove();
                     var pickupPoint = res.pickup_point,
                         options     = `
                             <option value="${pickupPoint.id}">${pickupPoint.name}</option>
@@ -520,6 +534,20 @@
                 },
             });
         },
+
+        getAvailablePickupPoints: function()
+        {
+            var context     = this,
+                pickupZones = $.parseJSON(moduleConfig.availableBarPickupZones);
+
+            if( !$.isEmptyObject(pickupZones) )
+            {
+                $.each( pickupZones, function(index, pickup_point)
+                {
+                    context.selectors.barForm.find('[name="pickup_points"]').append(`<option value='${pickup_point.id}'>${pickup_point.name}</option>`);
+                });
+            }
+        }
         //end Bar
     }
 })();

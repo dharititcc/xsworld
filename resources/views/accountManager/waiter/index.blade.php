@@ -231,11 +231,7 @@
                             </div>
                             <div class="form-group">
                                 <label class="white-lable d-block text-center">Pickup Location</label>
-                                <select name="pickup_points" id="pickup_points" class="form-control vari2">
-                                    @foreach ($pickup_points as $pickup_point)
-                                        <option value="{{ $pickup_point->id }}">{{ $pickup_point->name }}</option>
-                                    @endforeach
-                                </select>
+                                <select name="pickup_points" id="pickup_points" class="form-control vari2"></select>
 
                             </div>
                         </div>
@@ -264,6 +260,7 @@
         barpickStore: "{!! route('restaurants.barpickzone.store') !!}",
         barpickUpdate: "{!! route('restaurants.barpickzone.update', ':ID') !!}",
         barpickGet: "{!! route('restaurants.barpickzone.show', ':ID') !!}",
+        availableBarPickupZones: '{!! json_encode($pickup_points) !!}'
     };
 
     $(document).ready(function()
