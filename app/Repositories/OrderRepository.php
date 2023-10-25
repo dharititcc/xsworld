@@ -254,7 +254,7 @@ class OrderRepository extends BaseRepository
                 'latest_cart.restaurant',
                 'latest_cart.restaurant.pickup_points' => function($query)
                 {
-                    return $query->status(1);
+                    return $query->status(PickupPoint::ONLINE);
                 }
             ]
         );

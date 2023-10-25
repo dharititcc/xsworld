@@ -195,6 +195,16 @@ class Order extends Model
     }
 
     /**
+     * Get the review associated with the Order
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function review(): HasOne
+    {
+        return $this->hasOne(OrderReview::class, 'order_id', 'id');
+    }
+
+    /**
      * Method order_mixer
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasOne
