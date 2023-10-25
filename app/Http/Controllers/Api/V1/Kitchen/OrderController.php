@@ -97,4 +97,13 @@ class OrderController extends APIController
         }
         throw new GeneralException('There is no order found');
     }
+
+
+    public function gostatus(Request $request)
+    {
+        $input          = $request->all();
+        $restaurant_kitchen   = $this->repository->updateStatus($input);
+
+        return $this->respondSuccess('Status updated');
+    }
 }

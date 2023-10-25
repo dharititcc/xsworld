@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\V1\Waiter\AuthController as WaiterAuthController;
+use App\Http\Controllers\Api\V1\Waiter\HomeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -154,6 +155,7 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'v1', 'as' => 'api.v1.'], fun
             Route::get('order-history','OrderController@orderHistory')->name('kitchen.order.history');
             Route::post('order-update-status','OrderController@updateOrderStauts')->name('kitchen.order.update.status');
             Route::post('order-show','OrderController@orderDetail')->name('kitchen.order.show');
+            Route::post('gostatus','OrderController@gostatus')->name('kitchen.gostatus');
 
             // // orders
             // // {api/v1/orderupdate}
@@ -177,6 +179,8 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'v1', 'as' => 'api.v1.'], fun
         Route::group(['middleware' => 'auth:api'], function() {
             // {api/v1/waiter/logout}
             Route::post('logout', [WaiterAuthController::class, 'logout'] )->name('kitchen.logout');
+
+            Route::get('order-tbl-list',[HomeController::class,'activeTable'])->name('waiter.active.tbl');
         });
     });
 });

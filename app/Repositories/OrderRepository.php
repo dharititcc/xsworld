@@ -586,4 +586,14 @@ class OrderRepository extends BaseRepository
         $order = Order::findOrFail($id);
         return $order;
     }
+
+
+    public function updateStatus(array $data)
+    {
+        $user   = auth()->user();
+        // dd($user->restaurant_kitchen());
+        $user->restaurant_kitchen()->update($data);
+        $user->refresh();
+        return $user;
+    }
 }
