@@ -13,6 +13,11 @@ class HomeController extends APIController
     {
         $auth_waiter = auth('api')->user();
         $orderTbl = Order::where('waiter_id',$auth_waiter->id)->where('type',Order::ORDER)->get();
-        return $this->respondSuccess('Order Fetched successfully.', OrderResource::collection($orderTbl));
+        $kitchen_status = Order::where('type',Order::ORDER)->whereIn('status',[Order::KITCHEN_CONFIRM,Order::READYFORPICKUP])->get();
+        $data = [
+            'active_tables' => $orderTbl->count() ? OrderResource::collection($orderTbl) : [],
+            'kitchen_status' => $kitchen_status->count() ? OrderResource::collection($kitchen_status) : [],
+        ];
+        return $this->respondSuccess('Waiter Order Fetched successfully.', $data);
     }
 }
