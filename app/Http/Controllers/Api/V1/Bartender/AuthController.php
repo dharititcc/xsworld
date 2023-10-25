@@ -160,6 +160,8 @@ class AuthController extends APIController
                 'fcm_token'             => $input['fcm_token'],
             ];
 
+            $this->repository->storeDevice($user, ['fcm_token' => $input['fcm_token']]);
+
             $this->repository->update($dataArr, $user);
 
             $token  = $user->createToken('xs_world')->plainTextToken;
