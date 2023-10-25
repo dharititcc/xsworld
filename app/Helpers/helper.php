@@ -309,10 +309,11 @@ if (! function_exists('sendNotification')) {
      * @param String $title [explicite description]
      * @param String $message [explicite description]
      * @param array $tokens [explicite description]
+     * @param int $orderid [explicite description]
      *
      * @return mixed
      */
-    function sendNotification(String $title, String $message, array $tokens)
+    function sendNotification(String $title, String $message, array $tokens, int $orderid)
     {
 
         try {
@@ -326,6 +327,7 @@ if (! function_exists('sendNotification')) {
                 'sound'                 => 'mySound',
                 // 'notification_type'  => $type,
                 'image'                 =>'',
+                'order_id'              => $orderid
             ];
 
             $extraNotificationData = ["data" => $notification];
