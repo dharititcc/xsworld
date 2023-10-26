@@ -447,9 +447,7 @@
         {
             var context = this;
             context.selectors.drinkForm.validate({
-                errorPlacement: function($error, $element) {
-                    $error.appendTo($element.closest("div"));
-                },
+                ignore: [],
                 rules: {
                     name: {
                         required: true,
@@ -457,7 +455,7 @@
                     description: {
                         required: true,
                     },
-                    category_id : {
+                    'category_id[]' : {
                         required: true,
                     },
                     price: {
@@ -494,10 +492,22 @@
                     },
                     image: {
                         required: "Please enter files", //accept: 'Not an image!'
+                    },
+                    'category_id[]': {
+                        required: "Please select category",
+                    }
+                },
+                errorPlacement: function (error, element) {
+                    console.log(element);
+                    if (element.attr("type") == "checkbox") {
+                        error.insertAfter($(element).closest('div'));
+                    } else if( element.attr("type") == 'file' ) {
+                        error.insertAfter($(element).closest('div'));
+                    }else{
+                        error.insertAfter($(element));
                     }
                 },
                 submitHandler: function() {
-                    console.log('new');
                     context.submitDrinkForm(context.selectors.drinkForm.get(0));
                 }
             });

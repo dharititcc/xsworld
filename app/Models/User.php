@@ -109,6 +109,12 @@ class User extends Authenticatable
         return $this->hasOne(RestaurantKitchen::class,'user_id','id');
     }
 
+
+    public function restaurant_waiter()
+    {
+        return $this->hasOne(RestaurantWaiter::class,'user_id','id');
+    }
+
     public function kitchen_pickup_point()
     {
         return $this->hasMany(KitchenPickPoint::class,'user_id');

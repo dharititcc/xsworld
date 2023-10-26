@@ -97,6 +97,7 @@
             form.find('[name="waiter_id"]').removeAttr('disabled').val('');
             form.find('[name="first_name"]').val('');
             form.find('[name="password"]').val('');
+            form.find('[name="_method"]').remove();
 
             context.selectors.waiterSubmitBtn.html('Add Waiter');
         },

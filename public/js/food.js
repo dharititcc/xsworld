@@ -436,9 +436,7 @@
         {
             var context = this;
             context.selectors.foodForm.validate({
-                errorPlacement: function($error, $element) {
-                    $error.appendTo($element.closest("div"));
-                },
+                ignore: [],
                 rules: {
                     name: {
                         required: true,
@@ -446,7 +444,7 @@
                     description: {
                         required: true,
                     },
-                    category_id : {
+                    'category_id[]' : {
                         required: true,
                     },
                     price: {
@@ -481,6 +479,16 @@
                     },
                     image: {
                         required: "Please enter files", //accept: 'Not an image!'
+                    }
+                },
+                errorPlacement: function (error, element) {
+                    console.log(element);
+                    if (element.attr("type") == "checkbox") {
+                        error.insertAfter($(element).closest('div'));
+                    } else if( element.attr("type") == 'file' ) {
+                        error.insertAfter($(element).closest('div'));
+                    }else{
+                        error.insertAfter($(element));
                     }
                 },
                 submitHandler: function() {

@@ -5,10 +5,18 @@ namespace App\Http\Controllers\Api\V1\Waiter;
 use App\Http\Controllers\Api\V1\APIController;
 use App\Http\Resources\OrderResource;
 use App\Models\Order;
+use App\Repositories\OrderRepository;
 use Illuminate\Http\Request;
 
 class HomeController extends APIController
 {
+    protected $repository;
+
+    public function __construct(OrderRepository $repository)
+    {
+        $this->repository = $repository;
+    }
+
     public function activeTable()
     {
         $auth_waiter = auth('api')->user();
@@ -19,5 +27,13 @@ class HomeController extends APIController
             'kitchen_status' => $kitchen_status->count() ? OrderResource::collection($kitchen_status) : [],
         ];
         return $this->respondSuccess('Waiter Order Fetched successfully.', $data);
+    }
+
+    public function gostatus(Request $request)
+    {
+        $input          = $request->all();
+        $restaurant_waiter   = $this->repository->updateStatus($input,1);
+
+        return $this->respondSuccess('Status updated');
     }
 }
