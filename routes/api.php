@@ -179,8 +179,8 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'v1', 'as' => 'api.v1.'], fun
         Route::group(['middleware' => 'auth:api'], function() {
             // {api/v1/waiter/logout}
             Route::post('logout', [WaiterAuthController::class, 'logout'] )->name('kitchen.logout');
-
             Route::get('order-tbl-list',[HomeController::class,'activeTable'])->name('waiter.active.tbl');
+            Route::post('gostatus',[HomeController::class,'gostatus'])->name('kitchen.gostatus');
         });
     });
 });
