@@ -588,11 +588,15 @@ class OrderRepository extends BaseRepository
     }
 
 
-    public function updateStatus(array $data)
+    public function updateStatus(array $data,$isWaiter = 0)
     {
         $user   = auth()->user();
         // dd($user->restaurant_kitchen());
-        $user->restaurant_kitchen()->update($data);
+        if($isWaiter == 1) {
+            $user->restaurant_waiter()->update($data);
+        } else {
+            $user->restaurant_kitchen()->update($data);
+        }
         $user->refresh();
         return $user;
     }
