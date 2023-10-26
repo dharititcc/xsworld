@@ -30,7 +30,7 @@
                                 {{-- <button onclick="return deleteConform({{ $child->id }});"><i
                                         class="icon-trash"></i></button> --}}
                                 {{-- <a  onclick="return deleteConform('Are you sure?')" href="#"><i class="icon-trash"></i></a> --}}
-                                <figure onClick="updateCategory({{ $child->id }})" data-child_id="{{ $child->id }}" data-type="Edit" data-parent_id="{{ $category->id }}" data-parent="{{ $category->name }}" class="category_model"><img src="{{ $child->image }}"
+                                <figure onClick="updateCategory({{ $child->id }})" data-child_id="{{ $child->id }}" data-type="Edit" data-parent_id="{{ $category->id }}" data-parent="{{ $category->name }}" class="category_model"><img src="{{ $child->image != '' ? $child->image : asset('img/logo.png') }}"
                                         alt="{{ $child->name }}">
                                     <figcaption><span> {{ $child->name }}</span></figcaption>
                                 </figure>
@@ -371,13 +371,16 @@
                    // $("input[name=file]").val(response.data.image);
                     var image = `
                                     <div class="pip">
-                                        <img class="imageThumb" src="${ response.data.image!="" ?response.data.image :'#'}" title="" />
+                                        <img class="imageThumb" src="${ response.data.image!="" ? response.data.image : '#'}" title="" />
                                         <i class="icon-trash remove"></i>
                                     </div>
                                 `;
 
                     $(".image_box").children('.pip').remove();
-                    $("#upload").after(image);
+                    if( response.data.image!= "" )
+                    {
+                        $("#upload").after(image);
+                    }
                     $(".remove").click(function() {
                         $(this).parent(".pip").remove();
                     });
