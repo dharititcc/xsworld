@@ -475,11 +475,15 @@ class OrderRepository extends BaseRepository
         $order->refresh();
         $order->loadMissing(['items']);
 
-        $title      = "Preparing Your order";
-        $message    = "Your Order is #".$order->id." placed";
-        $orderid    = $order->id;
+        $title              = "Preparing Your order";
+        $message            = "Your Order is #".$order->id." placed";
+        $orderid            = $order->id;
+        $send_notification  = sendNotification($title,$message,$devices,$orderid);
 
-        $send_notification = sendNotification($title,$message,$devices,$orderid);
+        $bartitle           = "Order is placed by Customer";
+        $barmessage         = "Order is #".$order->id." placed by customer";
+        $bardevices         = $order->pickup_point_user->devices()->pluck('fcm_token')->toArray();
+        $bar_notification   = sendNotification($bartitle,$barmessage,$bardevices,$orderid);
 
         return $order;
     }
@@ -510,10 +514,10 @@ class OrderRepository extends BaseRepository
 
             $order->update($updateArr);
 
-            $title      = "Order is cancelled";
-            $message    = "Your Order is #".$order->id." cancelled";
+            // $title      = "Order is cancelled";
+            // $message    = "Your Order is #".$order->id." cancelled";
 
-            $send_notification = sendNotification($title,$message,$devices,$order_id);
+            // $send_notification = sendNotification($title,$message,$devices,$order_id);
         }
 
         $order->refresh();
