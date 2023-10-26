@@ -1,11 +1,13 @@
 <?php
 
-namespace App\Http\Controllers\Api\V1\Bartender;
+namespace App\Http\Controllers\Api\V1\Waiter;
 
 use App\Http\Controllers\Api\V1\APIController;
 use App\Http\Controllers\Api\V1\Traits\Authenticate;
 use App\Http\Requests\BartenderLoginRequest;
+use App\Http\Requests\LoginRequest;
 use App\Http\Resources\BartenderUserResource;
+use App\Http\Resources\UserResource;
 use App\Repositories\UserRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
@@ -32,7 +34,7 @@ class AuthController extends APIController
     /**
      * Method postLogin
      *
-     * @param Request $request [explicite description]
+     * @param LoginRequest $request [explicite description]
      *
      * @return \Illuminate\Http\JsonResponse
      */
@@ -149,12 +151,10 @@ class AuthController extends APIController
         {
             $user = auth()->user();
 
-            if( !access()->isBartender() )
+            if( !access()->isWaiter() )
             {
-                return $this->respondWithError('Invalid login credentials. Please use bar credentials.');
+                return $this->respondWithError('Invalid login credentials. Please use Waiter credentials.');
             }
-
-            $user->loadMissing(['pickup_point']);
 
             // update all other data
             $dataArr = [
@@ -165,8 +165,6 @@ class AuthController extends APIController
                 'fcm_token'             => $input['fcm_token'],
             ];
 
-            $this->repository->storeDevice($user, ['fcm_token' => $input['fcm_token']]);
-
             $this->repository->update($dataArr, $user);
 
             $token  = $user->createToken('xs_world')->plainTextToken;
@@ -174,7 +172,7 @@ class AuthController extends APIController
                 'status'    =>  true,
                 'message'   =>  'Login successful',
                 'token'     =>  $token,
-                'item'      =>  new BartenderUserResource($user),
+                'item'      =>  new UserResource($user),
             ]);
         }
 

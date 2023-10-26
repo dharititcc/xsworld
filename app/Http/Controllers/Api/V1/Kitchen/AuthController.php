@@ -151,6 +151,11 @@ class AuthController extends APIController
         {
             $user = auth()->user();
 
+            if( !access()->isKitchen() )
+            {
+                return $this->respondWithError('Invalid login credentials. Please use kitchen credentials.');
+            }
+
             // update all other data
             $dataArr = [
                 'platform'              => $input['platform'],

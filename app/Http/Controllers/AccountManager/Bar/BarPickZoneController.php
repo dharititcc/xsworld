@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\AccountManager\Bar;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\BarPickupAddUpdateRequest;
 use App\Models\RestaurantPickupPoint;
 use App\Models\User;
 use Illuminate\Support\Str;
@@ -38,10 +39,10 @@ class BarPickZoneController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Http\Requests\BarPickupAddUpdateRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(BarPickupAddUpdateRequest $request)
     {
         $restaurant = session('restaurant');
         //Random Email

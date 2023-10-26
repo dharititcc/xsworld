@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 
 class Restaurant extends Model
@@ -63,6 +64,16 @@ class Restaurant extends Model
     }
 
     /**
+     * Get all of the waiters for the Restaurant
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function waiters(): HasMany
+    {
+        return $this->hasMany(RestaurantWaiter::class, 'restaurant_id', 'id');
+    }
+
+    /**
      * Get all of the orders for the Restaurant
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
@@ -70,6 +81,16 @@ class Restaurant extends Model
     public function orders(): HasMany
     {
         return $this->hasMany(Order::class, 'restaurant_id', 'id');
+    }
+
+    /**
+     * Get all of the ratings for the Restaurant
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasManyThrough
+     */
+    public function ratings(): HasManyThrough
+    {
+        return $this->hasManyThrough(OrderReview::class, Order::class, 'restaurant_id', 'order_id', 'id', 'id');
     }
 
     /**
@@ -211,6 +232,17 @@ class Restaurant extends Model
     public function restaurant_items(): HasMany
     {
         return $this->hasMany(RestaurantItem::class, 'restaurant_id', 'id');
+    }
+
+    /**
+     * Method getAverageRatingAttribute
+     *
+     * @return float
+     */
+    public function getAverageRatingAttribute()
+    {
+        $rating = $this->ratings()->average('rating');
+        return $rating ? $rating : 0;
     }
 
     /**

@@ -17,7 +17,7 @@
                         <div class="catg-box overly">
                             {{-- <button><i class="icon-trash"></i></button>
                          --}}
-                            <form method="POST" action="{{ route('restaurants.waiter.destroy', $waiter->id) }}">
+                            <form method="POST" action="{{ route('restaurants.waiter.destroy', $waiter->user->id) }}">
                                 @csrf
                                 <input name="_method" type="hidden" value="DELETE">
                                 <button type="submit" class="show_confirm" data-toggle="tooltip" title='Delete'><i
@@ -27,10 +27,10 @@
                             {{-- <button onclick="return deleteConform({{ $waiter->id }});"><i
                             class="icon-trash"></i></button> --}}
                             <figure data-type="Edit Waiter"
-                                data-parent_id="{{ $waiter->id }}" data-parant="{{ $waiter->first_name }}"
+                                data-parent_id="{{ $waiter->user->id }}" data-parant="{{ $waiter->user->first_name }}"
                                 class="waiter_popup_modal">
 
-                                <figcaption><span>{{ $waiter->username }}</span></figcaption>
+                                <figcaption><span>{{ $waiter->user->username }}</span></figcaption>
                                 {{-- <figcaption><span>{{$waiter->first_name}}</span></figcaption> --}}
                             </figure>
                         </div>
@@ -231,11 +231,7 @@
                             </div>
                             <div class="form-group">
                                 <label class="white-lable d-block text-center">Pickup Location</label>
-                                <select name="pickup_points" id="pickup_points" class="form-control vari2">
-                                    @foreach ($pickup_points as $pickup_point)
-                                        <option value="{{ $pickup_point->id }}">{{ $pickup_point->name }}</option>
-                                    @endforeach
-                                </select>
+                                <select name="pickup_points" id="pickup_points" class="form-control vari2"></select>
 
                             </div>
                         </div>
@@ -264,6 +260,7 @@
         barpickStore: "{!! route('restaurants.barpickzone.store') !!}",
         barpickUpdate: "{!! route('restaurants.barpickzone.update', ':ID') !!}",
         barpickGet: "{!! route('restaurants.barpickzone.show', ':ID') !!}",
+        availableBarPickupZones: '{!! json_encode($pickup_points) !!}'
     };
 
     $(document).ready(function()

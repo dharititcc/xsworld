@@ -27,6 +27,7 @@ class BarOrderListingResource extends JsonResource
             'pickup_point_user_image'   => isset($this->pickup_point->id) ? $this->pickup_point->image : '',
             'status'                    => $this->order_status,
             'status_no'                 => $this->status,
+            'table_no'                  => '',
             // 'user_payment_method'       => '',
             // 'credit_point'              => $this->credit_point,
             'apply_time'                => $this->apply_time ?? 0,
