@@ -84,16 +84,6 @@ class Restaurant extends Model
     }
 
     /**
-     * Get all of the ratings for the Restaurant
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasManyThrough
-     */
-    public function ratings(): HasManyThrough
-    {
-        return $this->hasManyThrough(OrderReview::class, Order::class, 'restaurant_id', 'order_id', 'id', 'id');
-    }
-
-    /**
      * Get all of the restaurant_time for the Restaurant
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
@@ -251,8 +241,7 @@ class Restaurant extends Model
      */
     public function getAverageRatingAttribute()
     {
-        $rating = $this->ratings()->average('rating');
-        return $rating ? $rating : 0;
+        return $this->reviews()->avg('rating');
     }
 
     /**
