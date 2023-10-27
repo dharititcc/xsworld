@@ -23,7 +23,8 @@ class VenueController extends Controller
         $restaurant = session('restaurant');
         $restaurant->refresh();
         $restaurant->loadMissing(['orders', 'reviews']);
-        $order_reviews = $restaurant->reviews()->with(['order', 'order.user'])->orderByDesc('id')->get();
+        $order_reviews = $restaurant->reviews()->with(['order', 'order.user'])->orderByDesc('id')->paginate(2);
+        // dd($order_reviews);
         $days = Day::all();
         $restaurant->loadMissing(['restaurant_time']);
         $res_times = $restaurant->restaurant_time;

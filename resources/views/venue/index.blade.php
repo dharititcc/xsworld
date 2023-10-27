@@ -82,6 +82,9 @@
                     </div>
                     <div class="col-md-4">
                         <div class="grey-brd-box">
+                            <div class="d-flex flex-row-reverse">
+                                {!! $order_reviews->links() !!}
+                            </div>
                             <div class="title">
                                 <h2>Reviews</h2>
                                 <div class="reviewbox">
@@ -130,7 +133,6 @@
                                     </div>
                                 @endforeach
                             </div>
-
                         </div>
                     </div>
                     <div class="col-md-4">
