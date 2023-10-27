@@ -20,7 +20,8 @@ class OrderReview extends Model
     protected $fillable = [
         'order_id',
         'rating',
-        'comment'
+        'comment',
+        'restaurant_id'
     ];
 
     /**
@@ -41,5 +42,15 @@ class OrderReview extends Model
     public function order(): BelongsTo
     {
         return $this->belongsTo(Order::class, 'order_id', 'id');
+    }
+
+    /**
+     * Get the restaurant that owns the OrderReview
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function restaurant(): BelongsTo
+    {
+        return $this->belongsTo(Restaurant::class, 'restaurant_id', 'id');
     }
 }

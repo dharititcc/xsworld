@@ -44,11 +44,11 @@ class Order extends Model
         self::COMPLETED                 => 'Completed',
         self::RESTAURANT_CANCELED       => 'Cancelled',
         self::CONFIRM_PICKUP            => 'Order Pickup',
-        self::RESTAURANT_TOXICATION     => 'Cancel due to Intoxication',
+        self::RESTAURANT_TOXICATION     => 'Cancelled',
         self::PARTIAL_REFUND            => 'Partially Refund',
         self::FULL_REFUND               => 'Full Refund',
         self::DELAY_ORDER               => 'Delay Order',
-        self::CUSTOMER_CANCELED         => 'Cancelled by customer',
+        self::CUSTOMER_CANCELED         => 'Cancelled',
         self::READYFORPICKUP            => 'Kitchen ready for pickup',
         self::KITCHEN_CONFIRM           => 'Kitchen confirm order',
     ];
