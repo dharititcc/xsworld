@@ -4,10 +4,6 @@
 @endsection
 @section('content')
 
-    </nav>
-    <!-- Page content-->
-    <div class="container-fluid">
-        <main>
             <div class="outrbox">
                 <div class="row">
                     <div class="col-md-4">
@@ -81,10 +77,7 @@
                         </div>
                     </div>
                     <div class="col-md-4">
-                        <div class="grey-brd-box">
-                            <div class="d-flex flex-row-reverse">
-                                {!! $order_reviews->links() !!}
-                            </div>
+                        <div class="grey-brd-box h-100">
                             <div class="title">
                                 <h2>Reviews</h2>
                                 <div class="reviewbox">
@@ -103,7 +96,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="scroll-y h-800">
+                            <div class="scroll-y review-box-height">
                                 @foreach ($order_reviews as $orderReview)
                                     <div class="line-gradient">
                                         <table width="100%" class="reviewer mb-2">
@@ -125,13 +118,15 @@
                                             </div>
                                         </div>
 
-                                        <div class="d-flex justify-content-between align-items-end">
-                                            <div class="rvnote">{{$orderReview->comment}} </div>
+                                            <div class="rvnote mb-4">{{$orderReview->comment}} </div>
                                             <div class="ord-time">Order Time - {{ \Carbon\Carbon::parse($orderReview->order->created_at)->format('H:i') }}
                                             </div>
-                                        </div>
                                     </div>
                                 @endforeach
+                            </div>
+
+                            <div class="review-pagination">
+                                {!! $order_reviews->links() !!}
                             </div>
                         </div>
                     </div>
@@ -166,8 +161,6 @@
 
                 </div>
             </div>
-        </main>
-    </div>
 
     <!-- Global popup -->
     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
