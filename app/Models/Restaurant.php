@@ -235,6 +235,16 @@ class Restaurant extends Model
     }
 
     /**
+     * Get all of the reviews for the Restaurant
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(OrderReview::class, 'restaurant_id', 'id');
+    }
+
+    /**
      * Method getAverageRatingAttribute
      *
      * @return float
