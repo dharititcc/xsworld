@@ -87,9 +87,16 @@
                                 <div class="reviewbox">
                                     <div class="text-star">{{ (float) $restaurant->average_rating }} Star Avg</div>
                                     <div class="stars">
-                                        @for ($i=0; $i<(float) $restaurant->average_rating; $i++)
+                                        @php
+                                            $rating = floor($restaurant->average_rating);
+                                            $fraction = $restaurant->average_rating - $rating;
+                                        @endphp
+                                        @for ($i = 0; $i < $rating; $i++)
                                             <i class="icon-star"></i>
                                         @endfor
+                                        @if ($fraction > 0)
+                                            <i class="icon-star-half"></i>
+                                        @endif
                                     </div>
                                 </div>
                             </div>
