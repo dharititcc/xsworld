@@ -181,6 +181,8 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'v1', 'as' => 'api.v1.'], fun
             Route::post('logout', [WaiterAuthController::class, 'logout'] )->name('kitchen.logout');
             Route::get('order-tbl-list',[HomeController::class,'activeTable'])->name('waiter.active.tbl');
             Route::post('gostatus',[HomeController::class,'gostatus'])->name('kitchen.gostatus');
+            Route::post('item-search', [HomeController::class,'itemSearchByName'])->name('item.search');
+            Route::post('categoryById', [HomeController::class,'categoryById'])->name('categoryById');
         });
     });
 });
