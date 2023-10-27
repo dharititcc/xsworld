@@ -85,16 +85,17 @@
                             <div class="title">
                                 <h2>Reviews</h2>
                                 <div class="reviewbox">
-                                    <div class="text-star">5 Star Avg</div>
-                                    <div class="stars"><i class="icon-star"></i><i class="icon-star"></i><i
-                                            class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i>
+                                    <div class="text-star">{{ (float) $restaurant->average_rating }} Star Avg</div>
+                                    <div class="stars">
+                                        @for ($i=0; $i<(float) $restaurant->average_rating; $i++)
+                                            <i class="icon-star"></i>
+                                        @endfor
                                     </div>
                                 </div>
                             </div>
                             <div class="scroll-y h-800">
                                 @foreach ($order_reviews as $key => $orderReview)
                                 @php
-                                    // dd($orderReview->reviews[$key]->selectRaw('AVG(orders.reviews.rating) as ratings_average')->groupBy('order_id'));
                                     $avg_rating = '';
                                 @endphp
                                     <div class="line-gradient">
@@ -104,18 +105,22 @@
                                                 Y') }}</td>
                                                 <td>
                                                     <div class="name">{{$orderReview->user->first_name}}</div>
-                                                    <div class="order">Order {{$orderReview->reviews[$key]->order_id}}</div>
+                                                    <div class="order">Order #{{$orderReview->id}}</div>
                                                 </td>
                                                 <td><i class="icon-ok-circled"></i> ${{$orderReview->total}}</td>
                                             </tr>
                                         </table>
-                                        <div class="complete mb-2">Complete <i class="icon-star"></i><i
-                                                class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i><i
-                                                class="icon-star"></i></div>
+                                        <div class="complete mb-2">Complete
+                                            <div class="stars">
+                                                @for ($i=0; $i<(float) $orderReview->reviews[0]->rating; $i++)
+                                                    <i class="icon-star"></i>
+                                                @endfor
+                                            </div>
+                                        </div>
 
                                         <div class="d-flex justify-content-between align-items-end">
-                                            <div class="rvnote">{{$orderReview->reviews[$key]->comment}} </div>
-                                            <div class="ord-time">Order Time - {{ \Carbon\Carbon::parse($orderReview->created_at)->format('H:i') }}
+                                            <div class="rvnote">{{$orderReview->reviews[0]->comment}} </div>
+                                            <div class="ord-time">Order Time - {{ \Carbon\Carbon::parse($orderReview->reviews[0]->created_at)->format('H:i') }}
                                             </div>
                                         </div>
                                     </div>

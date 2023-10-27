@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Venue;
 
 use App\Http\Controllers\Controller;
 use App\Models\Day;
+use App\Models\Order;
 use App\Models\OrderReview;
 use App\Models\Restaurant;
 use Illuminate\Support\Facades\Validator;
@@ -21,8 +22,9 @@ class VenueController extends Controller
     {
         $restaurant = session('restaurant');
         $restaurant->refresh();
-        $order_reviews = $restaurant->loadMissing(['orders','orders.reviews']);
-        $order_reviews = $order_reviews->orders->where('status',3);
+        $restaurant->loadMissing(['orders']);
+        // $order_reviews = $restaurant->orders->where('status', Order::COMPLETED);
+        $order_reviews = $restaurant->orders()->with(['reviews'])->whereHas('reviews')->get();
         // dd($order_reviews);
         $days = Day::all();
         $restaurant->loadMissing(['restaurant_time']);
