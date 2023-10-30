@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1\Waiter;
 use App\Http\Controllers\Api\V1\APIController;
 use App\Http\Requests\RestaurantItemSearchRequest;
 use App\Http\Resources\CategoryResource;
+use App\Http\Resources\CategorySubCategoryResource;
 use App\Http\Resources\OrderResource;
 use App\Http\Resources\RestaurantItemsResource;
 use App\Models\Order;
@@ -58,24 +59,37 @@ class HomeController extends APIController
     }
 
 
-    public function categoryById(Request $request)
+    public function categoryList(Request $request)
     {
         $user = auth()->user();
         $user->loadMissing(['restaurant_waiter', 'restaurant_waiter.restaurant', 'restaurant_waiter.restaurant.main_categories', 'restaurant_waiter.restaurant.main_categories.children']);
-
         $categories = $user->restaurant_waiter->restaurant->main_categories()->with(['children'])->get();
-
-        // dd($user->restaurant_waiter->restaurant->main_categories);
-        // $category = $this->restaurantRepository->getRestaurantSubCategories(['restaurant_id' => $user->restaurant_waiter->restaurant_id]);
-        // dd($category->sub_categories);
-        if($categories->count())
+        if($user->restaurant_waiter->restaurant->main_categories->count())
         {
             $data = [
-                'categories' => $categories->count() ? CategoryResource::collection($categories) : [],
-                'items'      => []
+                'categories' => $categories->count() ? CategorySubCategoryResource::collection($user->restaurant_waiter->restaurant->main_categories) : [],
             ];
             return $this->respondSuccess('Category Found', $data);
         }
         return $this->respondWithError('Category not found.');
+    }
+
+    public function restaurantItemListByCategory(Request $request)
+    {
+        $user = auth()->user();
+        $user->loadMissing(['restaurant_waiter']);
+        $req_data = [
+            'is_available' => 1,
+            'restaurant_id' => $user->restaurant_waiter->restaurant_id,
+            'category_id' => $request->category_id,
+        ];
+        $restaurant_items = $this->restaurantRepository->getRestaurantItems($req_data);
+
+        if( $restaurant_items->count() )
+        {
+            return $this->respondSuccess('Items Found.', RestaurantItemsResource::collection($restaurant_items));
+        }
+
+        return $this->respondWithError('Items not found.');
     }
 }
