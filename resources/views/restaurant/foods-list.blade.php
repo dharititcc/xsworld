@@ -187,6 +187,7 @@
         getFood: "{!! route('restaurants.foods.show', ':ID') !!}",
         updateFood: "{!! route('restaurants.foods.update', ':ID') !!}",
         favoriteStatusUpdate: "{!! route('restaurants.favoriteStatusUpdate') !!}",
+        currency: "{!! $restaurant->country->symbol !!}"
     };
     $(document).ready(function()
     {

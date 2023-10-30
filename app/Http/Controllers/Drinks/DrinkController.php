@@ -21,7 +21,7 @@ class DrinkController extends Controller
     {
         $subcategory = array();
         $categories = array();
-        $restaurant = session('restaurant')->loadMissing(['main_categories']);
+        $restaurant = session('restaurant')->loadMissing(['main_categories', 'country']);
         $category = $restaurant->main_categories()->with(['children'])->where('name', 'Drinks')->first();
         if($category)
         {
@@ -69,7 +69,12 @@ class DrinkController extends Controller
                 ->make(true);
         }
 
-        return view('restaurant.drinks-list')->with('categories',$categories);
+        return view('restaurant.drinks-list')->with(
+            [
+                'categories' => $categories,
+                'restaurant' => $restaurant
+            ]
+        );
     }
 
     /**

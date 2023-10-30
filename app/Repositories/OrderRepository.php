@@ -536,7 +536,7 @@ class OrderRepository extends BaseRepository
      */
     function ReviewOrder(array $data) : OrderReview
     {
-        $order      = isset($data['order_id']) ? Order::firstOrFail($data['order_id']) : null;
+        $order      = isset($data['order_id']) ? Order::findOrFail($data['order_id']) : null;
         $rating     = isset($data['rating']) ? $data['rating'] : null;
         $comment    = isset($data['comment']) ? $data['comment'] : null;
         $reviewArr  = [];
