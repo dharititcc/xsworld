@@ -58,7 +58,8 @@ class MixerController extends Controller
 
         return view('restaurant.mixer-list', [
             'drink_categories'  => isset($drinkCategories) ? $drinkCategories : [],
-            'food_categories'   => isset($foodCategories) ? $foodCategories : []
+            'food_categories'   => isset($foodCategories) ? $foodCategories : [],
+            'restaurant'        => $restaurant
         ]);
     }
 

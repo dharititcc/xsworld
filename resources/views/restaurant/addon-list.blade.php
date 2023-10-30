@@ -92,6 +92,7 @@
             'addAddon': "{!! route('restaurants.addons.store') !!}",
             'getAddon': "{!! route('restaurants.addons.show', ':ID') !!}",
             'updateAddon': "{!! route('restaurants.addons.update', ':ID') !!}",
+            currency: "{!! $restaurant->country->symbol !!}"
         };
         var modal = $("#exampleModal");
             // modal open pop up
@@ -256,12 +257,11 @@
                             var text = "";
                             if (row.variations.length > 0) {
                                 for (let i = 0; i < row.variations.length; i++) {
-                                    text += '<label class="price">$' + row.variations[i]['price'] +
-                                        "</label><br>";
+                                    text += `<label class="price">${moduleConfig.currency}${row.variations[i]['price']}</label>`;
                                 }
                                 return text
                             }
-                            return row.price
+                            return `<label class="price">${moduleConfig.currency}${row.price}</label>`;
                         }
                     },
                     {
