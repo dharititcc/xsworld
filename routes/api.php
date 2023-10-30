@@ -184,6 +184,7 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'v1', 'as' => 'api.v1.'], fun
             Route::post('item-search', [HomeController::class,'itemSearchByName'])->name('item.search');
             Route::post('categoryList', [HomeController::class,'categoryList'])->name('categoryList');
             Route::post('restaurantItemListByCategory', [HomeController::class,'restaurantItemListByCategory'])->name('restaurantItemListByCategory');
+            Route::post('add-to-cart', [HomeController::class,'addToCart'])->name('addToCart');
         });
     });
 });

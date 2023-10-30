@@ -3,12 +3,14 @@
 namespace App\Http\Controllers\Api\V1\Waiter;
 
 use App\Http\Controllers\Api\V1\APIController;
+use App\Http\Requests\AddtocartRequest;
 use App\Http\Requests\RestaurantItemSearchRequest;
 use App\Http\Resources\CategoryResource;
 use App\Http\Resources\CategorySubCategoryResource;
 use App\Http\Resources\OrderResource;
 use App\Http\Resources\RestaurantItemsResource;
 use App\Models\Order;
+use App\Repositories\OrderRepository;
 use App\Repositories\RestaurantRepository;
 use App\Repositories\WaiterRepositiory;
 use Illuminate\Http\Request;
@@ -20,10 +22,14 @@ class HomeController extends APIController
     /** @var \App\Repositories\RestaurantRepository */
     protected $restaurantRepository;
 
-    public function __construct(WaiterRepositiory $repository, RestaurantRepository $restaurantRepository)
+    /** @var \App\Repositories\OrderRepository */
+    protected $orderRepository;
+
+    public function __construct(WaiterRepositiory $repository, RestaurantRepository $restaurantRepository, OrderRepository $orderRepository)
     {
         $this->repository = $repository;
         $this->restaurantRepository = $restaurantRepository;
+        $this->orderRepository      = $orderRepository;
     }
 
     public function activeTable()
@@ -91,5 +97,13 @@ class HomeController extends APIController
         }
 
         return $this->respondWithError('Items not found.');
+    }
+
+    public function addToCart(AddtocartRequest $request)
+    {
+        $requestData = $request->all();
+        $order       = $this->orderRepository->addTocart($requestData);
+
+        return $this->respondSuccess('Order created successfully.');
     }
 }
