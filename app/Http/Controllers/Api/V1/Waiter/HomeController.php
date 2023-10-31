@@ -106,4 +106,16 @@ class HomeController extends APIController
 
         return $this->respondSuccess('Order created successfully.');
     }
+
+    public function viewCart()
+    {
+        $cart_data = $this->orderRepository->getCartdata();
+        if($cart_data)
+        {
+            return $this->respondSuccess('Cart data found', new OrderResource($cart_data));
+        }
+
+        return $this->respondWithError('Your cart is empty.');
+
+    }
 }
