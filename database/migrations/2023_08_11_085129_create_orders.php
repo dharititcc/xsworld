@@ -15,7 +15,7 @@ class CreateOrders extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id')->comment('Actual customer who order');
+            $table->unsignedBigInteger('user_id')->nullable()->comment('Actual customer who order');
             $table->unsignedBigInteger('restaurant_id');
             $table->unsignedBigInteger('pickup_point_id')->nullable();
             $table->unsignedBigInteger('pickup_point_user_id')->nullable()->comment('Bar user who take order');
