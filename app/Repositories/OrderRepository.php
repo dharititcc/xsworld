@@ -292,7 +292,6 @@ class OrderRepository extends BaseRepository
         $text   = isset($data['text']) ? $data['text'] : null;
 
         $user   = auth()->user();
-        dd($data);
 
         $user->loadMissing([
             'orders'
