@@ -49,6 +49,13 @@ class AuthController extends Controller
         return view('admin.auth.login');
     }
 
+    /**
+     * Method login
+     *
+     * @param Request $request [explicite description]
+     *
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\JsonResponse
+     */
     public function login(Request $request)
     {
         $this->validateLogin($request);
