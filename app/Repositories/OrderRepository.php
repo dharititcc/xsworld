@@ -33,7 +33,7 @@ class OrderRepository extends BaseRepository
      */
     public function addTocart(array $data)
     {
-        $user       = auth()->user();
+        $user       = isset( $data['order']['user_id'] ) ? User::findOrFail($data['order']['user_id']) : auth()->user();
         $order      = isset( $data['order'] ) ? $data['order'] : [];
         $orderItems = isset( $data['order_items'] ) ? $data['order_items'] : [];
 
@@ -168,10 +168,12 @@ class OrderRepository extends BaseRepository
      */
     private function createOrder(User $user, array $data, array $orderItems): Order
     {
-        $restaurant = Restaurant::find($data['restaurant_id']);
-        $order['user_id'] = $user->id;
+        $restaurant             = Restaurant::find($data['restaurant_id']);
+        $order['user_id']       = $user->id;
         $order['restaurant_id'] = $restaurant->id;
-        $order['currency_id'] = $restaurant->currency_id;
+        $order['currency_id']   = $restaurant->currency_id;
+        $order['waiter_id']     = access()->isWaiter() ? auth()->user()->id : null;
+        $order['restaurant_table_id'] = isset($data['restaurant_table_id']) ? $data['restaurant_table_id'] : null;
 
         $newOrder = Order::create($order);
 
@@ -536,18 +538,17 @@ class OrderRepository extends BaseRepository
      */
     function ReviewOrder(array $data) : OrderReview
     {
-        $order_id   = isset($data['order_id']) ? $data['order_id'] : null;
+        $order      = isset($data['order_id']) ? Order::findOrFail($data['order_id']) : null;
         $rating     = isset($data['rating']) ? $data['rating'] : null;
         $comment    = isset($data['comment']) ? $data['comment'] : null;
         $reviewArr  = [];
 
         $reviewArr  = [
-            'order_id'  => $order_id,
-            'rating'    => $rating,
-            'comment'   => $comment
+            'order_id'      => $order->id,
+            'restaurant_id' => $order->restaurant->id,
+            'rating'        => $rating,
+            'comment'       => $comment
         ];
-
-        $order   = Order::where('id' , $order_id)->first();
 
         if(isset($order->id))
         {

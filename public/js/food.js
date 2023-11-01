@@ -43,12 +43,11 @@
                 var text = "";
                 if (row.variations.length > 0) {
                     for (let i = 0; i < row.variations.length; i++) {
-                        text += '<label class="price">$' + row.variations[i]['price'] +
-                            "</label>";
+                        text += `<label class="price">${moduleConfig.currency}${row.variations[i]['price']}</label>`;
                     }
                     return text
                 }
-                return row.price
+                return `<label class="price">${moduleConfig.currency}${row.price}</label>`;
             }
         },
         {

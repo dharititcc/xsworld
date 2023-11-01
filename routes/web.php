@@ -113,6 +113,15 @@ Route::middleware(['guest'])->group(function()
 
         Route::get('verification-success/{token}', 'XSWorldVerificationController@verificationSuccess')->name('verification-success');
     });
+
+    Route::group(['namespace' => 'Admin', 'prefix' => 'admin', 'as' => 'admin.'], function()
+    {
+        Route::group(['namespace' => 'Auth', 'as' => 'auth.'], function()
+        {
+            Route::get('login', 'AuthController@showLoginForm')->name('login');
+            Route::post('login', 'AuthController@login')->name('admin.post-login');
+        });
+    });
 });
 
 

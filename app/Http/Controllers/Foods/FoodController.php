@@ -69,7 +69,12 @@ class FoodController extends Controller
                 ->make(true);
         }
 
-        return view('restaurant.foods-list')->with('categories',$categories);
+        return view('restaurant.foods-list')->with(
+            [
+                'categories' => $categories,
+                'restaurant' => $restaurant
+            ]
+        );
 
     }
 

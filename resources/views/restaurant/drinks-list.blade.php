@@ -196,6 +196,7 @@
         drinkUpdate: "{!! route('restaurants.drinks.update', ':ID') !!}",
         drinkGet: "{!! route('restaurants.drinks.show', ':ID') !!}",
         favoriteStatusUpdate: "{!! route('restaurants.favoriteStatusUpdate') !!}",
+        currency: "{!! $restaurant->country->symbol !!}"
     };
 
     $(document).ready(function()

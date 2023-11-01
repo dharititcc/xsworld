@@ -60,6 +60,7 @@ class AddonsController extends Controller
         return view('restaurant.addon-list', [
             'food_categories' => isset($foodCategories) ? $foodCategories : [],
             'drink_categories'=> isset($drinkCategories) ? $drinkCategories : [],
+            'restaurant'      => $restaurant
         ]);
     }
 
