@@ -73,24 +73,12 @@
             </div> --}}
             <div class="col-lg-7 col-xl-8">
                 <div class="grid colmn-3 h-100 m-h-100">
-                    <a href="{{ route('restaurants.venue.index') }}"
-                        class="{{ Route::is('restaurants.venue.*') ? 'active' : '' }} grey-brd-box padbox text-center lable-box"><span>Venue
-                            Management</span></a>
-                    <a href="#" class="grey-brd-box padbox text-center lable-box"><span>Analytics</span></a>
-                    <a href="{{ route('restaurants.table.index') }}"
-                        class="grey-brd-box padbox text-center lable-box"><span>Table Management</span></a>
-                    <a href="{{ route('restaurants.foods.index') }}"
-                        class="grey-brd-box padbox text-center lable-box"><span>Food List</span></a>
-                    <a href="{{ route('restaurants.drinks.index') }}"
-                        class="grey-brd-box padbox text-center lable-box"><span>Drink List</span></a>
-                    <a href="{{ route('restaurants.mixers.index') }}"
-                        class="grey-brd-box padbox text-center lable-box"><span>Mixer Management</span></a>
-                    <a href="{{ route('restaurants.categories.index') }}"
-                        class="grey-brd-box padbox text-center lable-box"><span>Category Management</span></a>
-                    <a href="{{ route('restaurants.pickup.index') }}"
-                        class="grey-brd-box padbox text-center lable-box"><span>Pick-up Zone Management</span></a>
-                    <a href="{{ route('restaurants.addons.index') }}"
-                        class="grey-brd-box padbox text-center lable-box"><span>Addon Management</span></a>
+                    <a href="{{ route('admin.restaurant.index') }}"
+                        class="grey-brd-box padbox text-center lable-box"><span>Restaurants</span></a>
+                    <a href="{{ route('admin.event.index') }}"
+                        class="grey-brd-box padbox text-center lable-box"><span>Events</span></a>
+                    <a href="{{ route('admin.customer.index') }}"
+                        class="grey-brd-box padbox text-center lable-box"><span>Customers</span></a>
                 </div>
             </div>
         </div>

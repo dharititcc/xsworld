@@ -130,9 +130,27 @@ Route::middleware(['admin'])->group(function()
     {
         Route::get('/home', 'HomeController@index')->name('home');
 
-        Route::group(['namespace' => 'Auth'], function()
+        Route::group(['namespace' => 'Auth', 'prefix' => 'auth', 'as' => 'auth.'], function()
         {
             Route::post('/logout', 'LogoutController')->name('logout');
+        });
+
+        Route::group(['namespace' => 'Customer', 'prefix' => 'customer'], function()
+        {
+            Route::resource('/customer', 'CustomerController');
+            Route::post('/customer/get', 'CustomerTableController')->name('customer.table');
+        });
+
+        Route::group(['namespace' => 'Event', 'prefix' => 'event'], function()
+        {
+            Route::resource('/event', 'EventController');
+            Route::post('/event/get', 'EventTableController')->name('event.table');
+        });
+
+        Route::group(['namespace' => 'Restaurant', 'prefix' => 'restaurant'], function()
+        {
+            Route::resource('/restaurant', 'RestaurantController');
+            Route::post('/restaurant/get', 'RestaurantTableController')->name('restaurant.table');
         });
     });
 });
