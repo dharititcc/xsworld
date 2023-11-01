@@ -73,7 +73,7 @@ class Repository extends Command
         $txt3       = "/**\n * Class {$arguments['name']}.\n*/\n";
         fwrite($repository, $txt3);
 
-        $txt4       = "class UserRepository extends BaseRepository\n{\n}";
+        $txt4       = "class {$arguments['name']} extends BaseRepository\n{\n}";
         fwrite($repository, $txt4);
 
 

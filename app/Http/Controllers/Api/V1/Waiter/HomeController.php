@@ -69,6 +69,7 @@ class HomeController extends APIController
     {
         $user = auth()->user();
         $user->loadMissing(['restaurant_waiter', 'restaurant_waiter.restaurant', 'restaurant_waiter.restaurant.main_categories', 'restaurant_waiter.restaurant.main_categories.children']);
+
         $categories = $user->restaurant_waiter->restaurant->main_categories()->with(['children'])->get();
         if($user->restaurant_waiter->restaurant->main_categories->count())
         {
@@ -78,6 +79,26 @@ class HomeController extends APIController
             return $this->respondSuccess('Category Found', $data);
         }
         return $this->respondWithError('Category not found.');
+    }
+
+
+    public function getFeaturedItemsByCatID(Request $request)
+    {
+        $user = auth()->user();
+        $user->loadMissing(['restaurant_waiter', 'restaurant_waiter.restaurant']);
+        $data = [
+            'restaurant_id' => $user->restaurant_waiter->restaurant_id,
+            'category_id'   => $request->category_id,
+        ];
+        $featured_items = $this->restaurantRepository->getFeaturedItems($data);
+        if($featured_items->count())
+        {
+           
+                $items = $featured_items->count() ? RestaurantItemsResource::collection($featured_items) : [];
+            
+            return $this->respondSuccess('Featured Items Found', $items);
+        }
+        return $this->respondWithError('Featured Items not found.');
     }
 
     public function restaurantItemListByCategory(Request $request)
@@ -116,6 +137,12 @@ class HomeController extends APIController
         }
 
         return $this->respondWithError('Your cart is empty.');
-
     }
+
+    public function orderHistory()
+    {
+        
+    }
+
+
 }
