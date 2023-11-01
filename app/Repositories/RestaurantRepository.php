@@ -89,6 +89,7 @@ class RestaurantRepository extends BaseRepository
         $restaurantName = isset( $data['restaurant_name'] ) ? $data['restaurant_name'] : null;
         $drink_name     = isset( $data['drink_name'] ) ? $data['drink_name'] : null;
         $type           = isset( $data['type'] ) ? $data['type'] : null;
+        $rating         = isset( $data['rating'] ) ? $data['rating'] : null;
 
         $query = $this->restaurantQuery()->with([
             'categories',
@@ -139,7 +140,13 @@ class RestaurantRepository extends BaseRepository
         $query = $query->where('type', $type);
         $query = $this->filterRadius($query, $data);
         $query = $query->orderBy('distance');
-
+        if( $rating )
+        {
+            $query = $query->whereHas('reviews', function( Builder $query ) use($rating)
+            {
+                return $query->having(DB::raw('ifnull(avg(rating),5)'), '>=', $rating);
+            });
+        }
         return $query->get();
     }
 

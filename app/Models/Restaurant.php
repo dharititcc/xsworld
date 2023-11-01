@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
+use Illuminate\Support\Facades\DB;
 
 class Restaurant extends Model
 {
@@ -247,6 +248,16 @@ class Restaurant extends Model
             $rating = 5;
         }
         return $rating;
+    }
+
+    /**
+     * Method average
+     *
+     * @return mixed
+     */
+    public function avgReviewRating()
+    {
+        return $this->reviews()->select(DB::raw('avg(rating) as rate'))->first();
     }
 
     /**
