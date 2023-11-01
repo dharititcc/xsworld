@@ -20,12 +20,12 @@ class AdminMiddleware
     {
         if( !auth()->check() )
         {
-            return redirect(route('admin.auth.login'));
+            return redirect()->route('admin.auth.login');
         }
 
         if( auth()->check() && access()->isRestaurantOwner() )
         {
-            return redirect(route('home'));
+            return redirect()->route('home');
         }
 
         return $next($request);

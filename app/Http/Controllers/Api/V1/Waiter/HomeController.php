@@ -94,9 +94,9 @@ class HomeController extends APIController
         if($featured_items->count())
         {
            
-                $featured_items->count() ? RestaurantItemsResource::collection($featured_items) : [];
+                $items = $featured_items->count() ? RestaurantItemsResource::collection($featured_items) : [];
             
-            return $this->respondSuccess('Featured Items Found', $featured_items);
+            return $this->respondSuccess('Featured Items Found', $items);
         }
         return $this->respondWithError('Featured Items not found.');
     }
