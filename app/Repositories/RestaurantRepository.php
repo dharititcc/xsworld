@@ -355,4 +355,23 @@ class RestaurantRepository extends BaseRepository
 
         return $query->get();
     }
+
+    public function getRestaurantDatatable(array $data)
+    {
+        $active = isset($input['active']) ? $input['active'] : 0;
+        $query = $this->query()
+            ->select([
+                'restaurants.id',
+                'restaurants.name',
+                'restaurants.phone',
+                'restaurants.country_id'
+            ])->with(['attachment', 'country']);
+
+        if($active)
+        {
+            $query->onlyTrashed();
+        }
+
+        return $query;
+    }
 }

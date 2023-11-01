@@ -301,4 +301,56 @@ class Restaurant extends Model
 
         return $address;
     }
+
+    /**
+     * Get Action Buttons Attribute
+     *
+     * @return string
+     */
+    public function getActionButtonsAttribute()
+    {
+        if($this->trashed()) {
+            return '<div class="btn-group" role="group" aria-label="User Actions">
+                    ' . $this->getRestoreButtonAttribute('btn btn-primary btn-sm') . '
+                </div>';
+        }
+
+        $buttons = '<div class="btn-group" role="group" aria-label="User Actions">
+            ' . $this->getEditButtonAttribute('btn btn-warning btn-sm') . '
+            ' . $this->getDeleteButtonAttribute('btn btn-danger btn-sm') . '
+        </div>';
+
+        return $buttons;
+    }
+
+    /**
+     * Get Edit Button Attribute
+     *
+     * @param string $class
+     * @return string
+     */
+    public function getEditButtonAttribute($class = '')
+    {
+        return '<a class="'.$class.'" href="'.route('admin.restaurant.edit', $this->id).'"><i class="fa fa-pencil" data-toggle="tooltip" data-placement="top" title="Edit"></i></a>';
+    }
+
+    /**
+     * Get Delete Button Attribute
+     *
+     * @param string $class
+     * @return string
+     */
+    public function getDeleteButtonAttribute($class = '')
+    {
+        if(!$this->trashed())
+        {
+            return '<a class="'.$class.' delete" href="'.route('admin.restaurant.destroy', $this->id).'"
+                     data-method="delete"
+                     data-trans-button-cancel="Cancel"
+                     data-trans-button-confirm="Confirm"
+                     data-trans-title="Are you sure?"><i class="fa fa-trash" data-toggle="tooltip" data-placement="top" title="Delete"></i></a>';
+        }
+
+        return '';
+    }
 }
