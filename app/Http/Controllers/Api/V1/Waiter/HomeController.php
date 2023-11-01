@@ -4,9 +4,12 @@ namespace App\Http\Controllers\Api\V1\Waiter;
 
 use App\Http\Controllers\Api\V1\APIController;
 use App\Http\Requests\AddtocartRequest;
+use App\Http\Requests\OrderHistoryRequest;
+use App\Http\Requests\PlaceOrderRequest;
 use App\Http\Requests\RestaurantItemSearchRequest;
 use App\Http\Resources\CategoryResource;
 use App\Http\Resources\CategorySubCategoryResource;
+use App\Http\Resources\OrderListResource;
 use App\Http\Resources\OrderResource;
 use App\Http\Resources\RestaurantItemsResource;
 use App\Models\Order;
@@ -139,9 +142,24 @@ class HomeController extends APIController
         return $this->respondWithError('Your cart is empty.');
     }
 
-    public function orderHistory()
+    public function orderHistory(OrderHistoryRequest $request)
     {
-        
+        $order_data = $this->orderRepository->getOrderdata($request->validated());
+        if($order_data)
+        {
+            $data = [
+                'total_order' => $order_data['total_orders'],
+                'orders'      => $order_data['total_orders'] ? OrderListResource::collection($order_data['orders']) : ''
+            ];
+            return $this->respondSuccess('Order data found', $data);
+        }
+        return $this->respondWithError('Your order not found.');
+    }
+
+    public function placeOrder(PlaceOrderRequest $request)
+    {
+        $place_order = $this->orderRepository->placeOrder($request->validated());
+        return $this->respondSuccess('Order payment successfully.', new OrderResource($place_order));
     }
 
 
