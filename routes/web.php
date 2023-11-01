@@ -119,9 +119,20 @@ Route::middleware(['guest'])->group(function()
         Route::group(['namespace' => 'Auth', 'as' => 'auth.'], function()
         {
             Route::get('login', 'AuthController@showLoginForm')->name('login');
-            Route::post('login', 'AuthController@login')->name('admin.post-login');
+            Route::post('login', 'AuthController@login')->name('post-login');
         });
     });
 });
 
+Route::middleware(['admin'])->group(function()
+{
+    Route::group(['namespace' => 'Admin', 'prefix' => 'admin', 'as' => 'admin.'], function()
+    {
+        Route::get('/home', 'HomeController@index')->name('home');
 
+        Route::group(['namespace' => 'Auth'], function()
+        {
+            Route::post('/logout', 'LogoutController')->name('logout');
+        });
+    });
+});

@@ -1,7 +1,7 @@
 <div id="sidebar-wrapper">
-    <div class="sidebar-header"><label> {{ session('restaurant')->name }}</label> <a href="javascript:void(0);" class="setting"> <i class="icon-settings-thin"></i></a></div>
-    <div class="sidebar-title"><button type="button" id="sidebarToggle1"><i class="icon-left"></i></button> <img src="{{ asset('img/xsworld.png') }}" alt="" class="logo"></div>
-    <figure><img src="{{ session('restaurant')->image }}" alt="{{ session('restaurant')->name }}"></figure>
+    {{-- <div class="sidebar-header"><label> {{ session('restaurant')->name }}</label> <a href="javascript:void(0);" class="setting"> <i class="icon-settings-thin"></i></a></div> --}}
+    {{-- <div class="sidebar-title"><button type="button" id="sidebarToggle1"><i class="icon-left"></i></button> <img src="{{ asset('img/xsworld.png') }}" alt="" class="logo"></div> --}}
+    {{-- <figure><img src="{{ session('restaurant')->image }}" alt="{{ session('restaurant')->name }}"></figure> --}}
     <div class="list-group">
         <a href="{{ route('home') }}" class="{{ Route::is('home') ? 'active' : '' }}">Dashboard</a>
         <a href="{{ route('restaurants.categories.index') }}" class="{{ Route::is('restaurants.categories.*') ? 'active' : '' }}">Categories Management</a>
@@ -21,7 +21,7 @@
                 {{ __('Logout') }}
         </a>
 
-            <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+            <form id="logout-form" action="{{ route('admin.logout') }}" method="POST" class="d-none">
                 @csrf
             </form>
   </div>
