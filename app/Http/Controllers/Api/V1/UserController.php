@@ -444,4 +444,22 @@ class UserController extends APIController
 
         throw new GeneralException('Gift card purchase failed.');
     }
+
+    /**
+     * Method redeemGiftCard
+     *
+     * @param Request $request [explicite description]
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function redeemGiftCard(Request $request)
+    {
+        $input              = $request->all();
+        $redeem_gift_card   = $this->repository->redeemGiftCard($input);
+        if( $redeem_gift_card )
+        {
+            return $this->respondSuccess('Gift card redeemed successfully');
+        }
+        throw new GeneralException('Gift card redeemed failed.');
+    }
 }

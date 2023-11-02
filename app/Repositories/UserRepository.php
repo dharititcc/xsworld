@@ -534,4 +534,33 @@ class UserRepository extends BaseRepository
         $randomString = substr(str_shuffle($characters), 0, $length);
         return $randomString;
     }
+
+    /**
+     * Method redeemGiftCard
+     *
+     * @param array $input [explicite description]
+     *
+     * @return mixed
+     */
+    function redeemGiftCard(array $input)
+    {
+        if( isset($input['code']) )
+        {
+            $user = auth()->user();
+            $redeem = UserGiftCard::where(['to_user' => $user->email , 'code' =>$input['code'] ])->first();
+            if($redeem)
+            {
+                $data['status'] = UserGiftCard::REDEEMED;
+                $redeem->update($data);
+
+                $users['credit_points'] = $user->credit_points + $redeem->amount;
+                $user->update($users);
+
+                return $user;
+            }
+            throw new GeneralException('Invalid Redeem code.');
+        }
+
+        throw new GeneralException('Redeem Code is required.');
+    }
 }
