@@ -228,13 +228,13 @@
 
                 $('#submitBtn').html('Please Wait...');
                 $("#submitBtn").attr("disabled", true);
-                
+
                 var data = new FormData(),
                     cat_name = $( ".cat_name option:selected" ).text();
 
                     console.log(cat_name);
                 data.append('name', cat_name);
-               
+
                 $.ajax({
                     url: moduleConfig.categoryName,
                     type: "POST",
@@ -251,7 +251,7 @@
                     }
                 });
     });
-        //if ($("#categorypopup").length > 0) {
+
     $('#submitBtn').click(function(e)
     {
         var crudetype = $('#exampleModal').data('crudetype'); //getter
@@ -308,7 +308,8 @@
             });
         }
     });
-    function formsubmit(from){
+    function formsubmit(from)
+    {
         $.ajaxSetup({
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -353,106 +354,120 @@
                 });
     }
 
-        function getCategory(id) {
-            $('#category_id').val(id);
-            $('#exampleModal').data('crudetype', 1);
-            $('.model_title').html('Add ');
-        }
+    function getCategory(id)
+    {
+        $('#category_id').val(id);
+        $('#exampleModal').data('crudetype', 1);
+        $('.model_title').html('Add ');
+    }
 
-        function updateCategory(id) {
-            $('.model_title').html('Edit ');
-            $('#cat_id').val(id);
-            $.ajax({
-                url: moduleConfig.getCategory.replace(':ID', id),
-                type: "GET",
-                success: function(response) {
-                    console.log(response);
-                    $("input[name=name]").val(response.data.name);
-                   // $("input[name=file]").val(response.data.image);
-                    var image = `
-                                    <div class="pip">
-                                        <img class="imageThumb" src="${ response.data.image!="" ? response.data.image : '#'}" title="" />
-                                        <i class="icon-trash remove"></i>
-                                    </div>
-                                `;
+    function updateCategory(id)
+    {
+        $('.model_title').html('Edit ');
+        $('#cat_id').val(id);
+        $.ajax({
+            url: moduleConfig.getCategory.replace(':ID', id),
+            type: "GET",
+            success: function(response) {
+                console.log(response);
+                $("input[name=name]").val(response.data.name);
+                // $("input[name=file]").val(response.data.image);
+                var image = `
+                                <div class="pip">
+                                    <img class="imageThumb" src="${ response.data.image!="" ? response.data.image : '#'}" title="" />
+                                    <i class="icon-trash remove"></i>
+                                </div>
+                            `;
 
-                    $(".image_box").children('.pip').remove();
-                    if( response.data.image!= "" )
-                    {
-                        $("#upload").after(image);
-                    }
-                    $(".remove").click(function() {
-                        $(this).parent(".pip").remove();
-                    });
-                    $('#exampleModal').data('crudetype', 0);
-                    $('#exampleModal').modal('show');
-                },
-                error: function(data) {}
-            });
-        }
-        $(function() {
-            $('#disable').click(function(e) {
-                e.preventDefault();
-                $.confirmModal('<label>Are you sure you want to do this?</label>', function(el) {
-                    var data = [];
-                    var i = 0;
-                    data['disable'] = $.map($('input[name="id"]:checked'), function(c) {
-                        return c.value;
-                    })
-                    $('.drink_datatable').DataTable().destroy();
-                    load_data(data);
-                    //console.log(data);
+                $(".image_box").children('.pip').remove();
+                if( response.data.image!= "" )
+                {
+                    $("#upload").after(image);
+                }
+                $(".remove").click(function() {
+                    $(this).parent(".pip").remove();
                 });
+                $('#exampleModal').data('crudetype', 0);
+                $('#exampleModal').modal('show');
+            },
+            error: function(data) {}
+        });
+    }
+    $(function()
+    {
+        $('#disable').click(function(e) {
+            e.preventDefault();
+            $.confirmModal('<label>Are you sure you want to do this?</label>', function(el) {
+                var data = [];
+                var i = 0;
+                data['disable'] = $.map($('input[name="id"]:checked'), function(c) {
+                    return c.value;
+                })
+                $('.drink_datatable').DataTable().destroy();
+                load_data(data);
+                //console.log(data);
             });
         });
+    });
 
-        $('.show_confirm').click(function(event) {
-            event.preventDefault();
-            swal({
-                title: `Are you sure you want to delete this Records?`,
-                icon: "warning",
-                buttons: true,
-                dangerMode: true,
-            })
-                .then((willDelete) => {
-                    if (willDelete) {
-                        var category = [],
-                            form     = $(this).closest('form');
+    $('.show_confirm').click(function(event)
+    {
+        event.preventDefault();
+        swal({
+            title: `Are you sure you want to delete this Records?`,
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        })
+        .then((willDelete) => {
+            if (willDelete) {
+                var category = [],
+                    form     = $(this).closest('form');
 
-                        if( form.get(0) )
+                if( form.get(0) )
+                {
+                    category.push(form.closest('.catg-box').find('figure').data('child_id'));
+                }
+                else
+                {
+                    $.each($("input[name='category']:checked"), function(i) {
+                        category[i] = $(this).val();
+                    });
+                }
+
+                $.ajax({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    url: "categories/multidelete",
+                    type: "POST",
+                    data: {
+                        category
+                    },
+                    success: function(response) {
+                        if( category.length > 1 )
                         {
-                            category.push(form.closest('.catg-box').find('figure').data('child_id'));
+                            alert('Categories deleted successfully.');
                         }
                         else
                         {
-                            $.each($("input[name='category']:checked"), function(i) {
-                                category[i] = $(this).val();
-                            });
+                            alert('Category deleted successfully.');
                         }
-                        console.log(category);
-                        $.ajax({
-                            headers: {
-                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                            },
-                            url: "categories/multidelete",
-                            type: "POST",
-                            data: {
-                                category
-                            },
-                            success: function(response) {
-                                if( category.length > 1 )
-                                {
-                                    alert('Categories deleted successfully.');
-                                }
-                                else
-                                {
-                                    alert('Category deleted successfully.');
-                                }
-                                location.reload(true);
-                            }
+                        location.reload(true);
+                    },
+                    error: function(xhr, errors)
+                    {
+                        console.log(xhr);
+                        swal({
+                            title: xhr.responseJSON.error.message,
+                            icon: "warning",
+                            buttons: true,
+                            dangerMode: true,
                         });
                     }
                 });
+            }
         });
+    });
     </script>
 @endsection

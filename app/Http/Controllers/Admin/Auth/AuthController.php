@@ -71,6 +71,10 @@ class AuthController extends Controller
         }
 
         if ($this->attemptLogin($request)) {
+            if( !access()->isAdmin() )
+            {
+                $this->logout($request);
+            }
             return $this->sendLoginResponse($request);
         }
 
