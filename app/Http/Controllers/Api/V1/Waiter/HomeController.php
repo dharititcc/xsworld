@@ -162,5 +162,15 @@ class HomeController extends APIController
         return $this->respondSuccess('Order payment successfully.', new OrderResource($place_order));
     }
 
+    public function waiterupdateCart(Request $request)
+    {
+        $input = $request->all();
+        $order = Order::findOrFail($input['order_id']);
+        $order->loadMissing(['order_items']);
+
+        $order = $this->orderRepository->updateCart($order,$input);
+        return $this->respondSuccess('Order updated successfully',new OrderResource($order));
+    }
+
 
 }
