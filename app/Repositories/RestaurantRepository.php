@@ -363,20 +363,29 @@ class RestaurantRepository extends BaseRepository
         return $query->get();
     }
 
-    public function getRestaurantDatatable(array $data)
+    public function getRestaurantEventDatatable(array $data)
     {
         $active = isset($input['active']) ? $input['active'] : 0;
+        $type   = isset($data['type']) ? $data['type'] : Restaurant::RESTAURANT;
+
         $query = $this->query()
             ->select([
                 'restaurants.id',
                 'restaurants.name',
                 'restaurants.phone',
-                'restaurants.country_id'
+                'restaurants.country_id',
+                'restaurants.street1',
+                'restaurants.street2',
+                'restaurants.city',
+                'restaurants.state',
+                'restaurants.postcode',
+                'restaurants.start_date',
+                'restaurants.end_date'
             ])->with(['attachment', 'country']);
 
-        if($active)
+        if( $type )
         {
-            $query->onlyTrashed();
+            $query->where('type', $type);
         }
 
         return $query;

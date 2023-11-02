@@ -320,16 +320,14 @@ class Restaurant extends Model
      */
     public function getActionButtonsAttribute()
     {
-        if($this->trashed()) {
-            return '<div class="btn-group" role="group" aria-label="User Actions">
-                    ' . $this->getRestoreButtonAttribute('btn btn-primary btn-sm') . '
-                </div>';
-        }
-
         $buttons = '<div class="btn-group" role="group" aria-label="User Actions">
             ' . $this->getEditButtonAttribute('btn btn-warning btn-sm') . '
             ' . $this->getDeleteButtonAttribute('btn btn-danger btn-sm') . '
         </div>';
+
+        // $buttons .= '<div class="btn-group" role="group" aria-label="User Actions">
+        //     ' . $this->getRestoreButtonAttribute('btn btn-primary btn-sm') . '
+        // </div>';
 
         return $buttons;
     }
@@ -353,15 +351,13 @@ class Restaurant extends Model
      */
     public function getDeleteButtonAttribute($class = '')
     {
-        if(!$this->trashed())
-        {
+        // if(!$this->trashed())
+        // {
             return '<a class="'.$class.' delete" href="'.route('admin.restaurant.destroy', $this->id).'"
                      data-method="delete"
                      data-trans-button-cancel="Cancel"
                      data-trans-button-confirm="Confirm"
                      data-trans-title="Are you sure?"><i class="fa fa-trash" data-toggle="tooltip" data-placement="top" title="Delete"></i></a>';
-        }
-
-        return '';
+        // }
     }
 }

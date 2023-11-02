@@ -138,7 +138,7 @@ Route::middleware(['admin'])->group(function()
         Route::group(['namespace' => 'Customer', 'prefix' => 'customer'], function()
         {
             Route::resource('/customer', 'CustomerController');
-            Route::post('/customer/get', 'CustomerTableController')->name('customer.table');
+            Route::post('/get', 'CustomerTableController')->name('customer.table');
         });
 
         Route::group(['namespace' => 'Event', 'prefix' => 'event'], function()
