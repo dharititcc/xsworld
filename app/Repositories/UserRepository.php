@@ -1,14 +1,18 @@
 <?php namespace App\Repositories;
 
 use App\Billing\Stripe;
+use App\Events\GiftCardEvent;
 use App\Events\RegisterEvent;
 use App\Exceptions\GeneralException;
+use App\Mail\PurchaseGiftCard;
 use App\Models\User;
 use App\Models\UserDevices;
+use App\Models\UserGiftCard;
 use App\Models\UsersVerifyMobile;
 use App\Repositories\BaseRepository;
 use File;
 use Illuminate\Foundation\Mix;
+use Illuminate\Support\Facades\Mail;
 use Stripe\Source;
 use Stripe\Token;
 
@@ -461,5 +465,102 @@ class UserRepository extends BaseRepository
         }
         throw new GeneralException('OTP is invalid.');
 
+    }
+
+    /**
+     * Method purchaseGiftCard
+     *
+     * @param array $data [explicite description]
+     *
+     * @return mixed
+     */
+    public function purchaseGiftCard(array $data) : mixed
+    {
+        $user = auth()->user();
+
+        // $code = $this->generateRandomString(10);
+        $code = 11111111;
+
+        if($user->stripe_customer_id != '')
+        {
+            $stripe         = new Stripe();
+            $customer       = $stripe->fetchCustomer($user->stripe_customer_id);
+            $default_card   = $customer->default_source;
+
+            $paymentArr = [
+                'amount'        => $data['amount'] * 100,
+                'currency'      => 'AUD',
+                'customer'      => $user->stripe_customer_id,
+                'source'        => $default_card,
+                'description'   => 'Gift Card Purchase '. $data['name']
+            ];
+
+            $payment_data   = $stripe->createCharge($paymentArr);
+
+            $giftcardArr = [
+                'user_id'           => $user->id,
+                'name'              => $data['name'],
+                'from_user'         => $user->email,
+                'to_user'           => $data['to_user'],
+                'amount'            => $data['amount'],
+                'code'              => $code,
+                'status'            => UserGiftCard::PENDING,
+                'transaction_id'    => $payment_data->balance_transaction
+            ];
+
+            $savegiftcard   = UserGiftCard::create($giftcardArr);
+            //TODO:
+            // event(new GiftCardEvent($savegiftcard));
+            // $data = [
+            //     'code'         => $code
+            // ];
+            return $savegiftcard;
+        }
+
+        throw new GeneralException('Please select default card');
+
+    }
+
+    /**
+     * Method generateRandomString
+     *
+     * @param $length $length [explicite description]
+     *
+     * @return void
+     */
+    function generateRandomString($length = 10)
+    {
+        $characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $randomString = substr(str_shuffle($characters), 0, $length);
+        return $randomString;
+    }
+
+    /**
+     * Method redeemGiftCard
+     *
+     * @param array $input [explicite description]
+     *
+     * @return mixed
+     */
+    function redeemGiftCard(array $input)
+    {
+        if( isset($input['code']) )
+        {
+            $user = auth()->user();
+            $redeem = UserGiftCard::where(['to_user' => $user->email , 'code' =>$input['code'] , 'status' => UserGiftCard::PENDING ])->orderBy('id', 'desc')->first();
+            if($redeem)
+            {
+                $data['status'] = UserGiftCard::REDEEMED;
+                $redeem->update($data);
+
+                $users['credit_points'] = $user->credit_points + $redeem->amount;
+                $user->update($users);
+
+                return $user;
+            }
+            throw new GeneralException('Invalid Redeem code.');
+        }
+
+        throw new GeneralException('Redeem Code is required.');
     }
 }

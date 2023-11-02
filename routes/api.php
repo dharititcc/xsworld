@@ -82,6 +82,8 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'v1', 'as' => 'api.v1.'], fun
         Route::post('/order-review', 'OrderController@orderReview')->name('orderReview');
         // {api/v1/purchase-gift-card}
         Route::post('/purchase-gift-card', 'UserController@purchaseGiftCard')->name('purchaseGiftCard');
+        // {api/v1/redeem-gift-card}
+        Route::post('/redeem-gift-card', 'UserController@redeemGiftCard')->name('redeemGiftCard');
     });
 
     Route::group(['prefix' => 'users','middleware' => 'auth:api'], function ()
