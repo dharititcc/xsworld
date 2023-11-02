@@ -23,6 +23,10 @@ class EventServiceProvider extends ServiceProvider
 
         RegisterEvent::class => [
             SendEmailVerificationListener::class
+        ],
+
+        GiftCardEvent::class => [
+            PurchaseGiftCardListener::class
         ]
     ];
 

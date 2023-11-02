@@ -510,7 +510,8 @@ class UserRepository extends BaseRepository
 
             $savegiftcard   = UserGiftCard::create($giftcardArr);
             //TODO:
-            // event(new GiftCardEvent($savegiftcard));
+            event(new GiftCardEvent($savegiftcard));
+
             // $data = [
             //     'code'         => $code
             // ];
