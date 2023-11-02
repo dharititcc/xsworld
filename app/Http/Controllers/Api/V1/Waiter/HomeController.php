@@ -131,9 +131,9 @@ class HomeController extends APIController
         return $this->respondSuccess('Order created successfully.');
     }
 
-    public function viewCart()
+    public function viewCart(Request $request)
     {
-        $cart_data = $this->orderRepository->getCartdata();
+        $cart_data = $this->orderRepository->getCartdataWaiter($request->all());
         if($cart_data)
         {
             return $this->respondSuccess('Cart data found', new OrderResource($cart_data));
@@ -144,7 +144,7 @@ class HomeController extends APIController
 
     public function orderHistory(OrderHistoryRequest $request)
     {
-        $order_data = $this->orderRepository->getOrderdata($request->validated());
+        $order_data = $this->orderRepository->getwaiterOrderdata($request->validated());
         if($order_data)
         {
             $data = [

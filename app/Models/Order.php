@@ -106,6 +106,16 @@ class Order extends Model
     }
 
     /**
+     * Get the restaurant_table that owns the Order
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function restaurant_table(): BelongsTo
+    {
+        return $this->belongsTo(RestaurantTable::class, 'restaurant_table_id', 'id');
+    }
+
+    /**
      * Get the user that owns the Order
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo

@@ -297,7 +297,6 @@ class OrderRepository extends BaseRepository
         $user->loadMissing([
             'orders'
         ]);
-        dd($user);
 
         $query = $user
         ->orders()
@@ -422,14 +421,13 @@ class OrderRepository extends BaseRepository
      */
     function placeOrder(array $data): Order
     {
-        dd($data);
-        $card_id            = $data['card_id'] ? $data['card_id'] : null;
+        $card_id            = $data['card_id'] ?? null;
         $credit_amount      = $data['credit_amount'] ? $data['credit_amount'] : null;
         $amount             = $data['amount'] ? $data['amount'] : null;
-        $pickup_point_id    = $data['pickup_point_id'] ? PickupPoint::findorFail($data['pickup_point_id']) : null;
+        $pickup_point_id    = $data['pickup_point_id'] ? PickupPoint::findOrFail($data['pickup_point_id']) : null;
         $table_id           = $data['table_id'] ? $data['table_id'] : null;
         $order              = Order::findOrFail($data['order_id']);
-        $user               = auth()->user();
+        $user               = $order->user_id ? User::findOrFail($order->user_id) : auth()->user();
         $devices            = $user->devices()->pluck('fcm_token')->toArray();
 
         $updateArr         = [];
@@ -441,10 +439,10 @@ class OrderRepository extends BaseRepository
             {
                 $updateArr = [
                     'type'                  => Order::ORDER,
-                    'pickup_point_id'       => $pickup_point_id->id,
-                    'pickup_point_user_id'  => $pickup_point_id->user_id,
+                    'pickup_point_id'       => ($pickup_point_id) ? $pickup_point_id->id : null,
+                    'pickup_point_user_id'  => ($pickup_point_id) ? $pickup_point_id->user_id : null,
                     'credit_amount'         => $credit_amount,
-                    'restaurant_table_id'   => $table_id
+                    'restaurant_table_id'   => ($table_id) ? $table_id : null,
                 ];
             }
 
@@ -467,10 +465,10 @@ class OrderRepository extends BaseRepository
                     'type'                  => Order::ORDER,
                     'card_id'               => $card_id,
                     'charge_id'             => $payment_data->id,
-                    'pickup_point_id'       => $pickup_point_id->id,
-                    'pickup_point_user_id'  => $pickup_point_id->user_id,
+                    'pickup_point_id'       => ($pickup_point_id) ? $pickup_point_id->id : null,
+                    'pickup_point_user_id'  => ($pickup_point_id) ? $pickup_point_id->user_id : null,
                     'credit_amount'         => $credit_amount,
-                    'restaurant_table_id'   => $table_id
+                    'restaurant_table_id'   => ($table_id) ? $table_id : null,
                 ];
             }
 
@@ -607,5 +605,84 @@ class OrderRepository extends BaseRepository
         }
         $user->refresh();
         return $user;
+    }
+
+
+    /**
+     * Method getCartdataWaiter
+     *
+     * @return Order
+     */
+    public function getCartdataWaiter(array $data): ?Order
+    {
+        $order        = isset($data['order_id']) ? Order::findOrFail($data['order_id']) : null;
+
+        $order->loadMissing(
+            [
+                'order_items',
+                'restaurant_table',
+                'restaurant',
+            ]
+        );
+
+        return $order->refresh();
+    }
+
+
+    /**
+     * Method getwaiterOrderdata
+     *
+     * @param array $data [explicite description]
+     *
+     * @return mixed
+     */
+    function getwaiterOrderdata(array $data) : array
+    {
+        $page   = isset($data['page']) ? $data['page'] : 1;
+        $limit  = isset($data['limit']) ? $data['limit'] : 10;
+        $text   = isset($data['text']) ? $data['text'] : null;
+
+        $user   = auth()->user();
+        // dd($user->waiter_order);
+
+        $user->loadMissing([
+            'waiter_order'
+        ]);
+
+        $query = $user
+        ->waiter_order()
+        ->where('type', Order::ORDER)
+        ->with([
+            'user',
+            'reviews',
+            'order_items',
+            'order_mixer',
+            'restaurant'
+        ]);
+
+        if( $text )
+        {
+            $query->where(function($innerQuery) use($text)
+            {
+                $innerQuery->where('id', $text);
+                $innerQuery->orWhereHas('restaurant', function($resQuery) use($text)
+                {
+                    $resQuery->where('name', 'like', "%{$text}%");
+                });
+            });
+        }
+        $total = $query->count();
+        $query->limit($limit)->offset(($page - 1) * $limit)->orderBy('id','desc');
+        $data = $query->get();
+        if( $data->count() )
+        {
+            $data = [
+                'total_orders'   => $total,
+                'orders'         => $data
+            ];
+            return $data;
+        }
+
+        throw new GeneralException('There is no order found.');
     }
 }
