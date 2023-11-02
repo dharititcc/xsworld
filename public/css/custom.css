@@ -61,6 +61,8 @@ form .logo{ margin: 0 auto 6vh auto; display: block; max-width: 72%;}
 
 .bottom .btn{ width: 47%;}
 
+.xs-admin-nav{border-image-source: var(--gold-line); border-image-slice: 1; border-bottom: 1px solid;}
+
 .custom-nav.navbar{ padding:15px 0; min-height: 78px;}
 .custom-nav.navbar.bord{ border-bottom: 1px solid; border-image-source:var(--gold-line); border-image-slice: 1;}
 .custom-nav.navbar .container-fluid{ align-items: center; padding-left: 25px; padding-right: 25px;}
@@ -126,7 +128,11 @@ a.grey-brd-box.lable-box:hover{ border-color: var(--bs-light);}
 .sidebar-title{ justify-content: inherit;}
 .sidebar-title button{ border: none; background: transparent; padding: 0; color: #fff; font-size: 18px;}
 
-#sidebar-wrapper figure{ margin: 0; padding: 0 .75rem; height: 175px; width: 100%;     box-sizing: border-box;}
+.sidebar-title.xs-admin-ttl{border-image-source: var(--gold-line); border-image-slice: 1; border-bottom: 1px solid; min-height: 78px;}
+
+#sidebar-wrapper figure.xs-admin-logo{ height: auto; padding: 1em .75rem; border-image-source: var(--gold-line); border-image-slice: 1;  border-bottom: 1px solid;}
+
+#sidebar-wrapper figure{ margin: 0; padding: 0 .75rem; height: 175px; width: 100%; box-sizing: border-box;}
 #sidebar-wrapper figure img{ height: 100%; object-fit: cover; width: 100%;}
 
 .list-group{    flex: 1 0 auto;}
@@ -208,6 +214,7 @@ a.grey-brd-box.lable-box:hover{ border-color: var(--bs-light);}
 .h-800{ height: 100%; max-height: 800px;}
 .h-600{ height: 100%; max-height: 600px;}
 .h-754{ height: 100%; max-height: 754px;}
+.h-230{ height: 230px;}
 
 
 .scroll-y{ overflow-y: scroll; }
@@ -267,8 +274,14 @@ a.grey-brd-box.lable-box:hover{ border-color: var(--bs-light);}
 .drink_datatable thead:after{ border-bottom: 1px solid; border-image-source: var(--gold-line); border-image-slice: 1; content:''; position: absolute; bottom: 0; width: 100%; left: 0;}
 
 .drink_datatable th{ padding: 1.1rem .4rem; font-size: 20px; color: #fff; font-family: var(--bs-light);}
-.drink_datatable th:first-child{ padding-left: 0;}
+
+.drink_datatable th:first-child{}
 .drink_datatable th:last-child{ padding-right: 0;}
+
+table.dataTable .cst-check{ position: absolute; left: 0; margin-top: 2px;}
+
+table.dataTable th:first-child,
+table.dataTable td:first-child{ position: relative; padding-left: 30px;}
 
 .drink_datatable td{ padding: .85rem .4rem; color: #fff;}
 .drink_datatable td:first-child{ padding-left: 0;  width: 3%;}
@@ -336,9 +349,14 @@ th .sort-icon{ position: absolute; top: 20%;}
 .add-table-design{ color: #fff; font-size: 60px; text-decoration: none; text-align: center; height:100%; display: flex; align-items: center; justify-content: center;}
 .add-table-design:hover{ color: #fff;}
 
+.action-box{ display: flex; align-items: center; }
+.action-box .act-btn{ background: none; border: none; margin: 0 4px; color: #fff; border: var(--line) solid #424141; padding: 7px;}  
+
 .del-table.grey-brd-box,
 .del-table.table-design .export-info { border-color: #D74848;}
-.del-table.table-design .head{border-color: #D74848;  color: #D74848;}
+.del-table.table-design .head{border-color: #D74848;  color: #D74848;} 
+
+table.dataTable.no-footer{table-layout: fixed;}
 
 /* export popup */
 .modal .modal-dialog .modal-content{ border: 1px solid;border-image-source: var(--gold-line); border-image-slice: 1; }
@@ -509,6 +527,9 @@ table.dataTable thead .sorting:after, table.dataTable thead .sorting_asc:after, 
 table.dataTable thead .sorting_asc{ background-image: url(../img/sort_asc.png) !important;}
 table.dataTable thead .sorting_desc { background-image: url(../img/sort_desc.png) !important;}
 table.dataTable thead th{ padding: 1.1rem .4rem;}
+
+
+
 
 /* Analytics */
 .aa{}

@@ -24,13 +24,13 @@
                 console.log(row);
 
                 return `
-                            <p>${row.street1}</p>
+                            ${row.street1}<br/>
                             ${row.street2 ?
-                                `<p>${row.street2}</p>` : ``
+                                `${row.street2}<br/>` : ``
                             },
-                            <p>${row.city}</p>
-                            <p>${row.state}</p>
-                            <p>${row.postcode}</p>
+                            ${row.city}<br/>
+                            ${row.state}<br/>
+                            ${row.postcode}
                         `;
             }
         },
@@ -40,6 +40,11 @@
         },
         {
             "data": "country", // can be null or undefined
+            "defaultContent": ""
+        },
+        {
+            "data": "actions", // can be null or undefined
+            "sortable": false,
             "defaultContent": ""
         }],
 

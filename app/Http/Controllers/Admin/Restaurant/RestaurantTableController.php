@@ -38,6 +38,10 @@ class RestaurantTableController extends Controller
             {
                 return "<img src='{$restaurant->image}' width='30' />";
             })
+            ->editColumn('country', function(Restaurant $restaurant)
+            {
+                return $restaurant->country->name;
+            })
             ->addColumn('actions', function(Restaurant $restaurant)
             {
                 return $restaurant->action_buttons;

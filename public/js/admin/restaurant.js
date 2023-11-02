@@ -5,32 +5,26 @@
         table: null,
         /** table columns for datatable */
         tableCols: [{
-            "data": "id", // can be null or undefined
-            "defaultContent": "",
-            "sortable": false,
-            render: function (data, type, row) {
-                return `<label class="cst-check"><input name="id" class="checkboxitem" type="checkbox" value="${row.id}"><span class="checkmark"></span></label>`
-            }
-        },
-        {
             "data": "name", // can be null or undefined ->type
             "defaultContent": "",
+            render: function(data, type, row)
+            {
+                return `<label class="cst-check"><input name="id" class="checkboxitem" type="checkbox" value="${row.id}"><span class="checkmark"></span></label> ${row.name}`
+            }
         },
         {
             "data": "address", // can be null or undefined
             "defaultContent": "",
             render: function(data, type, row)
             {
-                console.log(row);
-
                 return `
-                            <p>${row.street1}</p>
+                            ${row.street1},
                             ${row.street2 ?
-                                `<p>${row.street2}</p>` : ``
+                                `${row.street2}` : ``
                             },
-                            <p>${row.city}</p>
-                            <p>${row.state}</p>
-                            <p>${row.postcode}</p>
+                            ${row.city},
+                            ${row.state}<br/>
+                            ${row.postcode}
                         `;
             }
         },
@@ -40,6 +34,11 @@
         },
         {
             "data": "country", // can be null or undefined
+            "defaultContent": ""
+        },
+        {
+            "data": "actions", // can be null or undefined
+            "sortable": false,
             "defaultContent": ""
         }],
 

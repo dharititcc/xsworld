@@ -1,4 +1,7 @@
 @extends('admin.layouts.mainlayout')
+@section('topbar')
+    @include('admin.common.nav')
+@endsection
 @section('content')
     <div class="outrbox">
         <div class="row">
@@ -71,7 +74,7 @@
                     </div>
                 </div>
             </div> --}}
-            <div class="col-lg-7 col-xl-8">
+            <div class="col-md-12 h-230">
                 <div class="grid colmn-3 h-100 m-h-100">
                     <a href="{{ route('admin.restaurant.index') }}"
                         class="grey-brd-box padbox text-center lable-box"><span>Restaurants</span></a>

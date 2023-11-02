@@ -8,8 +8,8 @@
         <h2 class="yellow">Sort By</h2>
         <div class="searchbox"><input type="text" name="search" id="search" class="searchbar" placeholder="Find a Drink"></div>
     </div>
-    <div class="data-table drinks scroll-y h-600 table-responsive">
-        <table width="100%" class="customer_datatable">
+    <div class="data-table drinks table-responsive">
+        <table width="100%" class="customer_datatable drink_datatable">
             <thead>
                 <tr valign="middle">
                     <th><label class="cst-check"><input type="checkbox" id="allcheck" value=""><span class="checkmark"></span></label></th>
