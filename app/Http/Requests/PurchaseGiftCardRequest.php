@@ -23,7 +23,6 @@ class PurchaseGiftCardRequest extends FormRequest
     {
         return [
             'name'        => 'required',
-            'from_user'   => 'required|email',
             'to_user'     => 'required|email',
             'amount'      => 'required',
         ];

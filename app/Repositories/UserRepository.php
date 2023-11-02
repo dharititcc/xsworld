@@ -481,7 +481,7 @@ class UserRepository extends BaseRepository
         // $code = $this->generateRandomString(10);
         $code = 11111111;
 
-        if($user->stripe_customer_id == '')
+        if($user->stripe_customer_id != '')
         {
             $stripe         = new Stripe();
             $customer       = $stripe->fetchCustomer($user->stripe_customer_id);
@@ -500,7 +500,7 @@ class UserRepository extends BaseRepository
             $giftcardArr = [
                 'user_id'           => $user->id,
                 'name'              => $data['name'],
-                'from_user'         => $data['from_user'],
+                'from_user'         => $user->email,
                 'to_user'           => $data['to_user'],
                 'amount'            => $data['amount'],
                 'code'              => $code,
