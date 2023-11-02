@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Categories;
 
+use App\Exceptions\GeneralException;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Http\Requests\CategoryRequest;
@@ -135,19 +136,26 @@ class CategoryController extends Controller
      */
     public function deleteCategories(Request $request)
     {
-        //dd($request->get('category'));
+        // dd($request->get('category'));
         $category = $request->get('category');
-        foreach ($category as $key => $value) {
-            //dd($value);
-            $delete = Category::find($value);
-            if( $delete->items->count() )
+
+        if( !empty( $category ) )
+        {
+            foreach ($category as $key => $value)
             {
-                $delete->items()->delete();
+                //dd($value);
+                $delete = Category::find($value);
+                if( $delete->items->count() )
+                {
+                    $delete->items()->delete();
+                }
+                $delete->delete();
             }
-            $delete->delete();
+
+            return redirect()->back();
         }
 
-        return redirect()->back();
+        throw new GeneralException('Please select atleast one category.');
     }
 
     /**

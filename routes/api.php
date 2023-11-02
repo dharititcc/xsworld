@@ -80,6 +80,8 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'v1', 'as' => 'api.v1.'], fun
         Route::post('/orderstatusupdate', 'OrderController@orderStatusUpdate')->name('orderStatusUpdate');
         // {api/v1/order-review}
         Route::post('/order-review', 'OrderController@orderReview')->name('orderReview');
+        // {api/v1/purchase-gift-card}
+        Route::post('/purchase-gift-card', 'UserController@purchaseGiftCard')->name('purchaseGiftCard');
     });
 
     Route::group(['prefix' => 'users','middleware' => 'auth:api'], function ()
@@ -178,7 +180,7 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'v1', 'as' => 'api.v1.'], fun
 
         Route::group(['middleware' => 'auth:api'], function() {
             // {api/v1/waiter/logout}
-            Route::post('logout', [WaiterAuthController::class, 'logout'] )->name('kitchen.logout');
+            Route::post('logout', [WaiterAuthController::class, 'logout'] )->name('waiter.logout');
             Route::get('order-tbl-list',[HomeController::class,'activeTable'])->name('waiter.active.tbl');
             Route::post('gostatus',[HomeController::class,'gostatus'])->name('waiter.gostatus');
             Route::post('item-search', [HomeController::class,'itemSearchByName'])->name('item.search');
