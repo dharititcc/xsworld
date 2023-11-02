@@ -292,11 +292,12 @@ class OrderRepository extends BaseRepository
         $text   = isset($data['text']) ? $data['text'] : null;
 
         $user   = auth()->user();
-        dd($data);
+        // dd($user);
 
         $user->loadMissing([
             'orders'
         ]);
+        dd($user);
 
         $query = $user
         ->orders()
@@ -421,6 +422,7 @@ class OrderRepository extends BaseRepository
      */
     function placeOrder(array $data): Order
     {
+        dd($data);
         $card_id            = $data['card_id'] ? $data['card_id'] : null;
         $credit_amount      = $data['credit_amount'] ? $data['credit_amount'] : null;
         $amount             = $data['amount'] ? $data['amount'] : null;
