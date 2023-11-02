@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin\Customer;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Repositories\CustomerRepository;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 
@@ -33,9 +34,18 @@ class CustomerTableController extends Controller
         $input = $request->all();
         return DataTables::of($this->repository->getCustomerForDatatable($input))
             ->escapeColumns(['id'])
-            ->editColumn('image', function(User $user)
+            ->editColumn('full_name', function(User $user)
             {
-                return "<img src='{$user->image}' width='30' />";
+                return $user->name;
+            })
+            ->orderColumn('full_name', function(Builder $query, $order)
+            {
+                $query->orderByRaw("CONCAT_WS(`first_name`, `last_name`) {$order}");
+            })
+            ->filterColumn('full_name', function(Builder $query) use($input)
+            {
+                $sql = "CONCAT_WS(`first_name`, `last_name`) like ?";
+                $query->whereRaw($sql, ["%{$input['search_main']}%"]);
             })
             ->addColumn('actions', function(User $user)
             {

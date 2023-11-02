@@ -1,5 +1,6 @@
 //common functionalities for all the javascript features
 var XS = {}; // common variable used in all the files of the backend
+var XS_Admin = {}; // common variable used in all the files of the backend
 
 (function () {
     let theEditor;
