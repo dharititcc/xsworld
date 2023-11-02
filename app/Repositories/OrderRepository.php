@@ -685,4 +685,77 @@ class OrderRepository extends BaseRepository
 
         throw new GeneralException('There is no order found.');
     }
+
+
+    function placeOrderwaiter(array $data): Order
+    {
+        // $card_id            = $data['card_id'] ?? null;
+        $credit_amount      = $data['credit_amount'] ? $data['credit_amount'] : null;
+        $amount             = $data['amount'] ? $data['amount'] : null;
+        // $pickup_point_id    = $data['pickup_point_id'] ? PickupPoint::findOrFail($data['pickup_point_id']) : null;
+        $table_id           = $data['table_id'] ? $data['table_id'] : null;
+        $order              = Order::findOrFail($data['order_id']);
+        $user               = $order->user_id ? User::findOrFail($order->user_id) : auth()->user();
+        $devices            = $user->devices()->pluck('fcm_token')->toArray();
+
+        $updateArr         = [];
+        $paymentArr        = [];
+
+        if(isset($order->id))
+        {
+            if($order->total == $credit_amount)
+            {
+                $updateArr = [
+                    'type'                  => Order::ORDER,
+                    // 'pickup_point_id'       => ($pickup_point_id) ? $pickup_point_id->id : null,
+                    // 'pickup_point_user_id'  => ($pickup_point_id) ? $pickup_point_id->user_id : null,
+                    'credit_amount'         => $credit_amount,
+                    'restaurant_table_id'   => ($table_id) ? $table_id : null,
+                ];
+            }
+
+
+            if( $order->total != $credit_amount )
+            {
+                $paymentArr = [
+                    'amount'        => $amount * 100,
+                    'currency'      => $order->restaurant->currency->code,
+                    'customer'      => $user->stripe_customer_id,
+                    'capture'       => false,
+                    // 'source'        => $card_id,
+                    'description'   => $order->id
+                ];
+
+                $stripe         = new Stripe();
+                $payment_data   = $stripe->createCharge($paymentArr);
+
+                $updateArr = [
+                    'type'                  => Order::ORDER,
+                    // 'card_id'               => $card_id,
+                    'charge_id'             => $payment_data->id,
+                    // 'pickup_point_id'       => ($pickup_point_id) ? $pickup_point_id->id : null,
+                    // 'pickup_point_user_id'  => ($pickup_point_id) ? $pickup_point_id->user_id : null,
+                    'credit_amount'         => $credit_amount,
+                    'restaurant_table_id'   => ($table_id) ? $table_id : null,
+                ];
+            }
+
+            $order->update($updateArr);
+        }
+
+        $order->refresh();
+        $order->loadMissing(['items']);
+
+        $title              = "Preparing Your order";
+        $message            = "Your Order is #".$order->id." placed";
+        $orderid            = $order->id;
+        $send_notification  = sendNotification($title,$message,$devices,$orderid);
+
+        $bartitle           = "Order is placed by Customer";
+        $barmessage         = "Order is #".$order->id." placed by customer";
+        $bardevices         = $order->user->devices()->pluck('fcm_token')->toArray();
+        $bar_notification   = sendNotification($bartitle,$barmessage,$bardevices,$orderid);
+
+        return $order;
+    }
 }
