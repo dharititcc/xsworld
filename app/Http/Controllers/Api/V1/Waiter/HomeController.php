@@ -172,5 +172,11 @@ class HomeController extends APIController
         return $this->respondSuccess('Order updated successfully',new OrderResource($order));
     }
 
+    public function waiterPayment(Request $request)
+    {
+        $takePayment = $this->orderRepository->takePayment($request->all());
+        return $this->respondSuccess('Payment successfully', new OrderResource(($takePayment)));
+    }
+
 
 }

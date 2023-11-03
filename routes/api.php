@@ -194,6 +194,7 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'v1', 'as' => 'api.v1.'], fun
             Route::post('order-history', [HomeController::class,'orderHistory'])->name('orderHistory');
             Route::post('place-order', [HomeController::class,'placeOrder'])->name('placeOrder');
             Route::post('update-cart', [HomeController::class,'waiterupdateCart'])->name('waiterupdateCart');
+            Route::post('take-payment', [HomeController::class,'waiterPayment'])->name('waiterPayment');
 
         });
     });
