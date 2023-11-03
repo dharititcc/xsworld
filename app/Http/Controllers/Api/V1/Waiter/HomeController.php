@@ -178,5 +178,11 @@ class HomeController extends APIController
         return $this->respondSuccess('Payment successfully', new OrderResource(($takePayment)));
     }
 
+    public function addCard(Request $request)
+    {
+        $cardDetails = $this->orderRepository->addNewCard($request->all());
+        return $this->respondSuccess('New Card Added successfully,',$cardDetails);
+    }
+
 
 }
