@@ -449,6 +449,7 @@ class OrderRepository extends BaseRepository
 
             if( $order->total != $credit_amount )
             {
+
                 $paymentArr = [
                     'amount'        => $amount * 100,
                     'currency'      => $order->restaurant->currency->code,
@@ -756,6 +757,33 @@ class OrderRepository extends BaseRepository
         $bardevices         = $order->user->devices()->pluck('fcm_token')->toArray();
         $bar_notification   = sendNotification($bartitle,$barmessage,$bardevices,$orderid);
 
+        return $order;
+    }
+
+    public function takePayment(array $data)
+    {
+        $order              = Order::findOrFail($data['order_id']);
+        $card_id            = $data['card_id'] ?? null;
+        $amount             = $data['amount'] ? $data['amount'] : null;
+        $user               = $order->user_id ? User::findOrFail($order->user_id) : auth()->user();
+        $paymentArr        = [];
+        if(isset($order->id))
+        {
+            if($order->total == $amount)
+            {
+                $paymentArr = [
+                    'amount'        =>  $amount * 100,
+                    'currency'      =>  $order->restaurant->currency->code,
+                    'customer'      =>  $user->stripe_customer_id,
+                    'source'        =>  $card_id,
+                    'description'   =>  $order->id
+                ];
+
+                $stripe = new Stripe();
+                $payment_data = $stripe->createCharge($paymentArr);
+            }
+            $order->refresh();
+        }
         return $order;
     }
 }
