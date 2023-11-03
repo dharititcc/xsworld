@@ -9,6 +9,7 @@ use App\Models\PickupPoint;
 use App\Models\Restaurant;
 use App\Models\RestaurantItem;
 use App\Models\User;
+use App\Models\UserPaymentMethod;
 use App\Repositories\BaseRepository;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
@@ -690,7 +691,7 @@ class OrderRepository extends BaseRepository
 
     function placeOrderwaiter(array $data): Order
     {
-        // $card_id            = $data['card_id'] ?? null;
+        $card_id            = $data['card_id'] ?? null;
         $credit_amount      = $data['credit_amount'] ? $data['credit_amount'] : null;
         $amount             = $data['amount'] ? $data['amount'] : null;
         // $pickup_point_id    = $data['pickup_point_id'] ? PickupPoint::findOrFail($data['pickup_point_id']) : null;
@@ -723,7 +724,7 @@ class OrderRepository extends BaseRepository
                     'currency'      => $order->restaurant->currency->code,
                     'customer'      => $user->stripe_customer_id,
                     'capture'       => false,
-                    // 'source'        => $card_id,
+                    'source'        => $card_id,
                     'description'   => $order->id
                 ];
 
@@ -732,7 +733,7 @@ class OrderRepository extends BaseRepository
 
                 $updateArr = [
                     'type'                  => Order::ORDER,
-                    // 'card_id'               => $card_id,
+                    'card_id'               => $card_id,
                     'charge_id'             => $payment_data->id,
                     // 'pickup_point_id'       => ($pickup_point_id) ? $pickup_point_id->id : null,
                     // 'pickup_point_user_id'  => ($pickup_point_id) ? $pickup_point_id->user_id : null,
@@ -781,9 +782,24 @@ class OrderRepository extends BaseRepository
 
                 $stripe = new Stripe();
                 $payment_data = $stripe->createCharge($paymentArr);
+
+                $updateArr = [
+                    'type'                  => Order::ORDER,
+                    'card_id'               => $card_id,
+                    'charge_id'             => $payment_data->id,
+                    // 'credit_amount'         => $credit_amount,
+                    'user_payment_method_id'=> UserPaymentMethod::CREDITCARD,
+                ];
             }
             $order->refresh();
         }
         return $order;
+    }
+
+    public function addNewCard(array $data)
+    {
+        $user = User::findOrFail($data['user_id']);
+        $stripe = new Stripe();
+        $card_data = $stripe->attachSource($user->stripe_customer_id,$cardArr);
     }
 }
