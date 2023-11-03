@@ -35,6 +35,9 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('referral/user/ABC', [App\Http\Controllers\ReferralController::class, 'code'])->name('referral-code');
+Route::get('apple-app-site-association', [App\Http\Controllers\ReferralController::class, 'iphone'])->name('referral-code-iphone');
+Route::get('.well-known/apple-app-site-association', [App\Http\Controllers\ReferralController::class, 'iphone'])->name('referral-code-iphone');
 
 Route::group(['prefix' => 'restaurants', 'as' => 'restaurants.', 'middleware' => ['auth']], function ()
 {

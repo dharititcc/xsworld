@@ -5,6 +5,7 @@ namespace App\Listeners;
 use App\Notifications\GiftCardNotification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
+use App\Events\GiftCardEvent;
 
 class PurchaseGiftCardListener
 {
@@ -19,7 +20,7 @@ class PurchaseGiftCardListener
     /**
      * Handle the event.
      */
-    public function handle(object $event): void
+    public function handle(GiftCardEvent $event)
     {
         $event->usergiftcard->notify(new GiftCardNotification($event->usergiftcard));
     }

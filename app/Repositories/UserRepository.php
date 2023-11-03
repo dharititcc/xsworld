@@ -478,8 +478,7 @@ class UserRepository extends BaseRepository
     {
         $user = auth()->user();
 
-        // $code = $this->generateRandomString(10);
-        $code = 11111111;
+        $code = $this->generateRandomString(10);
 
         if($user->stripe_customer_id != '')
         {
@@ -509,12 +508,9 @@ class UserRepository extends BaseRepository
             ];
 
             $savegiftcard   = UserGiftCard::create($giftcardArr);
-            //TODO:
+
             event(new GiftCardEvent($savegiftcard));
 
-            // $data = [
-            //     'code'         => $code
-            // ];
             return $savegiftcard;
         }
 

@@ -1,0 +1,1 @@
+[{  "relation": ["delegate_permission/common.handle_all_urls"],  "target": {    "namespace": "android_app",    "package_name": "supahsoftware.androidexamplecarousel",    "sha256_cert_fingerprints":    ["FF:48:48:4D:B3:12:C5:61:26:AB:DF:CD:E1:9E:78:20:0A:8B:45:5A:13:72:8D:E7:2C:01:5B:54:12:8A:D1:CD"]  }}]
