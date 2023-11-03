@@ -3,6 +3,7 @@
 namespace App\Notifications;
 
 use App\Mail\GiftCardMail;
+use App\Models\UserGiftCard;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -10,7 +11,7 @@ use Illuminate\Notifications\Notification;
 
 class GiftCardNotification extends Notification
 {
-    use Queueable;
+    // use Queueable;
 
     /**
      * Create a new notification instance.
@@ -38,11 +39,7 @@ class GiftCardNotification extends Notification
      */
     public function toMail(object $notifiable)
     {
-        return new GiftCardMail($this->user);
-        // return (new MailMessage)
-        //             ->line('The introduction to the notification.')
-        //             ->action('Notification Action', url('/'))
-        //             ->line('Thank you for using our application!');
+        return new GiftCardMail($notifiable);
     }
 
     /**
