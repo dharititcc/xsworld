@@ -9,6 +9,7 @@ use App\Models\PickupPoint;
 use App\Models\Restaurant;
 use App\Models\RestaurantItem;
 use App\Models\User;
+use App\Models\UserPaymentMethod;
 use App\Repositories\BaseRepository;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
@@ -292,6 +293,7 @@ class OrderRepository extends BaseRepository
         $text   = isset($data['text']) ? $data['text'] : null;
 
         $user   = auth()->user();
+        // dd($user);
 
         $user->loadMissing([
             'orders'
@@ -420,13 +422,13 @@ class OrderRepository extends BaseRepository
      */
     function placeOrder(array $data): Order
     {
-        $card_id            = $data['card_id'] ? $data['card_id'] : null;
+        $card_id            = $data['card_id'] ?? null;
         $credit_amount      = $data['credit_amount'] ? $data['credit_amount'] : null;
         $amount             = $data['amount'] ? $data['amount'] : null;
-        $pickup_point_id    = $data['pickup_point_id'] ? PickupPoint::findorFail($data['pickup_point_id']) : null;
+        $pickup_point_id    = $data['pickup_point_id'] ? PickupPoint::findOrFail($data['pickup_point_id']) : null;
         $table_id           = $data['table_id'] ? $data['table_id'] : null;
         $order              = Order::findOrFail($data['order_id']);
-        $user               = auth()->user();
+        $user               = $order->user_id ? User::findOrFail($order->user_id) : auth()->user();
         $devices            = $user->devices()->pluck('fcm_token')->toArray();
 
         $updateArr         = [];
@@ -438,16 +440,17 @@ class OrderRepository extends BaseRepository
             {
                 $updateArr = [
                     'type'                  => Order::ORDER,
-                    'pickup_point_id'       => $pickup_point_id->id,
-                    'pickup_point_user_id'  => $pickup_point_id->user_id,
+                    'pickup_point_id'       => ($pickup_point_id) ? $pickup_point_id->id : null,
+                    'pickup_point_user_id'  => ($pickup_point_id) ? $pickup_point_id->user_id : null,
                     'credit_amount'         => $credit_amount,
-                    'restaurant_table_id'   => $table_id
+                    'restaurant_table_id'   => ($table_id) ? $table_id : null,
                 ];
             }
 
 
             if( $order->total != $credit_amount )
             {
+
                 $paymentArr = [
                     'amount'        => $amount * 100,
                     'currency'      => $order->restaurant->currency->code,
@@ -464,10 +467,10 @@ class OrderRepository extends BaseRepository
                     'type'                  => Order::ORDER,
                     'card_id'               => $card_id,
                     'charge_id'             => $payment_data->id,
-                    'pickup_point_id'       => $pickup_point_id->id,
-                    'pickup_point_user_id'  => $pickup_point_id->user_id,
+                    'pickup_point_id'       => ($pickup_point_id) ? $pickup_point_id->id : null,
+                    'pickup_point_user_id'  => ($pickup_point_id) ? $pickup_point_id->user_id : null,
                     'credit_amount'         => $credit_amount,
-                    'restaurant_table_id'   => $table_id
+                    'restaurant_table_id'   => ($table_id) ? $table_id : null,
                 ];
             }
 
@@ -604,5 +607,199 @@ class OrderRepository extends BaseRepository
         }
         $user->refresh();
         return $user;
+    }
+
+
+    /**
+     * Method getCartdataWaiter
+     *
+     * @return Order
+     */
+    public function getCartdataWaiter(array $data): ?Order
+    {
+        $order        = isset($data['order_id']) ? Order::findOrFail($data['order_id']) : null;
+
+        $order->loadMissing(
+            [
+                'order_items',
+                'restaurant_table',
+                'restaurant',
+            ]
+        );
+
+        return $order->refresh();
+    }
+
+
+    /**
+     * Method getwaiterOrderdata
+     *
+     * @param array $data [explicite description]
+     *
+     * @return mixed
+     */
+    function getwaiterOrderdata(array $data) : array
+    {
+        $page   = isset($data['page']) ? $data['page'] : 1;
+        $limit  = isset($data['limit']) ? $data['limit'] : 10;
+        $text   = isset($data['text']) ? $data['text'] : null;
+
+        $user   = auth()->user();
+        // dd($user->waiter_order);
+
+        $user->loadMissing([
+            'waiter_order'
+        ]);
+
+        $query = $user
+        ->waiter_order()
+        ->where('type', Order::ORDER)
+        ->with([
+            'user',
+            'reviews',
+            'order_items',
+            'order_mixer',
+            'restaurant'
+        ]);
+
+        if( $text )
+        {
+            $query->where(function($innerQuery) use($text)
+            {
+                $innerQuery->where('id', $text);
+                $innerQuery->orWhereHas('restaurant', function($resQuery) use($text)
+                {
+                    $resQuery->where('name', 'like', "%{$text}%");
+                });
+            });
+        }
+        $total = $query->count();
+        $query->limit($limit)->offset(($page - 1) * $limit)->orderBy('id','desc');
+        $data = $query->get();
+        if( $data->count() )
+        {
+            $data = [
+                'total_orders'   => $total,
+                'orders'         => $data
+            ];
+            return $data;
+        }
+
+        throw new GeneralException('There is no order found.');
+    }
+
+
+    function placeOrderwaiter(array $data): Order
+    {
+        $card_id            = $data['card_id'] ?? null;
+        $credit_amount      = $data['credit_amount'] ? $data['credit_amount'] : null;
+        $amount             = $data['amount'] ? $data['amount'] : null;
+        // $pickup_point_id    = $data['pickup_point_id'] ? PickupPoint::findOrFail($data['pickup_point_id']) : null;
+        $table_id           = $data['table_id'] ? $data['table_id'] : null;
+        $order              = Order::findOrFail($data['order_id']);
+        $user               = $order->user_id ? User::findOrFail($order->user_id) : auth()->user();
+        $devices            = $user->devices()->pluck('fcm_token')->toArray();
+
+        $updateArr         = [];
+        $paymentArr        = [];
+
+        if(isset($order->id))
+        {
+            if($order->total == $credit_amount)
+            {
+                $updateArr = [
+                    'type'                  => Order::ORDER,
+                    // 'pickup_point_id'       => ($pickup_point_id) ? $pickup_point_id->id : null,
+                    // 'pickup_point_user_id'  => ($pickup_point_id) ? $pickup_point_id->user_id : null,
+                    'credit_amount'         => $credit_amount,
+                    'restaurant_table_id'   => ($table_id) ? $table_id : null,
+                ];
+            }
+
+
+            if( $order->total != $credit_amount )
+            {
+                $paymentArr = [
+                    'amount'        => $amount * 100,
+                    'currency'      => $order->restaurant->currency->code,
+                    'customer'      => $user->stripe_customer_id,
+                    'capture'       => false,
+                    'source'        => $card_id,
+                    'description'   => $order->id
+                ];
+
+                $stripe         = new Stripe();
+                $payment_data   = $stripe->createCharge($paymentArr);
+
+                $updateArr = [
+                    'type'                  => Order::ORDER,
+                    'card_id'               => $card_id,
+                    'charge_id'             => $payment_data->id,
+                    // 'pickup_point_id'       => ($pickup_point_id) ? $pickup_point_id->id : null,
+                    // 'pickup_point_user_id'  => ($pickup_point_id) ? $pickup_point_id->user_id : null,
+                    'credit_amount'         => $credit_amount,
+                    'restaurant_table_id'   => ($table_id) ? $table_id : null,
+                ];
+            }
+
+            $order->update($updateArr);
+        }
+
+        $order->refresh();
+        $order->loadMissing(['items']);
+
+        $title              = "Preparing Your order";
+        $message            = "Your Order is #".$order->id." placed";
+        $orderid            = $order->id;
+        $send_notification  = sendNotification($title,$message,$devices,$orderid);
+
+        $bartitle           = "Order is placed by Customer";
+        $barmessage         = "Order is #".$order->id." placed by customer";
+        $bardevices         = $order->user->devices()->pluck('fcm_token')->toArray();
+        $bar_notification   = sendNotification($bartitle,$barmessage,$bardevices,$orderid);
+
+        return $order;
+    }
+
+    public function takePayment(array $data)
+    {
+        $order              = Order::findOrFail($data['order_id']);
+        $card_id            = $data['card_id'] ?? null;
+        $amount             = $data['amount'] ? $data['amount'] : null;
+        $user               = $order->user_id ? User::findOrFail($order->user_id) : auth()->user();
+        $paymentArr        = [];
+        if(isset($order->id))
+        {
+            if($order->total == $amount)
+            {
+                $paymentArr = [
+                    'amount'        =>  $amount * 100,
+                    'currency'      =>  $order->restaurant->currency->code,
+                    'customer'      =>  $user->stripe_customer_id,
+                    'source'        =>  $card_id,
+                    'description'   =>  $order->id
+                ];
+
+                $stripe = new Stripe();
+                $payment_data = $stripe->createCharge($paymentArr);
+
+                $updateArr = [
+                    'type'                  => Order::ORDER,
+                    'card_id'               => $card_id,
+                    'charge_id'             => $payment_data->id,
+                    // 'credit_amount'         => $credit_amount,
+                    'user_payment_method_id'=> UserPaymentMethod::CREDITCARD,
+                ];
+            }
+            $order->refresh();
+        }
+        return $order;
+    }
+
+    public function addNewCard(array $data)
+    {
+        $user = User::findOrFail($data['user_id']);
+        $stripe = new Stripe();
+        $card_data = $stripe->attachSource($user->stripe_customer_id,$cardArr);
     }
 }

@@ -35,6 +35,9 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('referral/user/ABC', [App\Http\Controllers\ReferralController::class, 'code'])->name('referral-code');
+Route::get('apple-app-site-association', [App\Http\Controllers\ReferralController::class, 'iphone'])->name('referral-code-iphone');
+Route::get('.well-known/apple-app-site-association', [App\Http\Controllers\ReferralController::class, 'iphone'])->name('referral-code-iphone');
 
 Route::group(['prefix' => 'restaurants', 'as' => 'restaurants.', 'middleware' => ['auth']], function ()
 {
@@ -138,7 +141,7 @@ Route::middleware(['admin'])->group(function()
         Route::group(['namespace' => 'Customer', 'prefix' => 'customer'], function()
         {
             Route::resource('/customer', 'CustomerController');
-            Route::post('/customer/get', 'CustomerTableController')->name('customer.table');
+            Route::post('/get', 'CustomerTableController')->name('customer.table');
         });
 
         Route::group(['namespace' => 'Event', 'prefix' => 'event'], function()

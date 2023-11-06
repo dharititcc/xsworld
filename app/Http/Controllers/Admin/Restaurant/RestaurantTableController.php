@@ -31,11 +31,16 @@ class RestaurantTableController extends Controller
     public function __invoke(Request $request)
     {
         $input = $request->all();
-        return DataTables::of($this->repository->getRestaurantDatatable($input))
+        $input['type'] = Restaurant::RESTAURANT;
+        return DataTables::of($this->repository->getRestaurantEventDatatable($input))
             ->escapeColumns(['id'])
             ->editColumn('image', function(Restaurant $restaurant)
             {
                 return "<img src='{$restaurant->image}' width='30' />";
+            })
+            ->editColumn('country', function(Restaurant $restaurant)
+            {
+                return $restaurant->country->name;
             })
             ->addColumn('actions', function(Restaurant $restaurant)
             {

@@ -3,7 +3,9 @@
 namespace App\Providers;
 
 use App\Events\RegisterEvent;
+use App\Events\GiftCardEvent;
 use App\Listeners\SendEmailVerificationListener;
+use App\Listeners\PurchaseGiftCardListener;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -23,6 +25,10 @@ class EventServiceProvider extends ServiceProvider
 
         RegisterEvent::class => [
             SendEmailVerificationListener::class
+        ],
+
+        GiftCardEvent::class => [
+            PurchaseGiftCardListener::class
         ]
     ];
 

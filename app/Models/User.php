@@ -189,6 +189,16 @@ class User extends Authenticatable
     {
         return $this->hasMany(Order::class, 'user_id', 'id')->where('type', Order::ORDER);
     }
+    
+    /**
+     * Get all of the waiter_order for the User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function waiter_order(): HasMany
+    {
+        return $this->hasMany(Order::class, 'waiter_id', 'id')->where('type', Order::ORDER);
+    }
 
     /**
      * Get all of the carts for the User

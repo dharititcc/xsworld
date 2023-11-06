@@ -10,6 +10,7 @@ use App\Http\Requests\UpdateProfileRequest;
 use App\Http\Requests\ChangePasswordRequest;
 use App\Http\Requests\DeleteCardRequest;
 use App\Http\Requests\FetchCardRequest;
+use App\Http\Requests\PurchaseGiftCardRequest;
 use App\Http\Requests\UserFavouriteItemsRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;
@@ -423,5 +424,42 @@ class UserController extends APIController
         }
 
         throw new GeneralException('Mark default credit card is failed.');
+    }
+
+    /**
+     * Method purchaseGiftCard
+     *
+     * @param PurchaseGiftCardRequest $request [explicite description]
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function purchaseGiftCard(PurchaseGiftCardRequest $request)
+    {
+        $gift_card = $this->repository->purchaseGiftCard($request->validated());
+
+        if( $gift_card )
+        {
+            return $this->respondSuccess('Gift card purchased successfully');
+        }
+
+        throw new GeneralException('Gift card purchase failed.');
+    }
+
+    /**
+     * Method redeemGiftCard
+     *
+     * @param Request $request [explicite description]
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function redeemGiftCard(Request $request)
+    {
+        $input              = $request->all();
+        $redeem_gift_card   = $this->repository->redeemGiftCard($input);
+        if( $redeem_gift_card )
+        {
+            return $this->respondSuccess('Gift card redeemed successfully');
+        }
+        throw new GeneralException('Gift card redeemed failed.');
     }
 }

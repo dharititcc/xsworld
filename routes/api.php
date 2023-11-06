@@ -80,6 +80,10 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'v1', 'as' => 'api.v1.'], fun
         Route::post('/orderstatusupdate', 'OrderController@orderStatusUpdate')->name('orderStatusUpdate');
         // {api/v1/order-review}
         Route::post('/order-review', 'OrderController@orderReview')->name('orderReview');
+        // {api/v1/purchase-gift-card}
+        Route::post('/purchase-gift-card', 'UserController@purchaseGiftCard')->name('purchaseGiftCard');
+        // {api/v1/redeem-gift-card}
+        Route::post('/redeem-gift-card', 'UserController@redeemGiftCard')->name('redeemGiftCard');
     });
 
     Route::group(['prefix' => 'users','middleware' => 'auth:api'], function ()
@@ -178,15 +182,20 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'v1', 'as' => 'api.v1.'], fun
 
         Route::group(['middleware' => 'auth:api'], function() {
             // {api/v1/waiter/logout}
-            Route::post('logout', [WaiterAuthController::class, 'logout'] )->name('kitchen.logout');
+            Route::post('logout', [WaiterAuthController::class, 'logout'] )->name('waiter.logout');
             Route::get('order-tbl-list',[HomeController::class,'activeTable'])->name('waiter.active.tbl');
-            Route::post('gostatus',[HomeController::class,'gostatus'])->name('kitchen.gostatus');
+            Route::post('gostatus',[HomeController::class,'gostatus'])->name('waiter.gostatus');
             Route::post('item-search', [HomeController::class,'itemSearchByName'])->name('item.search');
             Route::post('categoryList', [HomeController::class,'categoryList'])->name('categoryList');
             Route::post('getFeaturedItemsByCatID', [HomeController::class,'getFeaturedItemsByCatID'])->name('getFeaturedItemsByCatID');
             Route::post('restaurantItemListByCategory', [HomeController::class,'restaurantItemListByCategory'])->name('restaurantItemListByCategory');
             Route::post('add-to-cart', [HomeController::class,'addToCart'])->name('addToCart');
             Route::post('view-cart', [HomeController::class,'viewCart'])->name('viewCart');
+            Route::post('order-history', [HomeController::class,'orderHistory'])->name('orderHistory');
+            Route::post('place-order', [HomeController::class,'placeOrder'])->name('placeOrder');
+            Route::post('update-cart', [HomeController::class,'waiterupdateCart'])->name('waiterupdateCart');
+            Route::post('take-payment', [HomeController::class,'waiterPayment'])->name('waiterPayment');
+            Route::post('addCard', [HomeController::class,'addCard'])->name('addCard');
 
         });
     });

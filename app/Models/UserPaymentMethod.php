@@ -12,6 +12,9 @@ class UserPaymentMethod extends Model
 
     protected $table = 'user_payment_methods';
 
+    const CASH  = 1;
+    const CREDITCARD = 2;
+
     /**
      * The attributes that are mass assignable.
      *

@@ -1,5 +1,6 @@
 <?php namespace App\Repositories;
 
+use App\Models\User;
 use App\Repositories\BaseRepository;
 
 /**
@@ -7,6 +8,11 @@ use App\Repositories\BaseRepository;
 */
 class CustomerRepository extends BaseRepository
 {
+    /**
+    * Associated Repository Model.
+    */
+    const MODEL = User::class;
+
     public function getCustomerForDatatable()
     {
         $active = isset($input['active']) ? $input['active'] : 0;
@@ -17,7 +23,7 @@ class CustomerRepository extends BaseRepository
                 'users.last_name',
                 'users.email',
                 'users.phone'
-            ]);
+            ])->where('user_type', User::CUSTOMER);
 
         if($active)
         {
