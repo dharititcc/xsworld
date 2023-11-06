@@ -15,6 +15,8 @@ use App\Repositories\BaseRepository;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
+use Stripe\Source;
+use Stripe\Token;
 
 /**
  * Class OrderRepository.
@@ -25,6 +27,13 @@ class OrderRepository extends BaseRepository
     * Associated Repository Model.
     */
     const MODEL = Order::class;
+
+    /** @var \App\Repositories\UserRepository */
+    protected $userRepository;
+    
+    public function __construct(UserRepository $userRepository) {
+        $this->userRepository = $userRepository;
+    }
 
     /**
      * Method addTocart
@@ -818,9 +827,25 @@ class OrderRepository extends BaseRepository
     public function addNewCard(array $data)
     {
         $user = User::findOrFail($data['user_id']);
-        // dd($user);
-        $stripe = new Stripe();
-        $createSource = $stripe->createSource($user->email,);
-        $card_data = $stripe->attachSource($user->stripe_customer_id,$cardArr);
+        $token          = isset( $data['token'] ) ? $this->userRepository->retrieveToken($data['token']) : null;
+        $fingerprint    = $token->card->fingerprint;
+        $cards          = $this->userRepository->fetchCard(['customer_id' => $user->stripe_customer_id]);
+        $stripe         = new Stripe();
+
+        // check card exist
+        if( !$this->userRepository->checkCardAlreadyExist($cards, $fingerprint) )
+        {
+            return $source = $this->userRepository->attachSource($stripe, $user->stripe_customer_id, $token);
+        }
+        else
+        {
+            throw new GeneralException('Card is already taken for this customer.');
+        }
+
+        return $cards;
+        
+        // $creatToken = $stripe->createToken($card);
+        // $createSource = $stripe->createSource($user->email,$token);
+        // $card_data = $stripe->attachSource($user->stripe_customer_id,$cardArr);
     }
 }
