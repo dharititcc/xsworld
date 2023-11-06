@@ -616,10 +616,14 @@ class OrderRepository extends BaseRepository
         // dd($user->restaurant_kitchen->restaurant_id);
         $devices            = $user->devices()->pluck('fcm_token')->toArray();
         $res_waiters = RestaurantWaiter::where('restaurant_id',$user->restaurant_kitchen->restaurant_id)->get();
-        $title              = "Your order Ready";
-        $message            = "Your Order is Ready";
-        $orderid            = $user->id;
-        $send_notification  = sendNotification($title,$message,$devices,$orderid);
+        // dd($res_waiters);
+        foreach($res_waiters as $res_waiter)
+        {
+            $title              = "Your order Ready";
+            $message            = "Your Order is Ready";
+            $orderid            = $res_waiter->user_id;
+            $send_notification  = sendNotification($title,$message,$devices,$orderid);
+        }
 
         return $user;
     }
