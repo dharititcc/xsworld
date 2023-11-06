@@ -8,6 +8,7 @@ use App\Models\OrderReview;
 use App\Models\PickupPoint;
 use App\Models\Restaurant;
 use App\Models\RestaurantItem;
+use App\Models\RestaurantWaiter;
 use App\Models\User;
 use App\Models\UserPaymentMethod;
 use App\Repositories\BaseRepository;
@@ -609,6 +610,20 @@ class OrderRepository extends BaseRepository
         return $user;
     }
 
+    public function callWaiterNotify()
+    {
+        $user   = auth()->user();
+        // dd($user->restaurant_kitchen->restaurant_id);
+        $devices            = $user->devices()->pluck('fcm_token')->toArray();
+        $res_waiters = RestaurantWaiter::where('restaurant_id',$user->restaurant_kitchen->restaurant_id)->get();
+        $title              = "Your order Ready";
+        $message            = "Your Order is Ready";
+        $orderid            = $user->id;
+        $send_notification  = sendNotification($title,$message,$devices,$orderid);
+
+        return $user;
+    }
+
 
     /**
      * Method getCartdataWaiter
@@ -799,7 +814,9 @@ class OrderRepository extends BaseRepository
     public function addNewCard(array $data)
     {
         $user = User::findOrFail($data['user_id']);
+        // dd($user);
         $stripe = new Stripe();
+        $createSource = $stripe->createSource($user->email,);
         $card_data = $stripe->attachSource($user->stripe_customer_id,$cardArr);
     }
 }
