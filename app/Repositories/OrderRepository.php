@@ -843,9 +843,5 @@ class OrderRepository extends BaseRepository
         }
 
         return $cards;
-        
-        // $creatToken = $stripe->createToken($card);
-        // $createSource = $stripe->createSource($user->email,$token);
-        // $card_data = $stripe->attachSource($user->stripe_customer_id,$cardArr);
     }
 }
