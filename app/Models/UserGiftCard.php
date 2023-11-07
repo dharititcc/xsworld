@@ -25,6 +25,7 @@ class UserGiftCard extends Model
         'amount',
         'code',
         'status',
+        'verify_user_id',
         'transaction_id'
     ];
 

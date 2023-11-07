@@ -8,12 +8,15 @@ use App\Models\OrderReview;
 use App\Models\PickupPoint;
 use App\Models\Restaurant;
 use App\Models\RestaurantItem;
+use App\Models\RestaurantWaiter;
 use App\Models\User;
 use App\Models\UserPaymentMethod;
 use App\Repositories\BaseRepository;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
+use Stripe\Source;
+use Stripe\Token;
 
 /**
  * Class OrderRepository.
@@ -24,6 +27,13 @@ class OrderRepository extends BaseRepository
     * Associated Repository Model.
     */
     const MODEL = Order::class;
+
+    /** @var \App\Repositories\UserRepository */
+    protected $userRepository;
+    
+    public function __construct(UserRepository $userRepository) {
+        $this->userRepository = $userRepository;
+    }
 
     /**
      * Method addTocart
@@ -562,6 +572,14 @@ class OrderRepository extends BaseRepository
         throw new GeneralException('Order is not found.');
     }
 
+    /**
+     * Method GetKitchenOrders
+     *
+     * @param array $data [explicite description]
+     * @param $is_history=0 $is_history [explicite description]
+     *
+     * @return void
+     */
     function GetKitchenOrders(array $data,$is_history=0)
     {
         $orders = Order::whereIn('restaurant_id',$data);
@@ -578,6 +596,13 @@ class OrderRepository extends BaseRepository
         }
     }
 
+    /**
+     * Method getBarCollections
+     *
+     * @param array $data [explicite description]
+     *
+     * @return Collection
+     */
     public function getBarCollections(array $data) : Collection
     {
         $orders = Order::whereIn('restaurant_id',$data)
@@ -589,6 +614,13 @@ class OrderRepository extends BaseRepository
         return $orders;
     }
 
+    /**
+     * Method getOrderById
+     *
+     * @param $id $id [explicite description]
+     *
+     * @return void
+     */
     public function getOrderById($id)
     {
         $order = Order::findOrFail($id);
@@ -596,16 +628,44 @@ class OrderRepository extends BaseRepository
     }
 
 
-    public function updateStatus(array $data,$isWaiter = 0)
+    /**
+     * Method updateStatus
+     *
+     * @param array $data [explicite description]
+     * @param int $isWaiter [explicite description]
+     *
+     * @return void
+     */
+    public function updateStatus(array $data, int $isWaiter = 0)
     {
         $user   = auth()->user();
-        // dd($user->restaurant_kitchen());
         if($isWaiter == 1) {
             $user->restaurant_waiter()->update($data);
         } else {
             $user->restaurant_kitchen()->update($data);
         }
         $user->refresh();
+        return $user;
+    }
+
+    /**
+     * Method callWaiterNotify
+     *
+     * @return mixed
+     */
+    public function callWaiterNotify()
+    {
+        $user           = auth()->user();
+        $devices        = $user->devices()->pluck('fcm_token')->toArray();
+        $res_waiters    = RestaurantWaiter::where('restaurant_id',$user->restaurant_kitchen->restaurant_id)->get();
+
+        foreach($res_waiters as $res_waiter)
+        {
+            $title              = "Your order Ready";
+            $message            = "Your Order is Ready";
+            $orderid            = $res_waiter->user_id;
+            $send_notification  = sendNotification($title,$message,$devices,$orderid);
+        }
         return $user;
     }
 
@@ -637,6 +697,7 @@ class OrderRepository extends BaseRepository
      * @param array $data [explicite description]
      *
      * @return mixed
+     * @throws \App\Exceptions\GeneralException
      */
     function getwaiterOrderdata(array $data) : array
     {
@@ -645,7 +706,6 @@ class OrderRepository extends BaseRepository
         $text   = isset($data['text']) ? $data['text'] : null;
 
         $user   = auth()->user();
-        // dd($user->waiter_order);
 
         $user->loadMissing([
             'waiter_order'
@@ -689,6 +749,13 @@ class OrderRepository extends BaseRepository
     }
 
 
+    /**
+     * Method placeOrderwaiter
+     *
+     * @param array $data [explicite description]
+     *
+     * @return App\Models\Order
+     */
     function placeOrderwaiter(array $data): Order
     {
         $card_id            = $data['card_id'] ?? null;
@@ -761,7 +828,14 @@ class OrderRepository extends BaseRepository
         return $order;
     }
 
-    public function takePayment(array $data)
+    /**
+     * Method takePayment
+     *
+     * @param array $data [explicite description]
+     *
+     * @return App\Models\Order
+     */
+    public function takePayment(array $data): Order
     {
         $order              = Order::findOrFail($data['order_id']);
         $card_id            = $data['card_id'] ?? null;
@@ -796,10 +870,40 @@ class OrderRepository extends BaseRepository
         return $order;
     }
 
-    public function addNewCard(array $data)
+    /**
+     * Method addNewCard
+     *
+     * @param array $data [explicite description]
+     *
+     * @return App\Models\Order
+     * @throws \App\Exceptions\GeneralException
+     */
+    public function addNewCard(array $data): Order
     {
         $user = User::findOrFail($data['user_id']);
-        $stripe = new Stripe();
-        $card_data = $stripe->attachSource($user->stripe_customer_id,$cardArr);
+        $token          = isset( $data['token'] ) ? $this->userRepository->retrieveToken($data['token']) : null;
+        $fingerprint    = $token->card->fingerprint;
+        $cards          = $this->userRepository->fetchCard(['customer_id' => $user->stripe_customer_id]);
+        $stripe         = new Stripe();
+
+        // check card exist
+        if( !$this->userRepository->checkCardAlreadyExist($cards, $fingerprint) )
+        {
+            return $source = $this->userRepository->attachSource($stripe, $user->stripe_customer_id, $token);
+        }
+        else
+        {
+            throw new GeneralException('Card is already taken for this customer.');
+        }
+
+        return $cards;
+    }
+
+    public function tableOrderLists(): Collection
+    {
+        $user   = auth()->user();
+        $restaurant_id = $user->restaurant_waiter->restaurant_id;
+        $orders = Order::where(['restaurant_id' => $restaurant_id, 'waiter_id' => $user->id])->where('type',Order::CART)->get();
+        return $orders;
     }
 }

@@ -106,4 +106,10 @@ class OrderController extends APIController
 
         return $this->respondSuccess('Status updated');
     }
+
+    public function callWaiter()
+    {
+        $manullyCallWaiter = $this->repository->callWaiterNotify();
+        return $this->respondSuccess('Notification Send Successfully');
+    }
 }
