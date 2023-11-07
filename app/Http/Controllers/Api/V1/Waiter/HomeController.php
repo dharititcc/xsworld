@@ -187,7 +187,7 @@ class HomeController extends APIController
     public function tableList()
     {
         $orderTable = $this->orderRepository->tableOrderLists();
-        return $this->respondSuccess('Table List successfully', OrderResource::collection(($orderTable)));
+        return $this->respondSuccess('Table List successfully', OrderListResource::collection(($orderTable)));
     }
 
 
