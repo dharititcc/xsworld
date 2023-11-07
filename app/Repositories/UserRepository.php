@@ -485,33 +485,37 @@ class UserRepository extends BaseRepository
             $stripe         = new Stripe();
             $customer       = $stripe->fetchCustomer($user->stripe_customer_id);
             $default_card   = $customer->default_source;
+            $amount         = number_format($data['amount'],2);
 
-            $paymentArr = [
-                'amount'        => $data['amount'] * 100,
-                'currency'      => 'AUD',
-                'customer'      => $user->stripe_customer_id,
-                'source'        => $default_card,
-                'description'   => 'Gift Card Purchase '. $data['name']
-            ];
+            if($default_card)
+            {
+                $paymentArr = [
+                    'amount'        => $amount  * 100,
+                    'currency'      => 'AUD',
+                    'customer'      => $user->stripe_customer_id,
+                    'source'        => $default_card,
+                    'description'   => 'Gift Card Purchase '. $data['name']
+                ];
 
-            $payment_data   = $stripe->createCharge($paymentArr);
+                $payment_data   = $stripe->createCharge($paymentArr);
 
-            $giftcardArr = [
-                'user_id'           => $user->id,
-                'name'              => $data['name'],
-                'from_user'         => $user->email,
-                'to_user'           => $data['to_user'],
-                'amount'            => $data['amount'],
-                'code'              => $code,
-                'status'            => UserGiftCard::PENDING,
-                'transaction_id'    => $payment_data->balance_transaction
-            ];
+                $giftcardArr = [
+                    'user_id'           => $user->id,
+                    'name'              => $data['name'],
+                    'from_user'         => $user->email,
+                    'to_user'           => $data['to_user'],
+                    'amount'            => $data['amount'],
+                    'code'              => $code,
+                    'status'            => UserGiftCard::PENDING,
+                    'transaction_id'    => $payment_data->balance_transaction
+                ];
 
-            $savegiftcard   = UserGiftCard::create($giftcardArr);
+                $savegiftcard   = UserGiftCard::create($giftcardArr);
+                event(new GiftCardEvent($savegiftcard));
 
-            event(new GiftCardEvent($savegiftcard));
-
-            return $savegiftcard;
+                return $savegiftcard;
+            }
+            throw new GeneralException('Please add Card');
         }
 
         throw new GeneralException('Please select default card');
@@ -544,7 +548,7 @@ class UserRepository extends BaseRepository
         if( isset($input['code']) )
         {
             $user = auth()->user();
-            $redeem = UserGiftCard::where(['to_user' => $user->email , 'code' =>$input['code'] , 'status' => UserGiftCard::PENDING ])->orderBy('id', 'desc')->first();
+            $redeem = UserGiftCard::where(['from_user' => $user->email, 'code' => $input['code'] , 'status' => UserGiftCard::PENDING ])->orderBy('id', 'desc')->first();
             if($redeem)
             {
                 $data['status'] = UserGiftCard::REDEEMED;
@@ -554,6 +558,10 @@ class UserRepository extends BaseRepository
                 $user->update($users);
 
                 return $user;
+            }
+            else
+            {
+                throw new GeneralException('You are not redeem your own gift card.');
             }
             throw new GeneralException('Invalid Redeem code.');
         }
