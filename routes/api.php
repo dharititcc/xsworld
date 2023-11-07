@@ -160,6 +160,7 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'v1', 'as' => 'api.v1.'], fun
             Route::post('order-update-status','OrderController@updateOrderStauts')->name('kitchen.order.update.status');
             Route::post('order-show','OrderController@orderDetail')->name('kitchen.order.show');
             Route::post('gostatus','OrderController@gostatus')->name('kitchen.gostatus');
+            Route::get('call-waiter','OrderController@callWaiter')->name('kitchen.callWaiter');
 
             // // orders
             // // {api/v1/orderupdate}
@@ -195,7 +196,7 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'v1', 'as' => 'api.v1.'], fun
             Route::post('place-order', [HomeController::class,'placeOrder'])->name('placeOrder');
             Route::post('update-cart', [HomeController::class,'waiterupdateCart'])->name('waiterupdateCart');
             Route::post('take-payment', [HomeController::class,'waiterPayment'])->name('waiterPayment');
-            Route::post('addCard', [HomeController::class,'addCard'])->name('addCard');
+            Route::post('add-new-card', [HomeController::class,'addCard'])->name('addCard');
 
         });
     });
