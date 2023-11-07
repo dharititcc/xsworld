@@ -197,6 +197,7 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'v1', 'as' => 'api.v1.'], fun
             Route::post('update-cart', [HomeController::class,'waiterupdateCart'])->name('waiterupdateCart');
             Route::post('take-payment', [HomeController::class,'waiterPayment'])->name('waiterPayment');
             Route::post('add-new-card', [HomeController::class,'addCard'])->name('addCard');
+            Route::get('tbl-list', [HomeController::class,'tableList'])->name('tableList');
 
         });
     });

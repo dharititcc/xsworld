@@ -20,6 +20,7 @@ class OrderListResource extends JsonResource
             'restaurant_name'           => $this->restaurant->name,
             'user'                      => $this->user->name,
             'restaurant_id'             => $this->restaurant->id,
+            'table_no'                  => $this->restaurant_table->id ?? '',
             'amount'                    => $this->amount,
             'total'                     => number_format($this->total, 2),
             'status'                    => $this->order_status,

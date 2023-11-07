@@ -184,5 +184,11 @@ class HomeController extends APIController
         return $this->respondSuccess('New Card Added successfully,',$cardDetails);
     }
 
+    public function tableList()
+    {
+        $orderTable = $this->orderRepository->tableOrderLists();
+        return $this->respondSuccess('Table List successfully', OrderResource::collection(($orderTable)));
+    }
+
 
 }

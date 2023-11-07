@@ -844,4 +844,12 @@ class OrderRepository extends BaseRepository
 
         return $cards;
     }
+
+    public function tableOrderLists(): Collection
+    {
+        $user   = auth()->user();
+        $restaurant_id = $user->restaurant_waiter->restaurant_id;
+        $orders = Order::where(['restaurant_id' => $restaurant_id, 'waiter_id' => $user->id])->where('type',Order::CART)->get();
+        return $orders;
+    }
 }
