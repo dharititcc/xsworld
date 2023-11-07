@@ -1,0 +1,218 @@
+{
+    "applinks": {
+        "apps": [],
+        "details": [
+            {
+                "appIDs": [
+                    "4NLSQYKBX8.com.xsworld.iOS"
+                ],
+                "appID": "4NLSQYKBX8.com.xsworld.iOS",
+                "components": [
+                    {
+                        "/": "/",
+                        "comment": "Frontpage"
+                    },
+                    {
+                        "/": "/$(lang)/",
+                        "caseSensitive": false,
+                        "comment": "Language feed page"
+                    },
+                    {
+                        "/": "/$(lang)/r/*",
+                        "caseSensitive": false,
+                        "comment": "Language subreddit page"
+                    },
+                    {
+                        "/": "/$(lang)/x/*",
+                        "caseSensitive": false,
+                        "comment": "Language adult subreddit page"
+                    },
+                    {
+                        "/": "/$(lang)/r/*/comments/*",
+                        "caseSensitive": false,
+                        "comment": "Language post detail page"
+                    },
+                    {
+                        "/": "/$(lang)/x/*/comments/*",
+                        "caseSensitive": false,
+                        "comment": "Language adult post detail page"
+                    },
+                    {
+                        "/": "/$(lang)-$(region)/",
+                        "caseSensitive": false,
+                        "comment": "Language feed page (w/ region code)"
+                    },
+                    {
+                        "/": "/$(lang)-$(region)/r/*",
+                        "caseSensitive": false,
+                        "comment": "Language subreddit page (w/ region code)"
+                    },
+                    {
+                        "/": "/$(lang)-$(region)/x/*",
+                        "caseSensitive": false,
+                        "comment": "Language adult subreddit page (w/ region code)"
+                    },
+                    {
+                        "/": "/$(lang)-$(region)/r/*/comments/*",
+                        "caseSensitive": false,
+                        "comment": "Language post detail page (w/ region code)"
+                    },
+                    {
+                        "/": "/$(lang)-$(region)/x/*/comments/*",
+                        "caseSensitive": false,
+                        "comment": "Language adult subreddit post detail page (w/ region code)"
+                    },
+                    {
+                        "/": "/r/*",
+                        "comment": "Subreddit page"
+                    },
+                    {
+                        "/": "/x/*",
+                        "comment": "Adult subreddit page"
+                    },
+                    {
+                        "/": "/u/*",
+                        "comment": "User profile page"
+                    },
+                    {
+                        "/": "/user/*",
+                        "comment": "User profile page"
+                    },
+                    {
+                        "/": "/comments/*",
+                        "comment": "Post detail page"
+                    },
+                    {
+                        "/": "/live/*",
+                        "comment": "Live"
+                    },
+                    {
+                        "/": "/message/*",
+                        "comment": "Inbox messages"
+                    },
+                    {
+                        "/": "/c/*",
+                        "comment": "Chat"
+                    },
+                    {
+                        "/": "/chat/*",
+                        "comment": "Chat"
+                    },
+                    {
+                        "/": "/channel/*",
+                        "comment": "Chat"
+                    },
+                    {
+                        "/": "/prefs/update",
+                        "comment": "Email/password change page"
+                    },
+                    {
+                        "/": "/coins",
+                        "comment": "Gold (coins)"
+                    },
+                    {
+                        "/": "/premium",
+                        "comment": "Premium (ad-free) buy page"
+                    },
+                    {
+                        "/": "/verification/*",
+                        "comment": "Email verification"
+                    },
+                    {
+                        "/": "/rpan/*",
+                        "comment": "RPAN"
+                    },
+                    {
+                        "/": "/layer",
+                        "comment": "Layer"
+                    },
+                    {
+                        "/": "/search/*",
+                        "comment": "Search page"
+                    },
+                    {
+                        "/": "/vault/*",
+                        "comment": "Vault"
+                    },
+                    {
+                        "/": "/submit/*",
+                        "comment": "Post creation page"
+                    },
+                    {
+                        "/": "/account/magic_link/landing/*",
+                        "comment": "Magic link authentication"
+                    },
+                    {
+                        "/": "/talk/*",
+                        "comment": "Reddit Talk"
+                    },
+                    {
+                        "/": "/subreddits/create",
+                        "comment": "Community Create"
+                    },
+                    {
+                        "/": "/discover/*",
+                        "comment": "Discover"
+                    },
+                    {
+                        "/": "/avatar/*",
+                        "comment": "Avatar"
+                    },
+                    {
+                        "/": "/onboarding",
+                        "comment": "Onboarding"
+                    },
+                    {
+                        "/": "/redditchat/*",
+                        "comment": "Reddit Chat"
+                    },
+                    {
+                        "/": "/recap/*",
+                        "caseSensitive": false,
+                        "comment": "Reddit Recap"
+                    },
+                ],
+                "paths": [
+                    "/",
+                    "/r/*",
+                    "/x/*",
+                    "/u/*",
+                    "/user/*",
+                    "/comments/*",
+                    "/live/*",
+                    "/message/*",
+                    "/c/*",
+                    "/chat/*",
+                    "/channel/*",
+                    "/prefs/update",
+                    "/coins",
+                    "/premium",
+                    "/verification/*",
+                    "/rpan/*",
+                    "/layer",
+                    "/search/*",
+                    "/vault/*",
+                    "/submit/*",
+                    "/account/magic_link/landing/*",
+                    "/talk/*",
+                    "/subreddits/create",
+                    "/discover/*",
+                    "/avatar/*",
+                    "/onboarding",
+                    "/redditchat",
+                    "/recap/*"
+                ]
+            }
+        ]
+    },
+    "activitycontinuation": {
+        "apps": [
+            "4NLSQYKBX8.com.xsworld.iOS"
+        ]
+    },
+    "webcredentials": {
+        "apps": [
+            "4NLSQYKBX8.com.xsworld.iOS"
+        ]
+    }
+}

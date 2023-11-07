@@ -2,20 +2,13 @@
 
     XS.Food = {
         table: null,
-        tableColumns: [{
-            "data": "id", // can be null or undefined
-            "defaultContent": "",
-            "sortable": false,
-            render: function (data, type, row) {
-                return `<label class="cst-check"><input name="id" class="checkboxitem" type="checkbox" value="${row.id}"><span class="checkmark"></span></label>`
-            }
-        },
+        tableColumns: [
         {
             "data": "name", // can be null or undefined ->type
             "defaultContent": "",
             render: function (data, type, row) {
                 var color = (row.is_available == 1) ? "green" : "red";
-                return `<div class="prdname ${color}"> ${row.name} </div>
+                return `<label class="cst-check"><input name="id" class="checkboxitem" type="checkbox" value="${row.id}"><span class="checkmark"></span></label><div class="prdname ${color}"> ${row.name} </div>
                             <a href="javascript:void(0);" data-id="${row.id}" class="food_modal edit">Edit</a>
                             <div class="add-date">Added ${XS.Common.formatDate(row.created_at)}</div>`
             }

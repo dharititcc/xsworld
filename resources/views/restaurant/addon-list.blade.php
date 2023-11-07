@@ -22,11 +22,7 @@
             <table width="100%" class="drink_datatable">
                 <thead>
                     <tr valign="middle">
-                        <th><label class="cst-check"><input type="checkbox" value=""><span
-                                    class="checkmark"></span></label></th>
-                        <th>
-                            Name
-                        </th>
+                        <th><label class="cst-check"><input type="checkbox" id="allcheck" value=""><span class="checkmark"></span></label> Name</th>
                         <th class="price">Price</th>
                         <th class="popularity">Popularity</th>
                         <th>Status</th>
@@ -224,26 +220,19 @@
                 processing: true,
                 serverSide: true,
                 searching: false,
-                order: [[1, 'asc']],
+                order: [[0, 'asc']],
                 ajax: {
                     url: moduleConfig.getAddonlist,
                     data: data,
                 },
-                columns: [{
-                        "data": "id", // can be null or undefined
-                        "defaultContent": "",
-                        "bSortable": false,
-                        render: function(data, type, row) {
-                            return '<label class="cst-check"><input name="id" class="checkboxitem" type="checkbox" value="' +
-                                row.id + '"><span class="checkmark"></span></label>'
-                        }
-                    },
+                columns: [
                     {
                         "data": "name", // can be null or undefined ->type
                         "defaultContent": "",
                         render: function(data, type, row) {
                             var color = (row.is_available == 1) ? "green" : "red";
-                            return '<div class="prdname ' + color + '"> ' + row.name +
+                            return '<label class="cst-check"><input name="id" class="checkboxitem" type="checkbox" value="' +
+                                row.id + '"><span class="checkmark"></span></label><div class="prdname ' + color + '"> ' + row.name +
                                 ' </div><a href="javascript:void(0)" data-type="Edit" data-addon_id="'+row.id+'" class="edit addon_model" data-id=" ' + row.id +
                                 ' " >Edit</a>  <div class="add-date">Added ' + formatDate(row
                                     .created_at) + '</div>'

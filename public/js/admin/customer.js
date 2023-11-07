@@ -9,12 +9,8 @@
             "defaultContent": "",
             "sortable": false,
             render: function (data, type, row) {
-                return `<label class="cst-check"><input name="id" class="checkboxitem" type="checkbox" value="${row.id}"><span class="checkmark"></span></label>`
+                return `<label class="cst-check"><input name="id" class="checkboxitem" type="checkbox" value="${row.id}"><span class="checkmark"></span></label> ${row.full_name}`
             }
-        },
-        {
-            "data": "full_name", // can be null or undefined ->type
-            "defaultContent": "",
         },
         {
             "data": "email", // can be null or undefined
