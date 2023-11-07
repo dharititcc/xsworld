@@ -23,19 +23,27 @@ class Order extends Model
     const CART  = 1;
     const ORDER = 2;
 
+    // Customer status
     const PENDNIG                       = 0;
+    const CUSTOMER_CANCELED             = 10;
+
+    // Bartender status
     const ACCEPTED                      = 1;
     const READY                         = 2;
     const COMPLETED                     = 3;
-    const RESTAURANT_CANCELED           = 4;
+    const DELAY_ORDER                   = 9;
     const CONFIRM_PICKUP                = 5;
     const RESTAURANT_TOXICATION         = 6;
-    const PARTIAL_REFUND                = 7;
-    const FULL_REFUND                   = 8;
-    const DELAY_ORDER                   = 9;
-    const CUSTOMER_CANCELED             = 10;
+
+    // Kitchen status
     const READYFORPICKUP                = 11;
     const KITCHEN_CONFIRM               = 12;
+
+    // Admin status
+    const PARTIAL_REFUND                = 7;
+    const FULL_REFUND                   = 8;
+
+    const RESTAURANT_CANCELED           = 4;
 
     const ORDER_STATUS = [
         self::PENDNIG                   => 'Pending',
