@@ -548,8 +548,9 @@ class UserRepository extends BaseRepository
         if( isset($input['code']) )
         {
             $user = auth()->user();
-            $redeem = UserGiftCard::where(['from_user' => $user->email, 'code' => $input['code'] , 'status' => UserGiftCard::PENDING ])->orderBy('id', 'desc')->first();
-            if($redeem)
+            $redeem = UserGiftCard::where(['code' => $input['code'] , 'status' => UserGiftCard::PENDING ])->orderBy('id', 'desc')->first();
+
+            if($user->email != $redeem->from_user)
             {
                 $data['status'] = UserGiftCard::REDEEMED;
                 $redeem->update($data);
