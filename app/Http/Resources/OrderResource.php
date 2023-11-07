@@ -31,6 +31,7 @@ class OrderResource extends JsonResource
             'status'                    => $this->order_status,
             'status_no'                 => (int) $this->status,
             'table_no'                  => $this->restaurant_table->id ?? '',
+            'table_name'                => $this->restaurant_table->name ?? '',
             'user_payment_method'       => '',
             'credit_point'              => $this->credit_point,
             'apply_time'                => $this->apply_time ?? 0,
