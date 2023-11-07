@@ -11,7 +11,7 @@
 		@csrf
 
 		<div class="container">
-			<img src="img/logo.svg" alt="" class="logo">
+			<img src="{{ asset('img/logo.png') }}" alt="" class="logo">
 
 			<div class="form-group">
 				<input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" placeholder="Email" value="{{ old('email') }}" required autocomplete="email" autofocus>
