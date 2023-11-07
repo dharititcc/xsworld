@@ -19,11 +19,13 @@ return new class extends Migration
             $table->string('to_user')->nullable();
             $table->integer('amount');
             $table->string('code');
+            $table->unsignedBigInteger('verify_user_id')->nullable();
             $table->text('transaction_id')->nullable();
             $table->tinyInteger('status')->comment("1 => Redeemed , 0 => Pending")->default(0);
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('verify_user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 

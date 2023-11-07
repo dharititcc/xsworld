@@ -550,21 +550,26 @@ class UserRepository extends BaseRepository
             $user = auth()->user();
             $redeem = UserGiftCard::where(['code' => $input['code'] , 'status' => UserGiftCard::PENDING ])->orderBy('id', 'desc')->first();
 
-            if($user->email != $redeem->from_user)
+            if($redeem)
             {
-                $data['status'] = UserGiftCard::REDEEMED;
-                $redeem->update($data);
+                if($user->email != $redeem->from_user)
+                {
+                    $data['status']         = UserGiftCard::REDEEMED;
+                    $data['verify_user_id'] = $user->id;
+                    $redeem->update($data);
 
-                $users['credit_points'] = $user->credit_points + $redeem->amount;
-                $user->update($users);
+                    $users['credit_points'] = $user->credit_points + $redeem->amount;
+                    $user->update($users);
 
-                return $user;
-            }
-            else
-            {
-                throw new GeneralException('You are not redeem your own gift card.');
+                    return $user;
+                }
+                else
+                {
+                    throw new GeneralException('You are not redeem your own gift card.');
+                }
             }
             throw new GeneralException('Invalid Redeem code.');
+
         }
 
         throw new GeneralException('Redeem Code is required.');
