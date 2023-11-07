@@ -485,7 +485,7 @@ class UserRepository extends BaseRepository
             $stripe         = new Stripe();
             $customer       = $stripe->fetchCustomer($user->stripe_customer_id);
             $default_card   = $customer->default_source;
-            $amount         = number_format($data['amount'],2);
+            $amount         = floatval(number_format($data['amount'],2));
 
             if($default_card)
             {
