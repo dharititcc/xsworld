@@ -3,6 +3,7 @@
 use App\Billing\Stripe;
 use App\Exceptions\GeneralException;
 use App\Models\Order;
+use App\Models\User;
 use App\Repositories\BaseRepository;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
@@ -68,7 +69,7 @@ class BarRepository extends BaseRepository
 
         $order       = $this->orderQuery()
         ->where(['type'=> Order::ORDER ])
-        ->whereIn('status', [Order::ACCEPTED, Order::DELAY_ORDER])
+        ->whereIn('status', [Order::KITCHEN_CONFIRM, Order::DELAY_ORDER])
         ->orderBy('id','desc')
         ->get();
 
@@ -149,6 +150,10 @@ class BarRepository extends BaseRepository
         $apply_time        = $data['apply_time'] ? $data['apply_time'] : null;
         $order             = Order::findOrFail($order_id);
         $updateArr         = [];
+        // dd($order);
+        // dd($order->pickup_point_user->devices()->pluck('fcm_token'));
+        $user               = $order->user_id ? User::findOrFail($order->user_id) : auth()->user();
+        $devices            = $user->devices()->pluck('fcm_token')->toArray();
 
         if(isset($order->id))
         {
