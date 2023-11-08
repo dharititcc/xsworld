@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\URL;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Client\Response;
 use SVG\SVG;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class RestaurantTableController extends Controller
 {
@@ -80,7 +81,7 @@ class RestaurantTableController extends Controller
             // ->format('png')
             // ->generate($qr_url . '/'.$table->id, public_path('images/qrcode.png'));
 
-        $qr_code_image =    \QrCode::size(212)
+        $qr_code_image =    QrCode::size(212)
             ->generate(
                 $qr_url . '/'.$table->id,
             );
