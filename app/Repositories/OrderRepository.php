@@ -758,7 +758,7 @@ class OrderRepository extends BaseRepository
      */
     function placeOrderwaiter(array $data): Order
     {
-        $card_id            = $data['card_id'] ?? null;
+        // $card_id            = $data['card_id'] ?? null;
         $credit_amount      = $data['credit_amount'] ? $data['credit_amount'] : null;
         $amount             = $data['amount'] ? $data['amount'] : null;
         // $pickup_point_id    = $data['pickup_point_id'] ? PickupPoint::findOrFail($data['pickup_point_id']) : null;
@@ -769,6 +769,8 @@ class OrderRepository extends BaseRepository
 
         $updateArr         = [];
         $paymentArr        = [];
+        $stripe_customer_id = $user->stripe_customer_id;
+        // dd($stripe_customer_id);
 
         if(isset($order->id))
         {
@@ -786,21 +788,23 @@ class OrderRepository extends BaseRepository
 
             if( $order->total != $credit_amount )
             {
+                $stripe         = new Stripe();
+                $getCusCardId   = $stripe->fetchCustomer($stripe_customer_id);
+                $defaultCardId  = $getCusCardId->default_source;
+
                 $paymentArr = [
                     'amount'        => $amount * 100,
                     'currency'      => $order->restaurant->currency->code,
                     'customer'      => $user->stripe_customer_id,
-                    'capture'       => false,
-                    'source'        => $card_id,
-                    'description'   => $order->id
+                    // 'capture'       => false,
+                    'source'        => $defaultCardId,
+                    'description'   => "Order #{$order->id} place Successfully with Payment of {$amount}"
                 ];
-
-                $stripe         = new Stripe();
                 $payment_data   = $stripe->createCharge($paymentArr);
 
                 $updateArr = [
                     'type'                  => Order::ORDER,
-                    'card_id'               => $card_id,
+                    'card_id'               => $defaultCardId,
                     'charge_id'             => $payment_data->id,
                     // 'pickup_point_id'       => ($pickup_point_id) ? $pickup_point_id->id : null,
                     // 'pickup_point_user_id'  => ($pickup_point_id) ? $pickup_point_id->user_id : null,
