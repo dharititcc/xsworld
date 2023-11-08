@@ -227,19 +227,22 @@
                         headers: {
                             'X-CSRF-TOKEN': jQuery('meta[name="csrf-token"]').attr('content')
                         },
-                        dataType: 'json',
-                        
+                        // dataType: 'json',
                         success: function(res){
                           console.log(res);
                           var link = document.createElement("a");
                           document.body.appendChild(link);
                           link.setAttribute("type", "hidden");
-                          link.href = "data:application/pdf;base64," + res.pdf;
-                          link.download = "qr.pdf";
+                          link.href = "data:application/png;base64," + res.pdf;
+                          link.download = "qr.png";
                           link.click();
                           document.body.removeChild(link);
                           alert('QR code Exported successfully');
                           $('.qr-code-hide').modal('hide');
+                        },
+                        error: function(xhr, error)
+                        {
+                            console.log(xhr);
                         }
                       });
                 });

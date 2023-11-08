@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\URL;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Client\Response;
+use SVG\SVG;
 
 class RestaurantTableController extends Controller
 {
@@ -22,25 +23,40 @@ class RestaurantTableController extends Controller
     public function export_pdf(Request $request)
     {
         $qr_code =$request->qr_code;
-        $restaurant = session('restaurant');
-        $base64  = base64_encode($qr_code);
-        $pdf = PDF::loadView('pdf.qr_code', ['qr_code' => $base64]);
+        $image = \SVG\SVG::fromString($qr_code);
+        header('Content-Type: image/png');
+        $image2 = imagepng($image->toRasterImage(650,650),'dharit1.png');
+
+
+        imagepng($image, 'output.png');
+        dd($image->getDocument(), 'image.png');
+        // $image2 = new SVG(100, 100);
+        // header('Content-Type: image/png');
+        // // $image2->toRasterImage(650,650);
+        // $docs = $image2->getDocument();
+
+        // $restaurant = session('restaurant');
+        // $base64  = base64_encode($qr_code);
+        // $pdf = PDF::loadView('pdf.qr_code', ['qr_code' => $qr_code]);
+
         // Convert PDF to base64
-       
-        $base64Pdf = base64_encode($pdf->output());
+        // return 'data:application/pdf;base64,'.base64_encode($pdf->output());
+
+        // $base64Pdf = $pdf->output();
+        // return $pdf->download('qr_code.pdf');
         // $headers = [
         //     'Content-Type' => 'application/pdf',
         //     'Content-Disposition' => 'attachment; filename="qr_code.pdf"',
         // ];
 
-        $header = header('Content-Type: text/html; charset=utf-8');
-        //     // dd($base64Pdf);
-        
+        // $header = header('Content-Type: text/html; charset=utf-8');
+
         return response()->json([
             'success' => true,
-            'pdf' => $base64Pdf,
-        ], 200, ['Content-Type' => 'application/pdf']);
-        
+            'pdf' => $image2,
+        ], 200);
+        // ], 200, ['Content-Type' => 'image/png']);
+
     }
 
     public function exportQrCode(Request $request)
