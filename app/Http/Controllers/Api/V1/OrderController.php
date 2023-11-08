@@ -309,4 +309,23 @@ class OrderController extends APIController
 
         return $this->respondWithError('Feedback is not received.');
     }
+
+    /**
+     * Method reOrder
+     *
+     * @param Request $request [explicite description]
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function reOrder(Request $request)
+    {
+        $input      = $request->all();
+        $reorder    = $this->repository->ReOrder($input);
+
+        if(isset($reorder->id))
+        {
+            return $this->respondSuccess('Cart data found', new OrderResource($reorder));
+        }
+        return $this->respondWithError('Failed to Re-order.');
+    }
 }

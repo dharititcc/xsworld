@@ -61,6 +61,10 @@ Route::group(['prefix' => 'restaurants', 'as' => 'restaurants.', 'middleware' =>
     {
         Route::resource('foods', 'FoodController');
     });
+    Route::group(['namespace' => 'Orders'], function()
+    {
+        Route::resource('orders', 'OrderController');
+    });
     Route::group(['namespace' => 'Mixers'], function()
     {
         Route::resource('mixers', 'MixerController');

@@ -34,8 +34,8 @@ var XS_Admin = {}; // common variable used in all the files of the backend
          * Btn Processing Stop
          * @param {*} btnElem
          */
-        btnProcessingStop: function (btnElem) {
-            btnElem.html('submit');
+        btnProcessingStop: function (btnElem, text = 'Submit') {
+            btnElem.html(text);
             btnElem.attr('disabled', false);
         },
 

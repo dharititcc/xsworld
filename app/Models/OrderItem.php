@@ -16,11 +16,6 @@ class OrderItem extends Model
 
     protected $table = 'order_items';
 
-    /** order item types */
-    const ADDON = 0;
-    const ITEM  = 1;
-    const Mixer = 2;
-
     /**
      * The attributes that are mass assignable.
      *

@@ -69,7 +69,7 @@ class BarRepository extends BaseRepository
 
         $order       = $this->orderQuery()
         ->where(['type'=> Order::ORDER ])
-        ->whereIn('status', [Order::KITCHEN_CONFIRM, Order::DELAY_ORDER])
+        ->whereIn('status', [Order::ACCEPTED, Order::DELAY_ORDER])
         ->orderBy('id','desc')
         ->get();
 

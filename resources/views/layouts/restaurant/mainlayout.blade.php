@@ -13,9 +13,7 @@
                 @yield('topbar')
                 <!-- Page content-->
                 <div class="container-fluid">
-                    <main>
                        @yield('content')
-                    </main>
                 </div>
             </div>
         </div>
