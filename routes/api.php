@@ -129,7 +129,7 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'v1', 'as' => 'api.v1.'], fun
 
             // orders
             // {api/v1/orderupdate}
-            Route::post('/orderupdate', 'BarController@orderUpdate')->name('barOrderUpdate');
+            Route::post('/orderstatusupdate', 'BarController@orderStatusUpdate')->name('barOrderStatusUpdate');
             // {api/v1/barorderhistory}
             Route::get('/barorderhistory', 'BarController@barOrderHistory')->name('barOrderHistory');
             // {api/v1/completedorderhistory}

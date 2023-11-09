@@ -137,23 +137,31 @@ class BarRepository extends BaseRepository
     }
 
     /**
-     * Method updateOrder
+     * Method updateStatusOrder
      *
      * @param array $data [explicite description]
      *
      * @return Order
      */
-    function updateOrder(array $data) : Order
+    function updateStatusOrder(array $data) : Order
     {
         $order_id          = $data['order_id'] ? $data['order_id'] : null;
         $status            = $data['status'] ? $data['status'] : null;
         $apply_time        = $data['apply_time'] ? $data['apply_time'] : null;
         $order             = Order::findOrFail($order_id);
         $updateArr         = [];
-        // dd($order);
-        // dd($order->pickup_point_user->devices()->pluck('fcm_token'));
-        $user               = $order->user_id ? User::findOrFail($order->user_id) : auth()->user();
-        $devices            = $user->devices()->pluck('fcm_token')->toArray();
+        $user              = $order->user_id ? User::findOrFail($order->user_id) : auth()->user();
+        $user_tokens       = $user->devices()->pluck('fcm_token')->toArray();
+        $kitchens          = $order->restaurant->kitchens;
+        $kitchen_token     = [];
+
+        foreach ($kitchens as $kitchen) {
+            $token   = $kitchen->user->devices()->pluck('fcm_token');
+            if(isset($token[0]))
+            {
+                $kitchen_token[]    = $token[0];
+            }
+        }
 
         if(isset($order->id))
         {
@@ -170,7 +178,10 @@ class BarRepository extends BaseRepository
 
             if( $status != Order::ACCEPTED )
             {
-                $updateArr['status']   = $status;
+                $updateArr['status']    = $status;
+                $title                  = "Order is Placed";
+                $message                = "New order is placed ";
+                $send_notification      = sendNotification($title,$message,$kitchen_token,$order_id);
             }
 
             if($status == Order::COMPLETED)
