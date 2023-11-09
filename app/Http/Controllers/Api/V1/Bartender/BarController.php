@@ -98,9 +98,9 @@ class BarController extends APIController
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function orderUpdate(OrderUpdateRequest $request)
+    public function orderStatusUpdate(OrderUpdateRequest $request)
     {
-        $order_data   = $this->repository->updateOrder($request->validated());
+        $order_data   = $this->repository->updateStatusOrder($request->validated());
 
         if($order_data->id)
         {
