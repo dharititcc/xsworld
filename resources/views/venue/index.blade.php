@@ -28,7 +28,7 @@
                                         @endif
                                     </form>
                                 </table>
-                                <button class="bor-btn w-100 font-26" id="venue_submitBtn" style="display: none" type="submit">Add Open
+                                <button class="bor-btn w-100 font-26 mt-4" id="venue_submitBtn" style="display: none" type="submit">Add Open
                                     Timming</button>
 
                             </div>
@@ -76,7 +76,7 @@
                             <button class="bor-btn w-100 font-30 top-bor" type="button">Support</button>
                         </div>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-4 review-box-outer">
                         <div class="grey-brd-box h-100">
                             <div class="title">
                                 <h2>Reviews</h2>
@@ -125,9 +125,11 @@
                                 @endforeach
                             </div>
 
+                            @if ($order_reviews->total() > 10)
                             <div class="review-pagination">
                                 {!! $order_reviews->links() !!}
                             </div>
+                            @endif
                         </div>
                     </div>
                     <div class="col-md-4">

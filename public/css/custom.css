@@ -53,6 +53,8 @@ form .logo{ margin: 0 auto 6vh auto; display: block; max-width: 72%;}
 .form-control{border-bottom: var(--line) solid #A8A8A8 !important; background: transparent; border-radius: 0; border: none; padding: .7rem 0; color: #fff !important;}
 .form-control:focus{ background: transparent; box-shadow: none; border-image-source:var(--gold-line); border-image-slice: 1;}
 
+.form-control.invert{filter: invert(1); color: #000 !important;} 
+
 .btn-box{ margin-top: 60px;}
 
 .green-box{ background: #4FDA76; padding: 15px; }
@@ -83,7 +85,7 @@ main{ padding: 0 15px;}
 .hero{ height: 335px; transition: .3s;} 
 .hero img{ width: 100%; object-fit: cover; height: 100%;}
 
-.grey-brd-box{ border:1px solid #A8A8A8;}
+.grey-brd-box{ border:1px solid #A8A8A8; position: relative;}
 .grey-brd-box .title{ display: flex; justify-content: space-between; padding: 20px; align-items: center; border-bottom: 1px solid #A8A8A8; position: relative;}
 .grey-brd-box .title h2{ color: #EAC36C;}
 .grey-brd-box .title .edit{ color: #fff; font-size: 17px; text-decoration: none; position: absolute; right: 0; padding: 20px}
@@ -164,6 +166,8 @@ a.grey-brd-box.lable-box:hover{ border-color: var(--bs-light);}
 .opening-time th{ font-family: var(--ff-bold); font-size: 20px;}
 .opening-time td{ text-align: right;}
 
+.restaurant-timing{ display: flex; gap: 10px; justify-content: flex-end;}
+
 .form-control.vari1{padding: 0.3rem 0; border-color: #F4F3EF;}
 .form-control.vari1:focus{border-image-source:none; border-color: #fff !important;}
 
@@ -195,11 +199,11 @@ a.grey-brd-box.lable-box:hover{ border-color: var(--bs-light);}
 .rvnote, .ord-time{ color: #fff;}
 .rvnote{ font-size: 14px; }
 .ord-time{ text-align: right;}
-.review-pagination{border-top: 1px solid #dee2e6;}
+.review-pagination{border-top: 1px solid #dee2e6; position: sticky; width: 100%; bottom: 0;}
 .review-pagination .pagination{ margin: 0 auto; display: table;}
 .review-pagination .pagination li{ display: table-cell; text-align: center;}
 .review-pagination .pagination .page-link{ border-bottom: 0; border-top: 0;}
-.review-box-height{ height: 180.5vh;}
+.review-box-height{ height: calc(100% - 109px);     max-height: 807px;}
 
 .venue-fig{ margin: 0; height: 290px; width: 100%;}
 .venue-fig img{ width: 100%; height: 100%; object-fit: cover;}
@@ -456,11 +460,11 @@ textarea.prd-desc{ border: 1px solid #A8A8A8; color: #fff; font-size: 1rem; widt
 
 .hitory-list ul li article{ display: flex; justify-content: space-between;}
 .hitory-list ul li .view-order{ margin-top: 2.5rem;}
-.hitory-list ul li .view-order.act.bor-btn{border-image-source: var(--gold-line); border-image-slice: 1; }
+.hitory-list ul li .view-order.act.bor-btn{ opacity: .4; color: #ffffffd6;}
 
 .hitory-list ul li aside{ display: flex;}
 
-time{ color: #fff; width: 46px; margin-right: 20px}
+time{ color: #fff; width: 46px; margin-right: 20px; word-break: break-all;}
 .hitory-list ul li aside .ord-id{ color: #EAC36C; font-weight: 700;}
 .hitory-list ul li aside .ord-id span{ color: #fff; font-weight: normal;}
 .ord-status{ text-align: right;}
@@ -473,7 +477,7 @@ time{ color: #fff; width: 46px; margin-right: 20px}
 .item-orderd{padding: 20px;  border-image-source: var(--gold-line); border-image-slice: 1;  border-bottom: 1px solid; }
 .item-orderd h2{ margin-bottom: 10px;}
 
-.item-list { height: 300px; direction: rtl; padding-left: 25px;}
+.item-list { max-height: 300px; direction: rtl; padding-left: 25px;}
 .item-list table{ width: 100%; text-align: left;}
 .item-list td{ padding: .5em 0; vertical-align: top;}
 .item-list td:nth-child(3){ padding: .5em .7em;}
@@ -622,6 +626,7 @@ table.dataTable thead th{ padding: 1.1rem .4rem;}
   .view-odbox .title h2,
   .item-orderd h2,
   .payopt-box h2{font-size: calc(100% + .25em);}
+  .review-box-height { height: calc(100% - 82px);}
 }
 
 @media (max-width: 1200px) {
@@ -723,6 +728,11 @@ table.dataTable thead th{ padding: 1.1rem .4rem;}
   .sb-sidenav-toggled .hitory-list ul li{ padding-right: 0;}
   .sidebar-header{min-height: initial;}
   .list-catg span{word-break: break-all;}
+  .review-pagination .pagination{ display: block;}
+  .review-pagination .pagination li{ display: inline-block;}
+  .review-pagination .pagination{ border: none; text-align: center;}
+  
+  .review-pagination .pagination .page-link{ border: 1px solid #fff;}
 }
 
 @media (max-width: 767px) {
@@ -754,6 +764,8 @@ table.dataTable thead th{ padding: 1.1rem .4rem;}
   .hitory-list ul li .green.icon-ok-circled{font-size: 17px; position: absolute;}
   time{ width: auto; margin: 0 0 0 30px;}
   .hitory-list ul li aside .ord-id{    padding: 1rem 0;}
+
+  .review-box-outer{ margin-bottom: 30px;}
 
 }
 
