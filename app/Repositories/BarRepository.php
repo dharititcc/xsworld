@@ -169,6 +169,9 @@ class BarRepository extends BaseRepository
             {
                 $updateArr['accepted_date'] = Carbon::now();
                 $updateArr['status']        = $status;
+                $title                      = "Order is Placed from Bar";
+                $message                    = "New order is placed from Bar";
+                $send_notification          = sendNotification($title,$message,$kitchen_token,$order_id);
             }
 
             if( isset($apply_time) )
@@ -179,9 +182,6 @@ class BarRepository extends BaseRepository
             if( $status != Order::ACCEPTED )
             {
                 $updateArr['status']    = $status;
-                $title                  = "Order is Placed";
-                $message                = "New order is placed ";
-                $send_notification      = sendNotification($title,$message,$kitchen_token,$order_id);
             }
 
             if($status == Order::COMPLETED)
