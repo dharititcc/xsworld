@@ -12,9 +12,12 @@
                     <article>
                         <aside>
                             <i class="icon-ok-circled green"></i>
-                            <time>{{ \Carbon\Carbon::parse($order->created_at)->format('d/m/Y') }}</time>
+                            <time>
+                                {{ \Carbon\Carbon::parse($order->created_at)->format('d/m') }}
+                                {{ \Carbon\Carbon::parse($order->created_at)->format('Y') }}
+                            </time>
 
-                            <div class="ord-id"><br>
+                            <div class="ord-id">
                                 {{ $order->user->name }}<br>
                                 <span>Order #{{ $order->id }}</span>
                             </div>
@@ -166,7 +169,7 @@
             </li> --}}
         </ul>
 
-        <div class="review-pagination">
+        <div class="history-pagination">
             {!! $orders->links() !!}
         </div>
     </div>
@@ -194,7 +197,8 @@
     {
         var selectors = {
             viewOrder:          jQuery('.view-order'),
-            orderDetailView:    jQuery('.view-odbox')
+            orderDetailView:    jQuery('.view-odbox'),
+            historyList:        jQuery('.hitory-list'),
         };
 
         selectors.viewOrder.on('click', function(e)
@@ -205,6 +209,8 @@
                 orderId = $this.data('order_id');
 
             XS.Common.btnProcessingStart($this);
+
+            selectors.historyList.find('.view-order').removeClass('act');
 
             $.ajax({
                 url: moduleConfig.viewOrderUrl.replace(':ID', orderId),
@@ -221,6 +227,7 @@
                 complete: function()
                 {
                     XS.Common.btnProcessingStop($this, 'View Order');
+                    $this.addClass('act');
                 }
             });
         });

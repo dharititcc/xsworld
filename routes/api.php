@@ -129,7 +129,7 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'v1', 'as' => 'api.v1.'], fun
 
             // orders
             // {api/v1/orderupdate}
-            Route::post('/orderupdate', 'BarController@orderUpdate')->name('barOrderUpdate');
+            Route::post('/orderstatusupdate', 'BarController@orderStatusUpdate')->name('barOrderStatusUpdate');
             // {api/v1/barorderhistory}
             Route::get('/barorderhistory', 'BarController@barOrderHistory')->name('barOrderHistory');
             // {api/v1/completedorderhistory}
@@ -199,6 +199,7 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'v1', 'as' => 'api.v1.'], fun
             Route::post('update-cart', [HomeController::class,'waiterupdateCart'])->name('waiterupdateCart');
             Route::post('take-payment', [HomeController::class,'waiterPayment'])->name('waiterPayment');
             Route::post('add-new-card', [HomeController::class,'addCard'])->name('addCard');
+            Route::post('addCusToTbl', [HomeController::class,'addCusToTbl'])->name('addCusToTbl');
             Route::get('tbl-list', [HomeController::class,'tableList'])->name('tableList');
 
         });

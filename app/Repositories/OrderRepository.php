@@ -2,6 +2,7 @@
 
 use App\Billing\Stripe;
 use App\Exceptions\GeneralException;
+use App\Models\CustomerTable;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\OrderReview;
@@ -182,12 +183,16 @@ class OrderRepository extends BaseRepository
      */
     private function createOrder(User $user, array $data, array $orderItems): Order
     {
-        $restaurant             = Restaurant::find($data['restaurant_id']);
-        $order['user_id']       = $user->id;
-        $order['restaurant_id'] = $restaurant->id;
-        $order['currency_id']   = $restaurant->currency_id;
-        $order['waiter_id']     = access()->isWaiter() ? auth()->user()->id : null;
-        $order['restaurant_table_id'] = isset($data['restaurant_table_id']) ? $data['restaurant_table_id'] : null;
+        $restaurant                     = Restaurant::find($data['restaurant_id']);
+        $order['user_id']               = $user->id;
+        $order['restaurant_id']         = $restaurant->id;
+        $order['currency_id']           = $restaurant->currency_id;
+        $order['waiter_id']             = access()->isWaiter() ? auth()->user()->id : null;
+        $order['restaurant_table_id']   = isset($data['restaurant_table_id']) ? $data['restaurant_table_id'] : null;
+
+        if($order['restaurant_table_id']) {
+            $order['status']    = Order::WAITER_PENDING;
+        }
 
         $newOrder = Order::create($order);
 
@@ -587,7 +592,7 @@ class OrderRepository extends BaseRepository
     {
         $orders = Order::whereIn('restaurant_id',$data);
         if($is_history === 0) {
-            $orderTbl = $orders->where('status',Order::ACCEPTED)->where('type',Order::ORDER)->get();
+            $orderTbl = $orders->whereIn('status',[Order::ACCEPTED,Order::WAITER_PENDING])->where('type',Order::ORDER)->get();
         } else {
             $orderTbl = $orders->whereIn('status',[Order::COMPLETED,Order::FULL_REFUND, Order::PARTIAL_REFUND, Order::RESTAURANT_CANCELED, Order::CUSTOMER_CANCELED, Order::KITCHEN_CONFIRM])->where('type',Order::ORDER)->get();
         }
@@ -944,5 +949,12 @@ class OrderRepository extends BaseRepository
             ]
         );
         return $newOrder;
+    }
+
+    public function customerTable(array $data)
+    {
+        $user = auth()->user();
+        $customerTbl = CustomerTable::create($data);
+        return $customerTbl;
     }
 }

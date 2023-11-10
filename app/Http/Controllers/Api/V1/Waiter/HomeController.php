@@ -12,6 +12,8 @@ use App\Http\Resources\CategorySubCategoryResource;
 use App\Http\Resources\OrderListResource;
 use App\Http\Resources\OrderResource;
 use App\Http\Resources\RestaurantItemsResource;
+use App\Http\Resources\TableResource;
+use App\Models\CustomerTable;
 use App\Models\Order;
 use App\Repositories\OrderRepository;
 use App\Repositories\RestaurantRepository;
@@ -38,10 +40,16 @@ class HomeController extends APIController
     public function activeTable()
     {
         $auth_waiter = auth('api')->user();
-        $orderTbl = Order::where('waiter_id',$auth_waiter->id)->where('type',Order::ORDER)->get();
-        $kitchen_status = Order::where('type',Order::ORDER)->whereIn('status',[Order::KITCHEN_CONFIRM,Order::READYFORPICKUP])->get();
+        $orderTbl = CustomerTable::select(['customer_tables.*'])
+        ->leftJoin('orders', 'customer_tables.order_id','=','orders.id')
+        ->with(['table_order'])
+        ->first();
+        // echo common()->formatSql($orderTbl);die;
+        // dd($orderTbl->table_order);
+        // $orderTbl = Order::with(['user','restaurant','restaurant_table'])->where('waiter_id',$auth_waiter->id)->where('type',Order::CART)->get();
+        $kitchen_status = Order::where('type',Order::ORDER)->where('waiter_id',$auth_waiter->id)->whereIn('status',[Order::KITCHEN_CONFIRM,Order::READYFORPICKUP,Order::WAITER_PENDING])->get();
         $data = [
-            'active_tables' => $orderTbl->count() ? OrderResource::collection($orderTbl) : [],
+            'active_tables' => $orderTbl->count() ? new TableResource($orderTbl) : [],
             'kitchen_status' => $kitchen_status->count() ? OrderResource::collection($kitchen_status) : [],
         ];
         return $this->respondSuccess('Waiter Order Fetched successfully.', $data);
@@ -188,6 +196,12 @@ class HomeController extends APIController
     {
         $orderTable = $this->orderRepository->tableOrderLists();
         return $this->respondSuccess('Table List successfully', OrderListResource::collection(($orderTable)));
+    }
+
+    public function addCusToTbl(Request $request)
+    {
+        $CusToTbl = $this->orderRepository->customerTable($request->all());
+        return $this->respondSuccess("Table Allocated Successfully", $CusToTbl);
     }
 
 

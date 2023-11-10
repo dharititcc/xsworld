@@ -64,10 +64,11 @@
                     <div class="table-design grey-brd-box">
                         <div class="head"><label class="cst-check">
                                 <input type="checkbox" class="qr_select" value="{{ $res_table->id }}"><span class="checkmark"></span></label>
-                            <h2>{{$res_table->code}}</h2>
+                            <h2>{{$res_table->code}} #{{$res_table->id}}</h2>
                         </div>
                         <div class="cnt">
                             <div class="qr-code">{!! html_entity_decode($res_table->qr_image) !!}</div>
+                            {{-- <div class="qr-code"><?php //echo $res_table->qr_image; ?></div> --}}
                             <a href="javascript:void(0);" class="export-info" data-id="{{$res_table->id}}" data-bs-toggle="modal"
                                 data-bs-target="#export_qr_code">Export QR<br>Code</a>
 

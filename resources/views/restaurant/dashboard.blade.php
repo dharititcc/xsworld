@@ -30,7 +30,7 @@
                                         @endif
                                     </form>
                                 </table>
-                                <button class="bor-btn w-100 font-26" id="venue_submitBtn" style="display: none" type="submit">Add Open
+                                <button class="bor-btn w-100 font-26 mt-4" id="venue_submitBtn" style="display: none" type="submit">Add Open
                                     Timming</button>
 
                             </div>
