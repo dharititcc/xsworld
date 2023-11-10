@@ -14,6 +14,7 @@ class TableResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        dd($request->all());
         return [
             'order_id'                  => $this->table_order->id,
             'status'                    => $this->table_order->order_status,

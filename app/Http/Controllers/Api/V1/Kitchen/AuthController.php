@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\V1\Traits\Authenticate;
 use App\Http\Requests\BartenderLoginRequest;
 use App\Http\Requests\LoginRequest;
 use App\Http\Resources\BartenderUserResource;
+use App\Http\Resources\KitchenResource;
 use App\Http\Resources\UserResource;
 use App\Repositories\UserRepository;
 use Illuminate\Http\Request;
@@ -168,13 +169,14 @@ class AuthController extends APIController
             $this->repository->storeDevice($user, ['fcm_token' => $input['fcm_token']]);
 
             $this->repository->update($dataArr, $user);
+            // dd($user->restaurant_kitchen->restaurant);
 
             $token  = $user->createToken('xs_world')->plainTextToken;
             return $this->respond([
                 'status'    =>  true,
                 'message'   =>  'Login successful',
                 'token'     =>  $token,
-                'item'      =>  new UserResource($user),
+                'item'      =>  new KitchenResource($user),
             ]);
         }
 
