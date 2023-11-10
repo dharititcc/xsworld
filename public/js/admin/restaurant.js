@@ -59,6 +59,19 @@
 
             context.makeDatatable();
             context.searchFilter();
+            context.openModal();
+        },
+
+        openModal: function()
+        {
+            jQuery('.create-restaurant').on('click', function(e)
+            {
+                e.preventDefault();
+
+                var $this = jQuery(this);
+
+                jQuery('#restaurant_modal').modal('show');
+            });
         },
 
         searchFilter: function(){
@@ -78,7 +91,7 @@
                 processing: true,
                 serverSide: true,
                 searching: false,
-                order: [[1, 'asc']],
+                order: [[0, 'asc']],
                 ajax: {
                     headers: {
                         'X-CSRF-TOKEN': XS.Common.csrfToken()
