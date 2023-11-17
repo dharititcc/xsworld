@@ -20,7 +20,21 @@ class CustomerTable extends Model
         'user_id'
     ];
 
-    const AWAITING_SERVICE                = 'Awaiting Service';
+    const AWAITING_SERVICE                = 19;
+
+    const ORDER_STATUS = [
+        self::AWAITING_SERVICE                   => 'Awaiting Service',
+    ];
+
+    /**
+     * Method getOrderStatusAttribute
+     *
+     * @return string
+    */
+    public function getOrderStatusAttribute(): string
+    {
+        return self::ORDER_STATUS[self::AWAITING_SERVICE];
+    }
 
     /**
      * Get the table_order that owns the CustomerTable
