@@ -43,13 +43,13 @@ class HomeController extends APIController
         $orderTbl = CustomerTable::select(['customer_tables.*'])
         ->leftJoin('orders', 'customer_tables.order_id','=','orders.id')
         ->with(['table_order'])
-        ->first();
+        ->where('customer_tables.waiter_id',$auth_waiter->id)
+        ->get();
         // echo common()->formatSql($orderTbl);die;
-        // dd($orderTbl->table_order);
         // $orderTbl = Order::with(['user','restaurant','restaurant_table'])->where('waiter_id',$auth_waiter->id)->where('type',Order::CART)->get();
         $kitchen_status = Order::where('type',Order::ORDER)->where('waiter_id',$auth_waiter->id)->whereIn('status',[Order::KITCHEN_CONFIRM,Order::READYFORPICKUP,Order::WAITER_PENDING])->get();
         $data = [
-            'active_tables' => $orderTbl->count() ? new TableResource($orderTbl) : [],
+            'active_tables' => $orderTbl->count() ? TableResource::collection($orderTbl) : [],
             'kitchen_status' => $kitchen_status->count() ? OrderResource::collection($kitchen_status) : [],
         ];
         return $this->respondSuccess('Waiter Order Fetched successfully.', $data);

@@ -9,7 +9,7 @@
             "defaultContent": "",
             "sortable": false,
             render: function (data, type, row) {
-                return `<label class="cst-check"><input name="id" class="checkboxitem" type="checkbox" value="${row.id}"><span class="checkmark"></span></label> ${row.full_name}`
+                return `<label class="cst-check"><input name="id" class="checkboxitem" type="checkbox" value="${row.id}"><span class="checkmark"></span></label> #${row.id} ${row.full_name}`
             }
         },
         {

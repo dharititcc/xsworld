@@ -20,6 +20,8 @@ class CustomerTable extends Model
         'user_id'
     ];
 
+    const AWAITING_SERVICE                = 'Awaiting Service';
+
     /**
      * Get the table_order that owns the CustomerTable
      *

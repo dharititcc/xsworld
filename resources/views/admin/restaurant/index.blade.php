@@ -25,6 +25,8 @@
     </div>
 </div>
 
+@include('admin.restaurant.partials.create-restaurant')
+
 @endsection
 @section('pagescript')
 @parent
