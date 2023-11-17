@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\CustomerTable;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -14,19 +15,18 @@ class TableResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        dd($request->all());
         return [
-            'order_id'                  => $this->table_order->id,
-            'status'                    => $this->table_order->order_status,
-            'status_no'                 => (int) $this->table_order->status,
-            'table_no'                  => $this->restaurant_table->id ?? '',
+            'order_id'                  => isset($this->table_order->id) ? $this->table_order->id : '',
+            'status'                    => isset($this->table_order->order_status) ? $this->table_order->order_status : '',
+            'status_no'                 => isset($this->table_order->status) ? (int) $this->table_order->status : CustomerTable::AWAITING_SERVICE,
+            'table_no'                  => $this->restaurant_table->id ?? $this->restaurant_table_id,
             'table_name'                => $this->restaurant_table->name ?? '',
-            'restaurant_name'           => $this->table_order->restaurant->name,
+            'restaurant_name'           => isset($this->table_order->restaurant->name) ? $this->table_order->restaurant->name : '',
             'user'                      => $this->user->name,
             'user_image'                => $this->user->image,
             'user_id'                   => $this->user->id,
-            'restaurant_id'             => $this->table_order->restaurant->id,
-            'order_items'               => ($this->table_order->type != 1) ? OrderItemResource::collection($this->table_order->order_items) : [],
+            'restaurant_id'             => isset($this->table_order->restaurant->id) ? $this->table_order->restaurant->id : '',
+            'order_items'               => isset($this->table_order->id) && $this->table_order->type != 1 ? OrderItemResource::collection($this->table_order->order_items) : [],
         ];
     }
 }

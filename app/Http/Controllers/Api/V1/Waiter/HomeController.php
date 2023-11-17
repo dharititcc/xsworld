@@ -46,7 +46,6 @@ class HomeController extends APIController
         ->where('customer_tables.waiter_id',$auth_waiter->id)
         ->get();
         // echo common()->formatSql($orderTbl);die;
-        // dd($orderTbl);
         // $orderTbl = Order::with(['user','restaurant','restaurant_table'])->where('waiter_id',$auth_waiter->id)->where('type',Order::CART)->get();
         $kitchen_status = Order::where('type',Order::ORDER)->where('waiter_id',$auth_waiter->id)->whereIn('status',[Order::KITCHEN_CONFIRM,Order::READYFORPICKUP,Order::WAITER_PENDING])->get();
         $data = [
