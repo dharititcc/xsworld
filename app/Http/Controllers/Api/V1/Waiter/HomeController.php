@@ -201,7 +201,12 @@ class HomeController extends APIController
     public function addCusToTbl(Request $request)
     {
         $CusToTbl = $this->orderRepository->customerTable($request->all());
-        return $this->respondSuccess("Table Allocated Successfully", $CusToTbl);
+        // if($CusToTbl != 0) {
+            return $this->respondSuccess("Table Allocated Successfully", $CusToTbl);
+        // } else {
+        //     return $this->respondWithError("Table Already Allocated");
+            
+        // }
     }
 
     public function endWaiterSession(Request $request)
