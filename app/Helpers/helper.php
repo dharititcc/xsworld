@@ -1,6 +1,7 @@
 <?php
 
 use App\Exceptions\GeneralException;
+use App\Models\Category;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use Twilio\Rest\Client;
@@ -358,5 +359,18 @@ if (! function_exists('sendNotification')) {
         } catch (Exception $e) {
             throw new GeneralException($e->getMessage());
         }
+    }
+}
+
+if (! function_exists('cate_name')) {
+    function cate_name(int $cate_id)
+    {
+        $category       = Category::find($cate_id);
+        $category_name  = '';
+        if(isset($category->id))
+        {
+            $category_name = $category->name;
+        }
+        return $category_name;
     }
 }
