@@ -959,8 +959,20 @@ class OrderRepository extends BaseRepository
 
     public function customerTable(array $data)
     {
-        $user = auth()->user();
-        $customerTbl = CustomerTable::create($data);
+        $getcusTbl = CustomerTable::where('user_id' , $data['user_id'])->where('restaurant_table_id',$data['restaurant_table_id'])->first();
+        // if($getcusTbl) {
+        //     $customerTbl = 0;
+        // } else {
+
+            $customerTbl = CustomerTable::updateOrCreate([
+                'restaurant_table_id' => $data['restaurant_table_id'],
+                'user_id'       => $data['user_id'],
+            ],[
+                'waiter_id'     => $data['waiter_id']
+            ]);
+            // $customerTbl = CustomerTable::create($data);
+        // }
+
         return $customerTbl;
     }
 
