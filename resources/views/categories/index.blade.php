@@ -84,7 +84,7 @@
                             <div class="form-group mb-4">
                                 <input type="text" name="name" class="form-control vari2" placeholder="Category Name">
                                 <input id="category_id" type="hidden" class="category_id" name="category_id" />
-                                <span id="Errorname"></span>
+                                <span class="error" id="duplicate_category"></span>
                             </div>
                             <div class="form-group mb-4">
                                 <input id="cat_id" type="hidden" class="cat_id" name="cat_id" />
@@ -204,6 +204,7 @@
 
                 $this.find('#categorypopup').find('.pip').remove();
                 $this.find('#categorypopup').find('#category_id').val('');
+                $this.find('#categorypopup').find('#duplicate_category').text('');
                 var $alertas = $('#categorypopup');
                 $alertas.validate().resetForm();
                 $alertas.find('.error').removeClass('error');
@@ -339,7 +340,7 @@
                     route = moduleConfig.updateCategory.replace(':ID', category_id),
                     data.append('_method', 'PUT');
                 }
-                console.log(route);
+                // console.log(route);
                 $.ajax({
                     url: route,
                     type: "POST",
@@ -352,6 +353,11 @@
                         alert('Category form has been submitted successfully');
                         document.getElementById("categorypopup").reset();
                         location.reload(true);
+                    },
+                    error: function(xhr)
+                    {
+                        // console.log(xhr.responseJSON.error.message.name[0]);return false;
+                        $("#duplicate_category").text(xhr.responseJSON.error.message.name[0]);
                     }
                 });
     }
