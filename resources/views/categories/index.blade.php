@@ -84,6 +84,7 @@
                             <div class="form-group mb-4">
                                 <input type="text" name="name" class="form-control vari2" placeholder="Category Name">
                                 <input id="category_id" type="hidden" class="category_id" name="category_id" />
+                                <span id="Errorname"></span>
                             </div>
                             <div class="form-group mb-4">
                                 <input id="cat_id" type="hidden" class="cat_id" name="cat_id" />
@@ -266,6 +267,7 @@
                     image: {
                         required: true,
                     },
+
                     message: {
                         required: true
                     },

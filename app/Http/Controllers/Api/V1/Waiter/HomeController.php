@@ -136,13 +136,13 @@ class HomeController extends APIController
         $requestData = $request->all();
         $order       = $this->orderRepository->addTocart($requestData);
 
-        return $this->respondSuccess('Order created successfully.');
+        return $this->respondSuccess('Order created successfully.',$order->id);
     }
 
     public function viewCart(Request $request)
     {
         $cart_data = $this->orderRepository->getCartdataWaiter($request->all());
-        if($cart_data)
+        if($cart_data->type == Order::CART)
         {
             return $this->respondSuccess('Cart data found', new OrderResource($cart_data));
         }

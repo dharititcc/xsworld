@@ -197,6 +197,11 @@ class OrderRepository extends BaseRepository
         $newOrder = Order::create($order);
 
         $newOrder->refresh();
+        
+
+        if($order['restaurant_table_id']) {
+            CustomerTable::where('user_id' , $user->id)->where('restaurant_table_id',$order['restaurant_table_id'])->update(['order_id' => $newOrder->id]);
+        }
 
         return $this->checkSameRestaurantOrder($user, $newOrder, $orderItems);
     }
@@ -826,6 +831,7 @@ class OrderRepository extends BaseRepository
 
         $order->refresh();
         $order->loadMissing(['items']);
+        // CustomerTable::where('user_id' , $user->id)->where('restaurant_table_id',$order['restaurant_table_id'])->delete();
 
         $title              = "Preparing Your order";
         $message            = "Your Order is #".$order->id." placed";

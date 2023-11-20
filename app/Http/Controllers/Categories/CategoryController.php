@@ -41,7 +41,7 @@ class CategoryController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(CategoryRequest $request)
     {
         $restaurant = session('restaurant')->loadMissing(['main_categories', 'main_categories.children']);
         $categoryArr = [
