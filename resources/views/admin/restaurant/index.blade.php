@@ -30,6 +30,7 @@
 @endsection
 @section('pagescript')
 @parent
+<script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBzaUUaqbCwcmb_TMSSnEQ5q0Qr5Sib7i4&libraries=places&callback=Function.prototype" defer></script>
 <script src="{{ asset('js/admin/restaurant.js') }}"></script>
 <script type="text/javascript">
     var moduleConfig = {
