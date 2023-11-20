@@ -8,6 +8,7 @@ use App\Http\Requests\BartenderLoginRequest;
 use App\Http\Requests\LoginRequest;
 use App\Http\Resources\BartenderUserResource;
 use App\Http\Resources\UserResource;
+use App\Http\Resources\WaiterResource;
 use App\Repositories\UserRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
@@ -174,7 +175,7 @@ class AuthController extends APIController
                 'status'    =>  true,
                 'message'   =>  'Login successful',
                 'token'     =>  $token,
-                'item'      =>  new UserResource($user),
+                'item'      =>  new WaiterResource($user),
             ]);
         }
 

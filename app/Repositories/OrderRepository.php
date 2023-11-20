@@ -197,6 +197,11 @@ class OrderRepository extends BaseRepository
         $newOrder = Order::create($order);
 
         $newOrder->refresh();
+        
+
+        if($order['restaurant_table_id']) {
+            CustomerTable::where('user_id' , $user->id)->where('restaurant_table_id',$order['restaurant_table_id'])->update(['order_id' => $newOrder->id]);
+        }
 
         return $this->checkSameRestaurantOrder($user, $newOrder, $orderItems);
     }
@@ -592,7 +597,7 @@ class OrderRepository extends BaseRepository
     {
         $orders = Order::whereIn('restaurant_id',$data);
         if($is_history === 0) {
-            $orderTbl = $orders->whereIn('status',[Order::ACCEPTED,Order::WAITER_PENDING])->where('type',Order::ORDER)->get();
+            $orderTbl = $orders->where('type',Order::ORDER)->whereIn('status',[Order::ACCEPTED,Order::WAITER_PENDING])->get();
         } else {
             $orderTbl = $orders->whereIn('status',[Order::COMPLETED,Order::FULL_REFUND, Order::PARTIAL_REFUND, Order::RESTAURANT_CANCELED, Order::CUSTOMER_CANCELED, Order::KITCHEN_CONFIRM])->where('type',Order::ORDER)->get();
         }
@@ -826,6 +831,7 @@ class OrderRepository extends BaseRepository
 
         $order->refresh();
         $order->loadMissing(['items']);
+        // 
 
         $title              = "Preparing Your order";
         $message            = "Your Order is #".$order->id." placed";
@@ -956,5 +962,11 @@ class OrderRepository extends BaseRepository
         $user = auth()->user();
         $customerTbl = CustomerTable::create($data);
         return $customerTbl;
+    }
+
+    public function customerTableDel(array $data)
+    {
+        $customerTblDel = CustomerTable::where('user_id' , $data['user_id'])->where('restaurant_table_id',$data['restaurant_table_id'])->delete();
+        return $customerTblDel;
     }
 }

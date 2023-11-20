@@ -44,7 +44,7 @@ class AddonsController extends Controller
                     ->with(['category', 'restaurant','variations'])
                     ->whereHas('restaurant', function($query) use($restaurant)
                     {
-                        return $query->where('id', $restaurant->id)->where('type',1);
+                        return $query->where('restaurants.id', $restaurant->id)->where('restaurant_items.type', RestaurantItem::ADDON);
                     });
                     if (!empty($request->get('search_main')))
                     {

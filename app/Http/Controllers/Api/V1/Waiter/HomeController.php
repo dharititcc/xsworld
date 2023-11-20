@@ -136,7 +136,7 @@ class HomeController extends APIController
         $requestData = $request->all();
         $order       = $this->orderRepository->addTocart($requestData);
 
-        return $this->respondSuccess('Order created successfully.');
+        return $this->respondSuccess('Order created successfully.',$order->id);
     }
 
     public function viewCart(Request $request)
@@ -203,6 +203,13 @@ class HomeController extends APIController
         $CusToTbl = $this->orderRepository->customerTable($request->all());
         return $this->respondSuccess("Table Allocated Successfully", $CusToTbl);
     }
+
+    public function endWaiterSession(Request $request)
+    {
+        $CusToTblDel = $this->orderRepository->customerTableDel($request->all());
+        return $this->respondSuccess("Table Data Remove Successfully");
+    }
+
 
 
 }

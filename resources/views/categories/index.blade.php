@@ -268,6 +268,7 @@
                     image: {
                         required: true,
                     },
+
                     message: {
                         required: true
                     },
