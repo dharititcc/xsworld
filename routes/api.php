@@ -201,6 +201,7 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'v1', 'as' => 'api.v1.'], fun
             Route::post('add-new-card', [HomeController::class,'addCard'])->name('addCard');
             Route::post('addCusToTbl', [HomeController::class,'addCusToTbl'])->name('addCusToTbl');
             Route::get('tbl-list', [HomeController::class,'tableList'])->name('tableList');
+            Route::post('end-session', [HomeController::class,'endWaiterSession'])->name('endWaiterSession');
 
         });
     });

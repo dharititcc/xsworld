@@ -966,8 +966,7 @@ class OrderRepository extends BaseRepository
 
     public function customerTableDel(array $data)
     {
-        // $user = auth()->user();
-        $customerTblDel = CustomerTable::where('user_id' , $data['user_id'])->where('restaurant_table_id',$data['restaurant_table_id'])->delete();;
+        $customerTblDel = CustomerTable::where('user_id' , $data['user_id'])->where('restaurant_table_id',$data['restaurant_table_id'])->delete();
         return $customerTblDel;
     }
 }

@@ -142,7 +142,7 @@ class HomeController extends APIController
     public function viewCart(Request $request)
     {
         $cart_data = $this->orderRepository->getCartdataWaiter($request->all());
-        if($cart_data->type == Order::CART)
+        if($cart_data)
         {
             return $this->respondSuccess('Cart data found', new OrderResource($cart_data));
         }
@@ -206,7 +206,10 @@ class HomeController extends APIController
 
     public function endWaiterSession(Request $request)
     {
-        $CusToTbl = $this->orderRepository->customerTableDel($request->all());
+        $CusToTblDel = $this->orderRepository->customerTableDel($request->all());
+        return $this->respondSuccess("Table Data Remove Successfully");
     }
+
+
 
 }
