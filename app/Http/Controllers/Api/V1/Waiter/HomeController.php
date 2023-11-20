@@ -204,5 +204,9 @@ class HomeController extends APIController
         return $this->respondSuccess("Table Allocated Successfully", $CusToTbl);
     }
 
+    public function endWaiterSession(Request $request)
+    {
+        $CusToTbl = $this->orderRepository->customerTableDel($request->all());
+    }
 
 }

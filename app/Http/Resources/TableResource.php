@@ -26,6 +26,7 @@ class TableResource extends JsonResource
             'user_image'                => $this->user->image,
             'user_id'                   => $this->user->id,
             'restaurant_id'             => isset($this->table_order->restaurant->id) ? $this->table_order->restaurant->id : 0,
+            'total_items'               => $this->table_order->order_items->sum('quantity'),
             'order_items'               => isset($this->table_order->id) && $this->table_order->type != 1 ? OrderItemResource::collection($this->table_order->order_items) : [],
         ];
     }
