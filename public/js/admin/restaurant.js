@@ -7,12 +7,21 @@
         /** table object for datatable */
         table: null,
         /** table columns for datatable */
-        tableCols: [{
+        tableCols: [
+        {
+            "data": "", // can be null or undefined ->type
+            "defaultContent": "",
+            render: function(data, type, row)
+            {
+                return `<label class="cst-check"><input name="id" class="checkboxitem" type="checkbox" value="${row.id}"><span class="checkmark"></span></label>`
+            }
+        },
+        {
             "data": "name", // can be null or undefined ->type
             "defaultContent": "",
             render: function(data, type, row)
             {
-                return `<label class="cst-check"><input name="id" class="checkboxitem" type="checkbox" value="${row.id}"><span class="checkmark"></span></label> ${row.name}`
+                return `${row.name}`
             }
         },
         {
