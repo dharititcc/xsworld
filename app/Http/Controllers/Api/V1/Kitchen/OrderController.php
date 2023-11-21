@@ -12,6 +12,7 @@ use App\Models\KitchenPickPoint;
 use App\Models\RestaurantKitchen;
 use App\Repositories\OrderRepository;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class OrderController extends APIController
 {
@@ -39,19 +40,34 @@ class OrderController extends APIController
     public function orderList()
     {
         $auth_kitchen = auth('api')->user();
+
+        if($auth_kitchen->restaurant_kitchen->restaurant->restaurant_time) {
+            foreach($auth_kitchen->restaurant_kitchen->restaurant->restaurant_time as $res_time)
+            {
+                $date = Carbon::now();
+                $day_num = $date->toArray();
+                // $day_num = $date->toRfc850String();
+                // dd($day_num['dayOfWeek']);
+                if($res_time->day->id == $day_num['dayOfWeek']) {
+                    $close_time = $res_time->close_time;
+                }
+            }
+        }
+
         $kitchen_orders = RestaurantKitchen::where('user_id',$auth_kitchen->id)->select('restaurant_id')->get()->toArray();
         // $kitchen_pickup_points = KitchenPickPoint::where('user_id',$auth_kitchen->id)->select('pickup_point_id')->get()->toArray();
 
         $orderList = $this->repository->GetKitchenOrders($kitchen_orders);
         $barOrderList = $this->repository->getBarCollections($kitchen_orders);
-        if( $orderList->count() ||  $barOrderList->count())
-        {
+        // if( $orderList->count() ||  $barOrderList->count())
+        // {
             $data = [
                 'confirmOrder'       => $orderList->count() ? OrderResource::collection($orderList) : [],
                 'CompletedOrders'      => $barOrderList->count() ? BarOrderListingResource::collection($barOrderList) : [],
+                'restaurant_close_time'     => $close_time,
             ];
             return $this->respondSuccess('Order Fetched successfully.', $data);
-        }
+        // }
 
         throw new GeneralException('There is no order found');
     }
