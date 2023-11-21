@@ -64,7 +64,7 @@ class OrderController extends APIController
             $data = [
                 'confirmOrder'       => $orderList->count() ? OrderResource::collection($orderList) : [],
                 'CompletedOrders'      => $barOrderList->count() ? BarOrderListingResource::collection($barOrderList) : [],
-                'restaurant_close_time'     => $close_time,
+                'restaurant_close_time'     => isset($close_time) ? $close_time  : "00:00:00",
             ];
             return $this->respondSuccess('Order Fetched successfully.', $data);
         // }
