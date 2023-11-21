@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests\CategoryRequest;
 use App\Http\Resources\CategoryResource;
 use App\Models\Category;
+use App\Models\Restaurant;
 
 class CategoryController extends Controller
 {
@@ -50,6 +51,13 @@ class CategoryController extends Controller
             'restaurant_id' => $restaurant->id,
         ];
 
+        // check if category name exist
+
+        if( $this->checkUniqueCategory($request, $restaurant) )
+        {
+            throw new GeneralException('The category name is already exist.');
+        }
+
         $newCategory = Category::create($categoryArr);
         $newCategory->refresh();
         if ($request->hasFile('photo'))
@@ -57,6 +65,19 @@ class CategoryController extends Controller
             $this->upload($request->file('photo'), $newCategory);
         }
         return $newCategory->refresh();
+    }
+
+    /**
+     * Method checkUniqueCategory
+     *
+     * @param Request $request [explicite description]
+     * @param Restaurant $restaurant [explicite description]
+     *
+     * @return int
+     */
+    private function checkUniqueCategory(Request  $request, Restaurant $restaurant)
+    {
+        return Category::where('name', $request->name)->where('restaurant_id', $restaurant->id)->count();
     }
 
     public function categoryName(Request $request)

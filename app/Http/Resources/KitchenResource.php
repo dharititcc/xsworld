@@ -21,7 +21,6 @@ class KitchenResource extends JsonResource
             'email'                 => $this->email,
             'username'              => $this->username,
             'restaurant'            => $this->restaurant_kitchen->restaurant,
-            'restaurant_timming'    => $this->restaurant_kitchen->restaurant->restaurant_time,
             'phone'                 => $this->phone ?? '',
             'phone2'                => $this->phone2 ?? '',
             'country'               => $this->country ? $this->country->name : '',

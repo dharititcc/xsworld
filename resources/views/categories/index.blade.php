@@ -36,15 +36,10 @@
                                 </figure>
                             </div>
                         @endforeach
-                        {{-- <a href="javascript:void(0);" onClick="getCategory({{ $category->id }})" data-parent="{{ $category->name }}" data-bs-toggle="modal"
-                            data-bs-target="#exampleModal" class="catg-box add overly">
-                            <figure><i class="icon-plus"> </i></figure>
-                            <!--<input type="text" required="" autofocus=""> -->
-                        </a> --}}
+                        @endif
                         <a href="javascript:void(0);" data-parent="{{ $category->name }}" data-parent_id="{{ $category->id }}" data-type="Add" class="catg-box add overly category_model">
                             <figure><i class="icon-plus"> </i></figure>
                         </a>
-                    @endif
                 </div>
                 @if ($categories->count() !== $cnt)
                     <div class="gldnline-sepr mb-5 mt-5"></div>
@@ -356,8 +351,12 @@
                     },
                     error: function(xhr)
                     {
-                        // console.log(xhr.responseJSON.error.message.name[0]);return false;
-                        $("#duplicate_category").text(xhr.responseJSON.error.message.name[0]);
+                        $("#duplicate_category").text(xhr.responseJSON.error.message);
+                    },
+                    complete: function()
+                    {
+                        $('#submitBtn').html('Save');
+                        $("#submitBtn").removeAttr("disabled");
                     }
                 });
     }

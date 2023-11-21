@@ -44,7 +44,7 @@
                                 </div>
                                 <div class="form-group full-w-form">
                                     <div class="row">
-                                        <div class="col-md-4">
+                                        <div class="col-md-6">
                                             <select class="form-control vari1" name="country_id">
                                                 <option>Select Country</option>
                                                 <option value="1">India</option>
@@ -52,18 +52,17 @@
                                                 <option value="3">Australlia</option>
                                             </select>
                                         </div>
-                                        <div class="col-md-4">
+                                        <div class="col-md-6">
                                             <input type="text" name="state" id="state" class="form-control vari1" placeholder="State">
-                                        </div>
-                                        <div class="col-md-4">
-                                            <input type="text" name="city" id="city" class="form-control vari1" placeholder="City">
                                         </div>
                                     </div>
                                 </div>
-
                                 <div class="form-group full-w-form">
                                     <div class="row">
-                                        <div class="col-md-4">
+                                        <div class="col-md-6">
+                                            <input type="text" name="city" id="city" class="form-control vari1" placeholder="City">
+                                        </div>
+                                        <div class="col-md-6">
                                             <input type="text" name="postcode" id="postcode" class="form-control vari1" placeholder="Postcode">
                                         </div>
                                     </div>
