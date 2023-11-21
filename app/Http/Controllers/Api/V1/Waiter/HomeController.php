@@ -14,6 +14,7 @@ use App\Http\Resources\OrderResource;
 use App\Http\Resources\RestaurantItemsResource;
 use App\Http\Resources\TableResource;
 use App\Models\CustomerTable;
+use Carbon\Carbon;
 use App\Models\Order;
 use App\Repositories\OrderRepository;
 use App\Repositories\RestaurantRepository;
@@ -40,6 +41,21 @@ class HomeController extends APIController
     public function activeTable()
     {
         $auth_waiter = auth('api')->user();
+        // dd($auth_waiter->restaurant_waiter->restaurant->restaurant_time);
+
+        if($auth_waiter->restaurant_waiter->restaurant->restaurant_time) {
+            foreach($auth_waiter->restaurant_waiter->restaurant->restaurant_time as $res_time)
+            {
+                $date = Carbon::now();
+                $day_num = $date->toArray();
+                // $day_num = $date->toRfc850String();
+                // dd($day_num['dayOfWeek']);
+                if($res_time->day->id == $day_num['dayOfWeek']) {
+                    $close_time = $res_time->close_time;
+                }
+            }
+        }
+
         $orderTbl = CustomerTable::select(['customer_tables.*'])
         ->leftJoin('orders', 'customer_tables.order_id','=','orders.id')
         ->with(['table_order'])
@@ -49,8 +65,9 @@ class HomeController extends APIController
         // $orderTbl = Order::with(['user','restaurant','restaurant_table'])->where('waiter_id',$auth_waiter->id)->where('type',Order::CART)->get();
         $kitchen_status = Order::where('type',Order::ORDER)->where('waiter_id',$auth_waiter->id)->whereIn('status',[Order::KITCHEN_CONFIRM,Order::READYFORPICKUP,Order::WAITER_PENDING])->get();
         $data = [
-            'active_tables' => $orderTbl->count() ? TableResource::collection($orderTbl) : [],
-            'kitchen_status' => $kitchen_status->count() ? OrderResource::collection($kitchen_status) : [],
+            'active_tables'             => $orderTbl->count() ? TableResource::collection($orderTbl) : [],
+            'kitchen_status'            => $kitchen_status->count() ? OrderResource::collection($kitchen_status) : [],
+            'restaurant_close_time'     => $close_time,
         ];
         return $this->respondSuccess('Waiter Order Fetched successfully.', $data);
     }
