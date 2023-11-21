@@ -30,7 +30,7 @@ class OrderResource extends JsonResource
             'total'                     => number_format($this->total, 2),
             'status'                    => $this->order_status,
             'status_no'                 => (int) $this->status,
-            'table_no'                  => $this->restaurant_table->id ?? '',
+            'table_no'                  => $this->restaurant_table->id ?? 0,
             'table_name'                => $this->restaurant_table->name ?? '',
             'user_payment_method'       => '',
             'credit_point'              => $this->credit_point,

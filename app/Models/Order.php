@@ -138,6 +138,16 @@ class Order extends Model
     }
 
     /**
+     * Get the restaurant_waiter that owns the Order
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function restaurant_waiter(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'waiter_id', 'id');
+    }
+
+    /**
      * Get the user that owns the Order
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
