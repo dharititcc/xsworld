@@ -312,9 +312,9 @@ class Order extends Model
     {
         $remaining_time     = 0;
         $current_time       = Carbon::now();
-        if($this->updated_at)
+        if($this->accepted_date)
         {
-            $updated_time   = Carbon::parse($this->updated_at);
+            $updated_time   = Carbon::parse($this->accepted_date);
             $apply_time     = $updated_time->addMinutes($this->apply_time);
             $remaining_time = $current_time->diffInSeconds($apply_time);
             $old_time       = Carbon::createFromFormat('Y-m-d H:i:s', $apply_time)->isPast();

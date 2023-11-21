@@ -176,7 +176,8 @@ class BarRepository extends BaseRepository
 
             if( isset($apply_time) )
             {
-                $updateArr['apply_time'] = $apply_time;
+                $time                    = $order->apply_time;
+                $updateArr['apply_time'] = $apply_time + $time;
             }
 
             if( $status != Order::ACCEPTED )
@@ -217,7 +218,7 @@ class BarRepository extends BaseRepository
             $title      = "Order is processing";
             $message    = "Your Order is ".$order->id." placed";
 
-            //$send_notification = sendNotification($title,$message,$devices);
+            //$send_notification = sendNotification($title,$message,$user_tokens);
 
             $order->update($updateArr);
         }
