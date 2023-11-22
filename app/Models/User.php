@@ -172,6 +172,16 @@ class User extends Authenticatable
         return isset($this->attachment) ? asset('storage/profile/'.$this->attachment->stored_name) : '';
     }
 
+     /**
+     * Method getQrImageAttribute
+     *
+     * @return string
+     */
+    public function getQrImageAttribute(): string
+    {
+        return isset($this->cus_qr_code_img) ? asset('customer_qr/'.$this->cus_qr_code_img) : '';
+    }
+
     /**
      * Get the pickup_point associated with the User
      *
