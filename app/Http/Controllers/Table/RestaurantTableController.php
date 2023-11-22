@@ -76,17 +76,20 @@ class RestaurantTableController extends Controller
             'restaurant_id'     => $restaurant->id,
         ]);
         $qr_url = URL::current();
-        // $qr_code_image = \QrCode::size(300)->generate($qr_url . '/'.$table->id);
-        // $qr_code_image = \QrCode::size(500)
-            // ->format('png')
-            // ->generate($qr_url . '/'.$table->id, public_path('images/qrcode.png'));
 
-        $qr_code_image =    QrCode::size(212)
-            ->generate(
-                $qr_url . '/'.$table->id,
-            );
+        // $qr_code_image = QrCode::size(500)
+        //     ->format('png')
+        //     ->generate($qr_url . '/'.$table->id, public_path("images/qrcode_$table->id.png"));
 
-        RestaurantTable::where('id',$table->id)->update(['qr_image' => $qr_code_image, 'qr_url' => $qr_url]);
+
+        $qr_code_image = QrCode::size(500)
+            ->format('png')
+            ->backgroundColor(139,149,255,0)
+            ->generate($qr_url . '/'.$table->id, public_path("images/qrcode_$table->id.png"));
+        
+        // dd($qr_code_image);
+        $imageName = "qrcode_$table->id.png";
+        RestaurantTable::where('id',$table->id)->update(['qr_image' => $imageName, 'qr_url' => $qr_url]);
         // dd($qr_code_image);
         return $table->refresh();
     }
