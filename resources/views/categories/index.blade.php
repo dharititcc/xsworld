@@ -202,7 +202,7 @@
                 $this.find('#categorypopup').find('#duplicate_category').text('');
                 var $alertas = $('#categorypopup');
                 $alertas.validate().resetForm();
-                $alertas.find('.error').removeClass('error');
+                $alertas.find('.error').remove();
             });
 
             $('#sidebarToggle1').on('click', function(e) {
@@ -257,7 +257,6 @@
                 $("#categorypopup").validate({
                 rules: {
                     name: {
-                        required: true,
                         maxlength: 20
                     },
                     image: {
@@ -271,7 +270,7 @@
                 messages: {
                     name: {
                         required: "Please enter name",
-                        maxlength: "Your name maxlength should be 50 characters long."
+                        maxlength: "Your name maxlength should be 20 characters long."
                     },
                     image: {
                         required: "Please enter files", //accept: 'Not an image!'
@@ -287,7 +286,6 @@
             $("#categorypopup").validate({
                 rules: {
                     name: {
-                        required: true,
                         maxlength: 20
                     },
                     message: {
@@ -297,7 +295,7 @@
                 messages: {
                     name: {
                         required: "Please enter name",
-                        maxlength: "Your name maxlength should be 50 characters long."
+                        maxlength: "Your name maxlength should be 20 characters long."
                     }
                 },
                 submitHandler: function(form) {
@@ -306,7 +304,7 @@
             });
         }
     });
-    function formsubmit(from)
+    function formsubmit(form)
     {
         $.ajaxSetup({
                     headers: {
@@ -328,14 +326,25 @@
                 data.append('photo', photo);
                 data.append('category_id', category_id);
                 data.append('parent_id', parent_id);
-                console.log(crudetype);
+
                 if (crudetype === 1) {
                     route = moduleConfig.addCategory;
                 } else {
                     route = moduleConfig.updateCategory.replace(':ID', category_id),
                     data.append('_method', 'PUT');
                 }
-                // console.log(route);
+
+                // remove error classes
+                jQuery(form).find('.error').remove();
+
+                if( jQuery(form).find('.pip').length == 0 )
+                {
+                    jQuery(form).find('input[type="file"]').closest('.form-group').after(`<span class="error">The image field is required.</span>`);
+                    $('#submitBtn').html('Save');
+                    $("#submitBtn").removeAttr("disabled");
+                    return false;
+                }
+
                 $.ajax({
                     url: route,
                     type: "POST",
@@ -345,13 +354,35 @@
                     success: function(response) {
                         $('#submitBtn').html('Submit');
                         $("#submitBtn").attr("disabled", false);
-                        alert('Category form has been submitted successfully');
-                        document.getElementById("categorypopup").reset();
-                        location.reload(true);
+                        $("#exampleModal").modal('hide');
+                        XS.Common.handleSwalSuccess('Category form has been submitted successfully');
                     },
                     error: function(xhr)
                     {
-                        $("#duplicate_category").text(xhr.responseJSON.error.message);
+                        if( xhr.status === 422 )
+                        {
+                            var {error} = xhr.responseJSON,
+                                fields  = jQuery(form).find('input[type="text"], input[type="file"]'),
+                                messages= error.message;
+
+                            $.each(messages, function(eIndex, eMessage)
+                            {
+                                fields.each(function(index, elem)
+                                {
+                                    if( jQuery(elem).attr('name') ==  eIndex)
+                                    {
+                                        if( jQuery(elem).attr('type') == 'file' )
+                                        {
+                                            jQuery(elem).closest('.form-group').after(`<span class="error">${eMessage[0]}</span>`);
+                                        }
+                                        else
+                                        {
+                                            jQuery(elem).after(`<span class="error">${eMessage[0]}</span>`);
+                                        }
+                                    }
+                                });
+                            });
+                        }
                     },
                     complete: function()
                     {
@@ -412,7 +443,6 @@
                 })
                 $('.drink_datatable').DataTable().destroy();
                 load_data(data);
-                //console.log(data);
             });
         });
     });
@@ -454,17 +484,15 @@
                     success: function(response) {
                         if( category.length > 1 )
                         {
-                            alert('Categories deleted successfully.');
+                            XS.Common.handleSwalSuccess('Categories deleted successfully.');
                         }
                         else
                         {
-                            alert('Category deleted successfully.');
+                            XS.Common.handleSwalSuccess('Category deleted successfully.');
                         }
-                        location.reload(true);
                     },
                     error: function(xhr, errors)
                     {
-                        console.log(xhr);
                         swal({
                             title: xhr.responseJSON.error.message,
                             icon: "warning",

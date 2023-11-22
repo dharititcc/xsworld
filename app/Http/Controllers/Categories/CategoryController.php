@@ -6,9 +6,11 @@ use App\Exceptions\GeneralException;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Http\Requests\CategoryRequest;
+use App\Http\Requests\UpdateCategoryRequest;
 use App\Http\Resources\CategoryResource;
 use App\Models\Category;
 use App\Models\Restaurant;
+use Illuminate\Support\Facades\DB;
 
 class CategoryController extends Controller
 {
@@ -77,7 +79,8 @@ class CategoryController extends Controller
      */
     private function checkUniqueCategory(Request  $request, Restaurant $restaurant)
     {
-        return Category::where('name', $request->name)->where('restaurant_id', $restaurant->id)->count();
+        $text = strtolower($request->name);
+        return Category::whereRaw(DB::raw("LOWER(`name`) = '{$text}'"))->where('restaurant_id', $restaurant->id)->count();
     }
 
     public function categoryName(Request $request)
@@ -115,11 +118,11 @@ class CategoryController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  UpdateCategoryRequest  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Category $category)
+    public function update(UpdateCategoryRequest $request, Category $category)
     {
         if(isset($category->id))
         {

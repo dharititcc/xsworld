@@ -34,6 +34,15 @@ Route::get('/', function () {
 
 Auth::routes();
 
+// sample qr testing
+Route::get('qrcode-with-color', function () {
+    return \QrCode::size(500)
+                    ->format('png')
+                    // ->backgroundColor(255,55,0)
+                    ->color(255,255,255)->backgroundColor(0,0,0)->margin(0)
+                    ->generate('A simple example of QR code', public_path('images/qrcode.png'));
+});
+
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 Route::get('referral/user/ABC', [App\Http\Controllers\ReferralController::class, 'code'])->name('referral-code');
 // Route::get('apple-app-site-association', [App\Http\Controllers\ReferralController::class, 'iphone'])->name('referral-code-iphone');

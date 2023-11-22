@@ -67,8 +67,9 @@
                             <h2>{{$res_table->code}} #{{$res_table->id}}</h2>
                         </div>
                         <div class="cnt">
-                            <div class="qr-code">{!! html_entity_decode($res_table->qr_image) !!}</div>
-                            {{-- <div class="qr-code"><?php //echo $res_table->qr_image; ?></div> --}}
+                            <?php //dd(asset("images/".$res_table->qr_image)); ?>
+                            {{-- <div class="qr-code">{!! html_entity_decode($res_table->qr_image) !!}</div> --}}
+                            <div class="qr-code"><img src="{{asset("images/".$res_table->qr_image)}}"/> </div>
                             <a href="javascript:void(0);" class="export-info" data-id="{{$res_table->id}}" data-bs-toggle="modal"
                                 data-bs-target="#export_qr_code">Export QR<br>Code</a>
 
