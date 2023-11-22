@@ -217,6 +217,7 @@
     });
 
     $('#submitCatBtn').on("click", function() {
+        var $this = $(this);
         $.ajaxSetup({
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -238,13 +239,25 @@
                     data: data,
                     processData: false,
                     contentType: false,
-                    success: function(response) {
-                        console.log(response);
+                    success: function(response)
+                    {
+                        $("#cat_modal").modal('hide');
+                        XS.Common.handleSwalSuccess('Category form has been submitted successfully');
+                    },
+                    error: function(xhr)
+                    {
+                        if( xhr.status == 403 )
+                        {
+                            var {error} = xhr.responseJSON;
+                            $this.closest('#add_form_category').find('.cat_name').after(`<span class="error">${error.message}</span>`);
+
+                            console.log($this.closest('#add_form_category'));
+                        }
+                    },
+                    complete: function()
+                    {
                         $('#submitBtn').html('Submit');
                         $("#submitBtn").attr("disabled", false);
-                        alert('Category form has been submitted successfully');
-                        document.getElementById("add_form_category").reset();
-                        location.reload(true);
                     }
                 });
     });
