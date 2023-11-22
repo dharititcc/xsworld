@@ -378,7 +378,7 @@ class OrderRepository extends BaseRepository
             'cart_count'        => isset($user->latest_cart->order_items) ? $user->latest_cart->order_items->sum('quantity') : 0,
             'restaurant_id'     => $user->latest_cart->restaurant->id ?? 0,
             'order_id'          => $user->latest_cart->id ?? 0,
-            'credit_amount'     => $user->latest_cart->credit_amount ?? 0,
+            'credit_amount'     => (float) $user->credit_amount ?? 0,
             'points'            => $user->points,
         ];
 
