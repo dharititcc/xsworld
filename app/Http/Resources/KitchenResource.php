@@ -31,7 +31,7 @@ class KitchenResource extends JsonResource
             'birth_date'            => $this->birth_date ?? '',
             'profile_img'           => $this->image,
             'member_id'             => $this->id,
-            'credit_point'          => (float) $this->credit_points ?? 0,
+            'credit_amount'          => (float) $this->credit_amount ?? 0,
             'email_verified_at'     => $this->email_verified_at ?? "",
             'is_mobile_verify'      => (int) $this->is_mobile_verify ?? 0,
             'created_at'            => $this->created_at->format('Y-m-d H:i:s')
