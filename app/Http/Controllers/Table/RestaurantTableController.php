@@ -52,7 +52,7 @@ class RestaurantTableController extends Controller
 
         $qr_code_image = QrCode::size(500)
             ->format('png')
-            ->backgroundColor(139,149,255,0)
+            ->backgroundColor(255,255,255)
             ->generate($qr_url . '/'.$table->id, public_path("images/qrcode_$table->id.png"));
         
         // dd($qr_code_image);
