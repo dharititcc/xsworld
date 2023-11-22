@@ -571,6 +571,10 @@ class UserRepository extends BaseRepository
                     $users['credit_amount'] = $user->credit_amount + $redeem->amount;
                     $user->update($users);
 
+                    $user   = [
+                        'credit_amount'     => (float) $user->credit_amount ?? 0,
+                        'points'            => $user->points,
+                    ];
                     return $user;
                 }
                 else

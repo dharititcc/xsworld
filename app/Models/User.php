@@ -61,6 +61,7 @@ class User extends Authenticatable
         'application_version',
         'model',
         'credit_amount',
+        'points',
         'username',
         'verification_code',
         'is_mobile_verify'

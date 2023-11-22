@@ -458,7 +458,7 @@ class UserController extends APIController
         $redeem_gift_card   = $this->repository->redeemGiftCard($input);
         if( $redeem_gift_card )
         {
-            return $this->respondSuccess('Gift card redeemed successfully');
+            return $this->respondSuccess('Gift card redeemed successfully',$redeem_gift_card);
         }
         throw new GeneralException('Gift card redeemed failed.');
     }
