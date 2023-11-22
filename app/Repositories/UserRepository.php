@@ -558,7 +558,7 @@ class UserRepository extends BaseRepository
                     $data['verify_user_id'] = $user->id;
                     $redeem->update($data);
 
-                    $users['credit_points'] = $user->credit_points + $redeem->amount;
+                    $users['credit_amount'] = $user->credit_amount + $redeem->amount;
                     $user->update($users);
 
                     return $user;
