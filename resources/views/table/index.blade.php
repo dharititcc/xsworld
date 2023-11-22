@@ -68,7 +68,6 @@
                         </div>
                         <div class="cnt">
                             <?php //dd(asset("images/".$res_table->qr_image)); ?>
-                            {{-- <div class="qr-code">{!! html_entity_decode($res_table->qr_image) !!}</div> --}}
                             <div class="qr-code"><img src="{{asset("images/".$res_table->qr_image)}}"/> </div>
                             <a href="javascript:void(0);" class="export-info" data-id="{{$res_table->id}}" data-bs-toggle="modal"
                                 data-bs-target="#export_qr_code">Export QR<br>Code</a>
@@ -80,34 +79,6 @@
                         </div>
                     </div>
                 @endforeach
-                {{-- <div class="table-design grey-brd-box">
-                    <div class="head"><label class="cst-check">
-                            <input type="checkbox" value=""><span class="checkmark"></span></label>
-                        <h2>Table #2</h2>
-                    </div>
-                    <div class="cnt">
-                        <div class="qr-code"><img src="img/clarity_qr-code-line.png" alt=""></div>
-                        <a href="#" class="export-info">Export QR<br>Code</a>
-                    </div>
-                    <div class="ftr">
-                        <a href="#" class="active">Active</a>
-                        <a href="#" class="disable red">Disable</a>
-                    </div>
-                </div>
-                <div class="table-design grey-brd-box del-table">
-                    <div class="head"><label class="cst-check">
-                            <input type="checkbox" value=""><span class="checkmark"></span></label>
-                        <h2>Table #3</h2>
-                    </div>
-                    <div class="cnt">
-                        <div class="qr-code"><img src="img/clarity_qr-code-line.png" alt=""></div>
-                        <a href="#" class="export-info">Export QR<br>Code</a>
-                    </div>
-                    <div class="ftr">
-                        <a href="#" class="active green">Active</a>
-                        <a href="#" class="disable">Disable</a>
-                    </div>
-                </div> --}}
                 <div class="table-design grey-brd-box">
                     <a href="javascript:void(0);" class="add-table-design table_popup_modal"><i class="icon-plus"></i></a>
                 </div>

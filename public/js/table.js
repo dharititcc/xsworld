@@ -186,55 +186,32 @@
         exportQRCode: function()
         {
             var context = this;
-            $('.export-info').on("click", function() {
-                
-                var $this = $(this),
-                    id = $this.data('id'),
-                    qr = $this.closest('.cnt').find('svg').clone(),
-                    selectorQr = $('#export_qr_code').find('.qrcode');
-                
+            $('.export-info').on("click", function()
+            {
+                var $this       = $(this),
+                    id          = $this.data('id'),
+                    qr          = $this.closest('.cnt').find('.qr-code').find('img').clone(),
+                    selectorQr  = $('#export_qr_code').find('.qrcode');
+
                 selectorQr.children().remove();
 
                 selectorQr.append(qr.get(0));
-                var qrCodeString = $this.closest('.cnt').find('svg')[0].outerHTML;
-                // console.log(qrCodeString);
-                
-                $('.export_pdf').on("click", function() {
-                    // $.ajax({
-                    //     url:moduleConfig.exportpdf,
-                    //     type:'POST',
-                    //     data: {'id': id, 'qr_code': qrCodeString},
-                    //     processData: false,
-                    //     contentType: false,
-                    //     headers: {
-                    //         'X-CSRF-TOKEN': jQuery('meta[name="csrf-token"]').attr('content')
-                    //     },
-                    //     success: function(res) {
-                    //         console.log(res);
-                    //         alert('QR code Exported successfully');
-                    //         $('.qr-code').modal('hide');
-                    //     },
-                    //     error: function(xhr, status, error) {
-                    //         console.error(xhr.responseText);
-                    //         alert('Error exporting QR code to PDF');
-                    //     },
-                    // });
 
+                $('.export_pdf').on("click", function() {
                     $.ajax({
                         url:moduleConfig.exportpdf,
                         type:'POST',
-                        data: {'id': id, 'qr_code': qrCodeString},
+                        data: {'id': id},
                         headers: {
                             'X-CSRF-TOKEN': jQuery('meta[name="csrf-token"]').attr('content')
                         },
-                        // dataType: 'json',
                         success: function(res){
                           console.log(res);
                           var link = document.createElement("a");
                           document.body.appendChild(link);
                           link.setAttribute("type", "hidden");
-                          link.href = "data:application/png;base64," + res.pdf;
-                          link.download = "qr.png";
+                          link.href = res.pdf;
+                          link.setAttribute('download', res.name);
                           link.click();
                           document.body.removeChild(link);
                           alert('QR code Exported successfully');
@@ -246,27 +223,22 @@
                         }
                       });
                 });
-                
+
+                $('.print').on('click', function(e)
+                {
+                    e.preventDefault();
+                    // console.log($(qr).attr('src')); return false;
+                    w=window.open('', '');
+                    // w.document.write($(qr).html());
+                    w.document.write('<html><head>');
+                    w.document.write('</head><body >');
+                    w.document.write('<img id="print-image-element" src="'+$(qr).attr('src')+'"/>');
+                    w.document.write('<script>var img = document.getElementById("print-image-element"); img.addEventListener("load",function(){ window.focus(); window.print(); window.document.close(); window.close(); }); </script>');
+                    w.document.write('</body></html>');
+                    w.window.print();
+                    w.close();
+                });
             });
         },
-
-        // exportPdf: function()
-        // {
-        //     var context = this;
-        //     $('.export_pdf').on("click", function() {
-        //         alert('hii');
-        //         $.ajax({
-        //             url:moduleConfig.exportpdf,
-        //             type:'GET',
-        //             data: {'id':id},
-        //             success: function(res) {
-        //                 console.log(res);
-        //                 alert('Table Status has been updated successfully');
-        //                 $this.closest('.ftr').find('.status').removeClass('green');
-        //                 $this.addClass('green');
-        //             },
-        //         });
-        //     });
-        // },
     }
 })();
