@@ -167,7 +167,8 @@ class UserRepository extends BaseRepository
                 
                 $imageName = "qrcode_$user->id.png";
                 User::where('id',$user->id)->update(['cus_qr_code_img' => $imageName]);
-
+                $user->cus_qr_code_img = $imageName;
+                
                 $stripe     = new Stripe();
                 $customer   = $stripe->createCustomer($data);
                 $str['stripe_customer_id'] = $customer->id;
