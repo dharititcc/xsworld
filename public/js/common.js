@@ -442,12 +442,11 @@ var XS_Admin = {}; // common variable used in all the files of the backend
 
                         fileReader.onload = (function(e)
                         {
-                            console.log('Hello');
                             var file        = e.target,
                                 data        = fileReader.result,
                                 thumbnail   = `
                                     <div class="pip">
-                                        <img class="imageThumb" src="${e.target.result}" title="${file.name}" />
+                                        <img class="imageThumb" src="${e.target.result}" title="${f.name}" />
                                         <i class="icon-trash remove"></i>
                                     </div>
                                 `;

@@ -323,7 +323,10 @@
                     photo = $('#upload').prop('files')[0];
 
                 data.append('name', name);
-                data.append('photo', photo);
+                if( $('#upload').prop('files').length > 0 )
+                {
+                    data.append('photo', photo);
+                }
                 data.append('category_id', category_id);
                 data.append('parent_id', parent_id);
 
@@ -383,6 +386,12 @@
                                 });
                             });
                         }
+
+                        if( xhr.status === 403 )
+                        {
+                            var {error} = xhr.responseJSON;
+                            jQuery(form).find('input[type="text"]').after(`<span class="error">${error.message}</span>`)
+                        }
                     },
                     complete: function()
                     {
@@ -412,7 +421,7 @@
                 // $("input[name=file]").val(response.data.image);
                 var image = `
                                 <div class="pip">
-                                    <img class="imageThumb" src="${ response.data.image!="" ? response.data.image : '#'}" title="" />
+                                    <img class="imageThumb" src="${ response.data.image!="" ? response.data.image : '#'}" title="${response.data.image_name}" />
                                     <i class="icon-trash remove"></i>
                                 </div>
                             `;
