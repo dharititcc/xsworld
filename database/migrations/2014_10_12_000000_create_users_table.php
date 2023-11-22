@@ -29,6 +29,7 @@ class CreateUsersTable extends Migration
             $table->string('country_code',5)->nullable();
             $table->date('birth_date')->nullable();
             $table->decimal('credit_points', 14,2)->default(0);
+            $table->decimal('points', 14,2)->default(0);
             $table->string('platform')->nullable();
             $table->string('os_version')->nullable();
             $table->string('address')->nullable();

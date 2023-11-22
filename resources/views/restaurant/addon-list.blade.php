@@ -12,11 +12,11 @@
         <div class="sort-by d-flex mb-4">
             <h2 class="yellow">Sort By</h2>
             <div class="searchbox"><input type="text" name="search" id="search" class="searchbar"
-                    placeholder="Find a Drink"></div>
+                    placeholder="Find a Addons"></div>
         </div>
         <div class="mb-4 table-en-ds">
-            <button class="bor-btn" id="disable">Disable Drink</button>
-            <button class="bor-btn ms-3" id="enable">Enable Drink</button>
+            <button class="bor-btn" id="disable">Disable Addons</button>
+            <button class="bor-btn ms-3" id="enable">Enable Addons</button>
         </div>
         <div class="data-table drinks scroll-y h-600">
             <table width="100%" class="drink_datatable">
