@@ -36,8 +36,8 @@
                         </div>
                     @endforeach
 
-                    <a href="javascript:void(0);" class="grey-brd-box waiter_popup_modal waiters add">
-                        <i class="icon-plus"> </i>
+                    <a href="javascript:void(0);" class="catg-box add overly kitchen waiter_popup_modal">
+                        <figure><i class="icon-plus"> </i></figure>
                     </a>
                 </div>
                 <div class="gldnline-sepr mb-5 mt-5"></div>
