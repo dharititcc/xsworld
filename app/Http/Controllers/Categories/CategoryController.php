@@ -86,6 +86,14 @@ class CategoryController extends Controller
     public function categoryName(Request $request)
     {
         $restaurant = session('restaurant')->loadMissing(['main_categories', 'main_categories.children']);
+
+        $text = strtolower($request->name);
+
+        if( $this->checkUniqueCategory($request, $restaurant) )
+        {
+            throw new GeneralException('The category name is already exist.');
+        }
+
         $newCategory = Category::updateOrCreate([
             'restaurant_id' => $restaurant->id,
             'name'          => $request->get('name'),
