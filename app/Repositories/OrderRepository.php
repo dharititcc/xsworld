@@ -379,7 +379,7 @@ class OrderRepository extends BaseRepository
             'restaurant_id'     => $user->latest_cart->restaurant->id ?? 0,
             'order_id'          => $user->latest_cart->id ?? 0,
             'credit_amount'     => (float) $user->credit_amount ?? 0,
-            'points'            => $user->points,
+            'points'            => (int) $user->points,
         ];
 
         return $cart;
