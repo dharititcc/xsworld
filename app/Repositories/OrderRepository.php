@@ -297,9 +297,13 @@ class OrderRepository extends BaseRepository
     {
         $user        = auth()->user();
 
-        $user->loadMissing(['latest_order', 'orders']);
-
-        return $user->orders()->whereIn('status', [Order::ACCEPTED, Order::PENDNIG, Order::COMPLETED])->orderBy('id', 'desc')->first();
+        $user->loadMissing(
+            [
+                'latest_order',
+                'orders',
+            ]
+        );
+        return $user->orders()->whereIn('status', [Order::ACCEPTED, Order::PENDNIG, Order::COMPLETED])->with('order_items')->orderBy('id', 'desc')->first();
     }
 
     /**
@@ -371,9 +375,11 @@ class OrderRepository extends BaseRepository
         $user->loadMissing(['latest_cart', 'latest_cart.restaurant', 'latest_cart.order_items']);
 
         $cart       = [
-            'cart_count'    => isset($user->latest_cart->order_items) ? $user->latest_cart->order_items->sum('quantity') : 0,
-            'restaurant_id' => $user->latest_cart->restaurant->id ?? 0,
-            'order_id'      => $user->latest_cart->id ?? 0
+            'cart_count'        => isset($user->latest_cart->order_items) ? $user->latest_cart->order_items->sum('quantity') : 0,
+            'restaurant_id'     => $user->latest_cart->restaurant->id ?? 0,
+            'order_id'          => $user->latest_cart->id ?? 0,
+            'credit_amount'     => (float) $user->credit_amount ?? 0,
+            'points'            => $user->points,
         ];
 
         return $cart;

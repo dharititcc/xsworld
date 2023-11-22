@@ -22,7 +22,7 @@ class CreateOrders extends Migration
             $table->unsignedTinyInteger('type')->default(1)->comment('1=CART, 2=ORDER');
             $table->unsignedTinyInteger('status')->default(0)->comment('0=Pending, 1=Accepted, 2=Ready, 3=Completed, 4=Canceled, 11=ReadyForPickup, 12=kitchen_confirm');
             $table->unsignedBigInteger('user_payment_method_id')->nullable();
-            $table->decimal('credit_point', 14,2)->default(0)->comment('Used from credit point');
+            $table->decimal('credit_amount', 14,2)->default(0)->comment('Used from credit point');
             $table->decimal('amount', 14,2)->default(0);
             $table->string('transaction_id')->nullable();
             $table->string('card_id')->nullable();
