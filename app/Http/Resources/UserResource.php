@@ -29,6 +29,7 @@ class UserResource extends JsonResource
             'stripe_customer_id'    => $this->stripe_customer_id ?? '',
             'birth_date'            => $this->birth_date ?? '',
             'profile_img'           => $this->image,
+            'qr_code_img'           => isset($this->cus_qr_code_img) ? asset("customer_qr/".$this->cus_qr_code_img) : '',
             'member_id'             => $this->id,
             'credit_amount'         => (float) $this->credit_amount ?? 0,
             'points'                => $this->points,

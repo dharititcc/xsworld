@@ -15,6 +15,8 @@ use Illuminate\Foundation\Mix;
 use Illuminate\Support\Facades\Mail;
 use Stripe\Source;
 use Stripe\Token;
+use Illuminate\Support\Facades\URL;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 /**
  * Class UserRepository.
@@ -157,6 +159,14 @@ class UserRepository extends BaseRepository
             {
                 // verification email send and send verification code
                 event(new RegisterEvent($user));
+                $qr_url = URL::current();
+                $qr_code_image = QrCode::size(500)
+                    ->format('png')
+                    ->backgroundColor(139,149,255,0)
+                    ->generate($qr_url . '/'.$user->id, public_path("customer_qr/qrcode_$user->id.png"));
+                
+                $imageName = "qrcode_$user->id.png";
+                User::where('id',$user->id)->update(['cus_qr_code_img' => $imageName]);
 
                 $stripe     = new Stripe();
                 $customer   = $stripe->createCustomer($data);
