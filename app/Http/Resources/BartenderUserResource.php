@@ -28,7 +28,7 @@ class BartenderUserResource extends JsonResource
             'birth_date'            => $this->birth_date ?? '',
             'profile_img'           => $this->image,
             'member_id'             => $this->id,
-            'credit_point'          => $this->credit_point ?? 0,
+            'credit_amount'          => $this->credit_amount ?? 0,
             'created_at'            => $this->created_at->format('Y-m-d H:i:s'),
             'pickup_point_name'     => $this->pickup_point->name,
             'pickup_point_id'       => $this->pickup_point->id

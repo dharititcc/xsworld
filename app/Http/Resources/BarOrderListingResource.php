@@ -29,7 +29,7 @@ class BarOrderListingResource extends JsonResource
             'status_no'                 => $this->status,
             'table_no'                  => 0,
             // 'user_payment_method'       => '',
-            // 'credit_point'              => $this->credit_point,
+            // 'credit_amount'              => $this->credit_amount,
             'apply_time'                => $this->apply_time ?? 0,
             'remaining_time'            => $this->remainingtime,
             'created_date'              => Carbon::parse($this->created_at)->toDateTimeString(),
