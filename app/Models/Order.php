@@ -93,7 +93,7 @@ class Order extends Model
         'card_id',
         'charge_id',
         'payment_method_id',
-        'credit_point',
+        'credit_amount',
         'amount',
         'transaction_id',
         'currency_id',
