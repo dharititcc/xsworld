@@ -105,23 +105,6 @@ var XS_Admin = {}; // common variable used in all the files of the backend
          * @param {*} url
          */
         handleSwalSuccess: function (message, url = false) {
-            // var swalSuccess = Swal.fire(
-            //     'Good job!',
-            //     message,
-            //     'success'
-            // );
-
-            // if (clickStat) {
-            //     if (url) {
-            //         swalSuccess.then(function () {
-            //             window.location.href = url;
-            //         });
-            //     } else {
-            //         swalSuccess.then(function () {
-            //             window.location.reload();
-            //         });
-            //     }
-            // }
 
             swal({
                 icon: "success",
@@ -135,6 +118,18 @@ var XS_Admin = {}; // common variable used in all the files of the backend
                 {
                     window.location.reload();
                 }
+            });
+        },
+
+        /**
+         * Handle Swal Success Without Reload
+         * @param {*} message
+         * @param {*} url
+         */
+        handleSwalSuccessWithoutReload: function (message) {
+            swal({
+                icon: "success",
+                title: message
             });
         },
 

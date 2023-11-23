@@ -21,6 +21,13 @@
             }
         },
         {
+            "data": "category_name",
+            "defaultContent": "",
+            render: function (data, type, row) {
+                return data;
+            }
+        },
+        {
             "data": "type", // can be null or undefined
             "defaultContent": "",
             "bSortable": false,
@@ -311,10 +318,13 @@
                         'X-CSRF-TOKEN': jQuery('meta[name="csrf-token"]').attr('content'),
                     },
                     data: {'is_featured':is_featured,'id':id},
-                    success: function(res) {
-                        alert('favorite Status has been updated successfully');
-
-                        context.table.ajax.reload();
+                    success: function(res)
+                    {
+                        XS.Common.handleSwalSuccessWithoutReload('Favorite Status has been updated successfully.');
+                        setTimeout(function()
+                        {
+                            context.table.ajax.reload();
+                        }, 500);
                     },
                 });
             });
@@ -345,7 +355,6 @@
             {
                 var $this       = jQuery(this),
                     productType = $this.data('product_type');
-                    // alert(productType)
 
                     jQuery('.product_type').removeClass('active');
 
@@ -582,9 +591,8 @@
                     'X-CSRF-TOKEN': jQuery('meta[name="csrf-token"]').attr('content')
                 },
                 success: function(response) {
-                    alert('Drink form has been submitted successfully');
                     document.getElementById("drinkpopup").reset();
-                    location.reload(true);
+                    XS.Common.handleSwalSuccess('Drink form has been submitted successfully.');
                 },
                 complete: function()
                 {

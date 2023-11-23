@@ -36,6 +36,7 @@
                     <tr valign="middle">
                         <th><label class="cst-check"><input type="checkbox" id="allcheck" value=""><span class="checkmark"></span></label></th>
                         <th>Name</th>
+                        <th>Category</th>
                         <th class="type">Type</th>
                         <th class="price">Price</th>
                         <th class="popularity">Popularity</th>
