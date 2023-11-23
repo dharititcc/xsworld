@@ -3,13 +3,21 @@
         table: null,
         tableColumns: [
         {
+            "data": "", // can be null or undefined ->type
+            "defaultContent": "",
+            "sortable": false,
+            render: function (data, type, row) {
+                return `<label class="cst-check"><input name="id" class="checkboxitem" type="checkbox" value="${row.id}"><span class="checkmark"></span></label>`
+            }
+        },
+        {
             "data": "name", // can be null or undefined ->type
             "defaultContent": "",
             render: function (data, type, row) {
                 var color = (row.is_available == 1) ? "green" : "red";
-                return `<label class="cst-check"><input name="id" class="checkboxitem" type="checkbox" value="${row.id}"><span class="checkmark"></span></label> <div class="prdname ${color}"> ${row.name} </div>
-                            <a href="javascript:void(0);" data-id="${row.id}" class="drink_modal edit">Edit</a>
-                            <div class="add-date">Added ${XS.Common.formatDate(row.created_at)}</div>`
+                return `<div class="prdname ${color}"> ${row.name} </div>
+                        <a href="javascript:void(0);" data-id="${row.id}" class="drink_modal edit">Edit</a>
+                        <div class="add-date">Added ${XS.Common.formatDate(row.created_at)}</div>`
             }
         },
         {
@@ -262,16 +270,16 @@
         },
 
         makeDatatable: function (){
-            var context     = this;            
+            var context     = this;
 
             context.categoryFilter();
             context.searchFilter();
-            
+
             context.table = context.selectors.drinkTable.DataTable({
                 processing: true,
                 serverSide: true,
                 searching: false,
-                // order: [[1, 'asc']],
+                order: [[1, 'asc']],
                 ajax: {
                     url: moduleConfig.getAccessibles,
                     type: 'get',
@@ -610,7 +618,7 @@
                         $('.is_favorite').attr('data-is_favorite', 0);
                         $('.is_favorite').addClass('null');
                     }
-                    
+
                     $('#price').val(res.data.price);
                     context.selectors.drinkModal.find('.modal-body').find('.variety').find('.item-box').not('.add_variations').remove();
 

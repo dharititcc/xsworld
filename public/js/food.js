@@ -4,13 +4,22 @@
         table: null,
         tableColumns: [
         {
+            "data": "", // can be null or undefined ->type
+            "defaultContent": "",
+            "sortable": false,
+            render: function (data, type, row) {
+                var color = (row.is_available == 1) ? "green" : "red";
+                return `<label class="cst-check"><input name="id" class="checkboxitem" type="checkbox" value="${row.id}"><span class="checkmark"></span></label>`;
+            }
+        },
+        {
             "data": "name", // can be null or undefined ->type
             "defaultContent": "",
             render: function (data, type, row) {
                 var color = (row.is_available == 1) ? "green" : "red";
-                return `<label class="cst-check"><input name="id" class="checkboxitem" type="checkbox" value="${row.id}"><span class="checkmark"></span></label><div class="prdname ${color}"> ${row.name} </div>
-                            <a href="javascript:void(0);" data-id="${row.id}" class="food_modal edit">Edit</a>
-                            <div class="add-date">Added ${XS.Common.formatDate(row.created_at)}</div>`
+                return `<div class="prdname ${color}"> ${row.name} </div>
+                        <a href="javascript:void(0);" data-id="${row.id}" class="food_modal edit">Edit</a>
+                        <div class="add-date">Added ${XS.Common.formatDate(row.created_at)}</div>`
             }
         },
         {
@@ -261,7 +270,7 @@
                 processing: true,
                 serverSide: true,
                 searching: false,
-                // order: [[0, 'desc']],
+                order: [[1, 'desc']],
                 ajax: {
                     url: moduleConfig.getAccessibles,
                     type: 'get',
