@@ -29,6 +29,7 @@ class CreateOrders extends Migration
             $table->string('charge_id')->nullable();
             $table->text('cancel_reason')->nullable();
             $table->unsignedTinyInteger('apply_time')->nullable();
+            $table->timestamp('remaining_date')->nullable();
             $table->timestamp('accepted_date')->nullable();
             $table->timestamp('cancel_date')->nullable();
             $table->timestamp('served_date')->nullable();

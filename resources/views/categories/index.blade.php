@@ -84,13 +84,13 @@
                             <div class="form-group mb-4">
                                 <input id="cat_id" type="hidden" class="cat_id" name="cat_id" />
                             </div>
-                            <div class="form-group grey-brd-box custom-upload mb-5 image_box">
+                            <div class="grey-brd-box custom-upload image_box">
                                 <input id="upload" type="file" class="files" name="image" accept="image/*" hidden />
                                 <label for="upload"><span> Add Category Feature Image (This can be changed).</span> <i
                                         class="icon-plus"></i></label>
                             </div>
                         </div>
-                        <button class="bor-btn w-100 font-26" id="submitBtn" type="submit">Save</button>
+                        <button class="bor-btn w-100 font-26 mt-4" id="submitBtn" type="submit">Save</button>
                     </form>
                 </div>
             </div>
@@ -250,8 +250,6 @@
                         {
                             var {error} = xhr.responseJSON;
                             $this.closest('#add_form_category').find('.cat_name').after(`<span class="error">${error.message}</span>`);
-
-                            console.log($this.closest('#add_form_category'));
                         }
                     },
                     complete: function()
@@ -355,7 +353,7 @@
 
                 if( jQuery(form).find('.pip').length == 0 )
                 {
-                    jQuery(form).find('input[type="file"]').closest('.form-group').after(`<span class="error">The image field is required.</span>`);
+                    jQuery(form).find('input[type="file"]').closest('.image_box').after(`<span class="error mb-2 d-block">The image field is required.</span>`);
                     $('#submitBtn').html('Save');
                     $("#submitBtn").removeAttr("disabled");
                     return false;
@@ -389,7 +387,7 @@
                                     {
                                         if( jQuery(elem).attr('type') == 'file' )
                                         {
-                                            jQuery(elem).closest('.form-group').after(`<span class="error">${eMessage[0]}</span>`);
+                                            jQuery(elem).closest('.image_box').after(`<span class="error mb-2 d-block">${eMessage[0]}</span>`);
                                         }
                                         else
                                         {

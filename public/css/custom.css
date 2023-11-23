@@ -391,8 +391,9 @@ th .sort-icon{ position: absolute; top: 20%;}
 .pip img{ object-fit: cover; height: 100%; width: 100%; max-width: 100%;}
 .pip i{ position: absolute; top: 0; right: 0; padding: 10px; cursor: pointer; box-shadow: 0 0 20px 0px rgb(0 0 0 / 18%); background: #00000021;}
 
-#wd930.modal .modal-dialog { max-width: 930px;}
+#wd930.modal .modal-dialog { max-width: 930px; width:100%;}
 .wd800.modal .modal-dialog { max-width: 800px;}
+.modal-dialog form{ width:100%;}
 
 .group-btns a{ margin-top: 1rem; }
 
@@ -561,8 +562,12 @@ table.dataTable thead th{ padding: 1.1rem .4rem;}
 .pd-20{ padding: 20px;}
 .gold-border{border-image-source: var(--gold-line); border-image-slice: 1; border-bottom: 1px solid;}
 .gold-border-left{border-image-source: linear-gradient(0deg, #805711 0%, #CCB260 25%, #FEF3B3 50%, #CCB260 75%, #805700 100%); border-ima; border-image-slice: 1; border-left: 1px solid;}
-
 /* Analytics */
+
+.swal-icon--success__hide-corners{ display:none;}
+.swal-icon--success:after, .swal-icon--success:before{ display:none;}
+
+
 
 /* Sweetalert */
 .swal-modal {

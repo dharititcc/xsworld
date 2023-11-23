@@ -16,10 +16,18 @@
             "data": "name", // can be null or undefined ->type
             "defaultContent": "",
             render: function (data, type, row) {
+                console.log(row);
                 var color = (row.is_available == 1) ? "green" : "red";
                 return `<div class="prdname ${color}"> ${row.name} </div>
                         <a href="javascript:void(0);" data-id="${row.id}" class="food_modal edit">Edit</a>
                         <div class="add-date">Added ${XS.Common.formatDate(row.created_at)}</div>`
+            }
+        },
+        {
+            "data": "category_name",
+            "defaultContent": "",
+            render: function (data, type, row) {
+                return data;
             }
         },
         {
@@ -34,7 +42,7 @@
                     }
                     return text
                 }
-                return ""
+                return "-"
             }
         },
         {
@@ -304,9 +312,12 @@
                     },
                     data: {'is_featured':is_featured,'id':id},
                     success: function(res) {
-                        alert('favorite Status has been updated successfully');
 
-                        context.table.ajax.reload();
+                        XS.Common.handleSwalSuccessWithoutReload('Favorite status has been updated successfully.');
+                        setTimeout(function()
+                        {
+                            context.table.ajax.reload();
+                        }, 500);
                     },
                 });
             });
@@ -566,9 +577,8 @@
                     'X-CSRF-TOKEN': jQuery('meta[name="csrf-token"]').attr('content')
                 },
                 success: function(response) {
-                    alert('Food form has been submitted successfully');
                     document.getElementById("drinkpopup").reset();
-                    location.reload(true);
+                    XS.Common.handleSwalSuccess('Food form has been submitted successfully.');
                 },
                 complete: function()
                 {

@@ -1,6 +1,6 @@
 <!-- Global popup -->
-<div class="modal fade" id="restaurant_modal" tabindex="0" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-xl">
+<div class="modal fade" id="wd930" tabindex="0" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl justify-content-center">
         <form name="adddrink" id="create_update_restaurant" method="post">
             @csrf
             <div class="modal-content">
