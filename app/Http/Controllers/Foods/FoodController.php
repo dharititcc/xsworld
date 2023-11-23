@@ -36,8 +36,19 @@ class FoodController extends Controller
             {    //not available
                 $data =  $this->updateItemAvailable($request->get('disable'), 0);
             }
-            $data = RestaurantItem::query()->groupBy('name')
+            $data = RestaurantItem::select([
+                'restaurant_items.id',
+                'restaurant_items.name',
+                'restaurant_items.type',
+                'categories.name AS category_name',
+                'restaurant_items.is_available',
+                'restaurant_items.is_featured',
+                'restaurant_items.created_at',
+                'restaurant_items.price',
+                'restaurant_items.type'
+            ])
                     ->with(['category', 'restaurant','variations'])
+                    ->leftJoin('categories', 'categories.id', '=', 'restaurant_items.category_id')
                     ->whereHas('restaurant', function($query) use($restaurant)
                     {
                         return $query->where('restaurants.id', $restaurant->id)->where('restaurant_items.type',RestaurantItem::ITEM);

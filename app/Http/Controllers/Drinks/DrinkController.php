@@ -45,7 +45,8 @@ class DrinkController extends Controller
                 'categories.name AS category_name',
                 'restaurant_items.is_available',
                 'restaurant_items.is_featured',
-                'restaurant_items.created_at'
+                'restaurant_items.created_at',
+                'restaurant_items.price'
             ])
                     ->with(['category', 'restaurant','variations'])
                     ->leftJoin('categories', 'categories.id', '=', 'restaurant_items.category_id')

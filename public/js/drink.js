@@ -320,7 +320,7 @@
                     data: {'is_featured':is_featured,'id':id},
                     success: function(res)
                     {
-                        XS.Common.handleSwalSuccessWithoutReload('Favorite Status has been updated successfully.');
+                        XS.Common.handleSwalSuccessWithoutReload('Favorite status has been updated successfully.');
                         setTimeout(function()
                         {
                             context.table.ajax.reload();
