@@ -12,7 +12,7 @@
     <title>{{ config('app.name', 'Login | XS World') }}</title>
 
     <!-- Favicon-->
-    <link rel="icon" type="image/x-icon" href="{{ asset('img/favicon.ioc') }}" />
+    <link rel="icon" type="image/x-icon" href="{{ asset('img/favicon.ico') }}" />
 
     <!-- Core theme CSS (includes Bootstrap)-->
     <link href="{{ asset('css/styles.css') }}" rel="stylesheet" />
