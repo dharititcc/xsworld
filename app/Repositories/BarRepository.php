@@ -176,8 +176,19 @@ class BarRepository extends BaseRepository
 
             if( isset($apply_time) )
             {
-                $time                    = $order->apply_time;
-                $updateArr['apply_time'] = $apply_time + $time;
+                $time                           = $order->apply_time;
+                $updateArr['apply_time']        = $apply_time + $time;
+                if(isset($order->remaining_date))
+                {
+                    $old_time           = Carbon::parse($order->remaining_date);
+                    $remaining_date     = $old_time->addMinutes($apply_time);
+                }
+                else
+                {
+                    $current_time       = Carbon::now();
+                    $remaining_date     = $current_time->addMinutes($apply_time);
+                }
+                $updateArr['remaining_date']    = $remaining_date;
             }
 
             if( $status != Order::ACCEPTED )
