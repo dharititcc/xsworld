@@ -15,6 +15,7 @@
         <a href="{{route('restaurants.pickup.index')}}" class="{{ Route::is('restaurants.pickup.*') ? 'active' : '' }}">Pick-up Zones</a>
         <a href="{{ route('restaurants.table.index') }}" class="{{ Route::is('restaurants.table.*') ? 'active' : '' }}">Table Management</a>
         <a href="{{ route('restaurants.venue.index') }}" class="{{ Route::is('restaurants.venue.*') ? 'active' : '' }}">Bar Management</a>
+        <a href="{{ route('restaurants.orders.index') }}" class="{{ Route::is('restaurants.orders.*') ? 'active' : '' }}">Order History</a>
         <a class="" href="{{ route('logout') }}"
                onclick="event.preventDefault();
                              document.getElementById('logout-form').submit();">

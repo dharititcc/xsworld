@@ -38,8 +38,17 @@ class DrinkController extends Controller
             {    //not available
                 $data =  $this->updateItemAvailable($request->get('disable'), 0);
             }
-            $data = RestaurantItem::query()->groupBy('name')
+            $data = RestaurantItem::select([
+                'restaurant_items.id',
+                'restaurant_items.name',
+                'restaurant_items.type',
+                'categories.name AS category_name',
+                'restaurant_items.is_available',
+                'restaurant_items.is_featured',
+                'restaurant_items.created_at'
+            ])
                     ->with(['category', 'restaurant','variations'])
+                    ->leftJoin('categories', 'categories.id', '=', 'restaurant_items.category_id')
                     ->whereHas('restaurant', function($query) use($restaurant)
                     {
                         return $query->where('restaurants.id', $restaurant->id)->where('restaurant_items.type',RestaurantItem::ITEM);
@@ -155,13 +164,11 @@ class DrinkController extends Controller
      */
     public function show(RestaurantItem $drink)
     {
-        $categories = RestaurantItem::query()->select('category_id')->where('restaurant_id', $drink->restaurant_id)->where('type', RestaurantItem::ITEM)->where('name', $drink->name)->groupBy('category_id')->pluck('category_id')->toArray();
-
         $restaurantVariation = RestaurantVariation::select('name','price')->where('restaurant_item_id',$drink->id)->get()->toArray();
         $data = [
             'name'          => $drink->name,
             'price'         => $drink->price,
-            'categories'    => $categories,
+            'categories'    => [$drink->category_id],
             'image'         => $drink->attachment ? asset('storage/items/'.$drink->attachment->stored_name) : '',
             'restaurant_id' => $drink->restaurant_id,
             'ingredients'   => $drink->ingredients,
@@ -282,7 +289,6 @@ class DrinkController extends Controller
         //
     }
 
-    
     public function favoriteStatusUpdate(Request $request)
     {
         $restaurant = session('restaurant');
