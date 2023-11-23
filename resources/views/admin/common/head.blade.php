@@ -9,7 +9,7 @@
 <title>{{ config('app.name', 'XS World') }}</title>
 
 <!-- Favicon-->
-<link rel="icon" type="image/x-icon" href="{{ asset('img/favicon.ioc') }}" />
+<link rel="icon" type="image/x-icon" href="{{ asset('img/favicon.ico') }}" />
     <!--  Datatable --->
     <link href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css" rel="stylesheet">
     <link href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css" rel="stylesheet">
