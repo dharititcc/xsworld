@@ -99,6 +99,7 @@ class Order extends Model
         'currency_id',
         'apply_time',
         'accepted_date',
+        'remaining_date',
         'cancel_date',
         'served_date',
         'completion_date',
@@ -312,17 +313,24 @@ class Order extends Model
     {
         $remaining_time     = 0;
         $current_time       = Carbon::now();
-        if($this->accepted_date)
+        $remaining_time     = $current_time->diffInSeconds($this->remaining_date);
+        $old_time           = Carbon::parse($this->remaining_date)->isPast();
+        if($old_time == true)
         {
-            $updated_time   = Carbon::parse($this->accepted_date);
-            $apply_time     = $updated_time->addMinutes($this->apply_time);
-            $remaining_time = $current_time->diffInSeconds($apply_time);
-            $old_time       = Carbon::createFromFormat('Y-m-d H:i:s', $apply_time)->isPast();
-            if($old_time === true)
-            {
-                return 0;
-            }
+            return 0;
         }
+        // $current_time       = Carbon::now();
+        // if($this->accepted_date)
+        // {
+        //     $updated_time   = Carbon::parse($this->accepted_date);
+        //     $apply_time     = $updated_time->addMinutes($this->apply_time);
+        //     $remaining_time = $current_time->diffInSeconds($apply_time);
+        //     $old_time       = Carbon::createFromFormat('Y-m-d H:i:s', $apply_time)->isPast();
+        //     if($old_time === true)
+        //     {
+        //         return 0;
+        //     }
+        // }
         return $remaining_time;
     }
 

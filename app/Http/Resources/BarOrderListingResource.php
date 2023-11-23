@@ -32,8 +32,9 @@ class BarOrderListingResource extends JsonResource
             // 'credit_amount'              => $this->credit_amount,
             'apply_time'                => $this->apply_time ?? 0,
             'remaining_time'            => $this->remainingtime,
+            'remaining_date'            => isset($this->remaining_date) ? $this->remaining_date : '',
             'created_date'              => Carbon::parse($this->created_at)->toDateTimeString(),
-            'updated_date'               => Carbon::parse($this->updated_at)->toDateTimeString(),
+            'updated_date'              => Carbon::parse($this->updated_at)->toDateTimeString(),
             'order_items'               => isset($this->order_items) ? OrderItemResource::collection($this->order_items) : [],
         ];
     }
