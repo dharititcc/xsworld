@@ -169,7 +169,7 @@
 
                 var $this = jQuery(this);
 
-                jQuery('#restaurant_modal').modal('show');
+                jQuery('#wd930').modal('show');
             });
         },
 
