@@ -52,7 +52,7 @@ class OrderResource extends JsonResource
             'rated'                     => $this->reviews->count(),
             'order_items'               => isset($this->order_items) ? OrderItemResource::collection($this->order_items) : [],
             'pickup_points'             => PickUpPointResource::collection($this->restaurant->pickup_points),
-            'card_details'              => isset($this->carddetails) ? $this->carddetails : new stdClass
+            // 'card_details'              => isset($this->carddetails) ? $this->carddetails : new stdClass
         ];
     }
 }

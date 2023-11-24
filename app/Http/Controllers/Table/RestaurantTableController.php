@@ -6,13 +6,15 @@ use App\Http\Controllers\Controller;
 use App\Models\RestaurantTable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\URL;
-use Barryvdh\DomPDF\Facade\Pdf;
-use Illuminate\Http\Client\Response;
-use SVG\SVG;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class RestaurantTableController extends Controller
 {
+    /**
+     * Method index
+     *
+     * @return \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory
+     */
     public function index()
     {
         $restaurant = session('restaurant');
@@ -21,6 +23,13 @@ class RestaurantTableController extends Controller
         return view('table.index',compact('res_tables','active_tbl'));
     }
 
+    /**
+     * Method export_pdf
+     *
+     * @param Request $request [explicite description]
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function export_pdf(Request $request)
     {
         $table  = RestaurantTable::findOrFail($request->id);
@@ -33,10 +42,15 @@ class RestaurantTableController extends Controller
         ], 200);
     }
 
+    /**
+     * Method store
+     *
+     * @param Request $request [explicite description]
+     *
+     * @return \App\Models\RestaurantTable
+     */
     public function store(Request $request)
     {
-        // dd(URL::current());
-        // dd($request->all());
         $restaurant = session('restaurant');
         $table = RestaurantTable::create([
             'name'  => $request->name,
@@ -45,23 +59,24 @@ class RestaurantTableController extends Controller
         ]);
         $qr_url = URL::current();
 
-        // $qr_code_image = QrCode::size(500)
-        //     ->format('png')
-        //     ->generate($qr_url . '/'.$table->id, public_path("images/qrcode_$table->id.png"));
-
-
         $qr_code_image = QrCode::size(500)
             ->format('png')
             ->backgroundColor(255,255,255)
             ->generate($qr_url . '/'.$table->id, public_path("images/qrcode_$table->id.png"));
-        
-        // dd($qr_code_image);
+
         $imageName = "qrcode_$table->id.png";
         RestaurantTable::where('id',$table->id)->update(['qr_image' => $imageName, 'qr_url' => $qr_url]);
-        // dd($qr_code_image);
+
         return $table->refresh();
     }
 
+    /**
+     * Method statusUpdate
+     *
+     * @param Request $request [explicite description]
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function statusUpdate(Request $request)
     {
         $restaurant = session('restaurant');
@@ -71,16 +86,16 @@ class RestaurantTableController extends Controller
         return response()->json(['success'=>'Status change successfully.']);
     }
 
-    public function show($id)
-    {
-        
-    }
-
+    /**
+     * Method destroy
+     *
+     * @param Request $request [explicite description]
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function destroy(Request $request)
     {
         RestaurantTable::whereIn('id',explode(",",$request->ids))->delete();
         return response()->json(['status'=>true,'message'=>"Table deleted successfully."]);
     }
-
-
 }

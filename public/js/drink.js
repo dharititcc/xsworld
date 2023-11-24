@@ -380,8 +380,8 @@
                 var $this       = jQuery(this),
                     productType = $this.data('product_type');
 
-                    jQuery('.product_type').removeClass('active');
-
+                jQuery('.product_type').removeClass('active');
+                console.log('Product Type', productType);
                 if( productType == 1 )
                 {
                     $('#product_type').val(1);
@@ -531,7 +531,6 @@
                     }
                 },
                 errorPlacement: function (error, element) {
-                    console.log(element);
                     if (element.attr("type") == "checkbox") {
                         error.insertAfter($(element).closest('div'));
                     } else if( element.attr("type") == 'file' ) {
@@ -589,7 +588,6 @@
 
                 },
                 submitHandler: function() {
-                    console.log('edit');
                     context.submitDrinkForm(context.selectors.drinkForm.get(0));
                 }
             });
@@ -632,7 +630,6 @@
                 url: moduleConfig.drinkGet.replace(':ID',id),
                 type: 'GET',
                 success: function(res) {
-                    console.log(res.data);
                     $('#name').val(res.data.name);
                     $('#ingredients').val(res.data.ingredients);
                     $('#country_of_origin').val(res.data.country_of_origin);

@@ -76,15 +76,11 @@
                                 <a href="javascript:void(0)" class="bor-btn product_type active" data-product_type="0">Simple</a>
                                 <a href="javascript:void(0)" class="bor-btn product_type" data-product_type="1">Variable</a>
                             </div>
-                            {{-- <div class="grey-brd-box d-flex featured-img">
-                              <a href="#" class="add-edit"><i class="icon-plus"></i></a>
-                              <span class="img-text">Product Image</span>
-                          </div> --}}
                             <div class="form-group grey-brd-box d-flex featured-img">
                                 <input id="upload" type="file" class="files" name="image" accept="image/*" hidden />
-                                <label for="upload"><span> Product Image</span> <i class="icon-plus"></i></label>
+                                <label for="upload" class="lbl-upload"><span class="img-text"> Product Image</span> <i class="icon-plus add-edit"></i></label>
                             </div>
-                            <input type="text" name="price" id="price" class="form-control vari2 mb-3" placeholder="Enter Price">
+                            <input type="text" name="price" id="price" class="form-control vari2 mb-3 show-error-info" placeholder="Enter Price">
 
                         </div>
                         <div class="col-md-8">

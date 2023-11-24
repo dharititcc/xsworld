@@ -15,7 +15,7 @@ class BarPickZoneController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory
      */
     public function index()
     {
@@ -24,16 +24,6 @@ class BarPickZoneController extends Controller
         return view('accountManager.waiter.index',[
             'pickup_points' => $pickup_points,
         ]);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
     }
 
     /**
@@ -66,19 +56,19 @@ class BarPickZoneController extends Controller
             'user_type' => User::BARTENDER,
         ]);
         RestaurantPickupPoint::where('id',$request->pickup_points)->update(['user_id'=>$barArr->id]);
-        
+
         return $barArr->refresh();
     }
 
-    
-    function generateRandomString($length) {
+    function generateRandomString($length)
+    {
         $characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ123456789';
         $randomString = '';
-        
+
         for ($i = 0; $i < $length; $i++) {
             $randomString .= $characters[rand(0, strlen($characters) - 1)];
         }
-        
+
         return $randomString;
     }
     /**
