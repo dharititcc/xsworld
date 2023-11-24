@@ -163,8 +163,19 @@ class OrderRepository extends BaseRepository
             }
 
             $order->refresh();
+            // if( $this->checkOrderCategoryType($order->order_items) )
+            // {
+            //     // update order category to 1
+            //     $order_category_type = 1;
+            // }
+            // else
+            // {
+            //     // update order category to 0
+            //     $order_category_type = 0;
+            // }
+            $order_category_type = $this->checkOrderCategoryType($order->order_items);
             $order->loadMissing(['items']);
-            $order->update(['total' => $order->items->sum('total')]);
+            $order->update(['total' => $order->items->sum('total'),'order_category_type' => $order_category_type]);
 
             return $order;
         }
@@ -412,10 +423,66 @@ class OrderRepository extends BaseRepository
         }
 
         $order->refresh();
+
+        // dd($this->checkOrderCategoryType($order->order_items));
+        // if( $this->checkOrderCategoryType($order->order_items) )
+        // {
+        //     // update order category to 1
+        //     $order_category_type = 1;
+        // }
+        // else
+        // {
+        //     // update order category to 0
+        //     $order_category_type = 0;
+        // }
+
+        $order_category_type = $this->checkOrderCategoryType($order->order_items);
+
         $order->loadMissing(['items']);
-        $order->update(['total' => $order->items->sum('total')]);
+        $order->update(['total' => $order->items->sum('total'),'order_category_type' => $order_category_type]);
 
         return $order;
+    }
+
+    public function checkOrderCategoryType(Collection $items)
+    {
+        $isOrderCategoryType = 0;
+        $isDrinkCategory = 0;
+        $isFoodCategory = 0;
+        if( $items->count() )
+        {
+            foreach( $items as $item )
+            {
+                $item->loadMissing(['restaurant_item', 'restaurant_item.category.children_parent']);
+
+                $parentCategory = $item->restaurant_item->category->children_parent;
+                
+                if( $parentCategory->name == 'Food' )
+                {
+                    $isFoodCategory = 1;
+                }
+
+                if( $parentCategory->name == 'Drinks' )
+                {
+                    $isDrinkCategory = 1;
+                }
+            }
+        }
+
+        if( $isDrinkCategory === 1 && $isFoodCategory === 1 )
+        {
+            $isOrderCategoryType = 2;
+        }
+        else if( $isDrinkCategory !== 1 && $isFoodCategory === 1 )
+        {
+            $isOrderCategoryType = 1;
+        }
+        else
+        {
+            $isOrderCategoryType = 0;
+        }
+
+        return $isOrderCategoryType;
     }
 
     /**

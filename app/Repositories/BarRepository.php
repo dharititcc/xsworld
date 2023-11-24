@@ -169,9 +169,9 @@ class BarRepository extends BaseRepository
             {
                 $updateArr['accepted_date'] = Carbon::now();
                 $updateArr['status']        = $status;
-                $title                      = "Order is Placed from Bar";
-                $message                    = "New order is placed from Bar";
-                $send_notification          = sendNotification($title,$message,$kitchen_token,$order_id);
+                $title                      = "Order Status Changed";
+                $message                    = "Bar Acepted Your Order #".$order_id;
+                $send_notification          = sendNotification($title,$message,$user_tokens,$order_id);
             }
 
             if( isset($apply_time) )
@@ -189,6 +189,10 @@ class BarRepository extends BaseRepository
                     $remaining_date     = $current_time->addMinutes($apply_time);
                 }
                 $updateArr['remaining_date']    = $remaining_date;
+
+                $title                      = "Order Delay Time Changed";
+                $message                    = "Bar Delay Your Order #".$order_id;
+                $send_notification          = sendNotification($title,$message,$user_tokens,$order_id);
             }
 
             if( $status != Order::ACCEPTED )
@@ -206,28 +210,44 @@ class BarRepository extends BaseRepository
                 }
                 $updateArr['status']            = $status;
                 $updateArr['completion_date']   = Carbon::now();
+                
+                $title                      = "Order Status Changed";
+                $message                    = "Order is Completed from Bar #".$order_id;
+                $send_notification          = sendNotification($title,$message,$user_tokens,$order_id);
             }
 
             if($status == Order::RESTAURANT_CANCELED)
             {
                 // RESTAURANT_CANCELED and process for refund
                 $updateArr['status']            = $status;
+
+                $title                      = "Restaurant Cancled Your Order";
+                $message                    = "Restaurant Cancled Your Order #".$order_id;
+                $send_notification          = sendNotification($title,$message,$user_tokens,$order_id);
             }
 
             if($status == Order::CONFIRM_PICKUP)
             {
                 $updateArr['status']            = $status;
                 $updateArr['served_date']       = Carbon::now();
+
+                $title                      = "Order Status Changed";
+                $message                    = "Order is Confirm from Bar";
+                $send_notification          = sendNotification($title,$message,$user_tokens,$order_id);
             }
 
             if($status == Order::RESTAURANT_TOXICATION)
             {
                 // RESTAURANT_TOXICATION and process for refund
                 $updateArr['status']            = $status;
+
+                $title                      = "Restaurant Toxication Order";
+                $message                    = "Restaurant Toxication Order ";
+                $send_notification          = sendNotification($title,$message,$user_tokens,$order_id);
             }
 
-            $title      = "Order is processing";
-            $message    = "Your Order is ".$order->id." placed";
+            // $title      = "Order is processing";
+            // $message    = "Your Order is ".$order->id." placed";
 
             //$send_notification = sendNotification($title,$message,$user_tokens);
 
