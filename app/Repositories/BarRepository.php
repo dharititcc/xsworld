@@ -180,7 +180,7 @@ class BarRepository extends BaseRepository
                 $updateArr['apply_time']        = $apply_time + $time;
                 if(isset($order->remaining_date))
                 {
-                    $old_time           = Carbon::parse($order->remaining_date);
+                    $old_time           = Carbon::now();
                     $remaining_date     = $old_time->addMinutes($apply_time);
                 }
                 else
