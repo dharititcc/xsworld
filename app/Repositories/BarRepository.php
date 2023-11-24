@@ -174,7 +174,7 @@ class BarRepository extends BaseRepository
                 $send_notification          = sendNotification($title,$message,$user_tokens,$order_id);
             }
 
-            if($status == Order::DELAY_ORDER && $status == Order::ACCEPTED)
+            if($status == Order::DELAY_ORDER || $status == Order::ACCEPTED)
             {
                 if( isset($apply_time) )
                 {
@@ -213,6 +213,7 @@ class BarRepository extends BaseRepository
                 }
                 $updateArr['status']            = $status;
                 $updateArr['completion_date']   = Carbon::now();
+                $updateArr['remaining_date']    = Carbon::now();
 
                 $title                      = "Order Status Changed";
                 $message                    = "Order is Completed from Bar #".$order_id;
