@@ -16,7 +16,6 @@
             "data": "name", // can be null or undefined ->type
             "defaultContent": "",
             render: function (data, type, row) {
-                console.log(row);
                 var color = (row.is_available == 1) ? "green" : "red";
                 return `<div class="prdname ${color}"> ${row.name} </div>
                         <a href="javascript:void(0);" data-id="${row.id}" class="food_modal edit">Edit</a>
@@ -369,12 +368,13 @@
 
         productTypeFilter: function()
         {
+            var context = this;
             jQuery('.product_type').on('click', function(e)
             {
                 var $this       = jQuery(this),
                     productType = $this.data('product_type');
 
-                    jQuery('.product_type').removeClass('active');
+                jQuery('.product_type').removeClass('active');
 
                 if( productType == 1 )
                 {
@@ -415,7 +415,6 @@
                     productType = $this.data('product_type');
                     $('#product_type').val(0);
                     $('#is_featured').val(0);
-                    console.log(foodId);
 
                 if(foodId == undefined)
                 {
@@ -518,7 +517,6 @@
                     }
                 },
                 errorPlacement: function (error, element) {
-                    console.log(element);
                     if (element.attr("type") == "checkbox") {
                         error.insertAfter($(element).closest('div'));
                     } else if( element.attr("type") == 'file' ) {
@@ -528,7 +526,6 @@
                     }
                 },
                 submitHandler: function() {
-                    console.log('new');
                     context.submitFoodForm(context.selectors.foodForm.get(0));
                 }
             });
@@ -575,7 +572,6 @@
 
                 },
                 submitHandler: function() {
-                    console.log('edit');
                     context.submitFoodForm(context.selectors.foodForm.get(0));
                 }
             });
@@ -618,7 +614,6 @@
                 url: moduleConfig.getFood.replace(':ID',id),
                 type: 'GET',
                 success: function(res) {
-                    console.log(res.data);
                     $('#name').val(res.data.name);
                     $('#ingredients').val(res.data.ingredients);
                     $('#country_of_origin').val(res.data.country_of_origin);

@@ -314,7 +314,27 @@ class OrderRepository extends BaseRepository
                 'orders',
             ]
         );
-        return $user->orders()->whereIn('status', [Order::ACCEPTED, Order::PENDNIG, Order::COMPLETED])->with('order_items')->orderBy('id', 'desc')->first();
+        return $user
+        ->orders()
+        ->whereIn('status', [Order::ACCEPTED, Order::PENDNIG, Order::COMPLETED])
+        ->with([
+            'reviews',
+            'order_items',
+            'order_items.mixer',
+            'order_items.addons',
+            'order_items.variation',
+            'order_items.restaurant_item',
+            'order_items.restaurant_item.restaurant',
+            'order_items.restaurant_item.restaurant.currency',
+            'order_items.restaurant_item.restaurant.country',
+            'user',
+            'pickup_point',
+            'pickup_point.attachment',
+            'pickup_point_user',
+            'restaurant',
+            'restaurant.pickup_points',
+            'restaurant.pickup_points.attachment'
+        ])->orderBy('id', 'desc')->first();
     }
 
     /**

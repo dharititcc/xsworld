@@ -72,6 +72,7 @@ form .logo{ margin: 0 auto 6vh auto; display: block; max-width: 72%;}
 .custom-nav.navbar .container-fluid{ align-items: center; padding-left: 25px; padding-right: 25px;}
 
 .custom-nav.navbar .btn{ background: transparent; border: none; font-size: 17px; color: #F4F3EF; padding-left: 0;}
+.custom-nav.navbar .btn:focus{box-shadow:none;}
 
 
 .custom-nav.navbar .btn-elemts{ display: flex; align-items: center;}
@@ -81,6 +82,7 @@ form .logo{ margin: 0 auto 6vh auto; display: block; max-width: 72%;}
 .custom-nav.navbar .right-info-element{ min-width: 16%; display: flex;}
 
 main{ padding: 0 15px;}
+.orders main{ padding: 0;}
 
 .hero{ height: 335px; transition: .3s;} 
 .hero img{ width: 100%; object-fit: cover; height: 100%; object-position: center;}
@@ -386,14 +388,15 @@ th .sort-icon{ position: absolute; top: 20%;}
 .custom-upload label {  display: flex; cursor: pointer; padding: 1rem; flex-direction:column; align-items: center; justify-content: center; height: 250px; font-size: 23px;}
 .custom-upload label span{ text-align: center; margin-bottom: 20px; max-width: 90%;}
 
-.pip + label{ display: none;}
+.pip + label.lbl-upload{ display: none;}
 .pip{ height: 250px; position: relative; }
 .pip img{ object-fit: cover; height: 100%; width: 100%; max-width: 100%;}
 .pip i{ position: absolute; top: 0; right: 0; padding: 10px; cursor: pointer; box-shadow: 0 0 20px 0px rgb(0 0 0 / 18%); background: #00000021;}
 
-.modal-body .pip{ height: 360px;}
+.modal-body .pip{ height: 360px; width: 100%;}
 
-#wd930.modal .modal-dialog { max-width: 930px; width:100%;}
+/* #wd930.modal .modal-dialog { max-width: 930px; width:100%;} */
+.modal .modal-dialog { width:100%;}
 .wd800.modal .modal-dialog { max-width: 800px;}
 .modal-dialog form{ width:100%;}
 
@@ -409,9 +412,14 @@ th .sort-icon{ position: absolute; top: 20%;}
 .favorite:after{font-family: "fontello"; font-size: 28px; color: #EAC36C; font-weight: lighter; content: '\e813';}
 .favorite.null:after{ content: '\e814';}
 
-.featured-img{ position: relative; align-items: center; text-align: center; color: #fff; justify-content: center; min-height: 358px; margin-bottom: 1.5em;}
+.featured-img{ position: relative; align-items: center; text-align: center; color: #fff; justify-content: center; margin-bottom: 2em;}
 .featured-img .add-edit{ position: absolute;color: #fff; text-decoration: none; font-size: 25px; top: 0; right: 0;}
 .featured-img .img-text{ font-size: 30px;  }
+.featured-img .lbl-upload{min-height: 358px; width: 100%; display: flex; align-items: center; justify-content: center; cursor: pointer;}
+
+
+.featured-img + .error{position: absolute; margin-top: -30px;}
+.show-error-info ~ .error{position: absolute; margin-top: -15px;} 
 
 .tab-btn{ display: flex; margin-bottom: 1.5rem;}
 .tab-btn .bor-btn{ width: 50%; padding: .7rem; text-align: center; border-right: none; font-size: 20px;}

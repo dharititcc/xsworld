@@ -13,7 +13,9 @@
                 @yield('topbar')
                 <!-- Page content-->
                 <div class="container-fluid">
+                    <main>
                        @yield('content')
+                    </main>
                 </div>
             </div>
         </div>
@@ -30,6 +32,15 @@
             else
             {
                 body.classList.remove('home')
+            }
+
+            if( pathname == '/restaurants/orders' )
+            {
+                body.classList.add('orders');
+            }
+            else
+            {
+                body.classList.remove('orders')
             }
         </script>
         @yield('pagescript')
