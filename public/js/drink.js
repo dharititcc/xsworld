@@ -138,6 +138,10 @@
             context.filterCategoryChange();
             XS.Common.enableSweetAlert(context.table);
             XS.Common.disableSweetAlert(context.table);
+
+            // price input field validation for number
+            context.selectors.drinkVariationModal.find('input[name="variation_price"]').get(0).addEventListener('keyup', XS.Common.checkNumberInput);
+            $('#price').get(0).addEventListener('keyup', XS.Common.checkNumberInput);
         },
 
         filterCategoryChange: function()
@@ -201,10 +205,30 @@
                 e.preventDefault();
 
                 var $this       = $(this),
+                    isValid     = true,
                     parent      = $this.closest('.modal-body'),
                     name        = parent.find('input[name="variation_name"]'),
                     price       = parent.find('input[name="variation_price"]'),
                     countVariation = context.selectors.drinkModal.find('.modal-body').find('.variety').children().length;
+
+                // validation variation form
+                if( name.val() == '' )
+                {
+                    isValid = false;
+
+                    name.after(`<span class="error">The variation name field is required.</span>`);
+                }
+
+                if( price.val() == '' )
+                {
+                    isValid = false;
+                    price.after(`<span class="error">The variation price field is required.</span>`);
+                }
+
+                if( !isValid )
+                {
+                    return false;
+                }
 
                 context.addVariationBlock(name.val(), price.val(), countVariation);
 

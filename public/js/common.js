@@ -13,6 +13,26 @@ var XS_Admin = {}; // common variable used in all the files of the backend
             });
         },
 
+        checkNumberInput: function(e)
+        {
+            var val = this.value;
+            var re = /^([0-9]+[\.]?[0-9]?[0-9]?|[0-9]+)$/g;
+            var re1 = /^([0-9]+[\.]?[0-9]?[0-9]?|[0-9]+)/g;
+            if (re.test(val))
+            {
+                //do something here
+            }
+            else
+            {
+                val = re1.exec(val);
+                if (val) {
+                    this.value = val[0];
+                } else {
+                    this.value = "";
+                }
+            }
+        },
+
         /**
          * CSRF token
          * @returns string
