@@ -99,6 +99,7 @@ class Order extends Model
         'transaction_id',
         'currency_id',
         'apply_time',
+        'last_delayed_time',
         'accepted_date',
         'remaining_date',
         'cancel_date',

@@ -62,7 +62,7 @@ class RestaurantTableController extends Controller
         $qr_code_image = QrCode::size(500)
             ->format('png')
             ->backgroundColor(255,255,255)
-            ->generate($qr_url . '/'.$table->id, public_path("images/qrcode_$table->id.png"));
+            ->generate($qr_url . '/'.$restaurant->id . '/'.$table->id, public_path("images/qrcode_$table->id.png"));
 
         $imageName = "qrcode_$table->id.png";
         RestaurantTable::where('id',$table->id)->update(['qr_image' => $imageName, 'qr_url' => $qr_url]);

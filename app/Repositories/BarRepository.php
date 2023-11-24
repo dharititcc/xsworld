@@ -178,8 +178,9 @@ class BarRepository extends BaseRepository
             {
                 if( isset($apply_time) )
                 {
-                    $time                           = $order->apply_time;
-                    $updateArr['apply_time']        = $apply_time + $time;
+                    $time                               = $order->apply_time;
+                    $updateArr['apply_time']            = $apply_time + $time;
+                    $updateArr['last_delayed_time']     = $apply_time;
                     if(isset($order->remaining_date))
                     {
                         $old_time           = Carbon::now();
@@ -191,6 +192,7 @@ class BarRepository extends BaseRepository
                         $remaining_date     = $current_time->addMinutes($apply_time);
                     }
                     $updateArr['remaining_date']    = $remaining_date;
+                    // dd($remaining_date);
 
                     $title                      = "Order Delay Time Changed";
                     $message                    = "Bar Delay Your Order #".$order_id;
