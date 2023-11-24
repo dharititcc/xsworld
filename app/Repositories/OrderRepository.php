@@ -765,6 +765,7 @@ class OrderRepository extends BaseRepository
      */
     public function getCartdataWaiter(array $data): ?Order
     {
+        
         $order        = isset($data['order_id']) ? Order::findOrFail($data['order_id']) : null;
 
         $order->loadMissing(
@@ -855,6 +856,17 @@ class OrderRepository extends BaseRepository
         $user               = $order->user_id ? User::findOrFail($order->user_id) : auth()->user();
         $devices            = $user->devices()->pluck('fcm_token')->toArray();
 
+        $kitchens          = $order->restaurant->kitchens;
+        $kitchen_token     = [];
+
+        foreach ($kitchens as $kitchen) {
+            $token   = $kitchen->user->devices()->pluck('fcm_token');
+            if(isset($token[0]))
+            {
+                $kitchen_token[]    = $token[0];
+            }
+        }
+
         $updateArr         = [];
         $paymentArr        = [];
         $stripe_customer_id = $user->stripe_customer_id;
@@ -913,10 +925,10 @@ class OrderRepository extends BaseRepository
         $orderid            = $order->id;
         $send_notification  = sendNotification($title,$message,$devices,$orderid);
 
-        $bartitle           = "Order is placed by Customer";
-        $barmessage         = "Order is #".$order->id." placed by customer";
-        $bardevices         = $order->user->devices()->pluck('fcm_token')->toArray();
-        $bar_notification   = sendNotification($bartitle,$barmessage,$bardevices,$orderid);
+        $kitchentitle           = "Order is placed by Customer";
+        $kitchenmessage         = "Order is #".$order->id." placed by customer";
+        // $kitchendevices         = $order->user->devices()->pluck('fcm_token')->toArray();
+        $kitchen_notification   = sendNotification($kitchentitle,$kitchenmessage,$kitchen_token,$orderid);
 
         return $order;
     }
