@@ -22,10 +22,9 @@
             <table width="100%" class="drink_datatable">
                 <thead>
                     <tr valign="middle">
-                        <th><label class="cst-check"><input type="checkbox" id="allcheck" value=""><span class="checkmark"></span></label></th>
+                        <th class="dt-left"><label class="cst-check"><input type="checkbox" id="allcheck" value=""><span class="checkmark"></span></label></th>
                         <th>Name</th>
                         <th class="price">Price</th>
-                        <th class="popularity">Popularity</th>
                         <th>Status</th>
                     </tr>
                 </thead>
@@ -191,7 +190,8 @@
                     }
                 });
             } else {
-                alert("Your browser doesn't support to File API")
+                //alert("Your browser doesn't support to File API")
+                XS.Common.handleSwalSuccessWithoutReload("Your browser doesn't support to File API.");
             }
 
         jQuery(document).ready(function() {
@@ -232,6 +232,7 @@
                     {
                         "data": "", // can be null or undefined
                         "defaultContent": "",
+                        "width": "10%",
                         "sortable": false,
                         render: function(data, type, row) {
                             return '<label class="cst-check"><input name="id" class="checkboxitem" type="checkbox" value="' +
@@ -241,6 +242,7 @@
                     {
                         "data": "name", // can be null or undefined ->type
                         "defaultContent": "",
+                        "width": "30%",
                         render: function(data, type, row) {
                             var color = (row.is_available == 1) ? "green" : "red";
                             return '<div class="prdname ' + color + '"> ' + row.name +
@@ -252,6 +254,7 @@
                     {
                         "data": "price", // can be null or undefined
                         "defaultContent": "",
+                        "width": "30%",
                         "bSortable": false,
                         render: function(data, type, row) {
                             var text = "";
@@ -265,16 +268,9 @@
                         }
                     },
                     {
-                        "data": "description", // can be null or undefined
-                        "defaultContent": "",
-                        "bSortable": false,
-                        render: function(data, type, row) {
-                            return row.description
-                        }
-                    },
-                    {
                         "data": "status", // can be null or undefined
                         "defaultContent": "",
+                        "width": "30%",
                         "bSortable": false,
                         render: function(data, type, row) {
                             var html = '';
@@ -289,7 +285,11 @@
                             return html
                         }
                     },
-                ]
+                ],
+                drawCallback: function ( settings )
+                {
+                    $('.drink_datatable').find('tbody tr').find('td:first').addClass('dt-center');
+                }
             });
         }
 
@@ -313,7 +313,6 @@
 
             $('#allcheck').click(function(e) {
                 e.preventDefault();
-                alert();
                 $('input[name="id"]').attr('checked', 'checked');
                 // $(this).val('uncheck all');
             }, function() {
@@ -378,8 +377,9 @@
                     success: function(response) {
                         $('#submitBtn').html('Submit');
                         $("#submitBtn").attr("disabled", false);
-                        alert('Mixer has been added successfully');
-                        location.reload(true);
+                        //alert('Mixer has been added successfully');
+                        //location.reload(true);
+                        XS.Common.handleSwalSuccess('Mixer has been added successfully.');
                     }
                 });
             }

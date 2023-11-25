@@ -184,9 +184,10 @@
                     'X-CSRF-TOKEN': jQuery('meta[name="csrf-token"]').attr('content')
                 },
                 success: function(res) {
-                    alert('Waiter has been submitted successfully');
+                    // alert('Waiter has been submitted successfully');
                     document.getElementById('addwaiterform').reset();
-                    location.reload(true);
+                    // location.reload(true);
+                    XS.Common.handleSwalSuccess('Waiter has been submitted successfully.');
                 },
                 error: function(jqXHR, exception)
                 {
@@ -345,9 +346,10 @@
                         'X-CSRF-TOKEN': jQuery('meta[name="csrf-token"]').attr('content')
                     },
                     success: function(res) {
-                        alert('Kitchen has been submitted successfully');
+                        // alert('Kitchen has been submitted successfully');
                         document.getElementById('addkitchenform').reset();
-                        location.reload(true);
+                        // location.reload(true);
+                        XS.Common.handleSwalSuccess('Kitchen has been submitted successfully.');
                     },
                     error: function(jqXHR, exception)
                     {
@@ -462,13 +464,16 @@
                     password: {
                         required:true,
                     },
+                    pickup_points: {
+                        required:true,
+                    },
                 },
                 messages: {
                     barpick_id: {
                         required: "Please enter barpick ID"
                     },
                     pickup_points: {
-                        required: "please select pickup points"
+                        required: "please select pickup location"
                     },
                     password: {
                         required: "Please enter Password"
@@ -487,7 +492,8 @@
                 if ($("#pickup_points").val() == "") {
                     e.preventDefault();
                     //If the "Please Select" option is selected display error.
-                    alert("Please select an option!");
+                    // alert("Please select an option!");
+                    XS.Common.handleSwalSuccessWithoutReload('Please select an option!');
                     return false;
                 }
                 return true;
@@ -535,9 +541,10 @@
                     'X-CSRF-TOKEN': jQuery('meta[name="csrf-token"]').attr('content')
                 },
                 success: function(res) {
-                    alert('Bar pick zone has been submitted successfully');
+                    // alert('Bar pick zone has been submitted successfully');
                     document.getElementById('addbarpickform').reset();
-                    location.reload(true);
+                    // location.reload(true);
+                    XS.Common.handleSwalSuccess('Bar pick zone has been submitted successfully.');
                 },
                 error: function(jqXHR, exception)
                 {

@@ -63,7 +63,8 @@ $(document).ready(function() {
             }
         });
     } else {
-        alert("Your browser doesn't support to File API")
+        // alert("Your browser doesn't support to File API")
+        XS.Common.handleSwalSuccessWithoutReload("Your browser doesn't support to File API.");
     }
 
     $("#sidebarToggle1").on('click',function(e){
@@ -159,9 +160,10 @@ function formsubmit(form) {
         success: function(res) {
             $('#pickup_submitBtn').html('Submit');
             $('#pickup_submitBtn').attr('disabled',false);
-            alert('Pickup point has been submitted successfully');
+            // alert('Pickup point has been submitted successfully');
             document.getElementById('pickupForm').reset();
-            location.reload(true);
+            // location.reload(true);
+            XS.Common.handleSwalSuccess('Pickup point has been submitted successfully.');
         }
     });
 }

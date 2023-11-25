@@ -107,7 +107,8 @@
                     data: {'status':status,'id':id},
                     success: function(res) {
                         console.log(res);
-                        alert('Table Status has been updated successfully');
+                        // alert('Table Status has been updated successfully');
+                        XS.Common.handleSwalSuccessWithoutReload("Table Status has been updated successfully.");
                         $this.closest('.ftr').find('.status').removeClass('green');
                         $this.addClass('green');
                     },
@@ -131,9 +132,10 @@
                     'X-CSRF-TOKEN': jQuery('meta[name="csrf-token"]').attr('content')
                 },
                 success: function(res) {
-                    alert('Table has been submitted successfully');
+                    // alert('Table has been submitted successfully');
                     document.getElementById('addtableform').reset();
-                    location.reload(true);
+                    // location.reload(true);
+                    XS.Common.handleSwalSuccess('Table has been submitted successfully.');
                 },
                 complete: function()
                 {
@@ -157,7 +159,8 @@
                 });
 
                 if(idsArr.length <= 0) {
-                    alert("Please select atleast one record to delete.");
+                    // alert("Please select atleast one record to delete.");
+                    XS.Common.handleSwalSuccessWithoutReload("Please select atleast one record to delete.");
                 } else {
                     if(confirm("Are you sure, you want to delete the selected table?")){
                         var strIds = idsArr.join(",");
@@ -170,7 +173,8 @@
                             },
                             success: function(res) {
                                 console.log(res);
-                                alert('Table has been removed successfully');
+                                // alert('Table has been removed successfully');
+                                XS.Common.handleSwalSuccessWithoutReload("Table has been removed successfully.");
                                 $this.closest('.ftr').find('.status').removeClass('green');
                                 $this.addClass('green');
                                 location.reload(true);
@@ -214,7 +218,8 @@
                           link.setAttribute('download', res.name);
                           link.click();
                           document.body.removeChild(link);
-                          alert('QR code Exported successfully');
+                        //   alert('QR code Exported successfully');
+                            XS.Common.handleSwalSuccessWithoutReload("QR code Exported successfully.");
                           $('.qr-code-hide').modal('hide');
                         },
                         error: function(xhr, error)

@@ -125,9 +125,10 @@ function formsubmit(form) {
         success: function(res) {
             $('#barpickzone_submitBtn').html('Submit');
             $('#barpickzone_submitBtn').attr('disabled',false);
-            alert('Bar pick zone has been submitted successfully');
+            // alert('Bar pick zone has been submitted successfully');
             document.getElementById('addbarpickform').reset();
-            location.reload(true);
+            // location.reload(true);
+            XS.Common.handleSwalSuccess('Bar pick zone has been submitted successfully.');
         }
     });
 }

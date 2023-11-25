@@ -5,6 +5,7 @@
         {
             "data": "", // can be null or undefined ->type
             "defaultContent": "",
+            "width": "5%",
             "sortable": false,
             render: function (data, type, row) {
                 return `<label class="cst-check"><input name="id" class="checkboxitem" type="checkbox" value="${row.id}"><span class="checkmark"></span></label>`
@@ -12,6 +13,7 @@
         },
         {
             "data": "name", // can be null or undefined ->type
+            "width": "25%",
             "defaultContent": "",
             render: function (data, type, row) {
                 var color = (row.is_available == 1) ? "green" : "red";
@@ -23,6 +25,7 @@
         {
             "data": "category_name",
             "defaultContent": "",
+            "width": "10%",
             render: function (data, type, row) {
                 return data;
             }
@@ -30,6 +33,7 @@
         {
             "data": "type", // can be null or undefined
             "defaultContent": "",
+            "width": "15%",
             "bSortable": false,
             render: function (data, type, row) {
                 var text = "";
@@ -45,6 +49,7 @@
         {
             "data": "price", // can be null or undefined
             "defaultContent": "",
+            "width": "10%",
             "bSortable": false,
             render: function (data, type, row) {
                 var text = "";
@@ -60,6 +65,7 @@
         {
             "data": "description", // can be null or undefined
             "defaultContent": "",
+            "width": "20%",
             "bSortable": false,
             render: function (data, type, row) {
                 var string = row.description;
@@ -74,6 +80,8 @@
         {
             "data": "favorite", // can be null or undefined
             "defaultContent": "",
+            "width": "5%",
+            "class": "dt-center",
             "bSortable": false,
             render: function (data, type, row) {
                 return `<a href="javascript:void(0)" class="favorite ${row.is_featured == 0 ? 'null' : ''} "  data-is_featured="${row.is_featured == 0 ? 1 : 0}" data-id="${row.id}"></a>`
@@ -82,6 +90,7 @@
         {
             "data": "status", // can be null or undefined
             "defaultContent": "",
+            "width": "10%",
             "bSortable": false,
             render: function (data, type, row) {
                 var html = '';
@@ -323,7 +332,11 @@
                         data.disable        = $('#disable').get(0).classList.contains('disable_clicked') ? checkboxes : []
                     },
                 },
-                columns: context.tableColumns
+                columns: context.tableColumns,
+                drawCallback: function ( settings )
+                {
+                    context.selectors.drinkTable.find('tbody tr').find('td:first').addClass('dt-center');
+                }
             });
         },
 

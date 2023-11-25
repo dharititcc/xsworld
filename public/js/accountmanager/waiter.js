@@ -133,9 +133,10 @@ function formsubmit(form) {
         success: function(res) {
             $('#waiter_submitBtn').html('Submit');
             $('#waiter_submitBtn').attr('disabled',false);
-            alert('Waiter has been submitted successfully');
+            // alert('Waiter has been submitted successfully');
             document.getElementById('addwaiterform').reset();
-            location.reload(true);
+            // location.reload(true);
+            XS.Common.handleSwalSuccess('Waiter has been submitted successfully.');
         }
     });
 }
