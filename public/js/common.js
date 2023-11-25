@@ -481,7 +481,8 @@ var XS_Admin = {}; // common variable used in all the files of the backend
                     }
                 });
             } else {
-                alert("Your browser doesn't support to File API")
+                // alert("Your browser doesn't support to File API")
+                XS.Common.handleSwalSuccessWithoutReload("Your browser doesn't support to File API.");
             }
         },
 

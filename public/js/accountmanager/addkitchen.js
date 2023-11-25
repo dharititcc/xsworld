@@ -129,9 +129,10 @@ function formsubmit(form) {
         success: function(res) {
             $('#kitchen_submitBtn').html('Submit');
             $('#kitchen_submitBtn').attr('disabled',false);
-            alert('Kitchen has been submitted successfully');
+            // alert('Kitchen has been submitted successfully');
             document.getElementById('addkitchenform').reset();
-            location.reload(true);
+            // location.reload(true);
+            XS.Common.handleSwalSuccess('Kitchen has been submitted successfully.');
         }
     });
 }
