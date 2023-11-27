@@ -2,6 +2,7 @@
 
 use App\Exceptions\GeneralException;
 use App\Models\Category;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use Twilio\Rest\Client;
@@ -372,5 +373,32 @@ if (! function_exists('cate_name')) {
             $category_name = $category->name;
         }
         return $category_name;
+    }
+}
+
+if (! function_exists('get_previous_quarter')) {
+    function get_previous_quarter()
+    {
+        $current = Carbon::now();
+
+        // check month and year in quarter
+        $getPreviousQuarter = $current->month($current->month-3);
+
+        return [
+            'start_date'=> $getPreviousQuarter->firstOfQuarter()->format('Y-m-d'),
+            'end_date'  => $getPreviousQuarter->lastOfQuarter()->format('Y-m-d'),
+        ];
+    }
+}
+
+if (! function_exists('get_current_quarter')) {
+    function get_current_quarter()
+    {
+        $current = Carbon::now();
+
+        return [
+            'start_date'=> $current->firstOfQuarter()->format('Y-m-d'),
+            'end_date'  => $current->lastOfQuarter()->format('Y-m-d'),
+        ];
     }
 }
