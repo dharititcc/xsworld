@@ -26,14 +26,24 @@ class BarRepository extends BaseRepository
      */
     private function orderQuery(): Builder
     {
+
         $user = auth()->user();
+        foreach($user->pickup_point->restaurant->main_categories as $category)
+        {
+            if($category->name == "Drinks") {
+                $category_id = $category->id;
+            }
+        }
 
         $user->loadMissing(['pickup_point']);
 
         return Order::with([
-            'order_items',
+            'order_items' => function($query) use($category_id){
+                $query->where('category_id',$category_id);
+            },
             'order_items.addons',
-            'order_items.mixer'
+            'order_items.mixer',
+            'order_items.category'
         ])->where('pickup_point_id', $user->pickup_point->id);
     }
 
@@ -45,16 +55,28 @@ class BarRepository extends BaseRepository
     public function getIncomingOrder() : Collection
     {
         $user = auth()->user();
+        // dd($user);
 
         $user->loadMissing(['pickup_point']);
 
-        $order       = $this->orderQuery()
+        $orders       = $this->orderQuery()
         ->where(['type'=> Order::ORDER , 'status' => Order::PENDNIG])
         ->orderBy('id','desc')
         ->get();
 
-        return $order;
+        return $orders;
     }
+
+    /**
+     * Method checkOrderType
+     *
+     *
+     * @return Collection
+     */
+    // public function checkOrderType(Order $order)
+    // {
+    //     dd('Hii'.$order);
+    // }
 
     /**
      * Method getConfirmedOrder

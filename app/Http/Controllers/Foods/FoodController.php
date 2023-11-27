@@ -44,6 +44,7 @@ class FoodController extends Controller
                 'restaurant_items.is_available',
                 'restaurant_items.is_featured',
                 'restaurant_items.created_at',
+                'restaurant_items.description',
                 'restaurant_items.price',
                 'restaurant_items.type'
             ])

@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use OpenApi\Annotations\Items;
 use Stripe\Source;
 use Stripe\Token;
@@ -407,15 +408,83 @@ class OrderRepository extends BaseRepository
 
         $creditAmount = $user->credit_amount ? number_format($user->credit_amount, 2, '.', '') : 0.00;
 
+        $membership = $this->getMembership($user);
+
         $cart       = [
             'cart_count'        => isset($user->latest_cart->order_items) ? $user->latest_cart->order_items->sum('quantity') : 0,
             'restaurant_id'     => $user->latest_cart->restaurant->id ?? 0,
             'order_id'          => $user->latest_cart->id ?? 0,
             'credit_amount'     => (float) $creditAmount,
             'points'            => (int) $user->points,
+            'membership'        => $membership
         ];
 
         return $cart;
+    }
+
+    /**
+     * Method getMembership
+     *
+     * @param User $user [explicite description]
+     *
+     * @return string
+     */
+    public function getMembership(User $user):string
+    {
+        // quarter logic goes here
+        $previousQuarter    = get_previous_quarter();
+        $currentQuarter     = get_current_quarter();
+        // get quarter completed orders sum of the user
+        $previousQuarterOrders = $user
+            ->orders()
+            ->where('status', Order::COMPLETED)
+            ->where(function ($query) use ($previousQuarter) {
+                $query->whereRaw(DB::raw("DATE(created_at) BETWEEN '{$previousQuarter['start_date']}' AND '{$previousQuarter['end_date']}'"));
+            })
+            ->get();
+        $currentQuarterOrders = $user
+            ->orders()
+            ->where('status', Order::COMPLETED)
+            ->where(function ($query) use ($currentQuarter) {
+                $query->whereRaw(DB::raw("DATE(created_at) BETWEEN '{$currentQuarter['start_date']}' AND '{$currentQuarter['end_date']}'"));
+            })
+            ->get();
+        $previousQuarterPoints = $previousQuarterOrders->sum('total');
+        $currentQuarterPoints = $currentQuarterOrders->sum('total');
+
+        if ($currentQuarterPoints > $previousQuarterPoints) {
+            // current quarter membership
+            $membership = $this->getMembershipType($currentQuarterPoints);
+        } else {
+            // previous quarter membership
+            $membership = $this->getMembershipType($previousQuarterPoints);
+        }
+
+        return $membership;
+    }
+
+    /**
+     * Method getMembershipType
+     *
+     * @param float $points [explicite description]
+     *
+     * @return string
+     */
+    public function getMembershipType(float $points): string
+    {
+        $membership = config('xs.bronze_membership');
+
+        if ($points > config('xs.bronze') && $points <= config('xs.silver')) {
+            $membership = config('xs.silver_membership');
+        } else if ($points > config('xs.silver') && $points <= config('xs.gold')) {
+            $membership = config('xs.gold_membership');
+        } else if ($points >= config('xs.platinum')) {
+            $membership = config('xs.platinum_membership');
+        } else {
+            $membership = config('xs.bronze_membership');
+        }
+
+        return $membership;
     }
 
     /**
