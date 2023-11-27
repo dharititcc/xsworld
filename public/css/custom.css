@@ -50,7 +50,7 @@ form .container { max-width: 400px;}
 form .logo{ margin: 0 auto 6vh auto; display: block; max-width: 72%;}
 
 .form-group{ margin-bottom: 15px; position: relative; }
-.form-control{border-bottom: var(--line) solid #A8A8A8 !important; background: transparent; border-radius: 0; border: none; padding: .7rem 0; color: #fff !important;}
+.form-control{border-bottom: var(--line) solid #A8A8A8 !important; background: transparent; border-radius: 0; border: none; padding: .7rem 0; color: #fff !important;     appearance: auto;}
 .form-control:focus{ background: transparent; box-shadow: none; border-image-source:var(--gold-line); border-image-slice: 1;}
 
 .form-control.invert{filter: invert(1); color: #000 !important;} 
@@ -84,7 +84,7 @@ form .logo{ margin: 0 auto 6vh auto; display: block; max-width: 72%;}
 main{ padding: 0 15px;}
 .orders main{ padding: 0;}
 
-.hero{ height: 335px; transition: .3s;} 
+.hero{ height: 400px; transition: .3s;} 
 .hero img{ width: 100%; object-fit: cover; height: 100%; object-position: center;}
 
 .grey-brd-box{ border:1px solid #A8A8A8; position: relative;}
@@ -107,7 +107,7 @@ main{ padding: 0 15px;}
 .grid.colmn-7{grid-template-columns: repeat(7, 1fr); grid-template-rows: auto;}
 .grid.gap30{ gap: 30px;}
 
-.lable-box{ font-size: 25px; color: #fff; text-decoration: none; font-family: var(--ff-normal); display: flex; justify-content: center; align-items: center; transition: .3s; position: relative;}
+.lable-box{ font-size: 22px; color: #fff; text-decoration: none; font-family: var(--ff-normal); display: flex; justify-content: center; align-items: center; transition: .3s; position: relative;}
 .lable-box:hover{ color: #fff;}
 a.grey-brd-box.lable-box:hover{ border-color: var(--bs-light);}
 
@@ -151,8 +151,19 @@ a.grey-brd-box.lable-box:hover{ border-color: var(--bs-light);}
 #sidebar-wrapper::-webkit-scrollbar-track { background:transparent; border-radius:0px; }
 #sidebar-wrapper::-webkit-scrollbar-thumb { background:rgba(255, 255, 255, 0.0); border-radius:0px; }
 
+.swal-button:focus{box-shadow:none; } 
+
+.swal-button,
 .bor-btn{ border: var(--line) solid #A8A8A8; color: #fff; font-size: 18px; font-weight: normal; text-decoration: none; padding: .5em 2em; background: transparent; position: relative;}
+
+.swal-button,
 .bor-btn:hover{ color: #fff;}
+
+.swal-button:active{background-color: transparent;}
+
+.swal-button.swal-button--cancel{ border-color: #cf423b;}
+
+
 
 .bor-btn svg{width: 28px; height: auto; display: none;}
 
@@ -388,6 +399,7 @@ th .sort-icon{ position: absolute; top: 20%;}
 .custom-upload label {  display: flex; cursor: pointer; padding: 1rem; flex-direction:column; align-items: center; justify-content: center; height: 250px; font-size: 23px;}
 .custom-upload label span{ text-align: center; margin-bottom: 20px; max-width: 90%;}
 
+.pip + label,
 .pip + label.lbl-upload{ display: none;}
 .pip{ height: 250px; position: relative; }
 .pip img{ object-fit: cover; height: 100%; width: 100%; max-width: 100%;}
@@ -418,8 +430,8 @@ th .sort-icon{ position: absolute; top: 20%;}
 .featured-img .lbl-upload{min-height: 358px; width: 100%; display: flex; align-items: center; justify-content: center; cursor: pointer;}
 
 
-.featured-img + .error{position: absolute; margin-top: -30px;}
-.show-error-info ~ .error{position: absolute; margin-top: -15px;} 
+/* .featured-img + .error{position: absolute; margin-top: -30px;}
+.show-error-info ~ .error{position: absolute; margin-top: -15px;}  */
 
 .tab-btn{ display: flex; margin-bottom: 1.5rem;}
 .tab-btn .bor-btn{ width: 50%; padding: .7rem; text-align: center; border-right: none; font-size: 20px;}
@@ -531,7 +543,7 @@ time{ color: #fff; width: 46px; margin-right: 20px; word-break: break-all;}
 
 .dataTables_length label{ color:#fff;}
 div.dataTables_wrapper div.dataTables_length select{padding: 0.5rem 0.7rem; border: 1px solid #ced4da; margin: 0 10px;}
-select option { color: #000; }
+select option { color: #000; background: #fff;}
 .dataTables_length{margin-bottom: 10px;}
 .dataTables_wrapper .dataTables_processing{ height:auto; background-color: #fff !important; border-radius: 0 !important;}
 table.dataTable tbody tr { background-color: #ffffff00;}
@@ -638,6 +650,9 @@ table.dataTable thead th{ padding: 1.1rem .4rem;}
   .sb-sidenav-toggled .custom-nav .bor-btn svg + span{ display: block;}
   .sb-sidenav-toggled .custom-nav .bor-btn svg{ display: none;}
   
+  .featured-img + .error,
+  .show-error-info ~ .error{ position: static; margin: 0;}
+
   
 }
 
@@ -808,6 +823,10 @@ table.dataTable thead th{ padding: 1.1rem .4rem;}
   .review-box-outer{ margin-bottom: 30px;}
   /* main{ padding: 0;} */
 
+}
+@media (max-width: 576px) {
+  .modal-dialog,
+  #wd930.modal .modal-dialog { max-width: var(--bs-modal-width);}
 }
 
 @media (max-width: 550px) {
