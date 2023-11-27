@@ -28,6 +28,8 @@ class OrderItemResource extends JsonResource
                 'category_name'    => cate_name($this->restaurant_item->category->parent_id),
                 'currency'         => $this->restaurant_item->restaurant->currency->code,
                 'symbol'           => $this->restaurant_item->restaurant->country->symbol,
+                'status'           => $this->order_status,
+                'status_no'        => (int) $this->status,
                 'total'            => $this->total,
                 'type'             => $this->restaurant_item->item_type,
                 'variation'        => isset($this->variation) ? [

@@ -3,6 +3,7 @@
 use App\Billing\Stripe;
 use App\Exceptions\GeneralException;
 use App\Models\Order;
+use App\Models\OrderItem;
 use App\Models\User;
 use App\Repositories\BaseRepository;
 use Carbon\Carbon;
@@ -167,6 +168,7 @@ class BarRepository extends BaseRepository
      */
     function updateStatusOrder(array $data) : Order
     {
+
         $order_id          = $data['order_id'] ? $data['order_id'] : null;
         $status            = $data['status'] ? $data['status'] : null;
         $apply_time        = $data['apply_time'] ? $data['apply_time'] : null;
@@ -279,11 +281,25 @@ class BarRepository extends BaseRepository
 
             //$send_notification = sendNotification($title,$message,$user_tokens);
 
-            $order->update($updateArr);
+            $user = auth()->user();
+            foreach($user->pickup_point->restaurant->main_categories as $category)
+            {
+                if($category->name == "Drinks") {
+                    $category_id = $category->id;
+                }
+            }
+
+            if($order->order_category_type == 2) {
+                $order = OrderItem::where('order_id',$order_id)->where('category_id',$category_id)->update(['status' =>$updateArr['status']]);
+                $order    = Order::findOrFail($order_id);
+            } else {
+                $order->update($updateArr);
+                $order->refresh();
+                $order->loadMissing(['items']);
+            }
         }
 
-        $order->refresh();
-        $order->loadMissing(['items']);
+       
 
         return $order;
     }
