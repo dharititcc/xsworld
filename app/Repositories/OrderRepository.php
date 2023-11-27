@@ -605,8 +605,10 @@ class OrderRepository extends BaseRepository
 
         $bartitle           = "Order is placed by Customer";
         $barmessage         = "Order is #".$order->id." placed by customer";
-        $bardevices         = $order->pickup_point_user->devices()->pluck('fcm_token')->toArray();
-        $bar_notification   = sendNotification($bartitle,$barmessage,$bardevices,$orderid);
+        $bardevices         = $pickup_point_id ? $order->pickup_point_user->devices()->pluck('fcm_token')->toArray() : [];
+        if($pickup_point_id) {
+            $bar_notification   = sendNotification($bartitle,$barmessage,$bardevices,$orderid);
+        }
 
         return $order;
     }
