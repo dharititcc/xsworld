@@ -26,6 +26,8 @@ class OrderItem extends Model
         'restaurant_item_id',
         'variation_id',
         'parent_item_id',
+        'category_id',
+        'status',
         'quantity',
         'price',
         'total',
@@ -50,6 +52,16 @@ class OrderItem extends Model
     public function restaurant_item(): BelongsTo
     {
         return $this->belongsTo(RestaurantItem::class, 'restaurant_item_id', 'id');
+    }
+
+    /**
+     * Get the category that owns the RestaurantItem
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(Category::class, 'category_id', 'id');
     }
 
     /**

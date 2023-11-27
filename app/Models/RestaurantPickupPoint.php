@@ -64,7 +64,7 @@ class RestaurantPickupPoint extends Model
      */
     public function restaurant(): BelongsTo
     {
-        return $this->belongsTo(Restaurant::class, 'restaurant_id', 'is');
+        return $this->belongsTo(Restaurant::class, 'restaurant_id', 'id');
     }
 
     /**
