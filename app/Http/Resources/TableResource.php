@@ -20,7 +20,7 @@ class TableResource extends JsonResource
             'status'                    => isset($this->table_order->order_status) ? $this->table_order->order_status : $this->order_status,
             'status_no'                 => isset($this->table_order->status) ? (int) $this->table_order->status : CustomerTable::AWAITING_SERVICE,
             'table_no'                  => $this->restaurant_table->id ?? $this->restaurant_table_id,
-            'table_name'                => $this->restaurant_table->name ?? '',
+            'table_name'                => $this->restaurant_table->code ?? '',
             'order_type'                => isset($this->table_order->type) ? $this->table_order->type : 0,
             'restaurant_name'           => isset($this->table_order->restaurant->name) ? $this->table_order->restaurant->name : '',
             'user'                      => $this->user->name,
