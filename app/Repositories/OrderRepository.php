@@ -761,11 +761,20 @@ class OrderRepository extends BaseRepository
      */
     function GetKitchenOrders(array $data,$is_history=0)
     {
+        $auth_kitchen = auth('api')->user();
+        foreach($auth_kitchen->restaurant_kitchen->restaurant->main_categories as $category)
+        {
+            if($category->name == "Food") {
+                $category_id = $category->id;
+            }
+        }
         $orders = Order::whereIn('restaurant_id',$data);
         if($is_history === 0) {
-            $orderTbl = $orders->where('type',Order::ORDER)->whereIn('status',[Order::ACCEPTED,Order::WAITER_PENDING])->get();
+            $orderTbl = $orders->with(['order_items' => function($query) use($category_id){
+                $query->where('category_id',$category_id);
+            },])->where('type',Order::ORDER)->whereIn('status',[Order::PENDNIG,Order::ACCEPTED,Order::WAITER_PENDING])->whereNotIn('order_category_type', [0])->get();
         } else {
-            $orderTbl = $orders->whereIn('status',[Order::COMPLETED,Order::FULL_REFUND, Order::PARTIAL_REFUND, Order::RESTAURANT_CANCELED, Order::CUSTOMER_CANCELED, Order::KITCHEN_CONFIRM])->where('type',Order::ORDER)->get();
+            $orderTbl = $orders->whereIn('status',[Order::COMPLETED,Order::FULL_REFUND, Order::PARTIAL_REFUND, Order::RESTAURANT_CANCELED, Order::CUSTOMER_CANCELED, Order::KITCHEN_CONFIRM])->where('type',Order::ORDER)->whereNotIn('order_category_type', [0])->get();
         }
         if($orderTbl)
         {
@@ -787,6 +796,7 @@ class OrderRepository extends BaseRepository
         $orders = Order::whereIn('restaurant_id',$data)
         ->where('type', Order::ORDER)
         ->where('status', [Order::READYFORPICKUP])
+        ->whereNotIn('order_category_type', [0])
         ->orderByDesc('id')
         ->get();
 
