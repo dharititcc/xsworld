@@ -22,7 +22,7 @@ class OrderListResource extends JsonResource
             'user_id'                   => $this->user_id,
             'restaurant_id'             => $this->restaurant->id,
             'table_no'                  => $this->restaurant_table->id ?? 0,
-            'table_name'                => $this->restaurant_table->name ?? '',
+            'table_name'                => $this->restaurant_table->code ?? '',
             'amount'                    => $this->amount,
             'total'                     => number_format($this->total, 2),
             'status'                    => $this->order_status,
