@@ -9,8 +9,10 @@
         /** table columns for datatable */
         tableCols: [
         {
-            "data": "", // can be null or undefined ->type
+            "data": "id", // can be null or undefined ->type
             "defaultContent": "",
+            "width": "5%",
+            "sortable": false,
             render: function(data, type, row)
             {
                 return `<label class="cst-check"><input name="id" class="checkboxitem" type="checkbox" value="${row.id}"><span class="checkmark"></span></label>`
@@ -19,6 +21,7 @@
         {
             "data": "name", // can be null or undefined ->type
             "defaultContent": "",
+            "width": "25%",
             render: function(data, type, row)
             {
                 return `${row.name}`
@@ -27,6 +30,7 @@
         {
             "data": "address", // can be null or undefined
             "defaultContent": "",
+            "width": "25%",
             render: function(data, type, row)
             {
                 return `
@@ -42,17 +46,21 @@
         },
         {
             "data": "phone", // can be null or undefined
+            "width": "15%",
             "defaultContent": ""
         },
         {
             "data": "country", // can be null or undefined
+            "width": "15%",
             "defaultContent": ""
         },
         {
             "data": "actions", // can be null or undefined
             "sortable": false,
-            "defaultContent": ""
-        }],
+            "defaultContent": "",
+            "width": "15%",
+        }
+    ],
 
         /** selectors for customers */
         selectors: {
@@ -190,7 +198,7 @@
                 processing: true,
                 serverSide: true,
                 searching: false,
-                order: [[0, 'asc']],
+                order: [[1, 'asc']],
                 ajax: {
                     headers: {
                         'X-CSRF-TOKEN': XS.Common.csrfToken()
@@ -202,7 +210,11 @@
                         data.search_main    = context.selectors.search.val();
                     },
                 },
-                columns: context.tableCols
+                columns: context.tableCols,
+                drawCallback: function ( settings )
+                {
+                    context.selectors.restaurantTable.find('tbody tr').find('td:first').addClass('dt-center');
+                }
             });
         },
     }

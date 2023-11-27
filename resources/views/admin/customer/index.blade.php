@@ -12,9 +12,10 @@
         <table width="100%" class="customer_datatable drink_datatable">
             <thead>
                 <tr valign="middle">
-                    <th><label class="cst-check"><input type="checkbox" id="allcheck" value=""><span class="checkmark"></span></label> Name</th>
-                    <th class="type">Email</th>
-                    <th class="price">Phone</th>
+                    <th class="dt-left"><label class="cst-check"><input type="checkbox" id="allcheck" value=""><span class="checkmark"></span></label></th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
                 </tr>
             </thead>
             <tbody>

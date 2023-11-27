@@ -12,7 +12,7 @@
         <table width="100%" class="event_datatable drink_datatable">
             <thead>
                 <tr valign="middle">
-                    <th><label class="cst-check"><input type="checkbox" id="allcheck" value=""><span class="checkmark"></span></label> Name</th>
+                    <th class="dt-left"><label class="cst-check"><input type="checkbox" id="allcheck" value=""><span class="checkmark"></span></label></th>
                     <th>Name</th>
                     <th class="type">Address</th>
                     <th class="price">Phone</th>
