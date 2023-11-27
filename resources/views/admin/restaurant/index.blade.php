@@ -12,12 +12,12 @@
         <table width="100%" class="restaurant_datatable drink_datatable">
             <thead>
                 <tr valign="middle">
-                    <th width="5%"><label class="cst-check"><input type="checkbox" id="allcheck" value=""><span class="checkmark"></span></label></th>
-                    <th width="10%"> Name</th>
-                    <th class="type" width="30%">Address</th>
-                    <th class="price" width="15%">Phone</th>
-                    <th class="popularity" width="30%">Country</th>
-                    <th class="popularity" width="10%">Action</th>
+                    <th class="dt-left"><label class="cst-check"><input type="checkbox" id="allcheck" value=""><span class="checkmark"></span></label></th>
+                    <th> Name</th>
+                    <th>Address</th>
+                    <th>Phone</th>
+                    <th>Country</th>
+                    <th>Action</th>
                 </tr>
             </thead>
             <tbody>
