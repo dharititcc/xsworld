@@ -4,20 +4,32 @@
         /** table object for datatable */
         table: null,
         /** table columns for datatable */
-        tableCols: [{
+        tableCols: [
+        {
             "data": "id", // can be null or undefined
             "defaultContent": "",
+            "width": "10%",
             "sortable": false,
             render: function (data, type, row) {
-                return `<label class="cst-check"><input name="id" class="checkboxitem" type="checkbox" value="${row.id}"><span class="checkmark"></span></label> #${row.id} ${row.full_name}`
+                return `<label class="cst-check"><input name="id" class="checkboxitem" type="checkbox" value="${row.id}"><span class="checkmark"></span></label>`
+            }
+        },
+        {
+            "data": "full_name", // can be null or undefined
+            "defaultContent": "",
+            "width": "5%",
+            render: function (data, type, row) {
+                return row.full_name
             }
         },
         {
             "data": "email", // can be null or undefined
+            "width": "30%",
             "defaultContent": ""
         },
         {
             "data": "phone", // can be null or undefined
+            "width": "30%",
             "defaultContent": ""
         }],
 
@@ -73,7 +85,11 @@
                         // data.disable        = $('#disable').get(0).classList.contains('disable_clicked') ? checkboxes : []
                     },
                 },
-                columns: context.tableCols
+                columns: context.tableCols,
+                drawCallback: function ( settings )
+                {
+                    context.selectors.customerTable.find('tbody tr').find('td:first').addClass('dt-center');
+                }
             });
         },
     }

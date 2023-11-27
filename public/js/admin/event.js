@@ -7,6 +7,7 @@
         tableCols: [{
             "data": "id", // can be null or undefined
             "defaultContent": "",
+            "width": "5%",
             "sortable": false,
             render: function (data, type, row) {
                 return `<label class="cst-check"><input name="id" class="checkboxitem" type="checkbox" value="${row.id}"><span class="checkmark"></span></label>`
@@ -14,38 +15,42 @@
         },
         {
             "data": "name", // can be null or undefined ->type
+            "width": "25%",
             "defaultContent": "",
         },
         {
             "data": "address", // can be null or undefined
+            "width": "25%",
             "defaultContent": "",
             render: function(data, type, row)
             {
                 console.log(row);
 
                 return `
-                            ${row.street1}<br/>
+                            ${row.street1},
                             ${row.street2 ?
-                                `${row.street2}<br/>` : ``
-                            },
-                            ${row.city}<br/>
-                            ${row.state}<br/>
-                            ${row.postcode}
+                                `${row.street2},` : ``
+                            }
+                            ${row.city},<br/>
+                            ${row.state}-${row.postcode}
                         `;
             }
         },
         {
             "data": "phone", // can be null or undefined
+            "width": "15%",
             "defaultContent": ""
         },
         {
             "data": "country", // can be null or undefined
+            "width": "15%",
             "defaultContent": ""
         },
         {
             "data": "actions", // can be null or undefined
             "sortable": false,
-            "defaultContent": ""
+            "defaultContent": "",
+            "width": "15%",
         }],
 
         /** selectors for customers */
@@ -96,7 +101,11 @@
                         data.search_main    = context.selectors.search.val();
                     },
                 },
-                columns: context.tableCols
+                columns: context.tableCols,
+                drawCallback: function ( settings )
+                {
+                    context.selectors.eventTable.find('tbody tr').find('td:first').addClass('dt-center');
+                }
             });
         },
     }
