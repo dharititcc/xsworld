@@ -428,6 +428,7 @@ th .sort-icon{ position: absolute; top: 20%;}
 .featured-img .add-edit{ position: absolute;color: #fff; text-decoration: none; font-size: 25px; top: 0; right: 0;}
 .featured-img .img-text{ font-size: 30px;  }
 .featured-img .lbl-upload{min-height: 358px; width: 100%; display: flex; align-items: center; justify-content: center; cursor: pointer;}
+.featured-img .lbl-upload.min-h-424{min-height: 424px;}
 
 
 /* .featured-img + .error{position: absolute; margin-top: -30px;}
@@ -452,6 +453,8 @@ th .sort-icon{ position: absolute; top: 20%;}
 .extr-info .head .optional-info{ position: absolute; right: 0; top: 0; color: #fff; font-size: 15px; width: 24%; line-height: normal; text-align: right;}
 
 textarea.prd-desc{ border: 1px solid #A8A8A8; color: #fff; font-size: 1rem; width: 100%; background-color: transparent; border-radius: 0; padding: .5rem; height: 105px; resize: none;}
+
+textarea.prd-desc.h-96{ height:96px;}
 
 .prd-variation .head{ position: relative; padding:1rem 0; border-bottom: 1px solid; border-image-source: var(--gold-line); border-image-slice: 1; margin-bottom: 1.5rem;  display: flex; justify-content: space-between;}
 
@@ -764,8 +767,8 @@ table.dataTable thead th{ padding: 1.1rem .4rem;}
   .custom-nav.navbar .right-info-element.no-info{ display: none;}
 
   .custom-nav.navbar .btn-elemts.wraped{flex: 0 0 100%;}
-  .showin-mob{flex: 0 0 100%;  margin-top: 5px; padding-top: 5px;}
-  .bor-btn.m-icon{ padding: .5em; margin: 0 10px; width: calc(100% - 20px); text-align: center;}
+  .showin-mob{flex: 0 0 100%;  margin-top: 5px; padding-top: 5px; gap:20px;}
+  .bor-btn.m-icon{ padding: .5em; margin: 0 !important; width: 100%; text-align: center;}
   .bor-btn svg{width: 20px;}
   .grid.colmn-5{grid-template-columns: repeat(2, 1fr);}
   .drinks-info { max-width: 100%; margin-top: 15px;}
