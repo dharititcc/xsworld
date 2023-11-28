@@ -103,6 +103,7 @@ class OrderRepository extends BaseRepository
                     {
                         $variationArr = [
                             'restaurant_item_id'    => $item['item_id'],
+                            'category_id'           => $item['category_id'],
                             'parent_item_id'        => null,
                             'variation_id'          => $item['variation']['id'],
                             'quantity'              => $item['variation']['quantity'],
@@ -761,13 +762,7 @@ class OrderRepository extends BaseRepository
      */
     function GetKitchenOrders(array $data,$is_history=0)
     {
-        $auth_kitchen = auth('api')->user();
-        foreach($auth_kitchen->restaurant_kitchen->restaurant->main_categories as $category)
-        {
-            if($category->name == "Food") {
-                $category_id = $category->id;
-            }
-        }
+        $category_id = $this->categoryGet();
         $orders = Order::whereIn('restaurant_id',$data);
         if($is_history === 0) {
             $orderTbl = $orders->with(['order_items' => function($query) use($category_id){
@@ -785,22 +780,47 @@ class OrderRepository extends BaseRepository
     }
 
     /**
-     * Method getBarCollections
+     * Method getKitchenCollections
      *
      * @param array $data [explicite description]
      *
      * @return Collection
      */
-    public function getBarCollections(array $data) : Collection
+    public function getKitchenCollections(array $data) : Collection
     {
-        $orders = Order::whereIn('restaurant_id',$data)
+        $category_id = $this->categoryGet();
+        $orders = Order::whereIn('restaurant_id',$data)->with(['order_items' => function($query) use($category_id) { $query->where('category_id', $category_id); }])
         ->where('type', Order::ORDER)
-        ->where('status', [Order::READYFORPICKUP])
+        // ->where('status', [Order::READYFORPICKUP])
+        ->whereHas('order_items', function($query) use($category_id)
+        {
+            $query->where('category_id',$category_id)
+                ->where('status', OrderItem::COMPLETED);
+        })
         ->whereNotIn('order_category_type', [0])
         ->orderByDesc('id')
         ->get();
 
         return $orders;
+    }
+
+    /**
+     * Method updateStatus
+     *
+     * @param array $data [explicite description]
+     *
+     * @return mixed
+     */
+    public function categoryGet()
+    {
+        $auth_kitchen = auth('api')->user();
+        foreach($auth_kitchen->restaurant_kitchen->restaurant->main_categories as $category)
+        {
+            if($category->name == "Food") {
+                $category_id = $category->id;
+            }
+        }
+        return $category_id;
     }
 
     /**
@@ -1166,6 +1186,7 @@ class OrderRepository extends BaseRepository
 
     public function customerTableDel(array $data)
     {
+        $order = Order::where('id',$data['order_id'])->update(['status' => Order::COMPLETED]);
         $customerTblDel = CustomerTable::where('user_id' , $data['user_id'])->where('restaurant_table_id',$data['restaurant_table_id'])->delete();
         return $customerTblDel;
     }

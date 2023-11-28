@@ -58,7 +58,7 @@ class OrderController extends APIController
         // $kitchen_pickup_points = KitchenPickPoint::where('user_id',$auth_kitchen->id)->select('pickup_point_id')->get()->toArray();
 
         $orderList = $this->repository->GetKitchenOrders($kitchen_orders);
-        $barOrderList = $this->repository->getBarCollections($kitchen_orders);
+        $barOrderList = $this->repository->getKitchenCollections($kitchen_orders);
         // if( $orderList->count() ||  $barOrderList->count())
         // {
             $data = [

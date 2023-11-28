@@ -21,21 +21,42 @@ trait OrderStatus
         }
 
         $order = Order::find($order_id);
-        if($order->order_category_type == 2) {
-            $order = OrderItem::where('order_id',$order_id)->where('category_id',$category_id)->update(['status'=>$status]);
-        } else {
-            $order = Order::where('id',$order_id)->update(['status'=>$status]);
-        }
+        // if($order->order_category_type == 2) {
+            if($status == Order::READYFORPICKUP)
+            {
+                OrderItem::where('order_id',$order_id)->where('category_id',$category_id)->update(['status'=> OrderItem::ACCEPTED]);
+            } else {
+                OrderItem::where('order_id',$order_id)->where('category_id',$category_id)->update(['status' => OrderItem::COMPLETED]);
+                $totalItemCount = OrderItem::where('order_id',$order_id)->whereNotNull('category_id')->count();
+                    // dd($orderItemCount);
+                $totalCompletedItem = OrderItem::where('order_id',$order_id)->where('status', OrderItem::COMPLETED)->count();
+                if($totalItemCount === $totalCompletedItem) {
+                    foreach($order->order_items as $orderitem)
+                    {
+                        if($orderitem->status == OrderItem::COMPLETED ) {
+                            $order->update(['status'=>$status]);
+                            $order->refresh();
+                            $order->loadMissing(['items']);
+                        }
+                    }
+                }
+            }
+
+        // } else {
+        //     Order::where('id',$order_id)->update(['status'=>$status]);
+        // }
         $order_data = Order::with(['order_items' => function($query) use($category_id){
             $query->where('category_id',$category_id);
         },])->find($order_id);
 
         if($order_data->restaurant_table_id) {
-            $devices            = $order_data->restaurant_waiter->devices()->pluck('fcm_token')->toArray();
+            $devices            = $order_data->restaurant_waiter->devices->count() ? $order_data->restaurant_waiter->devices()->pluck('fcm_token')->toArray() : [];
             $title              = "Your order is Ready for pickup";
             $message            = "Your Order is #".$order_data->id." Ready for pickup";
             $orderid            = $order_data->id;
-            $send_notification  = sendNotification($title,$message,$devices,$orderid);
+            if(!empty($devices)) {
+                $send_notification  = sendNotification($title,$message,$devices,$orderid);
+            }
         }
 
         return $order_data;
