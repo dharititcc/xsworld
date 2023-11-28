@@ -114,6 +114,12 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'v1', 'as' => 'api.v1.'], fun
         Route::get('get-countries', 'CountryController@index')->name('countries.index');
     });
 
+    Route::group(['prefix' => 'faq'], function ()
+    {
+        // {api/v1/faq/}
+        Route::get('faq', 'FaqController@index')->name('faq.index');
+    });
+
     Route::group(['namespace' => 'Bartender', 'prefix' => 'bartender'], function()
     {
         Route::group(['middleware' => ['guest']], function()
