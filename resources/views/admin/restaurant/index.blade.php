@@ -6,7 +6,7 @@
 <div class="outrbox">
     <div class="sort-by d-flex mb-4">
         <h2 class="yellow">Sort By</h2>
-        <div class="searchbox"><input type="text" name="search" id="search" class="searchbar" placeholder="Find a Drink"></div>
+        <div class="searchbox"><input type="text" name="search" id="search" class="searchbar" placeholder="Find a venue"></div>
     </div>
     <div class="data-table drinks table-responsive">
         <table width="100%" class="restaurant_datatable drink_datatable">
