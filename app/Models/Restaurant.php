@@ -216,6 +216,16 @@ class Restaurant extends Model
     }
 
     /**
+     * The restaurant_pickup_points that belong to the Restaurant
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function restaurant_pickup_points(): HasMany
+    {
+        return $this->hasMany(RestaurantPickupPoint::class, 'restaurant_id', 'id');
+    }
+
+    /**
      * Get all of the restaurant_items for the Restaurant
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
