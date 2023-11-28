@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API\V1;
 
+use App\Http\Controllers\Api\V1\APIController;
 use App\Http\Resources\FaqResource;
 use App\Repositories\FaqRepository;
 use Illuminate\Http\Request;
