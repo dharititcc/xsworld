@@ -29,12 +29,14 @@ class BarRepository extends BaseRepository
     {
 
         $user = auth()->user();
-        foreach($user->pickup_point->restaurant->main_categories as $category)
-        {
-            if($category->name == "Drinks") {
-                $category_id = $category->id;
-            }
-        }
+        // foreach($user->pickup_point->restaurant->main_categories as $category)
+        // {
+        //     if($category->name == "Drinks") {
+        //         $category_id = $category->id;
+        //     }
+        // }
+
+        $category_id = $this->categoryGet();
 
         $user->loadMissing(['pickup_point']);
 
@@ -59,9 +61,15 @@ class BarRepository extends BaseRepository
         // dd($user);
 
         $user->loadMissing(['pickup_point']);
+        $category_id = $this->categoryGet();
 
         $orders       = $this->orderQuery()
-        ->where(['type'=> Order::ORDER , 'status' => Order::PENDNIG])
+        ->whereHas('order_items', function($query) use($category_id)
+        {
+            $query->where('category_id',$category_id)
+                ->where('status', OrderItem::PENDNIG);
+        })
+        // ->where(['type'=> Order::ORDER , 'status' => Order::PENDNIG])
         ->orderBy('id','desc')
         ->get();
 
@@ -92,7 +100,11 @@ class BarRepository extends BaseRepository
 
         $order       = $this->orderQuery()
         ->where(['type'=> Order::ORDER ])
-        ->whereIn('status', [Order::ACCEPTED, Order::DELAY_ORDER])
+        // ->whereIn('status', [Order::ACCEPTED, Order::DELAY_ORDER])
+        ->whereHas('order_items', function($query)
+        {
+            return $query->where('status', OrderItem::ACCEPTED);
+        })
         ->orderBy('id','desc')
         ->get();
 
@@ -281,22 +293,44 @@ class BarRepository extends BaseRepository
 
             //$send_notification = sendNotification($title,$message,$user_tokens);
 
-            $user = auth()->user();
-            foreach($user->pickup_point->restaurant->main_categories as $category)
-            {
-                if($category->name == "Drinks") {
-                    $category_id = $category->id;
+            // if($order->order_category_type == 2) {
+                
+                if($status == Order::ACCEPTED)
+                {
+                    OrderItem::where('order_id',$order_id)->where('category_id',$this->categoryGet())->update(['status' => OrderItem::ACCEPTED]);
+                    $order    = Order::findOrFail($order_id);
                 }
-            }
 
-            if($order->order_category_type == 2) {
-                $order = OrderItem::where('order_id',$order_id)->where('category_id',$category_id)->update(['status' =>$updateArr['status']]);
-                $order    = Order::findOrFail($order_id);
-            } else {
-                $order->update($updateArr);
-                $order->refresh();
-                $order->loadMissing(['items']);
-            }
+                if($status == Order::RESTAURANT_CANCELED)
+                {
+                    OrderItem::where('order_id',$order_id)->where('category_id',$this->categoryGet())->update(['status' => OrderItem::RESTAURANT_CANCELED]);
+                    $order    = Order::findOrFail($order_id);
+                }
+
+                if($status == Order::COMPLETED)
+                {
+                    OrderItem::where('order_id',$order_id)->where('category_id',$this->categoryGet())->update(['status' => OrderItem::COMPLETED]);
+                    $order    = Order::findOrFail($order_id);
+                    $totalItemCount = OrderItem::where('order_id',$order_id)->whereNotNull('category_id')->count();
+                    // dd($orderItemCount);
+                    $totalCompletedItem = OrderItem::where('order_id',$order_id)->where('status', OrderItem::COMPLETED)->count();
+                    if($totalItemCount === $totalCompletedItem) {
+                        foreach($order->order_items as $orderitem)
+                        {
+                            if($orderitem->status == OrderItem::COMPLETED ) {
+                                $order->update($updateArr);
+                                $order->refresh();
+                                $order->loadMissing(['items']);
+                            }
+                        }
+                    }
+                }
+
+            // } else {
+            //     $order->update($updateArr);
+            //     $order->refresh();
+            //     $order->loadMissing(['items']);
+            // }
         }
 
        
@@ -318,4 +352,26 @@ class BarRepository extends BaseRepository
         $user->refresh();
         return $user;
     }
+
+    /**
+     * Method updateStatus
+     *
+     * @param array $data [explicite description]
+     *
+     * @return mixed
+     */
+    public function categoryGet()
+    {
+        $user = auth()->user();
+        foreach($user->pickup_point->restaurant->main_categories as $category)
+        {
+            if($category->name == "Drinks") {
+                $drinkcategory_id = $category->id;
+            } else {
+                $foodCategory_id = $category->id;
+            }
+        }
+        return $drinkcategory_id;
+    }
+
 }
