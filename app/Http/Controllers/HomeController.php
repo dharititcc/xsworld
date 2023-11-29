@@ -42,4 +42,23 @@ class HomeController extends Controller
         // 404
         abort(404);
     }
+
+    /**
+     * Method analytics
+     *
+     * @param Request $request [explicite description]
+     *
+     * @return \Illuminate\Contracts\View\View|\Illuminate\Contracts\View\Factory
+     */
+    public function analytics(Request $request)
+    {
+        $restaurant = session('restaurant');
+        $restaurant->refresh();
+
+        $categories = $restaurant->categories()->with(['children_parent'])->whereNotNull('parent_id')->get();
+        // dd($categories);
+        return view('analytics.index', [
+            'categories' => $categories
+        ]);
+    }
 }
