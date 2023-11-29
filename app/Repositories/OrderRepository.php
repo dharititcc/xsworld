@@ -603,6 +603,13 @@ class OrderRepository extends BaseRepository
         throw new GeneralException('Order is not found.');
     }
 
+    public function randomPickpickPoint(Order $order)
+    {
+        $restaurant_id = $order->restaurant_id;
+        $pickup_point_id = PickupPoint::where(['restaurant_id' => $restaurant_id , 'type' => 2, 'status' => PickupPoint::ONLINE])->inRandomOrder()->first();
+        return $pickup_point_id;
+    }
+
     /**
      * Method placeOrder
      *
@@ -615,11 +622,16 @@ class OrderRepository extends BaseRepository
         $card_id            = $data['card_id'] ?? null;
         $credit_amount      = $data['credit_amount'] ? $data['credit_amount'] : null;
         $amount             = $data['amount'] ? $data['amount'] : null;
-        $pickup_point_id    = $data['pickup_point_id'] ? PickupPoint::findOrFail($data['pickup_point_id']) : null;
         $table_id           = $data['table_id'] ? $data['table_id'] : null;
         $order              = Order::findOrFail($data['order_id']);
         $user               = $order->user_id ? User::findOrFail($order->user_id) : auth()->user();
         $devices            = $user->devices()->pluck('fcm_token')->toArray();
+
+        if($order->order_category_type == 2) {
+            $pickup_point_id    = $this->randomPickpickPoint($order);
+        } else {
+            $pickup_point_id    = $data['pickup_point_id'] ? PickupPoint::findOrFail($data['pickup_point_id']) : null;
+        }
 
         $updateArr         = [];
         $paymentArr        = [];
