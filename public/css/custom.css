@@ -375,7 +375,7 @@ th .sort-icon{ position: absolute; top: 20%;}
 
 .del-table.grey-brd-box,
 .del-table.table-design .export-info { border-color: #D74848;}
-.del-table.table-design .head{border-color: #D74848;  color: #D74848;} 
+.del-table.table-design .head{border-color: #D74848;  color: #D74848;}
 
 /*table.dataTable.no-footer{table-layout: fixed;}*/
 
@@ -384,7 +384,7 @@ th .sort-icon{ position: absolute; top: 20%;}
 .modal.qr-code-pop .modal-dialog { max-width: 370px;}
 .modal.qr-code-pop .table-ids{ text-align: center; color: #fff; font-size: 30px;}
 
-.modal.qr-code-pop .qrcode{ text-align: center; width: 200px; margin: 0 auto;}
+.modal.qr-code-pop .qrcode{ text-align: center; width: 200px; margin: 0 auto; border: 1px solid #fff;}
 .modal.qr-code-pop .qrcode img{ width: 100%; }
 .modal.qr-code-pop .x-logo{margin: 1rem 0;}
 .modal.qr-code-pop .x-logo img{ max-width: 10%;}
