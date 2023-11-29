@@ -606,8 +606,7 @@ class OrderRepository extends BaseRepository
     public function randomPickpickPoint(Order $order)
     {
         $restaurant_id = $order->restaurant_id;
-        $data['pickup_point_id'] = PickupPoint::select('id')->where(['restaurant_id' => $restaurant_id , 'type' => 2, 'status' => PickupPoint::ONLINE])->inRandomOrder()->first();
-        $pickup_point_id    = $data['pickup_point_id']->id ? PickupPoint::findOrFail($data['pickup_point_id']->id) : null;
+        $pickup_point_id = PickupPoint::where(['restaurant_id' => $restaurant_id , 'type' => 2, 'status' => PickupPoint::ONLINE])->inRandomOrder()->first();
         return $pickup_point_id;
     }
 
