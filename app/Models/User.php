@@ -64,7 +64,10 @@ class User extends Authenticatable
         'points',
         'username',
         'verification_code',
-        'is_mobile_verify'
+        'is_mobile_verify',
+        'referral_code',
+        'referrer_id',
+        'email_verified_at'
     ];
 
     /**
@@ -272,5 +275,18 @@ class User extends Authenticatable
     public function kitchen(): HasOne
     {
         return $this->hasOne(RestaurantKitchen::class, 'user_id', 'id');
+    }
+
+    /**
+     * Method getReferralLinkAttribute
+     *
+     * @return string
+     */
+    public function getReferralLinkAttribute()
+    {
+        $url = 'https://xsworld.page.link/?link='.env('APP_URL').'/?referral='.$this->referral_code.'&apn=com.itcc.xsworld&efr=1';
+
+        // https://xsworld.page.link/?link=https://express.itcc.net.au/?referral=Manthan&apn=com.itcc.xsworld&efr=1
+        return $url;
     }
 }

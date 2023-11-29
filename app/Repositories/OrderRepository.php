@@ -3,6 +3,7 @@
 use App\Billing\Stripe;
 use App\Exceptions\GeneralException;
 use App\Models\Category;
+use App\Models\CreditPointsHistory;
 use App\Models\CustomerTable;
 use App\Models\Order;
 use App\Models\OrderItem;
@@ -1200,7 +1201,19 @@ class OrderRepository extends BaseRepository
 
     public function customerTableDel(array $data)
     {
-        $order = Order::where('id',$data['order_id'])->update(['status' => Order::COMPLETED]);
+        Order::where('id',$data['order_id'])->update(['status' => Order::COMPLETED]);
+        $order = Order::findOrFail($data['order_id']);
+
+        if($order->id){
+            $points                     = $order->total * 3;
+            $update['points']           = $order->user->points + round($points);
+            $$order->user->update($update);
+            $creditArr['user_id']       = $order->user->id;
+            $creditArr['order_id']      = $order->id;
+            $creditArr['credit_point']  = $order->total;
+            $creditArr['total']         = $update['points'];
+            CreditPointsHistory::create($creditArr);
+        }
         $customerTblDel = CustomerTable::where('user_id' , $data['user_id'])->where('restaurant_table_id',$data['restaurant_table_id'])->delete();
         return $customerTblDel;
     }
