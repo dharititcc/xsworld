@@ -260,6 +260,7 @@ class BarRepository extends BaseRepository
                     $payment_data                   = $stripe->captureCharge($order->charge_id);
                     $updateArr['transaction_id']    = $payment_data->balance_transaction;
                 }
+                $updateArr['status']            = $status;
                 $updateArr['completion_date']   = Carbon::now();
                 $updateArr['remaining_date']    = Carbon::now();
                 $this->orderItemStatusUpdated($order_id,OrderItem::COMPLETED);
