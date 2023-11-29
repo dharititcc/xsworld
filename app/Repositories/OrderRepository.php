@@ -2,6 +2,7 @@
 
 use App\Billing\Stripe;
 use App\Exceptions\GeneralException;
+use App\Models\Category;
 use App\Models\CustomerTable;
 use App\Models\Order;
 use App\Models\OrderItem;
@@ -89,10 +90,11 @@ class OrderRepository extends BaseRepository
             {
                 foreach( $orderItems as $item )
                 {
+                    $item['category_id'] = Category::select('parent_id')->where('id',$item['category_id'])->first();
                     // make proper item array for the table
                     $itemArr = [
                         'restaurant_item_id'    => $item['item_id'],
-                        'category_id'           => $item['category_id'],
+                        'category_id'           => $item['category_id']->parent_id,
                         'price'                 => $item['price'],
                         'quantity'              => $item['quantity'],
                         'type'                  => RestaurantItem::ITEM,
@@ -103,7 +105,7 @@ class OrderRepository extends BaseRepository
                     {
                         $variationArr = [
                             'restaurant_item_id'    => $item['item_id'],
-                            'category_id'           => $item['category_id'],
+                            'category_id'           => $item['category_id']->parent_id,
                             'parent_item_id'        => null,
                             'variation_id'          => $item['variation']['id'],
                             'quantity'              => $item['variation']['quantity'],
