@@ -1,7 +1,7 @@
 (function () {
     XS.Analytic = {
         selectors: {
-            drinkModal:         jQuery('#wd930'),
+            drinkModal: jQuery('#wd930'),
         },
 
         init: function (){
@@ -61,8 +61,10 @@
                     scrollablePlotArea: {
                         minWidth: 700
                     },
-                    className: 'analytic-chart'
+                    className: 'analytic-chart',
+                    backgroundColor:'transparent',
                 },
+
 
                 data: {
                     csvURL: 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/analytics.csv',
@@ -72,13 +74,15 @@
                 },
 
                 title: {
-                    text: 'Daily sessions at www.highcharts.com',
-                    align: 'left'
+                    text: 'Daily sessions',
+                    align: 'left',
+                    color: '#fff'
                 },
 
                 subtitle: {
-                    text: 'Source: Google Analytics',
-                    align: 'left'
+                    text: null,
+                    align: 'center',
+                    // y: 14
                 },
 
                 xAxis: {
@@ -86,7 +90,7 @@
                     tickWidth: 0,
                     gridLineWidth: 1,
                     labels: {
-                        align: 'left',
+                        align: 'center',
                         x: 3,
                         y: -3
                     }
@@ -103,7 +107,7 @@
                         format: '{value:.,0f}'
                     },
                     showFirstLabel: false
-                }, { // right y axis
+                     }, { // right y axis
                     linkedTo: 0,
                     gridLineWidth: 0,
                     opposite: true,
@@ -121,7 +125,7 @@
 
                 legend: {
                     align: 'left',
-                    verticalAlign: 'top',
+                    verticalAlign: 'bottom',
                     borderWidth: 0
                 },
 
@@ -136,7 +140,11 @@
                         className: 'popup-on-click',
                         marker: {
                             lineWidth: 1
-                        }
+                        },
+                        label: {
+                            connectorAllowed: false
+                          },
+                        pointStart: 2020
                     }
                 },
 
@@ -148,7 +156,8 @@
                     }
                 }, {
                     name: 'New users'
-                }]
+                }],
+                
             });
         },
     }

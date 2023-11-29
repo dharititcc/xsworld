@@ -137,7 +137,13 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'v1', 'as' => 'api.v1.'], fun
             // {api/v1/orderupdate}
             Route::post('/orderstatusupdate', 'BarController@orderStatusUpdate')->name('barOrderStatusUpdate');
             // {api/v1/barorderhistory}
-            Route::get('/barorderhistory', 'BarController@barOrderHistory')->name('barOrderHistory');
+            // Route::get('/barorderhistory', 'BarController@barOrderHistory')->name('barOrderHistory');
+
+            Route::get('/incomingOrder', 'BarController@incomingOrder')->name('incomingOrder');
+            Route::get('/confirmOrder', 'BarController@confirmOrder')->name('confirmOrder');
+            Route::get('/completedOrder', 'BarController@completedOrder')->name('completedOrder');
+
+
             // {api/v1/completedorderhistory}
             Route::post('/completedorderhistory', 'BarController@completedorderhistory')->name('completedorderhistory');
             Route::get('/show/{order}', 'BarController@show')->name('bar.show');

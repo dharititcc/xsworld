@@ -34,7 +34,7 @@
                 body.classList.remove('home')
             }
 
-            if( pathname == '/restaurants/orders' )
+            if( pathname == '/restaurants/orders' || pathname == '/analytics' )
             {
                 body.classList.add('orders');
             }

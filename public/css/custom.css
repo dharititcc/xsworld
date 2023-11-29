@@ -367,7 +367,7 @@ th .sort-icon{ position: absolute; top: 20%;}
 .table-design .ftr a.green{ border-color: #4FDA76; color: #4FDA76;}
 .table-design .ftr a.red{ border-color: #D74848; color: #D74848 ;}
 
-.add-table-design{ color: #fff; font-size: 60px; text-decoration: none; text-align: center; height:100%; display: flex; align-items: center; justify-content: center;}
+.add-table-design{ color: #fff; font-size: 60px; text-decoration: none; text-align: center; height:100%; display: flex; align-items: center; justify-content: center; min-height: 395px;}
 .add-table-design:hover{ color: #fff;}
 
 .action-box{ display: flex; align-items: center; }
@@ -632,6 +632,41 @@ table.dataTable thead th{ padding: 1.1rem .4rem;}
 	font-size: 20px;
 }
 /* Sweetalert */
+
+/* ______________ high chart ___________*/
+
+/* COLOUR SCHEME */
+
+ .highcharts-color-0 { fill: #EAC36C; stroke: transparent;}/
+ .highcharts-color-1 { fill: #fff; stroke: transparent;} 
+/*.highcharts-color-2 { fill: #808A9F; stroke: #808A9F;}
+.highcharts-color-3 { fill: #EB9486; stroke: #EB9486;}
+.highcharts-color-4 { fill: #E1DEE3; stroke: #E1DEE3;}*/
+
+/* CONTAINER */
+.highcharts-container { font-family:var(--ff-normal);}
+
+/* LABELS */
+.highcharts-title { fill: #fff !important;  }
+.highcharts-legend-item text { fill: #fff !important;}
+.highcharts-legend-item:hover text {fill: #EAC36C !important;}
+
+.highcharts-series-label text{ display: none !important;}
+.highcharts-axis-labels text { fill: #fff !important;} 
+
+/* AXES & GRID */
+.highcharts-xaxis path { stroke: rgba(234, 195, 108, 0.50);}
+.highcharts-grid path { stroke: rgba(234, 195, 108, 0.50); stroke-dasharray: .4 .4;} 
+
+/* SERIES */
+.highcharts-graph {stroke-width: 1px;}
+.highcharts-color-0 path{stroke: #EAC36C !important; stroke-width: 1px;}
+.highcharts-color-1 path{stroke: #fff !important; stroke-width: 1px;}
+
+.highcharts-color-0 path.highcharts-point{ fill: #EAC36C;}
+.highcharts-color-1 path.highcharts-point{ fill: #fff;}
+
+/* ______________ high chart ___________*/
 
 /* responsive */
 

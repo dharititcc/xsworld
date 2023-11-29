@@ -51,6 +51,38 @@ class BarController extends APIController
         return $this->respondSuccess('Orders found.', $data);
     }
 
+
+    public function incomingOrder()
+    {
+        $incomingOrder      = $this->repository->getIncomingOrder();
+        $data = [
+            'incoming_order'       => $incomingOrder->count() ? BarOrderListingResource::collection($incomingOrder) : [],
+        ];
+
+        return $this->respondSuccess('Incoming Orders found.', $data);
+    }
+
+
+    public function confirmOrder()
+    {
+        $confirmedOrder     = $this->repository->getConfirmedOrder();
+        $data = [
+            'confirmed_order'      => $confirmedOrder->count() ? BarOrderListingResource::collection($confirmedOrder) : [],
+        ];
+
+        return $this->respondSuccess('Confirmed Orders found.', $data);
+    }
+
+
+    public function completedOrder()
+    {
+        $completedOrder     = $this->repository->getBarCollections();
+        $data = [
+            'completed_order'      => $completedOrder->count() ? BarOrderListingResource::collection($completedOrder) : [],
+        ];
+        return $this->respondSuccess('Completed Orders found.', $data);
+    }
+
     /**
      * Method completedorderhistory
      *
