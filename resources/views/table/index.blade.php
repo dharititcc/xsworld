@@ -64,7 +64,7 @@
                     <div class="table-design grey-brd-box">
                         <div class="head"><label class="cst-check">
                                 <input type="checkbox" class="qr_select" value="{{ $res_table->id }}"><span class="checkmark"></span></label>
-                            <h2>{{$res_table->code}} #{{$res_table->id}}</h2>
+                            <h2>{{ $res_table->name }} - {{$res_table->code}}</h2>
                         </div>
                         <div class="cnt">
                             <?php //dd(asset("images/".$res_table->qr_image)); ?>
