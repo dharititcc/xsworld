@@ -1196,6 +1196,8 @@ class OrderRepository extends BaseRepository
             // $customerTbl = CustomerTable::create($data);
         // }
 
+        Order::where('type',Order::ORDER)->where('status', Order::PENDNIG)->where('restaurant_table_id',$data['restaurant_table_id'])->where('user_id', $data['user_id'])->update(['waiter_id' => $data['waiter_id']]);
+
         return $customerTbl;
     }
 
