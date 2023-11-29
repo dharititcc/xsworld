@@ -192,14 +192,18 @@
             var context = this;
             $('.export-info').on("click", function()
             {
-                var $this       = $(this),
-                    id          = $this.data('id'),
-                    qr          = $this.closest('.cnt').find('.qr-code').find('img').clone(),
-                    selectorQr  = $('#export_qr_code').find('.qrcode');
+                var $this           = $(this),
+                    id              = $this.data('id'),
+                    qr              = $this.closest('.cnt').find('.qr-code').find('img').clone(),
+                    qrText          = $this.closest('.table-design').find('.head').find('h2').text(),
+                    selectorQr      = $('#export_qr_code').find('.qrcode'),
+                    selectorQrTxt   = $('#export_qr_code').find('.table-ids'),
+                    qrCode          = qrText.split('-');
 
                 selectorQr.children().remove();
 
                 selectorQr.append(qr.get(0));
+                selectorQrTxt.html(jQuery.trim(qrCode[1]));
 
                 $('.export_pdf').on("click", function() {
                     $.ajax({
