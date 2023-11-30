@@ -176,10 +176,17 @@ class BarRepository extends BaseRepository
         return $order;
     }
 
-    public function orderItemStatusUpdated($order_id,$status)
+    /**
+     * Method orderItemStatusUpdated
+     *
+     * @param $order_id $order_id [explicite description]
+     * @param $status $status [explicite description]
+     *
+     * @return bool
+     */
+    public function orderItemStatusUpdated($order_id, $status): bool
     {
-        OrderItem::where('order_id',$order_id)->where('category_id',$this->categoryGet())->update(['status' => $status]);
-        return true;
+        return OrderItem::where('order_id', $order_id)->where('category_id', $this->categoryGet())->update(['status' => $status]);
     }
 
     public function allOrderCompletedlogic(Order $order, $updateArr , $user)
@@ -236,7 +243,7 @@ class BarRepository extends BaseRepository
         {
             if($status == Order::DELAY_ORDER || $status == Order::ACCEPTED)
             {
-                if( isset($apply_time) )
+                if( isset($apply_time) && $apply_time > 0 )
                 {
                     $updateArr['accepted_date']         = Carbon::now();
                     $time                               = $order->apply_time;
@@ -252,12 +259,25 @@ class BarRepository extends BaseRepository
                         $current_time       = Carbon::now();
                         $remaining_date     = $current_time->addMinutes($apply_time);
                     }
-                    $this->orderItemStatusUpdated($order_id,OrderItem::ACCEPTED);
                     $updateArr['remaining_date']    = $remaining_date;
+                    $updateArr['status']    = $status;
+
+                    // order items status update if the status is accepted
+                    if( $status != Order::DELAY_ORDER )
+                    {
+                        $this->orderItemStatusUpdated($order_id, Order::ACCEPTED);
+                    }
+
+                    // update order
                     $order->update($updateArr);
+
                     $title                      = "Order Delay Time Changed";
                     $message                    = "Bar Delay Your Order #".$order_id;
                     $send_notification          = sendNotification($title,$message,$user_tokens,$order_id);
+                }
+                else
+                {
+                    throw new GeneralException('Apply time should greater than zero.');
                 }
             }
 
@@ -272,9 +292,12 @@ class BarRepository extends BaseRepository
                 $updateArr['status']            = $status;
                 $updateArr['completion_date']   = Carbon::now();
                 $updateArr['remaining_date']    = Carbon::now();
-                $this->orderItemStatusUpdated($order_id,OrderItem::COMPLETED);
+                $this->orderItemStatusUpdated($order_id, OrderItem::COMPLETED);
                 $order = $this->allOrderCompletedlogic($order,$updateArr,$user);
-                $order->update($updateArr);
+
+                // update order data
+                $this->orderUpdate($order, $updateArr);
+
                 $title                      = "Order Status Changed";
                 $message                    = "Order is Completed from Bar #".$order_id;
                 $send_notification          = sendNotification($title,$message,$user_tokens,$order_id);

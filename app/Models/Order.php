@@ -53,6 +53,11 @@ class Order extends Model
 
     const RESTAURANT_CANCELED           = 4;
 
+    /** ORDER CATEGORY TYPES */
+    const DRINK= 0;
+    const FOOD = 1;
+    const BOTH = 2;
+
     const ORDER_STATUS = [
         self::PENDNIG                   => 'Pending',
         self::ACCEPTED                  => 'Accepted',
