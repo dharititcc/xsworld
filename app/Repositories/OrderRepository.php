@@ -8,9 +8,9 @@ use App\Models\CustomerTable;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\OrderReview;
-use App\Models\PickupPoint;
 use App\Models\Restaurant;
 use App\Models\RestaurantItem;
+use App\Models\RestaurantPickupPoint;
 use App\Models\RestaurantWaiter;
 use App\Models\User;
 use App\Models\UserPaymentMethod;
@@ -294,9 +294,9 @@ class OrderRepository extends BaseRepository
                 'latest_cart',
                 'latest_cart.order_items',
                 'latest_cart.restaurant',
-                'latest_cart.restaurant.pickup_points' => function($query)
+                'latest_cart.restaurant.restaurant_pickup_points' => function($query)
                 {
-                    return $query->status(PickupPoint::ONLINE);
+                    return $query->status(RestaurantPickupPoint::ONLINE);
                 }
             ]
         );
@@ -333,12 +333,12 @@ class OrderRepository extends BaseRepository
             'order_items.restaurant_item.restaurant.currency',
             'order_items.restaurant_item.restaurant.country',
             'user',
-            'pickup_point',
-            'pickup_point.attachment',
+            'restaurant_pickup_point',
+            'restaurant_pickup_point.attachment',
             'pickup_point_user',
             'restaurant',
-            'restaurant.pickup_points',
-            'restaurant.pickup_points.attachment'
+            'restaurant.restaurant_pickup_points',
+            'restaurant.restaurant_pickup_points.attachment'
         ])->orderBy('id', 'desc')->first();
     }
 
@@ -607,7 +607,7 @@ class OrderRepository extends BaseRepository
     public function randomPickpickPoint(Order $order)
     {
         $restaurant_id = $order->restaurant_id;
-        $pickup_point_id = PickupPoint::where(['restaurant_id' => $restaurant_id , 'type' => 2, 'status' => PickupPoint::ONLINE])->inRandomOrder()->first();
+        $pickup_point_id = RestaurantPickupPoint::where(['restaurant_id' => $restaurant_id , 'type' => 2, 'status' => RestaurantPickupPoint::ONLINE])->inRandomOrder()->first();
         return $pickup_point_id;
     }
 
@@ -631,15 +631,16 @@ class OrderRepository extends BaseRepository
         if($order->order_category_type == 2) {
             $pickup_point_id    = $this->randomPickpickPoint($order);
         } else {
-            $pickup_point_id    = $data['pickup_point_id'] ? PickupPoint::findOrFail($data['pickup_point_id']) : null;
+            $pickup_point_id    = $data['pickup_point_id'] ? RestaurantPickupPoint::findOrFail($data['pickup_point_id']) : null;
         }
 
+        $userCreditAmountBalance = $user->credit_amount;
         $updateArr         = [];
         $paymentArr        = [];
 
         if(isset($order->id))
         {
-            if($order->total == $credit_amount)
+            if($order->total <= $credit_amount)
             {
                 $updateArr = [
                     'type'                  => Order::ORDER,
@@ -648,12 +649,13 @@ class OrderRepository extends BaseRepository
                     'credit_amount'         => $credit_amount,
                     'restaurant_table_id'   => ($table_id) ? $table_id : null,
                 ];
+                $remaingAmount = $userCreditAmountBalance - $credit_amount;
+                $this->userCreditAmountUpdated($user,$remaingAmount);
             }
 
 
             if( $order->total != $credit_amount )
             {
-
                 $paymentArr = [
                     'amount'        => $amount * 100,
                     'currency'      => $order->restaurant->currency->code,
@@ -675,6 +677,8 @@ class OrderRepository extends BaseRepository
                     'credit_amount'         => $credit_amount,
                     'restaurant_table_id'   => ($table_id) ? $table_id : null,
                 ];
+                $remaingAmount = $credit_amount - $userCreditAmountBalance;
+                $this->userCreditAmountUpdated($user,$remaingAmount);
             }
 
             $order->update($updateArr);
@@ -697,6 +701,12 @@ class OrderRepository extends BaseRepository
 
         return $order;
     }
+	
+	public function userCreditAmountUpdated(User $user,$remaingAmount)
+    {
+        User::where('id', $user->id)->update(['credit_amount' => $remaingAmount]);
+        return true;
+    }
 
     /**
      * Method updateOrderStatus
@@ -713,16 +723,22 @@ class OrderRepository extends BaseRepository
         $updateArr         = [];
         $user              = auth()->user();
         $devices           = $user->devices()->pluck('fcm_token')->toArray();
+        $userCreditAmountBalance = $user->credit_amount;
+        $refundCreditAmount = $order->credit_amount;
 
         if(isset($order->id))
         {
             if($status == Order::CUSTOMER_CANCELED)
             {
+
                 $updateArr['cancel_date']   = Carbon::now();
                 $updateArr['status']        = $status;
+
             }
 
             $order->update($updateArr);
+            $totalCreditAmount = $userCreditAmountBalance + $refundCreditAmount;
+            $this->userCreditAmountUpdated($user,$totalCreditAmount);
 
             // $title      = "Order is cancelled";
             // $message    = "Your Order is #".$order->id." cancelled";
@@ -986,7 +1002,7 @@ class OrderRepository extends BaseRepository
         // $card_id            = $data['card_id'] ?? null;
         $credit_amount      = $data['credit_amount'] ? $data['credit_amount'] : null;
         $amount             = $data['amount'] ? $data['amount'] : null;
-        // $pickup_point_id    = $data['pickup_point_id'] ? PickupPoint::findOrFail($data['pickup_point_id']) : null;
+        // $pickup_point_id    = $data['pickup_point_id'] ? RestaurantPickupPoint::findOrFail($data['pickup_point_id']) : null;
         $table_id           = $data['table_id'] ? $data['table_id'] : null;
         $order              = Order::findOrFail($data['order_id']);
         $user               = $order->user_id ? User::findOrFail($order->user_id) : auth()->user();

@@ -107,7 +107,8 @@ class BarRepository extends BaseRepository
         {
             return $query->where('status', OrderItem::ACCEPTED);
         })
-        ->orderBy('id','desc')
+        ->orderBy('orders.apply_time','asc')
+        ->orderByDesc('orders.id')
         ->get();
 
         return $order;
@@ -159,6 +160,7 @@ class BarRepository extends BaseRepository
      */
     public function getBarCollections() : Collection
     {
+
         $user = auth()->user();
 
         $user->loadMissing(['pickup_point']);
@@ -166,8 +168,9 @@ class BarRepository extends BaseRepository
         $order       = $this->orderQuery()
         ->where('type', Order::ORDER)
         ->whereIn('status', [Order::COMPLETED])
-        ->orderBy('completion_date', 'asc')
-        ->orderBy('id', 'asc')
+        // ->orderBy('orders.completion_date', 'asc')
+        ->orderBy('orders.apply_time','asc')
+        ->orderByDesc('orders.id')
         ->get();
 
         return $order;
@@ -206,6 +209,12 @@ class BarRepository extends BaseRepository
         }
         return $order;
     }
+
+    public function userCreditAmountUpdated(User $user,$remaingAmount)
+    {
+        User::where('id', $user->id)->update(['credit_amount' => $remaingAmount]);
+        return true;
+    }
     /**
      * Method updateStatusOrder
      *
@@ -235,7 +244,7 @@ class BarRepository extends BaseRepository
                     $updateArr['last_delayed_time']     = $apply_time;
                     if(isset($order->remaining_date))
                     {
-                        $old_time           = Carbon::now();
+                        $old_time           = Carbon::parse($order->remaining_date);
                         $remaining_date     = $old_time->addMinutes($apply_time);
                     }
                     else
@@ -275,6 +284,10 @@ class BarRepository extends BaseRepository
             {
                 // RESTAURANT_CANCELED and process for refund
                 $this->orderItemStatusUpdated($order_id,OrderItem::RESTAURANT_CANCELED);
+                $userCreditAmountBalance = $user->credit_amount;
+                $refundCreditAmount = $order->credit_amount;
+                $totalCreditAmount = $userCreditAmountBalance + $refundCreditAmount;
+                $this->userCreditAmountUpdated($user,$totalCreditAmount);
                 // $order->update($updateArr);
                 $title                      = "Restaurant Cancled Your Order";
                 $message                    = "Restaurant Cancled Your Order #".$order_id;

@@ -3,7 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\KitchenPickPoint;
-use App\Models\PickupPoint;
+use App\Models\RestaurantPickupPoint;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
@@ -66,7 +66,7 @@ class KitchenUserSeeder extends Seeder
 
             $kitchenUser = User::where('user_type',User::KITCHEN)->inRandomOrder()->limit(1)->get();
 
-            $pickupPoint = PickupPoint::get();
+            $pickupPoint = RestaurantPickupPoint::get();
 
             foreach ($pickupPoint as $value) {
                 $kitchenpickupPoint = [
