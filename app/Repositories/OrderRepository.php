@@ -634,12 +634,13 @@ class OrderRepository extends BaseRepository
             $pickup_point_id    = $data['pickup_point_id'] ? RestaurantPickupPoint::findOrFail($data['pickup_point_id']) : null;
         }
 
+        $userCreditAmountBalance = $user->credit_amount;
         $updateArr         = [];
         $paymentArr        = [];
 
         if(isset($order->id))
         {
-            if($order->total == $credit_amount)
+            if($order->total <= $credit_amount)
             {
                 $updateArr = [
                     'type'                  => Order::ORDER,
@@ -648,12 +649,13 @@ class OrderRepository extends BaseRepository
                     'credit_amount'         => $credit_amount,
                     'restaurant_table_id'   => ($table_id) ? $table_id : null,
                 ];
+                $remaingAmount = $userCreditAmountBalance - $credit_amount;
+                $this->userCreditAmountUpdated($user,$remaingAmount);
             }
 
 
             if( $order->total != $credit_amount )
             {
-
                 $paymentArr = [
                     'amount'        => $amount * 100,
                     'currency'      => $order->restaurant->currency->code,
@@ -675,6 +677,8 @@ class OrderRepository extends BaseRepository
                     'credit_amount'         => $credit_amount,
                     'restaurant_table_id'   => ($table_id) ? $table_id : null,
                 ];
+                $remaingAmount = $credit_amount - $userCreditAmountBalance;
+                $this->userCreditAmountUpdated($user,$remaingAmount);
             }
 
             $order->update($updateArr);
@@ -697,6 +701,12 @@ class OrderRepository extends BaseRepository
 
         return $order;
     }
+	
+	public function userCreditAmountUpdated(User $user,$remaingAmount)
+    {
+        User::where('id', $user->id)->update(['credit_amount' => $remaingAmount]);
+        return true;
+    }
 
     /**
      * Method updateOrderStatus
@@ -713,16 +723,22 @@ class OrderRepository extends BaseRepository
         $updateArr         = [];
         $user              = auth()->user();
         $devices           = $user->devices()->pluck('fcm_token')->toArray();
+        $userCreditAmountBalance = $user->credit_amount;
+        $refundCreditAmount = $order->credit_amount;
 
         if(isset($order->id))
         {
             if($status == Order::CUSTOMER_CANCELED)
             {
+
                 $updateArr['cancel_date']   = Carbon::now();
                 $updateArr['status']        = $status;
+
             }
 
             $order->update($updateArr);
+            $totalCreditAmount = $userCreditAmountBalance + $refundCreditAmount;
+            $this->userCreditAmountUpdated($user,$totalCreditAmount);
 
             // $title      = "Order is cancelled";
             // $message    = "Your Order is #".$order->id." cancelled";
