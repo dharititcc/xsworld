@@ -333,12 +333,12 @@ class OrderRepository extends BaseRepository
             'order_items.restaurant_item.restaurant.currency',
             'order_items.restaurant_item.restaurant.country',
             'user',
-            'pickup_point',
-            'pickup_point.attachment',
+            'restaurant_pickup_point',
+            'restaurant_pickup_point.attachment',
             'pickup_point_user',
             'restaurant',
-            'restaurant.pickup_points',
-            'restaurant.pickup_points.attachment'
+            'restaurant.restaurant_pickup_points',
+            'restaurant.restaurant_pickup_points.attachment'
         ])->orderBy('id', 'desc')->first();
     }
 
