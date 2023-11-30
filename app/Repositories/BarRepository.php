@@ -235,7 +235,7 @@ class BarRepository extends BaseRepository
                     $updateArr['last_delayed_time']     = $apply_time;
                     if(isset($order->remaining_date))
                     {
-                        $old_time           = Carbon::now();
+                        $old_time           = Carbon::parse($order->remaining_date);
                         $remaining_date     = $old_time->addMinutes($apply_time);
                     }
                     else
