@@ -107,7 +107,7 @@ class BarRepository extends BaseRepository
         {
             return $query->where('status', OrderItem::ACCEPTED);
         })
-        ->orderBy('id','desc')
+        ->orderByDesc('orders.id')
         ->get();
 
         return $order;
@@ -159,6 +159,7 @@ class BarRepository extends BaseRepository
      */
     public function getBarCollections() : Collection
     {
+
         $user = auth()->user();
 
         $user->loadMissing(['pickup_point']);
@@ -166,8 +167,8 @@ class BarRepository extends BaseRepository
         $order       = $this->orderQuery()
         ->where('type', Order::ORDER)
         ->whereIn('status', [Order::COMPLETED])
-        ->orderBy('completion_date', 'asc')
-        ->orderBy('id', 'asc')
+        // ->orderBy('completion_date', 'asc')
+        ->orderByDesc('orders.id')
         ->get();
 
         return $order;
