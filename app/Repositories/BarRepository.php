@@ -209,6 +209,12 @@ class BarRepository extends BaseRepository
         }
         return $order;
     }
+
+    public function userCreditAmountUpdated(User $user,$remaingAmount)
+    {
+        User::where('id', $user->id)->update(['credit_amount' => $remaingAmount]);
+        return true;
+    }
     /**
      * Method updateStatusOrder
      *
@@ -278,6 +284,10 @@ class BarRepository extends BaseRepository
             {
                 // RESTAURANT_CANCELED and process for refund
                 $this->orderItemStatusUpdated($order_id,OrderItem::RESTAURANT_CANCELED);
+                $userCreditAmountBalance = $user->credit_amount;
+                $refundCreditAmount = $order->credit_amount;
+                $totalCreditAmount = $userCreditAmountBalance + $refundCreditAmount;
+                $this->userCreditAmountUpdated($user,$totalCreditAmount);
                 // $order->update($updateArr);
                 $title                      = "Restaurant Cancled Your Order";
                 $message                    = "Restaurant Cancled Your Order #".$order_id;
