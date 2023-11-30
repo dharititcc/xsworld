@@ -475,7 +475,10 @@ class AuthController extends APIController
             'os_version'            => $request->os_version,
             'application_version'   => $request->application_version,
             'model'                 => $request->model,
-            'user_type'             => User::CUSTOMER
+            'user_type'             => User::CUSTOMER,
+            'points'                => 30,
+            'social_id'             => $request->social_id,
+            'referral_code'         => $request->referral_code
         ];
 
         $user = $this->repository->create($dataArr);
@@ -521,7 +524,10 @@ class AuthController extends APIController
             'model'                 => $request->model,
             'user_type'             => User::CUSTOMER,
             'email_verified_at'     => Carbon::now(),
-            'social_id'             => $request->social_id
+            'social_id'             => $request->social_id,
+            'points'                => 30,
+            'social_id'             => $request->social_id,
+            'referral_code'         => $request->referral_code
         ];
 
         $user = $this->repository->Socialcreate($dataArr);
