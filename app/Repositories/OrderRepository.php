@@ -8,9 +8,9 @@ use App\Models\CustomerTable;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\OrderReview;
-use App\Models\PickupPoint;
 use App\Models\Restaurant;
 use App\Models\RestaurantItem;
+use App\Models\RestaurantPickupPoint;
 use App\Models\RestaurantWaiter;
 use App\Models\User;
 use App\Models\UserPaymentMethod;
@@ -294,9 +294,9 @@ class OrderRepository extends BaseRepository
                 'latest_cart',
                 'latest_cart.order_items',
                 'latest_cart.restaurant',
-                'latest_cart.restaurant.pickup_points' => function($query)
+                'latest_cart.restaurant.restaurant_pickup_points' => function($query)
                 {
-                    return $query->status(PickupPoint::ONLINE);
+                    return $query->status(RestaurantPickupPoint::ONLINE);
                 }
             ]
         );
@@ -607,7 +607,7 @@ class OrderRepository extends BaseRepository
     public function randomPickpickPoint(Order $order)
     {
         $restaurant_id = $order->restaurant_id;
-        $pickup_point_id = PickupPoint::where(['restaurant_id' => $restaurant_id , 'type' => 2, 'status' => PickupPoint::ONLINE])->inRandomOrder()->first();
+        $pickup_point_id = RestaurantPickupPoint::where(['restaurant_id' => $restaurant_id , 'type' => 2, 'status' => RestaurantPickupPoint::ONLINE])->inRandomOrder()->first();
         return $pickup_point_id;
     }
 
@@ -631,7 +631,7 @@ class OrderRepository extends BaseRepository
         if($order->order_category_type == 2) {
             $pickup_point_id    = $this->randomPickpickPoint($order);
         } else {
-            $pickup_point_id    = $data['pickup_point_id'] ? PickupPoint::findOrFail($data['pickup_point_id']) : null;
+            $pickup_point_id    = $data['pickup_point_id'] ? RestaurantPickupPoint::findOrFail($data['pickup_point_id']) : null;
         }
 
         $updateArr         = [];
@@ -986,7 +986,7 @@ class OrderRepository extends BaseRepository
         // $card_id            = $data['card_id'] ?? null;
         $credit_amount      = $data['credit_amount'] ? $data['credit_amount'] : null;
         $amount             = $data['amount'] ? $data['amount'] : null;
-        // $pickup_point_id    = $data['pickup_point_id'] ? PickupPoint::findOrFail($data['pickup_point_id']) : null;
+        // $pickup_point_id    = $data['pickup_point_id'] ? RestaurantPickupPoint::findOrFail($data['pickup_point_id']) : null;
         $table_id           = $data['table_id'] ? $data['table_id'] : null;
         $order              = Order::findOrFail($data['order_id']);
         $user               = $order->user_id ? User::findOrFail($order->user_id) : auth()->user();

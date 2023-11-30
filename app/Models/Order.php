@@ -171,13 +171,13 @@ class Order extends Model
     }
 
     /**
-     * Get the pickup_point that owns the Order
+     * Get the restaurant_pickup_point that owns the Order
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function pickup_point(): BelongsTo
+    public function restaurant_pickup_point(): BelongsTo
     {
-        return $this->belongsTo(PickupPoint::class, 'pickup_point_id', 'id');
+        return $this->belongsTo(RestaurantPickupPoint::class, 'pickup_point_id', 'id');
     }
 
     /**

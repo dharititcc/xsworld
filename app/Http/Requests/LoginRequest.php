@@ -25,6 +25,7 @@ class LoginRequest extends FormRequest
      */
     public function rules()
     {
+        // dd(request()->json());
         $rules = [
             'fcm_token'             => 'required|string',
             'platform'              => 'required',

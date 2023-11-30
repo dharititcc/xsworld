@@ -96,7 +96,7 @@ class RestaurantRepository extends BaseRepository
             'main_categories',
             'attachment',
             'country',
-            'pickup_points' => function($query)
+            'restaurant_pickup_points' => function($query)
             {
                 return $query->status(1);
             }
