@@ -28,7 +28,7 @@ class RestaurantResource extends JsonResource
             'start_date'        => $this->start_date ?? '',
             'end_date'          => $this->end_date ?? '',
             'categories'        => isset($this->main_categories) ? CategoryResource::collection($this->main_categories) : [],
-            'pickup_points'     => isset($this->pickup_points) ? PickUpPointResource::collection($this->pickup_points) : [],
+            'pickup_points'     => isset($this->restaurant_pickup_points) ? PickUpPointResource::collection($this->restaurant_pickup_points) : [],
             // 'featured_items'    => RestaurantItemsResource::collection($this->featured_items),
         ];
     }

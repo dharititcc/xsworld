@@ -107,7 +107,7 @@ class BarRepository extends BaseRepository
         {
             return $query->where('status', OrderItem::ACCEPTED);
         })
-        ->orderBy('id','desc')
+        ->orderByDesc('orders.id')
         ->get();
 
         return $order;
@@ -159,6 +159,7 @@ class BarRepository extends BaseRepository
      */
     public function getBarCollections() : Collection
     {
+
         $user = auth()->user();
 
         $user->loadMissing(['pickup_point']);
@@ -166,8 +167,8 @@ class BarRepository extends BaseRepository
         $order       = $this->orderQuery()
         ->where('type', Order::ORDER)
         ->whereIn('status', [Order::COMPLETED])
-        ->orderBy('completion_date', 'asc')
-        ->orderBy('id', 'asc')
+        // ->orderBy('completion_date', 'asc')
+        ->orderByDesc('orders.id')
         ->get();
 
         return $order;
@@ -235,7 +236,7 @@ class BarRepository extends BaseRepository
                     $updateArr['last_delayed_time']     = $apply_time;
                     if(isset($order->remaining_date))
                     {
-                        $old_time           = Carbon::now();
+                        $old_time           = Carbon::parse($order->remaining_date);
                         $remaining_date     = $old_time->addMinutes($apply_time);
                     }
                     else

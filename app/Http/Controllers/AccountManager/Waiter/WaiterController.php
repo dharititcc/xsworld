@@ -30,7 +30,7 @@ class WaiterController extends Controller
         $waiters        = $restaurant->waiters()->with(['user'])->whereHas('user')->get();
         // $barpickzones = User::select('id','first_name','username','email')->where('user_type',User::BARTENDER)->get();
         // $kitchens = User::select('id','first_name','username','email')->where('user_type',User::KITCHEN)->get();
-        $barpickzones   = $restaurant->pickup_points()->with(['user'])->whereHas('user')->get();
+        $barpickzones   = $restaurant->restaurant_pickup_points()->with(['user'])->whereHas('user')->get();
         // dd($barpickzones);
         $pickup_points  = RestaurantPickupPoint::restaurantget($restaurant->id)->whereNull('user_id')->get();
 
