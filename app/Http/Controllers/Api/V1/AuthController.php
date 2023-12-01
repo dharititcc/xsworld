@@ -565,7 +565,7 @@ class AuthController extends APIController
 
         return $this->respond([
             'status'    =>  true,
-            'message'   =>  'OTP send succesfully',
+            'message'   =>  'OTP has been sent succesfully',
         ]);
     }
 
