@@ -105,7 +105,7 @@ class BarRepository extends BaseRepository
         // ->whereIn('status', [Order::ACCEPTED, Order::DELAY_ORDER])
         ->whereHas('order_items', function($query)
         {
-            return $query->where('status', OrderItem::ACCEPTED);
+            return $query->whereIn('status', [OrderItem::ACCEPTED, OrderItem::CONFIRM_PICKUP]);
         })
         ->orderBy('orders.apply_time','asc')
         ->orderByDesc('orders.id')
@@ -193,11 +193,11 @@ class BarRepository extends BaseRepository
     {
         $totalItemCount = OrderItem::where('order_id',$order->id)->whereNotNull('category_id')->count();
 
-        $totalCompletedItem = OrderItem::where('order_id',$order->id)->where('status', OrderItem::COMPLETED)->count();
+        $totalCompletedItem = OrderItem::where('order_id',$order->id)->where('status', OrderItem::CONFIRM_PICKUP)->count();
         if($totalItemCount === $totalCompletedItem) {
             foreach($order->order_items as $orderitem)
             {
-                if($orderitem->status == OrderItem::COMPLETED ) {
+                if($orderitem->status == OrderItem::CONFIRM_PICKUP ) {
                     $order->update($updateArr);
                     $order->refresh();
                     $order->loadMissing(['items']);
@@ -293,7 +293,7 @@ class BarRepository extends BaseRepository
                 $updateArr['completion_date']   = Carbon::now();
                 $updateArr['remaining_date']    = Carbon::now();
                 $this->orderItemStatusUpdated($order_id, OrderItem::COMPLETED);
-                $order = $this->allOrderCompletedlogic($order,$updateArr,$user);
+                // $order = $this->allOrderCompletedlogic($order,$updateArr,$user);
 
                 // update order data
                 $order->update($updateArr);
@@ -307,11 +307,12 @@ class BarRepository extends BaseRepository
             {
                 // RESTAURANT_CANCELED and process for refund
                 $this->orderItemStatusUpdated($order_id,OrderItem::RESTAURANT_CANCELED);
+                $updateArr['status']            = $status;
+                $order->update($updateArr);
                 $userCreditAmountBalance = $user->credit_amount;
                 $refundCreditAmount = $order->credit_amount;
                 $totalCreditAmount = $userCreditAmountBalance + $refundCreditAmount;
                 $this->userCreditAmountUpdated($user,$totalCreditAmount);
-                // $order->update($updateArr);
                 $title                      = "Restaurant Cancled Your Order";
                 $message                    = "Restaurant Cancled Your Order #".$order_id;
                 $send_notification          = sendNotification($title,$message,$user_tokens,$order_id);
@@ -319,9 +320,10 @@ class BarRepository extends BaseRepository
 
             if($status == Order::CONFIRM_PICKUP)
             {
+                $updateArr['status']            = $status;
                 $updateArr['served_date']       = Carbon::now();
-                $this->orderItemStatusUpdated($order_id,OrderItem::ACCEPTED);
-
+                $this->orderItemStatusUpdated($order_id,OrderItem::CONFIRM_PICKUP);
+                $order = $this->allOrderCompletedlogic($order,$updateArr,$user);
                 $order->update($updateArr);
                 $title                      = "Order Status Changed";
                 $message                    = "Order is Confirm from Bar";
@@ -333,7 +335,7 @@ class BarRepository extends BaseRepository
                 // RESTAURANT_TOXICATION and process for refund
                 $updateArr['status']            = $status;
 
-                // $order->update($updateArr);
+                $order->update($updateArr);
                 $title                      = "Restaurant Toxication Order";
                 $message                    = "Restaurant Toxication Order ";
                 $send_notification          = sendNotification($title,$message,$user_tokens,$order_id);
