@@ -144,6 +144,7 @@
                             <div class="form-group">
                                 <input type="password" name="password" id="password" class="form-control vari2"
                                     placeholder="Password" autocomplete="off">
+                                    <i class="icon-eye-off show-password" data-type="0"></i>
                                 <span id="Errorpassword"></span>
                             </div>
                         </div>
@@ -178,6 +179,7 @@
                             <div class="form-group mb-4">
                                 <input type="password" name="password" id="password" class="form-control vari2"
                                     placeholder="Password" autocomplete="off">
+                                    <i class="icon-eye-off show-password" data-type="0"></i>
                                 <span id="Errorpassword"></span>
                             </div>
                             {{-- <div class="form-group">
@@ -221,6 +223,7 @@
                             <div class="form-group mb-4">
                                 <input type="password" name="password" id="password" class="form-control vari2"
                                     placeholder="Password" autocomplete="off">
+                                    <i class="icon-eye-off show-password" data-type="0"></i>
                                 <span id="Errorpassword"></span>
                             </div>
                             <div class="form-group">
