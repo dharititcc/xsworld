@@ -3,6 +3,7 @@
 use App\Exceptions\GeneralException;
 use Stripe\Charge;
 use Stripe\Exception\ApiErrorException;
+use Stripe\Refund;
 use Stripe\StripeClient;
 use Stripe\Token;
 
@@ -354,11 +355,11 @@ class Stripe
     /**
      * Method refundCreate
      *
-     * @param string $charge [explicite description]
+     * @param array $charge [explicite description]
      *
      * @return Charge
      */
-    public function refundCreate(string $charge) : Charge
+    public function refundCreate(array $charge) : Refund
     {
         try {
             return $this->stripe->refunds->create(
