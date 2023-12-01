@@ -343,6 +343,10 @@ class BarRepository extends BaseRepository
                     $this->refundCharge($order);
                 }
                 $order->update($updateArr);
+                $userCreditAmountBalance = $user->credit_amount;
+                $refundCreditAmount = $order->credit_amount;
+                $totalCreditAmount = $userCreditAmountBalance + $refundCreditAmount;
+                $this->userCreditAmountUpdated($user,$totalCreditAmount);
                 $title                      = "Restaurant Toxication Order";
                 $message                    = "Restaurant Toxication Order ";
                 $send_notification          = sendNotification($title,$message,$user_tokens,$order_id);
@@ -354,6 +358,10 @@ class BarRepository extends BaseRepository
                 $updateArr['status']            = $status;
 
                 $order->update($updateArr);
+                $userCreditAmountBalance = $user->credit_amount;
+                $refundCreditAmount = $order->credit_amount;
+                $totalCreditAmount = $userCreditAmountBalance + $refundCreditAmount;
+                $this->userCreditAmountUpdated($user,$totalCreditAmount);
                 $title                      = "Restaurant Deny Order";
                 $message                    = "Restaurant Deny  Order ";
                 $send_notification          = sendNotification($title,$message,$user_tokens,$order_id);
