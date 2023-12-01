@@ -8,6 +8,7 @@ use App\Mail\PurchaseGiftCard;
 use App\Models\User;
 use App\Models\UserDevices;
 use App\Models\UserGiftCard;
+use App\Models\UserReferrals;
 use App\Models\UsersVerifyMobile;
 use App\Repositories\BaseRepository;
 use File;
@@ -154,28 +155,58 @@ class UserRepository extends BaseRepository
     {
         if( isset( $data['user_type'] ) )
         {
+            if(isset($data['referral_code']))
+            {
+                $refer_user             = User::where('referral_code',$data['referral_code'])->first();
+
+                if(isset($refer_user->id))
+                {
+                    $data['referral_code']  = referralCode();
+                    $data['referrer_id']    = $refer_user->id;
+                    $data['points']         = UserReferrals::TO_USER_POINTS;
+
+                    $refer_user['points']   = $refer_user->points + UserReferrals::FROM_USER_POINTS;
+                    $refer_user->update();
+
+                    $referred_data['from_user_id']                  = $refer_user->id;
+                    $referred_data['points_earned_by_to_user']      = UserReferrals::FROM_USER_POINTS;
+                    $referred_data['points_earned_by_from_user']    = UserReferrals::TO_USER_POINTS;
+
+                    $referred_user     = UserReferrals::create($referred_data);
+                }
+                
+            }
+
             $user = User::create($data);
             if( $data['user_type'] == User::CUSTOMER )
             {
                 // verification email send and send verification code
                 event(new RegisterEvent($user));
-                $qr_url = URL::current();
-                $qr_code_image = QrCode::size(500)
-                    ->format('png')
-                    ->backgroundColor(139,149,255,0)
-                    ->generate($qr_url . '/'.$user->id, public_path("customer_qr/qrcode_$user->id.png"));
-                
-                $imageName = "qrcode_$user->id.png";
-                User::where('id',$user->id)->update(['cus_qr_code_img' => $imageName]);
-                $user->cus_qr_code_img = $imageName;
-                
-                $stripe     = new Stripe();
-                $customer   = $stripe->createCustomer($data);
+                // $qr_url = URL::current();
+                // $qr_code_image = QrCode::size(500)
+                //     ->format('png')
+                //     ->backgroundColor(139,149,255,0)
+                //     ->generate($qr_url . '/'.$user->id, public_path("customer_qr/qrcode_$user->id.png"));
+
+                // $imageName = "qrcode_$user->id.png";
+                // User::where('id',$user->id)->update(['cus_qr_code_img' => $imageName]);
+                // $user->cus_qr_code_img = $imageName;
+
+                $user['referral_code']     = referralCode();
+                $stripe                    = new Stripe();
+                $customer                  = $stripe->createCustomer($data);
                 $str['stripe_customer_id'] = $customer->id;
                 $user->update($str);
                 $user->payment_methods()->create([
                     'name' => 'Cash'
                 ]);
+
+                // Latest user id for to_user_id in User referrals
+                if(isset($referred_user->id))
+                {
+                    $referred_id['to_user_id']  = $user->id;
+                    $referred_user->update($referred_id);
+                }
             }
         }
         return $user;
@@ -192,13 +223,39 @@ class UserRepository extends BaseRepository
     {
         $user = User::where('email', $data['email'])->first();
         if(!$user){
+
+            if(isset($data['referral_code']))
+            {
+                $refer_user             = User::where('referral_code',$data['referral_code'])->first();
+                $data['referral_code']  = referralCode();
+                $data['referrer_id']    = $refer_user->id;
+                $data['points']         = UserReferrals::TO_USER_POINTS;
+
+                $refer_user['points']   = $refer_user->points + UserReferrals::FROM_USER_POINTS;
+                $refer_user->update();
+
+                $referred_data['from_user_id']                  = $refer_user->id;
+                $referred_data['points_earned_by_to_user']      = UserReferrals::FROM_USER_POINTS;
+                $referred_data['points_earned_by_from_user']    = UserReferrals::TO_USER_POINTS;
+
+                $referred_user     = UserReferrals::create($referred_data);
+            }
+
             $user = User::create($data);
             if( $data['user_type'] == User::CUSTOMER )
             {
                 $stripe     = new Stripe();
                 $customer   = $stripe->createCustomer($data);
                 $str['stripe_customer_id'] = $customer->id;
+                $user['referral_code']     = referralCode();
                 $user->update($str);
+
+                // Latest user id for to_user_id in User referrals
+                if(isset($referred_user->id))
+                {
+                    $referred_id['to_user_id']  = $user->id;
+                    $referred_user->update($referred_id);
+                }
             }
         }
         if( $user instanceof \App\Models\User && isset( $user->id ) )
@@ -588,5 +645,32 @@ class UserRepository extends BaseRepository
         }
 
         throw new GeneralException('Redeem Code is required.');
+    }
+
+    /**
+     * Method getreferralList
+     *
+     * @return mixed
+     */
+    public function getreferralList()
+    {
+        $user           = auth()->user();
+        $referral_list  = UserReferrals::with(['touser'])->where('from_user_id',$user->id)->get();
+        return $referral_list;
+    }
+
+    /**
+     * Method shareReferral
+     *
+     * @return mixed
+     */
+    public function shareReferral()
+    {
+        $user      = auth()->user();
+        $referArr  = [];
+
+        $referArr['from_user_id'] = $user->id;
+        $referral_list  = UserReferrals::create($referArr);
+        return $referral_list;
     }
 }

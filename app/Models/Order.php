@@ -53,6 +53,8 @@ class Order extends Model
 
     const RESTAURANT_CANCELED           = 4;
 
+    const DENY_ORDER                    = 13;
+
     /** ORDER CATEGORY TYPES */
     const DRINK= 0;
     const FOOD = 1;
@@ -63,16 +65,17 @@ class Order extends Model
         self::ACCEPTED                  => 'Accepted',
         self::READY                     => 'Ready',
         self::COMPLETED                 => 'Completed',
-        self::RESTAURANT_CANCELED       => 'Cancelled',
+        self::RESTAURANT_CANCELED       => 'Restaurant Cancelled',
         self::CONFIRM_PICKUP            => 'Order Pickup',
-        self::RESTAURANT_TOXICATION     => 'Cancelled',
+        self::RESTAURANT_TOXICATION     => 'Restaurant Toxication',
         self::PARTIAL_REFUND            => 'Partially Refund',
         self::FULL_REFUND               => 'Full Refund',
         self::DELAY_ORDER               => 'Delay Order',
-        self::CUSTOMER_CANCELED         => 'Cancelled',
+        self::CUSTOMER_CANCELED         => 'Customer Cancelled',
         self::READYFORPICKUP            => 'Kitchen ready for pickup',
         self::KITCHEN_CONFIRM           => 'Kitchen confirm order',
         self::WAITER_PENDING            => 'Waiter Pending',
+        self::DENY_ORDER                => 'Deny Order',
         // self::BAR_PENDING               => 'Bar pending',
         // self::BAR_CONFIRM               => 'Bar accepted/Confirm order',
         // self::BAR_READY                 => 'Bar ready',
@@ -111,7 +114,8 @@ class Order extends Model
         'served_date',
         'completion_date',
         'total',
-        'cancel_reason'
+        'cancel_reason',
+        'refunded_id'
     ];
 
     /**

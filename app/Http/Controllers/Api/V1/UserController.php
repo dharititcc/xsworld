@@ -12,6 +12,7 @@ use App\Http\Requests\DeleteCardRequest;
 use App\Http\Requests\FetchCardRequest;
 use App\Http\Requests\PurchaseGiftCardRequest;
 use App\Http\Requests\UserFavouriteItemsRequest;
+use App\Http\Resources\UserReferralResource;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;
 
@@ -461,5 +462,32 @@ class UserController extends APIController
             return $this->respondSuccess('Gift card redeemed successfully',$redeem_gift_card);
         }
         throw new GeneralException('Gift card redeemed failed.');
+    }
+
+    /**
+     * Method referralList
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function referralList()
+    {
+        $referral_list        = $this->repository->getreferralList();
+
+        if( $referral_list->count() )
+        {
+            return $this->respondSuccess('Referral list Found.', UserReferralResource::collection($referral_list));
+        }
+
+        return $this->respondWithError('Referral not found.');
+    }
+
+    /**
+     * Method shareReferral
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function shareReferral()
+    {
+        $share_referral     = $this->repository->shareReferral();
     }
 }

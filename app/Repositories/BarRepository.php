@@ -132,7 +132,7 @@ class BarRepository extends BaseRepository
 
         $order       = $this->orderQuery()
         ->where('type', Order::ORDER)
-        ->whereIn('status', [Order::COMPLETED, Order::RESTAURANT_CANCELED, Order::RESTAURANT_TOXICATION, Order::CONFIRM_PICKUP])
+        ->whereIn('status', [Order::COMPLETED, Order::RESTAURANT_CANCELED, Order::RESTAURANT_TOXICATION, Order::CONFIRM_PICKUP, Order::DENY_ORDER])
         ->orderBy('id','desc');
         // ->get();
 
@@ -308,6 +308,10 @@ class BarRepository extends BaseRepository
                 // RESTAURANT_CANCELED and process for refund
                 $this->orderItemStatusUpdated($order_id,OrderItem::RESTAURANT_CANCELED);
                 $updateArr['status']            = $status;
+                if($order->charge_id)
+                {
+                    $this->refundCharge($order);
+                }
                 $order->update($updateArr);
                 $userCreditAmountBalance = $user->credit_amount;
                 $refundCreditAmount = $order->credit_amount;
@@ -334,10 +338,24 @@ class BarRepository extends BaseRepository
             {
                 // RESTAURANT_TOXICATION and process for refund
                 $updateArr['status']            = $status;
-
+                if($order->charge_id)
+                {
+                    $this->refundCharge($order);
+                }
                 $order->update($updateArr);
                 $title                      = "Restaurant Toxication Order";
                 $message                    = "Restaurant Toxication Order ";
+                $send_notification          = sendNotification($title,$message,$user_tokens,$order_id);
+            }
+
+            if($status == Order::DENY_ORDER)
+            {
+                // DENY_ORDER and process for refund
+                $updateArr['status']            = $status;
+
+                $order->update($updateArr);
+                $title                      = "Restaurant Deny Order";
+                $message                    = "Restaurant Deny  Order ";
                 $send_notification          = sendNotification($title,$message,$user_tokens,$order_id);
             }
 
@@ -349,6 +367,26 @@ class BarRepository extends BaseRepository
             //     $order->loadMissing(['items']);
             // }
         }
+
+        return $order;
+    }
+
+    /**
+     * Method refundCharge
+     *
+     * @param Order $order [explicite description]
+     *
+     * @return Order
+     */
+    function refundCharge(Order $order): Order
+    {
+        $stripe            = new Stripe();
+        $refundArr = [
+            'charge'       => $order->charge_id,
+        ];
+        $refund_data                = $stripe->refundCreate($refundArr);
+        $updateArr['refunded_id']   = $refund_data->id;
+        $order->update($updateArr);
 
         return $order;
     }
