@@ -42,7 +42,7 @@ class OrderResource extends JsonResource
             'remaining_time'            => $this->remainingtime,
             'remaining_date'            => isset($this->remaining_date) ? $this->remaining_date : '',
             'progress'                  => $this->progress ?? 0,
-            'completion_time'           => $this->completion_date->format('Y-m-d H:i:s') ?? '',
+            'completion_time'           => isset($this->remaining_date) ? $this->completion_date->format('Y-m-d H:i:s') : '',
             'served_time'               => $this->served_date ?? '',
             'currency'                  => $this->restaurant->currency->code,
             'symbol'                    => $this->restaurant->country->symbol,
