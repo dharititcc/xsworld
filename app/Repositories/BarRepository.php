@@ -132,7 +132,7 @@ class BarRepository extends BaseRepository
 
         $order       = $this->orderQuery()
         ->where('type', Order::ORDER)
-        ->whereIn('status', [Order::COMPLETED, Order::RESTAURANT_CANCELED, Order::RESTAURANT_TOXICATION, Order::CONFIRM_PICKUP, Order::DENY_ORDER])
+        ->whereIn('status', [Order::RESTAURANT_TOXICATION, Order::CONFIRM_PICKUP, Order::DENY_ORDER])
         ->orderBy('id','desc');
         // ->get();
 
@@ -290,7 +290,7 @@ class BarRepository extends BaseRepository
                     $updateArr['transaction_id']    = $payment_data->balance_transaction;
                 }
                 $updateArr['status']            = $status;
-                $updateArr['completion_date']   = Carbon::now();
+                $updateArr['completion_date']   = Carbon::now()->format('Y-m-d H:i:s');
                 $updateArr['remaining_date']    = Carbon::now();
                 $this->orderItemStatusUpdated($order_id, OrderItem::COMPLETED);
                 // $order = $this->allOrderCompletedlogic($order,$updateArr,$user);
@@ -343,6 +343,10 @@ class BarRepository extends BaseRepository
                     $this->refundCharge($order);
                 }
                 $order->update($updateArr);
+                $userCreditAmountBalance = $user->credit_amount;
+                $refundCreditAmount = $order->credit_amount;
+                $totalCreditAmount = $userCreditAmountBalance + $refundCreditAmount;
+                $this->userCreditAmountUpdated($user,$totalCreditAmount);
                 $title                      = "Restaurant Toxication Order";
                 $message                    = "Restaurant Toxication Order ";
                 $send_notification          = sendNotification($title,$message,$user_tokens,$order_id);
@@ -354,6 +358,10 @@ class BarRepository extends BaseRepository
                 $updateArr['status']            = $status;
 
                 $order->update($updateArr);
+                $userCreditAmountBalance = $user->credit_amount;
+                $refundCreditAmount = $order->credit_amount;
+                $totalCreditAmount = $userCreditAmountBalance + $refundCreditAmount;
+                $this->userCreditAmountUpdated($user,$totalCreditAmount);
                 $title                      = "Restaurant Deny Order";
                 $message                    = "Restaurant Deny  Order ";
                 $send_notification          = sendNotification($title,$message,$user_tokens,$order_id);

@@ -677,7 +677,7 @@ class OrderRepository extends BaseRepository
                     'credit_amount'         => $credit_amount,
                     'restaurant_table_id'   => ($table_id) ? $table_id : null,
                 ];
-                $remaingAmount = $credit_amount - $userCreditAmountBalance;
+                $remaingAmount = $userCreditAmountBalance - $credit_amount;
                 $this->userCreditAmountUpdated($user,$remaingAmount);
             }
 
