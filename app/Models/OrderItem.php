@@ -38,6 +38,7 @@ class OrderItem extends Model
      // Customer status
      const PENDNIG                       = 0;
      const ACCEPTED                      = 1;
+     const CONFIRM_PICKUP                = 5;
      const COMPLETED                     = 2;
 
      const CUSTOMER_CANCELED             = 4;
@@ -51,6 +52,7 @@ class OrderItem extends Model
      const ORDER_STATUS = [
          self::PENDNIG                   => 'Pending',
          self::ACCEPTED                  => 'Accepted',
+         self::CONFIRM_PICKUP            => 'Confirm Pickup',
          self::COMPLETED                 => 'Completed',
          self::RESTAURANT_CANCELED       => 'Cancelled',
          self::PARTIAL_REFUND            => 'Partially Refund',
