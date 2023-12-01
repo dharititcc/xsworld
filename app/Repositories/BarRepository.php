@@ -290,7 +290,7 @@ class BarRepository extends BaseRepository
                     $updateArr['transaction_id']    = $payment_data->balance_transaction;
                 }
                 $updateArr['status']            = $status;
-                $updateArr['completion_date']   = Carbon::now();
+                $updateArr['completion_date']   = Carbon::now()->format('Y-m-d H:i:s');
                 $updateArr['remaining_date']    = Carbon::now();
                 $this->orderItemStatusUpdated($order_id, OrderItem::COMPLETED);
                 // $order = $this->allOrderCompletedlogic($order,$updateArr,$user);
