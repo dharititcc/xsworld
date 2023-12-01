@@ -730,10 +730,17 @@ class OrderRepository extends BaseRepository
         {
             if($status == Order::CUSTOMER_CANCELED)
             {
-
+                if($order->charge_id)
+                {
+                    $stripe            = new Stripe();
+                    $refundArr = [
+                        'charge'       => $order->charge_id,
+                    ];
+                    $refund_data                = $stripe->refundCreate($refundArr);
+                    $updateArr['refunded_id']   = $refund_data->id;
+                }
                 $updateArr['cancel_date']   = Carbon::now();
                 $updateArr['status']        = $status;
-
             }
 
             $order->update($updateArr);

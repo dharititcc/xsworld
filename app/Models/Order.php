@@ -111,7 +111,8 @@ class Order extends Model
         'served_date',
         'completion_date',
         'total',
-        'cancel_reason'
+        'cancel_reason',
+        'refunded_id'
     ];
 
     /**
