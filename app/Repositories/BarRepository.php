@@ -107,7 +107,7 @@ class BarRepository extends BaseRepository
         {
             return $query->whereIn('status', [OrderItem::ACCEPTED, OrderItem::CONFIRM_PICKUP]);
         })
-        ->orderBy('orders.apply_time','asc')
+        ->orderBy('orders.remaining_date','asc')
         ->orderByDesc('orders.id')
         ->get();
 
@@ -169,8 +169,8 @@ class BarRepository extends BaseRepository
         ->where('type', Order::ORDER)
         ->whereIn('status', [Order::COMPLETED])
         // ->orderBy('orders.completion_date', 'asc')
-        ->orderBy('orders.apply_time','asc')
-        ->orderByDesc('orders.id')
+        // ->orderBy('orders.remaining_date','asc')
+        ->orderBy('orders.id','asc')
         ->get();
 
         return $order;
