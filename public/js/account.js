@@ -44,6 +44,41 @@
             context.openBarModal();
             context.closeBarModal();
             context.pickupPointValidation();
+
+            context.passwordToggle();
+        },
+
+        passwordToggle: function()
+        {
+            var context = this;
+
+            jQuery('.show-password').on('click', function(e)
+            {
+                e.preventDefault();
+
+                var $this = $(this),
+                    type  = $this.attr('data-type');
+
+                    console.log(type);
+                if( type == 0 )
+                {
+                    $this.addClass('icon-eye');
+                    $this.removeClass('icon-eye-off');
+                    $this.attr('data-type', 1);
+
+                    // input type text
+                    $this.closest('.form-group').find('input').attr('type', 'text');
+                }
+                else
+                {
+                    $this.addClass('icon-eye-off');
+                    $this.removeClass('icon-eye');
+                    $this.attr('data-type', 0);
+
+                    // input type password
+                    $this.closest('.form-group').find('input').attr('type', 'password');
+                }
+            });
         },
 
         openWaiterModal: function()
