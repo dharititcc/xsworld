@@ -29,6 +29,7 @@ class UserResource extends JsonResource
             'stripe_customer_id'    => $this->stripe_customer_id ?? '',
             'birth_date'            => $this->birth_date ?? '',
             'profile_img'           => $this->image,
+            'referral_url'          => $this->referral_link,
             'qr_code_img'           => $this->qr_image,
             'member_id'             => $this->id,
             'credit_amount'         => (float) $this->credit_amount ?? 0,
