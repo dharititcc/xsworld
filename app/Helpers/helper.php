@@ -317,49 +317,52 @@ if (! function_exists('sendNotification')) {
      */
     function sendNotification(String $title, String $message, array $tokens, int $orderid)
     {
+        if( !empty( $tokens ) )
+        {
+            try {
+                $accesstoken = getenv("FCM_TOKEN");
+                $URL = 'https://fcm.googleapis.com/fcm/send';
 
-        try {
-            $accesstoken = getenv("FCM_TOKEN");
-            $URL = 'https://fcm.googleapis.com/fcm/send';
+                $notification = [
+                    'title'                 =>  $title,
+                    'body'                  =>  $message,
+                    'icon'                  =>  'myIcon',
+                    'sound'                 => 'mySound',
+                    // 'notification_type'  => $type,
+                    'image'                 =>'',
+                    'order_id'              => $orderid
+                ];
 
-            $notification = [
-                'title'                 =>  $title,
-                'body'                  =>  $message,
-                'icon'                  =>  'myIcon',
-                'sound'                 => 'mySound',
-                // 'notification_type'  => $type,
-                'image'                 =>'',
-                'order_id'              => $orderid
-            ];
+                $extraNotificationData = ["data" => $notification];
+                $post_data = [
+                    'registration_ids'    => $tokens, //multple token array
+                    // 'to'                    => $tokens, //single token
+                    'notification'          => $notification,
+                    'data'                  => $extraNotificationData
+                ];
 
-            $extraNotificationData = ["data" => $notification];
-            $post_data = [
-                'registration_ids'    => $tokens, //multple token array
-                // 'to'                    => $tokens, //single token
-                'notification'          => $notification,
-                'data'                  => $extraNotificationData
-            ];
+                $crl = curl_init();
 
-            $crl = curl_init();
+                $headr = array();
+                $headr[] = 'Content-type: application/json';
+                $headr[] = 'Authorization: Bearer ' . $accesstoken;
+                curl_setopt($crl, CURLOPT_SSL_VERIFYPEER, false);
 
-            $headr = array();
-            $headr[] = 'Content-type: application/json';
-            $headr[] = 'Authorization: Bearer ' . $accesstoken;
-            curl_setopt($crl, CURLOPT_SSL_VERIFYPEER, false);
+                curl_setopt($crl, CURLOPT_URL, $URL);
+                curl_setopt($crl, CURLOPT_HTTPHEADER, $headr);
 
-            curl_setopt($crl, CURLOPT_URL, $URL);
-            curl_setopt($crl, CURLOPT_HTTPHEADER, $headr);
+                curl_setopt($crl, CURLOPT_POST, true);
+                curl_setopt($crl, CURLOPT_POSTFIELDS, json_encode($post_data));
+                curl_setopt($crl, CURLOPT_RETURNTRANSFER, true);
 
-            curl_setopt($crl, CURLOPT_POST, true);
-            curl_setopt($crl, CURLOPT_POSTFIELDS, json_encode($post_data));
-            curl_setopt($crl, CURLOPT_RETURNTRANSFER, true);
-
-            $rest = curl_exec($crl);
-            // dd($rest);
-            return true;
-        } catch (Exception $e) {
-            throw new GeneralException($e->getMessage());
+                $rest = curl_exec($crl);
+                // dd($rest);
+                return true;
+            } catch (Exception $e) {
+                throw new GeneralException($e->getMessage());
+            }
         }
+
     }
 }
 
