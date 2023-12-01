@@ -296,7 +296,7 @@ class BarRepository extends BaseRepository
                 $order = $this->allOrderCompletedlogic($order,$updateArr,$user);
 
                 // update order data
-                $this->orderUpdate($order, $updateArr);
+                $order->update($updateArr);
 
                 $title                      = "Order Status Changed";
                 $message                    = "Order is Completed from Bar #".$order_id;
