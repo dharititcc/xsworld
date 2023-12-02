@@ -321,7 +321,7 @@ class OrderRepository extends BaseRepository
         );
         return $user
         ->orders()
-        ->whereIn('status', [Order::ACCEPTED, Order::PENDNIG, Order::COMPLETED])
+        ->whereIn('status', [Order::ACCEPTED, Order::DELAY_ORDER, Order::PENDNIG, Order::COMPLETED])
         ->with([
             'reviews',
             'order_items',
