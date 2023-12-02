@@ -266,13 +266,17 @@ class BarRepository extends BaseRepository
                     if( $status != Order::DELAY_ORDER )
                     {
                         $this->orderItemStatusUpdated($order_id, Order::ACCEPTED);
+
+                        $title                      = "Venue is processing your order";
+                        $message                    = "Venue has accepted your order #".$order_id;
+                        $send_notification          = sendNotification($title,$message,$user_tokens,$order_id);
                     }
 
                     // update order
                     $order->update($updateArr);
 
-                    $title                      = "Order Delay Time Changed";
-                    $message                    = "Bar Delay Your Order #".$order_id;
+                    $title                      = "Venue is processing your order";
+                    $message                    = "Your Order #".$order_id." is delayed by venue";
                     $send_notification          = sendNotification($title,$message,$user_tokens,$order_id);
                 }
                 else
@@ -298,8 +302,8 @@ class BarRepository extends BaseRepository
                 // update order data
                 $order->update($updateArr);
 
-                $title                      = "Order Status Changed";
-                $message                    = "Order is Completed from Bar #".$order_id;
+                $title                      = "Venue is processing your order";
+                $message                    = "Your Order #".$order_id." is completed by venue";
                 $send_notification          = sendNotification($title,$message,$user_tokens,$order_id);
             }
 
@@ -317,8 +321,8 @@ class BarRepository extends BaseRepository
                 $refundCreditAmount = $order->credit_amount;
                 $totalCreditAmount = $userCreditAmountBalance + $refundCreditAmount;
                 $this->userCreditAmountUpdated($user,$totalCreditAmount);
-                $title                      = "Restaurant Cancled Your Order";
-                $message                    = "Restaurant Cancled Your Order #".$order_id;
+                $title                      = "Venue is processing your order";
+                $message                    = "Your Order #".$order_id." is canceled by venue";
                 $send_notification          = sendNotification($title,$message,$user_tokens,$order_id);
             }
 
@@ -329,8 +333,8 @@ class BarRepository extends BaseRepository
                 $this->orderItemStatusUpdated($order_id,OrderItem::CONFIRM_PICKUP);
                 $order = $this->allOrderCompletedlogic($order,$updateArr,$user);
                 $order->update($updateArr);
-                $title                      = "Order Status Changed";
-                $message                    = "Order is Confirm from Bar";
+                $title                      = "Venue is processing your order";
+                $message                    = "Your Order #".$order_id." is pick up from the venue ";
                 $send_notification          = sendNotification($title,$message,$user_tokens,$order_id);
             }
 
@@ -347,8 +351,8 @@ class BarRepository extends BaseRepository
                 $refundCreditAmount = $order->credit_amount;
                 $totalCreditAmount = $userCreditAmountBalance + $refundCreditAmount;
                 $this->userCreditAmountUpdated($user,$totalCreditAmount);
-                $title                      = "Restaurant Toxication Order";
-                $message                    = "Restaurant Toxication Order ";
+                $title                      = "Venue is processing your order";
+                $message                    = "Your Order #".$order_id." is intoxicated by venue";
                 $send_notification          = sendNotification($title,$message,$user_tokens,$order_id);
             }
 
@@ -362,8 +366,8 @@ class BarRepository extends BaseRepository
                 $refundCreditAmount = $order->credit_amount;
                 $totalCreditAmount = $userCreditAmountBalance + $refundCreditAmount;
                 $this->userCreditAmountUpdated($user,$totalCreditAmount);
-                $title                      = "Restaurant Deny Order";
-                $message                    = "Restaurant Deny  Order ";
+                $title                      = "Venue is processing your order";
+                $message                    = "Your Order #".$order_id." is denied by venue";
                 $send_notification          = sendNotification($title,$message,$user_tokens,$order_id);
             }
 
