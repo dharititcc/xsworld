@@ -687,7 +687,7 @@ class OrderRepository extends BaseRepository
         $order->refresh();
         $order->loadMissing(['items']);
 
-        $title              = "Preparing Your order";
+        $title              = "Venue is processing your order";
         $message            = "Your Order is #".$order->id." placed";
         $orderid            = $order->id;
         $send_notification  = sendNotification($title,$message,$devices,$orderid);
@@ -701,7 +701,7 @@ class OrderRepository extends BaseRepository
 
         return $order;
     }
-	
+
 	public function userCreditAmountUpdated(User $user,$remaingAmount)
     {
         User::where('id', $user->id)->update(['credit_amount' => $remaingAmount]);
