@@ -182,15 +182,15 @@ class UserRepository extends BaseRepository
             {
                 // verification email send and send verification code
                 event(new RegisterEvent($user));
-                // $qr_url = URL::current();
-                // $qr_code_image = QrCode::size(500)
-                //     ->format('png')
-                //     ->backgroundColor(139,149,255,0)
-                //     ->generate($qr_url . '/'.$user->id, public_path("customer_qr/qrcode_$user->id.png"));
+                $qr_url = URL::current();
+                $qr_code_image = QrCode::size(500)
+                    ->format('png')
+                    ->backgroundColor(139,149,255,0)
+                    ->generate($qr_url . '/'.$user->id, public_path("customer_qr/qrcode_$user->id.png"));
 
-                // $imageName = "qrcode_$user->id.png";
-                // User::where('id',$user->id)->update(['cus_qr_code_img' => $imageName]);
-                // $user->cus_qr_code_img = $imageName;
+                $imageName = "qrcode_$user->id.png";
+                User::where('id',$user->id)->update(['cus_qr_code_img' => $imageName]);
+                $user->cus_qr_code_img = $imageName;
 
                 $user['referral_code']     = referralCode();
                 $stripe                    = new Stripe();
