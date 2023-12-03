@@ -35,6 +35,10 @@ class User extends Authenticatable
     const USERNAME  = 4;
     const APPLE     = 5;
 
+    const ONE_X     = 0;
+    const FIVE_X    = 1;
+    const TEN_X     = 2;
+
     /**
      * The attributes that are mass assignable.
      *
@@ -88,6 +92,16 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'phone'             => 'integer',
     ];
+
+    /**
+     * Get all of the spins for the User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function spins(): HasMany
+    {
+        return $this->hasMany(Spin::class, 'user_id', 'id');
+    }
 
     /**
      * Get all of the devices for the User
