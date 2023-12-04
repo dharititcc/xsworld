@@ -167,7 +167,7 @@ class UserRepository extends BaseRepository
                 {
                     $data['referral_code']  = referralCode();
                     $data['referrer_id']    = $refer_user->id;
-                    $data['points']         = UserReferrals::TO_USER_POINTS;
+                    $data['points']         = $data['points'] + UserReferrals::TO_USER_POINTS;
 
                     $refer_user['points']   = $refer_user->points + UserReferrals::FROM_USER_POINTS;
                     $refer_user->update();
@@ -175,10 +175,10 @@ class UserRepository extends BaseRepository
                     $referred_data['from_user_id']                  = $refer_user->id;
                     $referred_data['points_earned_by_to_user']      = UserReferrals::FROM_USER_POINTS;
                     $referred_data['points_earned_by_from_user']    = UserReferrals::TO_USER_POINTS;
+                    $referred_data['status']                        = UserReferrals::ACCEPTED;
 
                     $referred_user     = UserReferrals::create($referred_data);
                 }
-                
             }
 
             $user = User::create($data);
@@ -233,7 +233,7 @@ class UserRepository extends BaseRepository
                 $refer_user             = User::where('referral_code',$data['referral_code'])->first();
                 $data['referral_code']  = referralCode();
                 $data['referrer_id']    = $refer_user->id;
-                $data['points']         = UserReferrals::TO_USER_POINTS;
+                $data['points']         = $data['points'] + UserReferrals::TO_USER_POINTS;
 
                 $refer_user['points']   = $refer_user->points + UserReferrals::FROM_USER_POINTS;
                 $refer_user->update();
@@ -241,6 +241,7 @@ class UserRepository extends BaseRepository
                 $referred_data['from_user_id']                  = $refer_user->id;
                 $referred_data['points_earned_by_to_user']      = UserReferrals::FROM_USER_POINTS;
                 $referred_data['points_earned_by_from_user']    = UserReferrals::TO_USER_POINTS;
+                $referred_data['status']                        = UserReferrals::ACCEPTED;
 
                 $referred_user     = UserReferrals::create($referred_data);
             }
