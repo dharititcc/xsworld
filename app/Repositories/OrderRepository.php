@@ -747,6 +747,13 @@ class OrderRepository extends BaseRepository
             $totalCreditAmount = $userCreditAmountBalance + $refundCreditAmount;
             $this->userCreditAmountUpdated($user,$totalCreditAmount);
 
+            $bartitle           = "Order canceled";
+            $barmessage         = "Order #".$order->id." is canceled by customer";
+            $bardevices         = $order->pickup_point_user_id ? $order->pickup_point_user->devices()->pluck('fcm_token')->toArray() : [];
+            if(!empty( $bardevices )) {
+                $bar_notification   = sendNotification($bartitle,$barmessage,$bardevices,$order->id);
+            }
+
             // $title      = "Order is cancelled";
             // $message    = "Your Order is #".$order->id." cancelled";
 
