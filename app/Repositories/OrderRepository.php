@@ -1211,7 +1211,6 @@ class OrderRepository extends BaseRepository
 
         $reOrderItems->loadMissing(['addons','mixer']);
 
-        // dd($reOrderItems);
         // get order items and store into order items table
         foreach ($reOrderItems as  $item) {
             // $item->offsetUnset('order_id');
