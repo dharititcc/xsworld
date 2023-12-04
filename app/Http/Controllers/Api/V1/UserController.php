@@ -13,6 +13,7 @@ use App\Http\Requests\FetchCardRequest;
 use App\Http\Requests\PurchaseGiftCardRequest;
 use App\Http\Requests\UserFavouriteItemsRequest;
 use App\Http\Resources\UserReferralResource;
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;
 
@@ -489,5 +490,26 @@ class UserController extends APIController
     public function shareReferral()
     {
         $share_referral     = $this->repository->shareReferral();
+    }
+
+    /**
+     * Method getSpinResult
+     *
+     * @param Request $request [explicite description]
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getSpinResult(Request $request)
+    {
+        $resultOneX = (int) $this->repository->getSpinResult(User::ONE_X);
+
+        return $this->respond([
+            'status' => true,
+            'data'   => [
+                '1x'    => $resultOneX,
+                '5x'    => 0,
+                '10x'   => 0,
+            ]
+        ]);
     }
 }

@@ -11,8 +11,10 @@ use App\Models\UserGiftCard;
 use App\Models\UserReferrals;
 use App\Models\UsersVerifyMobile;
 use App\Repositories\BaseRepository;
+use App\Repositories\Traits\SpinWheel;
 use File;
 use Illuminate\Foundation\Mix;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Stripe\Source;
 use Stripe\Token;
@@ -24,6 +26,8 @@ use SimpleSoftwareIO\QrCode\Facades\QrCode;
 */
 class UserRepository extends BaseRepository
 {
+    use SpinWheel;
+
     /**
      * Associated Repository Model.
      */
@@ -672,5 +676,18 @@ class UserRepository extends BaseRepository
         $referArr['from_user_id'] = $user->id;
         $referral_list  = UserReferrals::create($referArr);
         return $referral_list;
+    }
+
+    /**
+     * Method getSpinResult
+     *
+     * @param int $type [explicite description]
+     *
+     * @return bool
+     */
+    public function getSpinResult(int $type): bool
+    {
+        $user = auth()->user();
+        return $this->spinWheel($user, $type);
     }
 }
