@@ -70,8 +70,8 @@ class BarRepository extends BaseRepository
             $query->where('category_id',$category_id)
                 ->where('status', OrderItem::PENDNIG);
         })
-        ->where(['type'=> Order::ORDER])
-        // ->where(['type'=> Order::ORDER , 'status' => Order::PENDNIG])
+        // ->where(['type'=> Order::ORDER])
+        ->where(['type'=> Order::ORDER , 'status' => Order::PENDNIG])
         ->orderBy('id','desc')
         ->get();
 
