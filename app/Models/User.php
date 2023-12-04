@@ -39,6 +39,8 @@ class User extends Authenticatable
     const FIVE_X    = 1;
     const TEN_X     = 2;
 
+    const SIGN_UP_POINTS    = 30;
+
     /**
      * The attributes that are mass assignable.
      *
