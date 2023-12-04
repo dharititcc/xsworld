@@ -293,6 +293,8 @@ class OrderRepository extends BaseRepository
             [
                 'latest_cart',
                 'latest_cart.order_items',
+                'latest_cart.order_items.addons',
+                'latest_cart.order_items.mixer',
                 'latest_cart.restaurant',
                 'latest_cart.restaurant.restaurant_pickup_points' => function($query)
                 {
@@ -1188,8 +1190,8 @@ class OrderRepository extends BaseRepository
     public function reOrder(array $data): Order
     {
         $user                   = auth()->user();
-        $orderAgain = Order::where('restaurant_id',$data['restaurant_id'])->where('user_id',$user->id)->where('type',Order::ORDER)->whereNotIn('status',[Order::CUSTOMER_CANCELED,Order::RESTAURANT_CANCELED,Order::RESTAURANT_TOXICATION])->orderByDesc('id')->first();
-        
+        $orderAgain             = $user->orders()->where('restaurant_id', $data['restaurant_id'])->where('type',Order::ORDER)->whereNotIn('status',[Order::CUSTOMER_CANCELED,Order::RESTAURANT_CANCELED,Order::RESTAURANT_TOXICATION])->orderByDesc('id')->first();
+
         $user->loadMissing(['latest_cart', 'latest_cart.restaurant']);
 
         $latestCart = $user->latest_cart;
@@ -1200,18 +1202,21 @@ class OrderRepository extends BaseRepository
             $latestCart->delete();
         }
 
-        $reOrder                = Order::findOrFail($orderAgain->id);
+        $reOrder                = $orderAgain;
         $reOrderItems           = $reOrder->items;
         $newOrder               = $reOrder->replicate();
         $newOrder->type         = Order::CART;
         $newOrder->status       = Order::PENDNIG;
         $newOrder->save();
+
+        // get order items and store into order items table
         foreach ($reOrderItems as  $item) {
             $item->offsetUnset('order_id');
             $newOrder->items()->create($item->toArray());
         }
 
         $newOrder->refresh();
+
         $newOrder->loadMissing(
             [
                 'items',
