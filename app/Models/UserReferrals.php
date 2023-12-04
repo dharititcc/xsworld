@@ -21,7 +21,8 @@ class UserReferrals extends Model
         'from_user_id',
         'to_user_id',
         'points_earned_by_to_user',
-        'points_earned_by_from_user'
+        'points_earned_by_from_user',
+        'status'
     ];
 
     /**

@@ -70,8 +70,8 @@ class BarRepository extends BaseRepository
             $query->where('category_id',$category_id)
                 ->where('status', OrderItem::PENDNIG);
         })
-        ->where(['type'=> Order::ORDER])
-        // ->where(['type'=> Order::ORDER , 'status' => Order::PENDNIG])
+        // ->where(['type'=> Order::ORDER])
+        ->where(['type'=> Order::ORDER , 'status' => Order::PENDNIG])
         ->orderBy('id','desc')
         ->get();
 
@@ -275,9 +275,12 @@ class BarRepository extends BaseRepository
                     // update order
                     $order->update($updateArr);
 
-                    $title                      = "Venue is processing your order";
-                    $message                    = "Your Order #".$order_id." is delayed by venue";
-                    $send_notification          = sendNotification($title,$message,$user_tokens,$order_id);
+                    if($status == Order::DELAY_ORDER)
+                    {
+                        $title                      = "Venue is processing your order";
+                        $message                    = "Your Order #".$order_id." is delayed by venue";
+                        $send_notification          = sendNotification($title,$message,$user_tokens,$order_id);
+                    }
                 }
                 else
                 {

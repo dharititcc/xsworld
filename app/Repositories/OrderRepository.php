@@ -441,14 +441,14 @@ class OrderRepository extends BaseRepository
         // get quarter completed orders sum of the user
         $previousQuarterOrders = $user
             ->orders()
-            ->where('status', Order::COMPLETED)
+            ->where('status', Order::CONFIRM_PICKUP)
             ->where(function ($query) use ($previousQuarter) {
                 $query->whereRaw(DB::raw("DATE(created_at) BETWEEN '{$previousQuarter['start_date']}' AND '{$previousQuarter['end_date']}'"));
             })
             ->get();
         $currentQuarterOrders = $user
             ->orders()
-            ->where('status', Order::COMPLETED)
+            ->where('status', Order::CONFIRM_PICKUP)
             ->where(function ($query) use ($currentQuarter) {
                 $query->whereRaw(DB::raw("DATE(created_at) BETWEEN '{$currentQuarter['start_date']}' AND '{$currentQuarter['end_date']}'"));
             })
@@ -746,6 +746,13 @@ class OrderRepository extends BaseRepository
             $order->update($updateArr);
             $totalCreditAmount = $userCreditAmountBalance + $refundCreditAmount;
             $this->userCreditAmountUpdated($user,$totalCreditAmount);
+
+            $bartitle           = "Order canceled";
+            $barmessage         = "Order #".$order->id." is canceled by customer";
+            $bardevices         = $order->pickup_point_user_id ? $order->pickup_point_user->devices()->pluck('fcm_token')->toArray() : [];
+            if(!empty( $bardevices )) {
+                $bar_notification   = sendNotification($bartitle,$barmessage,$bardevices,$order->id);
+            }
 
             // $title      = "Order is cancelled";
             // $message    = "Your Order is #".$order->id." cancelled";
