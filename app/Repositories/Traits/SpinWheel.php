@@ -2,7 +2,6 @@
 
 namespace App\Repositories\Traits;
 
-use App\Exceptions\GeneralException;
 use App\Models\Spin;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
@@ -55,7 +54,8 @@ trait SpinWheel
                 return $this->getOneXWinningByRange15($user, $type, $range);
             case User::TEN_X:
                 // return 1 / 13; // Platinum users have a constant chance of 1 in 13
-                // Add more user types as needed
+                // logic to get counter and range
+                $range = $this->getRangeBy10($spinCount);
             default:
                 return 0; // Default to no chance
         }
@@ -94,6 +94,24 @@ trait SpinWheel
         $newNumber  = $roundDown*15;
         $start      = $newNumber+1;
         $end        = $newNumber+15;
+
+        return [$start, $end];
+    }
+
+    /**
+     * Method getRangeBy10
+     *
+     * @param int $counter [explicite description]
+     *
+     * @return array
+     */
+    public function getRangeBy10($counter): array
+    {
+        $number     = $counter;
+        $roundDown  = floor($number/13);
+        $newNumber  = $roundDown*13;
+        $start      = $newNumber+1;
+        $end        = $newNumber+13;
 
         return [$start, $end];
     }
@@ -218,7 +236,48 @@ trait SpinWheel
         }
 
         // random
-        return $this->getWinning(1,17);
+        return $this->getWinning(1,15);
+    }
+
+    /**
+     * Method getTenXWinningByRange13
+     *
+     * @param User $user [explicite description]
+     * @param int $type [explicite description]
+     * @param array $range [explicite description]
+     *
+     * @return bool
+     */
+    public function getTenXWinningByRange13(User $user, int $type, array $range): bool
+    {
+        $records = $this->getSpinCountRange($user, $type, $range);
+
+        if( $records->count() )
+        {
+            $search = 1;
+            $filtered = $records->filter(function($item) use ($search) {
+                return stripos($item['is_winner'], $search) !== false;
+            });
+
+            if( $filtered->count() )
+            {
+                return false;
+            }
+            else
+            {
+                if( $records->count() == 14 )
+                {
+                    return true;
+                }
+                else
+                {
+                    return $this->getWinning(1,13);
+                }
+            }
+        }
+
+        // random
+        return $this->getWinning(1,13);
     }
 
     /**
@@ -301,93 +360,132 @@ trait SpinWheel
      *
      * @param array $data [explicite description]
      *
-     * @return Spin
-     * @throws \App\Exceptions\GeneralException
+     * @return bool
      */
-    public function storeSpin(array $data): Spin
+    public function storeSpin(array $data): bool
     {
         $user = auth()->user();
 
-        $spin = $user->spins()->create([
-            'type'      => $data['type'],
-            'is_winner' => $data['is_winner']
-        ]);
+        $pointsToDebit = 60;
+        $amountWin     = 0;
+        $updatedPoints = 0;
 
-        if( isset($spin->id) )
+        switch($data['type'])
         {
-            $pointsToDebit = 60;
-            $amountWin     = 0;
+            case User::ONE_X:
+                // insert spin record
+                $this->insertSpinResult($user, ['type' => User::ONE_X, 'is_winner' => $data['is_winner']]);
 
-            switch($data['type'])
-            {
-                case User::ONE_X:
-                    // update user points
-                    $updatedPoints = $user->points - $pointsToDebit;
+                // update user points
+                $updatedPoints = $user->points - $pointsToDebit;
 
-                    // update user credits if win
-                    if( $data['is_winner'] == 1 )
+                // update user credits if win
+                if( $data['is_winner'] == 1 )
+                {
+                    $amountWin = $user->credit_amount + 2.5;
+                }
+                else
+                {
+                    $amountWin = $user->credit_amount + 0;
+                }
+
+                break;
+            case User::FIVE_X:
+                // update user points
+                $updatedPoints = $user->points - ($pointsToDebit*5);
+
+                // update user credits if win
+                if( $data['is_winner'] == 1 )
+                {
+                    for( $i = 0; $i < 5; $i++ )
                     {
-                        $amountWin = $user->credit_amount + 2.5;
+                        $winner = 0;
+                        if( $i == 4 )
+                        {
+                            $winner = 1;
+                        }
+                        // insert spin record
+                        $this->insertSpinResult($user, ['type' => User::FIVE_X, 'is_winner' => $winner]);
                     }
-                    else
+                    $amountWin = $user->credit_amount + 5;
+                }
+                else
+                {
+                    for( $i = 0; $i < 5; $i++ )
                     {
-                        $amountWin = $user->credit_amount + 0;
+                        // insert spin record
+                        $this->insertSpinResult($user, ['type' => User::FIVE_X, 'is_winner' => $data['is_winner']]);
                     }
+                    $amountWin = $user->credit_amount + 0;
+                }
+                break;
+            case User::TEN_X:
+                // update user points
+                $updatedPoints = $user->points - ($pointsToDebit*10);
 
-                    break;
-                case User::FIVE_X:
-                    // update user points
-                    $updatedPoints = $user->points - ($pointsToDebit*5);
-
-                    // update user credits if win
-                    if( $data['is_winner'] == 1 )
+                // update user credits if win
+                if( $data['is_winner'] == 1 )
+                {
+                    for( $i = 0; $i < 10; $i++ )
                     {
-                        $amountWin = $user->credit_amount + 5;
+                        $winner = 0;
+                        if( $i == 9 )
+                        {
+                            $winner = 1;
+                        }
+                        // insert spin record
+                        $this->insertSpinResult($user, ['type' => User::TEN_X, 'is_winner' => $winner]);
                     }
-                    else
+                    $amountWin = $user->credit_amount + 5;
+                }
+                else
+                {
+                    for( $i = 0; $i < 10; $i++ )
                     {
-                        $amountWin = $user->credit_amount + 0;
+                        // insert spin record
+                        $this->insertSpinResult($user, ['type' => User::TEN_X, 'is_winner' => $data['is_winner']]);
                     }
-                    break;
-                case User::TEN_X:
-                    // update user points
-                    $updatedPoints = $user->points - ($pointsToDebit*10);
+                    $amountWin = $user->credit_amount + 0;
+                }
+                break;
+            default:
+                // insert spin record
+                $this->insertSpinResult($user, ['type' => User::ONE_X, 'is_winner' => $data['is_winner']]);
 
-                    // update user credits if win
-                    if( $data['is_winner'] == 1 )
-                    {
-                        $amountWin = $user->credit_amount + 5;
-                    }
-                    else
-                    {
-                        $amountWin = $user->credit_amount + 0;
-                    }
-                    break;
-                default:
-                    // update user points
-                    $updatedPoints = $user->points - $pointsToDebit;
+                // update user points
+                $updatedPoints = $user->points - $pointsToDebit;
 
-                    // update user credits if win
-                    if( $data['is_winner'] == 1 )
-                    {
-                        $amountWin = $user->credit_amount + 2.5;
-                    }
-                    else
-                    {
-                        $amountWin = $user->credit_amount + 0;
-                    }
+                // update user credits if win
+                if( $data['is_winner'] == 1 )
+                {
+                    $amountWin = $user->credit_amount + 2.5;
+                }
+                else
+                {
+                    $amountWin = $user->credit_amount + 0;
+                }
 
-                    break;
-            }
-
-            $user->update([
-                'points'        => $updatedPoints,
-                'credit_amount' => $amountWin
-            ]);
-
-            return $spin;
+                break;
         }
 
-        throw new GeneralException('Spin result is failed to store.');
+        $user->update([
+            'points'        => $updatedPoints,
+            'credit_amount' => $amountWin
+        ]);
+
+        return true;
+    }
+
+    /**
+     * Method insertSpinResult
+     *
+     * @param User $user [explicite description]
+     * @param array $data [explicite description]
+     *
+     * @return Spin
+     */
+    public function insertSpinResult(User $user, array $data): Spin
+    {
+        return $user->spins()->create($data);
     }
 }
