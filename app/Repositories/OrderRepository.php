@@ -1172,30 +1172,44 @@ class OrderRepository extends BaseRepository
     }
 
     /**
-     * Method ReOrder
+     * Method reOrder
      *
      * @param array $data [explicite description]
      *
      * @return \App\Models\Order
      */
-    public function ReOrder(array $data): Order
+    public function reOrder(array $data): Order
     {
         $user                   = auth()->user();
-        $reOrder                = Order::findOrFail($data['order_id']);
-        $reOrderItems           = $reOrder->order_items;
+        $orderAgain = Order::where('restaurant_id',$data['restaurant_id'])->where('user_id',$user->id)->where('type',Order::ORDER)->whereNotIn('status',[Order::CUSTOMER_CANCELED,Order::RESTAURANT_CANCELED,Order::RESTAURANT_TOXICATION])->orderByDesc('id')->first();
+        
+        $user->loadMissing(['latest_cart', 'latest_cart.restaurant']);
+
+        $latestCart = $user->latest_cart;
+
+        if( isset( $latestCart->id ) && ($latestCart->restaurant->id ==  $data['restaurant_id']) )
+        {
+            // check restaurant id available in the cart
+            $latestCart->delete();
+        }
+
+        $reOrder                = Order::findOrFail($orderAgain->id);
+        $reOrderItems           = $reOrder->items;
         $newOrder               = $reOrder->replicate();
         $newOrder->type         = Order::CART;
         $newOrder->status       = Order::PENDNIG;
         $newOrder->save();
-
         foreach ($reOrderItems as  $item) {
             $item->offsetUnset('order_id');
             $newOrder->items()->create($item->toArray());
         }
 
+        $newOrder->refresh();
         $newOrder->loadMissing(
             [
-                'order_items',
+                'items',
+                'items.addons',
+                'items.mixer',
                 'restaurant_table',
                 'restaurant'
             ]

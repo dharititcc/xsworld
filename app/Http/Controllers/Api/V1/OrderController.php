@@ -320,7 +320,7 @@ class OrderController extends APIController
     public function reOrder(Request $request)
     {
         $input      = $request->all();
-        $reorder    = $this->repository->ReOrder($input);
+        $reorder    = $this->repository->reOrder($input);
 
         if(isset($reorder->id))
         {
