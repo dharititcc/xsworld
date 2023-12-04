@@ -253,6 +253,12 @@ class BarRepository extends BaseRepository
                     {
                         $old_time           = Carbon::parse($order->remaining_date);
                         $remaining_date     = $old_time->addMinutes($apply_time);
+                        $old_time           = Carbon::parse($remaining_date)->isPast();
+                        if($old_time == true)
+                        {
+                            $current_time       = Carbon::now();
+                            $remaining_date     = $current_time->addMinutes($apply_time);
+                        }
                     }
                     else
                     {
