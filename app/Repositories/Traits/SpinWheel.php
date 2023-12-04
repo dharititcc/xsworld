@@ -2,6 +2,8 @@
 
 namespace App\Repositories\Traits;
 
+use App\Exceptions\GeneralException;
+use App\Models\Spin;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -230,5 +232,100 @@ trait SpinWheel
     public function getSpinCounterByType(User $user, $type): int
     {
         return $user->spins()->where('type', $type)->count();
+    }
+
+    /**
+     * Method storeSpin
+     *
+     * @param array $data [explicite description]
+     *
+     * @return Spin
+     * @throws \App\Exceptions\GeneralException
+     */
+    public function storeSpin(array $data): Spin
+    {
+        $user = auth()->user();
+
+        $spin = $user->spins()->create([
+            'type'      => $data['type'],
+            'is_winner' => $data['is_winner']
+        ]);
+
+        if( isset($spin->id) )
+        {
+            $pointsToDebit = 60;
+            $amountWin     = 0;
+
+            switch($data['type'])
+            {
+                case User::ONE_X:
+                    // update user points
+                    $updatedPoints = $user->points + $pointsToDebit;
+
+                    // update user credits if win
+                    if( $data['is_winner'] == 1 )
+                    {
+                        $amountWin = $user->credit_amount + 2.5;
+                    }
+                    else
+                    {
+                        $amountWin = $user->credit_amount + 0;
+                    }
+
+                    break;
+                case User::FIVE_X:
+                    // update user points
+                    $updatedPoints = $user->points + ($pointsToDebit*5);
+
+                    // update user credits if win
+                    if( $data['is_winner'] == 1 )
+                    {
+                        $amountWin = $user->credit_amount + 5;
+                    }
+                    else
+                    {
+                        $amountWin = $user->credit_amount + 0;
+                    }
+                    break;
+                case User::TEN_X:
+                    // update user points
+                    $updatedPoints = $user->points + ($pointsToDebit*10);
+
+                    // update user credits if win
+                    if( $data['is_winner'] == 1 )
+                    {
+                        $amountWin = $user->credit_amount + 5;
+                    }
+                    else
+                    {
+                        $amountWin = $user->credit_amount + 0;
+                    }
+                    break;
+                default:
+                    // update user points
+                    $updatedPoints = $user->points + $pointsToDebit;
+
+                    // update user credits if win
+                    if( $data['is_winner'] == 1 )
+                    {
+                        $amountWin = $user->credit_amount + 2.5;
+                    }
+                    else
+                    {
+                        $amountWin = $user->credit_amount + 0;
+                    }
+
+                    break;
+            }
+
+            $user->update([
+                'points'        => $updatedPoints,
+                'credit_amount' => $amountWin
+            ]);
+
+            return $spin;
+        }
+
+        throw new GeneralException('Spin result is failed to store.');
     }
 }

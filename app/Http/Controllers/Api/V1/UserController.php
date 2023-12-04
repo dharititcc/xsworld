@@ -501,15 +501,39 @@ class UserController extends APIController
      */
     public function getSpinResult(Request $request)
     {
-        $resultOneX = (int) $this->repository->getSpinResult(User::ONE_X);
+        $resultOneX     = (int) $this->repository->getSpinResult(User::ONE_X);
+        $resultFiveX    = (int) $this->repository->getSpinResult(User::FIVE_X);
+        $resultTenX     = (int) $this->repository->getSpinResult(User::TEN_X);
 
         return $this->respond([
             'status' => true,
             'data'   => [
                 '1x'    => $resultOneX,
-                '5x'    => 0,
-                '10x'   => 0,
+                '5x'    => $resultFiveX,
+                '10x'   => $resultTenX,
             ]
+        ]);
+    }
+
+    /**
+     * Method storeSpin
+     *
+     * @param Request $request [explicite description]
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function storeSpin(Request $request)
+    {
+        $spin = $this->repository->storeSpin($request->all());
+
+        $resultOneX     = (int) $this->repository->getSpinResult(User::ONE_X);
+        $resultFiveX    = (int) $this->repository->getSpinResult(User::FIVE_X);
+        $resultTenX     = (int) $this->repository->getSpinResult(User::TEN_X);
+
+        return $this->respondSuccess('Spin stored successfully.', [
+            '1x'    => $resultOneX,
+            '5x'    => $resultFiveX,
+            '10x'   => $resultTenX,
         ]);
     }
 }
