@@ -40,7 +40,7 @@ trait SpinWheel
                     return $this->getOneXWinningByRange11($user, $type, [45,55]);
 
                 } else if ( $spinCount > 55 ) {
-                    return 1 / 17; // After 55 spins, lifetime chance is 1 in 17
+                    // return 1 / 17; // After 55 spins, lifetime chance is 1 in 17
 
                     // logic to get counter and range
                     $range = $this->getRangeBy17($spinCount);
@@ -211,10 +211,10 @@ trait SpinWheel
         $winningChance  = $this->calculateWinningChance($user, $type, $spinCount);
 
         // Save spin result to the database (you need to have a table for spins)
-        $user->spins()->create([
-            'type'      => $type,
-            'is_winner' => $winningChance
-        ]);
+        // $user->spins()->create([
+        //     'type'      => $type,
+        //     'is_winner' => $winningChance
+        // ]);
 
         return $winningChance;
     }
