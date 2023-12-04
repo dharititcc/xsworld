@@ -441,14 +441,14 @@ class OrderRepository extends BaseRepository
         // get quarter completed orders sum of the user
         $previousQuarterOrders = $user
             ->orders()
-            ->where('status', Order::COMPLETED)
+            ->where('status', Order::CONFIRM_PICKUP)
             ->where(function ($query) use ($previousQuarter) {
                 $query->whereRaw(DB::raw("DATE(created_at) BETWEEN '{$previousQuarter['start_date']}' AND '{$previousQuarter['end_date']}'"));
             })
             ->get();
         $currentQuarterOrders = $user
             ->orders()
-            ->where('status', Order::COMPLETED)
+            ->where('status', Order::CONFIRM_PICKUP)
             ->where(function ($query) use ($currentQuarter) {
                 $query->whereRaw(DB::raw("DATE(created_at) BETWEEN '{$currentQuarter['start_date']}' AND '{$currentQuarter['end_date']}'"));
             })
