@@ -1203,25 +1203,50 @@ class OrderRepository extends BaseRepository
         }
 
         $reOrder                = $orderAgain;
-        $reOrderItems           = $reOrder->items;
+        $reOrderItems           = $reOrder->order_items;
         $newOrder               = $reOrder->replicate();
         $newOrder->type         = Order::CART;
         $newOrder->status       = Order::PENDNIG;
         $newOrder->save();
 
+        $reOrderItems->loadMissing(['addons','mixer']);
+
         // get order items and store into order items table
         foreach ($reOrderItems as  $item) {
-            $item->offsetUnset('order_id');
-            $newOrder->items()->create($item->toArray());
+            // $item->offsetUnset('order_id');
+            $newOrderItem = $newOrder->order_items()->create($item->toArray());
+
+            // create addons
+            if($item->addons->count()) {
+                foreach( $item->addons as $addon )
+                {
+                    // clear old parent item id
+                    $addon->offsetUnset('parent_item_id');
+                    $addon->offsetUnset('order_id');
+                    $addon->order_id =  $newOrderItem->order_id;
+                    $newOrderItem->addons()->create($addon->toArray());
+                }
+            }
+
+            // create mixer
+            if( isset( $item->mixer->id ) )
+            {
+                // create mixer for specific item
+                // clear old parent item id
+                $item->mixer->offsetUnset('parent_item_id');
+                $item->mixer->offsetUnset('order_id');
+                $item->mixer->order_id =  $newOrderItem->order_id;
+                $newOrderItem->mixer()->create($item->mixer->toArray());
+            }
         }
 
         $newOrder->refresh();
 
         $newOrder->loadMissing(
             [
-                'items',
-                'items.addons',
-                'items.mixer',
+                'order_items',
+                'order_items.addons',
+                'order_items.mixer',
                 'restaurant_table',
                 'restaurant'
             ]
