@@ -42,17 +42,19 @@ trait SpinWheel
                     return $this->getOneXWinningByRange11($user, $type, [45,55]);
 
                 } else if ( $spinCount > 55 ) {
-                    // return 1 / 17; // After 55 spins, lifetime chance is 1 in 17
-
                     // logic to get counter and range
                     $range = $this->getRangeBy17($spinCount);
 
                     return $this->getOneXWinningByRange17($user, $type, $range);
                 }
             case User::FIVE_X:
-                return 1 / 15; // Gold users have a constant chance of 1 in 15
+                // return 1 / 15; // Gold users have a constant chance of 1 in 15
+                // logic to get counter and range
+                $range = $this->getRangeBy5($spinCount);
+
+                return $this->getOneXWinningByRange15($user, $type, $range);
             case User::TEN_X:
-                return 1 / 13; // Platinum users have a constant chance of 1 in 13
+                // return 1 / 13; // Platinum users have a constant chance of 1 in 13
                 // Add more user types as needed
             default:
                 return 0; // Default to no chance
@@ -71,8 +73,27 @@ trait SpinWheel
         $number     = $counter - 55;
         $roundDown  = floor($number/17);
         $newNumber  = $roundDown*17;
+        $newNumber  = $newNumber+55;
         $start      = $newNumber+1;
         $end        = $newNumber+17;
+
+        return [$start, $end];
+    }
+
+    /**
+     * Method getRangeBy5
+     *
+     * @param int $counter [explicite description]
+     *
+     * @return array
+     */
+    public function getRangeBy5($counter): array
+    {
+        $number     = $counter;
+        $roundDown  = floor($number/15);
+        $newNumber  = $roundDown*15;
+        $start      = $newNumber+1;
+        $end        = $newNumber+15;
 
         return [$start, $end];
     }
@@ -151,6 +172,47 @@ trait SpinWheel
                 else
                 {
                     return $this->getWinning(1,17);
+                }
+            }
+        }
+
+        // random
+        return $this->getWinning(1,17);
+    }
+
+    /**
+     * Method getOneXWinningByRange15
+     *
+     * @param User $user [explicite description]
+     * @param int $type [explicite description]
+     * @param array $range [explicite description]
+     *
+     * @return bool
+     */
+    public function getOneXWinningByRange15(User $user, int $type, array $range): bool
+    {
+        $records = $this->getSpinCountRange($user, $type, $range);
+
+        if( $records->count() )
+        {
+            $search = 1;
+            $filtered = $records->filter(function($item) use ($search) {
+                return stripos($item['is_winner'], $search) !== false;
+            });
+
+            if( $filtered->count() )
+            {
+                return false;
+            }
+            else
+            {
+                if( $records->count() == 14 )
+                {
+                    return true;
+                }
+                else
+                {
+                    return $this->getWinning(1,15);
                 }
             }
         }
