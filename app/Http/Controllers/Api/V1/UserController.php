@@ -508,7 +508,7 @@ class UserController extends APIController
         return $this->respond([
             'status' => true,
             'message'=> 'Spin result before you spin.',
-            'data'   => [
+            'item'   => [
                 'one_x'     => $resultOneX,
                 'five_x'    => $resultFiveX,
                 'ten_x'     => $resultTenX,
