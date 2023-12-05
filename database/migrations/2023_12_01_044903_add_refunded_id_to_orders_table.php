@@ -22,7 +22,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('orders', function (Blueprint $table) {
-            $table->string('refunded_id')->comment('Refund id from Stripe')->nullable();
+            $table->dropColumn('refunded_id');
         });
     }
 };

@@ -45,12 +45,13 @@ class CreateRestaurantTablesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('restaurant_tables');
         Schema::table('orders', function (Blueprint $table) {
-            $table->dropForeign('users_waiter_id_foreign');
-            $table->dropForeign('restaurant_tables_restaurant_table_id_foreign');
+            $table->dropForeign(['waiter_id']);
+            $table->dropForeign(['restaurant_table_id']);
             $table->dropColumn('waiter_id');
             $table->dropColumn('restaurant_table_id');
         });
+
+        Schema::dropIfExists('restaurant_tables');
     }
 }
