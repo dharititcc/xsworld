@@ -12,6 +12,7 @@ use App\Http\Requests\DeleteCardRequest;
 use App\Http\Requests\FetchCardRequest;
 use App\Http\Requests\PurchaseGiftCardRequest;
 use App\Http\Requests\UserFavouriteItemsRequest;
+use App\Http\Resources\SpinWinningResource;
 use App\Http\Resources\UserReferralResource;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
@@ -536,5 +537,24 @@ class UserController extends APIController
             'five_x'    => $resultFiveX,
             'ten_x'     => $resultTenX,
         ]);
+    }
+
+    /**
+     * Method myWinning
+     *
+     * @param Request $request [explicite description]
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function myWinning(Request $request)
+    {
+        $result = $this->repository->myWinning();
+
+        if( $result->count() )
+        {
+            return $this->respondSuccess('Winning list found.', SpinWinningResource::collection($result));
+        }
+
+        throw new GeneralException('There is no winning in the spin game yet.');
     }
 }
