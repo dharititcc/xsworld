@@ -507,10 +507,11 @@ class UserController extends APIController
 
         return $this->respond([
             'status' => true,
-            'data'   => [
-                '1x'    => $resultOneX,
-                '5x'    => $resultFiveX,
-                '10x'   => $resultTenX,
+            'message'=> 'Spin result before you spin.',
+            'item'   => [
+                'one_x'     => $resultOneX,
+                'five_x'    => $resultFiveX,
+                'ten_x'     => $resultTenX,
             ]
         ]);
     }
@@ -531,9 +532,9 @@ class UserController extends APIController
         $resultTenX     = (int) $this->repository->getSpinResult(User::TEN_X);
 
         return $this->respondSuccess('Spin stored successfully.', [
-            '1x'    => $resultOneX,
-            '5x'    => $resultFiveX,
-            '10x'   => $resultTenX,
+            'one_x'     => $resultOneX,
+            'five_x'    => $resultFiveX,
+            'ten_x'     => $resultTenX,
         ]);
     }
 }

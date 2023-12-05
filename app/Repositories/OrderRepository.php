@@ -293,6 +293,8 @@ class OrderRepository extends BaseRepository
             [
                 'latest_cart',
                 'latest_cart.order_items',
+                'latest_cart.order_items.addons',
+                'latest_cart.order_items.mixer',
                 'latest_cart.restaurant',
                 'latest_cart.restaurant.restaurant_pickup_points' => function($query)
                 {
@@ -441,14 +443,14 @@ class OrderRepository extends BaseRepository
         // get quarter completed orders sum of the user
         $previousQuarterOrders = $user
             ->orders()
-            ->where('status', Order::COMPLETED)
+            ->where('status', Order::CONFIRM_PICKUP)
             ->where(function ($query) use ($previousQuarter) {
                 $query->whereRaw(DB::raw("DATE(created_at) BETWEEN '{$previousQuarter['start_date']}' AND '{$previousQuarter['end_date']}'"));
             })
             ->get();
         $currentQuarterOrders = $user
             ->orders()
-            ->where('status', Order::COMPLETED)
+            ->where('status', Order::CONFIRM_PICKUP)
             ->where(function ($query) use ($currentQuarter) {
                 $query->whereRaw(DB::raw("DATE(created_at) BETWEEN '{$currentQuarter['start_date']}' AND '{$currentQuarter['end_date']}'"));
             })
@@ -1179,30 +1181,77 @@ class OrderRepository extends BaseRepository
     }
 
     /**
-     * Method ReOrder
+     * Method reOrder
      *
      * @param array $data [explicite description]
      *
      * @return \App\Models\Order
      */
-    public function ReOrder(array $data): Order
+    public function reOrder(array $data): Order
     {
         $user                   = auth()->user();
-        $reOrder                = Order::findOrFail($data['order_id']);
+        $orderAgain             = $user->orders()->where('restaurant_id', $data['restaurant_id'])->where('type',Order::ORDER)->whereNotIn('status',[Order::CUSTOMER_CANCELED,Order::RESTAURANT_CANCELED,Order::RESTAURANT_TOXICATION])->orderByDesc('id')->first();
+
+        if( !isset($orderAgain->id) )
+        {
+            throw new GeneralException('There is no order');
+        }
+
+        $user->loadMissing(['latest_cart', 'latest_cart.restaurant']);
+
+        $latestCart = $user->latest_cart;
+
+        if( isset( $latestCart->id ) && ($latestCart->restaurant->id ==  $data['restaurant_id']) )
+        {
+            // check restaurant id available in the cart
+            $latestCart->delete();
+        }
+
+        $reOrder                = $orderAgain;
         $reOrderItems           = $reOrder->order_items;
         $newOrder               = $reOrder->replicate();
         $newOrder->type         = Order::CART;
         $newOrder->status       = Order::PENDNIG;
         $newOrder->save();
 
+        $reOrderItems->loadMissing(['addons','mixer']);
+
+        // get order items and store into order items table
         foreach ($reOrderItems as  $item) {
-            $item->offsetUnset('order_id');
-            $newOrder->items()->create($item->toArray());
+            // $item->offsetUnset('order_id');
+            $newOrderItem = $newOrder->order_items()->create($item->toArray());
+
+            // create addons
+            if($item->addons->count()) {
+                foreach( $item->addons as $addon )
+                {
+                    // clear old parent item id
+                    $addon->offsetUnset('parent_item_id');
+                    $addon->offsetUnset('order_id');
+                    $addon->order_id =  $newOrderItem->order_id;
+                    $newOrderItem->addons()->create($addon->toArray());
+                }
+            }
+
+            // create mixer
+            if( isset( $item->mixer->id ) )
+            {
+                // create mixer for specific item
+                // clear old parent item id
+                $item->mixer->offsetUnset('parent_item_id');
+                $item->mixer->offsetUnset('order_id');
+                $item->mixer->order_id =  $newOrderItem->order_id;
+                $newOrderItem->mixer()->create($item->mixer->toArray());
+            }
         }
+
+        $newOrder->refresh();
 
         $newOrder->loadMissing(
             [
                 'order_items',
+                'order_items.addons',
+                'order_items.mixer',
                 'restaurant_table',
                 'restaurant'
             ]
