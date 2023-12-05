@@ -14,6 +14,7 @@ use App\Http\Requests\PurchaseGiftCardRequest;
 use App\Http\Requests\UserFavouriteItemsRequest;
 use App\Http\Resources\SpinWinningResource;
 use App\Http\Resources\UserReferralResource;
+use App\Models\Spin;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;
@@ -502,9 +503,9 @@ class UserController extends APIController
      */
     public function getSpinResult(Request $request)
     {
-        $resultOneX     = (int) $this->repository->getSpinResult(User::ONE_X);
-        $resultFiveX    = (int) $this->repository->getSpinResult(User::FIVE_X);
-        $resultTenX     = (int) $this->repository->getSpinResult(User::TEN_X);
+        $resultOneX     = (int) $this->repository->getSpinResult(Spin::ONE_X);
+        $resultFiveX    = (int) $this->repository->getSpinResult(Spin::FIVE_X);
+        $resultTenX     = (int) $this->repository->getSpinResult(Spin::TEN_X);
 
         return $this->respond([
             'status' => true,
@@ -528,9 +529,9 @@ class UserController extends APIController
     {
         $spin = $this->repository->storeSpin($request->all());
 
-        $resultOneX     = (int) $this->repository->getSpinResult(User::ONE_X);
-        $resultFiveX    = (int) $this->repository->getSpinResult(User::FIVE_X);
-        $resultTenX     = (int) $this->repository->getSpinResult(User::TEN_X);
+        $resultOneX     = (int) $this->repository->getSpinResult(Spin::ONE_X);
+        $resultFiveX    = (int) $this->repository->getSpinResult(Spin::FIVE_X);
+        $resultTenX     = (int) $this->repository->getSpinResult(Spin::TEN_X);
 
         return $this->respondSuccess('Spin stored successfully.', [
             'one_x'     => $resultOneX,

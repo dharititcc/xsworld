@@ -19,7 +19,7 @@ trait SpinWheel
     public function calculateWinningChance(User $user, $type, $spinCount): int
     {
         switch ($type) {
-            case User::ONE_X:
+            case Spin::ONE_X:
                 if ($spinCount <= 11) {
 
                     return $this->getOneXWinningByRange11($user, $type, [1,11]);
@@ -46,13 +46,13 @@ trait SpinWheel
 
                     return $this->getOneXWinningByRange17($user, $type, $range);
                 }
-            case User::FIVE_X:
+            case Spin::FIVE_X:
                 // return 1 / 15; // Gold users have a constant chance of 1 in 15
                 // logic to get counter and range
                 $range = $this->getRangeBy5($spinCount);
 
                 return $this->getOneXWinningByRange15($user, $type, $range);
-            case User::TEN_X:
+            case Spin::TEN_X:
                 // return 1 / 13; // Platinum users have a constant chance of 1 in 13
                 // logic to get counter and range
                 $range = $this->getRangeBy13($spinCount);
@@ -372,9 +372,9 @@ trait SpinWheel
 
         switch($data['type'])
         {
-            case User::ONE_X:
+            case Spin::ONE_X:
                 // insert spin record
-                $this->insertSpinResult($user, ['type' => User::ONE_X, 'is_winner' => $data['is_winner']]);
+                $this->insertSpinResult($user, ['type' => Spin::ONE_X, 'is_winner' => $data['is_winner']]);
 
                 // update user points
                 $updatedPoints = $user->points - $pointsToDebit;
@@ -390,7 +390,7 @@ trait SpinWheel
                 }
 
                 break;
-            case User::FIVE_X:
+            case Spin::FIVE_X:
                 // update user points
                 $updatedPoints = $user->points - ($pointsToDebit*5);
 
@@ -405,7 +405,7 @@ trait SpinWheel
                             $winner = 1;
                         }
                         // insert spin record
-                        $this->insertSpinResult($user, ['type' => User::FIVE_X, 'is_winner' => $winner]);
+                        $this->insertSpinResult($user, ['type' => Spin::FIVE_X, 'is_winner' => $winner]);
                     }
                     $amountWin = $user->credit_amount + 5;
                 }
@@ -414,12 +414,12 @@ trait SpinWheel
                     for( $i = 0; $i < 5; $i++ )
                     {
                         // insert spin record
-                        $this->insertSpinResult($user, ['type' => User::FIVE_X, 'is_winner' => $data['is_winner']]);
+                        $this->insertSpinResult($user, ['type' => Spin::FIVE_X, 'is_winner' => $data['is_winner']]);
                     }
                     $amountWin = $user->credit_amount + 0;
                 }
                 break;
-            case User::TEN_X:
+            case Spin::TEN_X:
                 // update user points
                 $updatedPoints = $user->points - ($pointsToDebit*10);
 
@@ -434,7 +434,7 @@ trait SpinWheel
                             $winner = 1;
                         }
                         // insert spin record
-                        $this->insertSpinResult($user, ['type' => User::TEN_X, 'is_winner' => $winner]);
+                        $this->insertSpinResult($user, ['type' => Spin::TEN_X, 'is_winner' => $winner]);
                     }
                     $amountWin = $user->credit_amount + 5;
                 }
@@ -443,14 +443,14 @@ trait SpinWheel
                     for( $i = 0; $i < 10; $i++ )
                     {
                         // insert spin record
-                        $this->insertSpinResult($user, ['type' => User::TEN_X, 'is_winner' => $data['is_winner']]);
+                        $this->insertSpinResult($user, ['type' => Spin::TEN_X, 'is_winner' => $data['is_winner']]);
                     }
                     $amountWin = $user->credit_amount + 0;
                 }
                 break;
             default:
                 // insert spin record
-                $this->insertSpinResult($user, ['type' => User::ONE_X, 'is_winner' => $data['is_winner']]);
+                $this->insertSpinResult($user, ['type' => Spin::ONE_X, 'is_winner' => $data['is_winner']]);
 
                 // update user points
                 $updatedPoints = $user->points - $pointsToDebit;

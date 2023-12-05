@@ -35,10 +35,6 @@ class User extends Authenticatable
     const USERNAME  = 4;
     const APPLE     = 5;
 
-    const ONE_X     = 0;
-    const FIVE_X    = 1;
-    const TEN_X     = 2;
-
     const SIGN_UP_POINTS    = 30;
 
     /**
