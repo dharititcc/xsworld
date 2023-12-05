@@ -92,6 +92,7 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'v1', 'as' => 'api.v1.'], fun
         Route::post('/re-order', 'OrderController@reOrder')->name('reOrder');
         Route::get('/spin-status', 'UserController@getSpinResult')->name('user.spin');
         Route::post('/spin/store', 'UserController@storeSpin')->name('user.spin.store');
+        Route::get('/my-winning', 'UserController@myWinning')->name('user.spin.index');
     });
 
     Route::group(['prefix' => 'users','middleware' => 'auth:api'], function ()

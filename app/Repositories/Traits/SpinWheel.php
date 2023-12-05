@@ -55,7 +55,7 @@ trait SpinWheel
             case User::TEN_X:
                 // return 1 / 13; // Platinum users have a constant chance of 1 in 13
                 // logic to get counter and range
-                $range = $this->getRangeBy10($spinCount);
+                $range = $this->getRangeBy13($spinCount);
             default:
                 return 0; // Default to no chance
         }
@@ -99,13 +99,13 @@ trait SpinWheel
     }
 
     /**
-     * Method getRangeBy10
+     * Method getRangeBy13
      *
      * @param int $counter [explicite description]
      *
      * @return array
      */
-    public function getRangeBy10($counter): array
+    public function getRangeBy13($counter): array
     {
         $number     = $counter;
         $roundDown  = floor($number/13);
@@ -487,5 +487,17 @@ trait SpinWheel
     public function insertSpinResult(User $user, array $data): Spin
     {
         return $user->spins()->create($data);
+    }
+
+    /**
+     * Method myWinning
+     *
+     * @return Collection
+     */
+    public function myWinning():Collection
+    {
+        $user = auth()->user();
+
+        return $user->spins()->where('is_winner', 1)->get();
     }
 }
