@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Traits;
 
+use App\Models\Set;
 use App\Models\Spin;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
@@ -54,11 +55,61 @@ trait SpinWheel
                 return $this->getOneXWinningByRange15($user, $type, $range);
             case Spin::TEN_X:
                 // return 1 / 13; // Platinum users have a constant chance of 1 in 13
-                // logic to get counter and range
-                $range = $this->getRangeBy13($spinCount);
+                // check for the user if there is any set id present or not
+                if( isset( $user->set_id ) )
+                {
+                    $set = $this->getSet($user->set_id);
+                }
+                else
+                {
+                    // get random set for user and update
+                    $set = $this->getRandomSet();
+
+                    // update user set
+                    $user = $this->updateUserSet($user, $set);
+                }
+
+                // 
             default:
                 return 0; // Default to no chance
         }
+    }
+
+    /**
+     * Method getSet
+     *
+     * @param int $set [explicite description]
+     *
+     * @return Set
+     */
+    public function getSet(int $set): Set
+    {
+        return Set::findOrFail($set)->first();
+    }
+
+    /**
+     * Method getRandomSet
+     *
+     * @return \App\Models\Set
+     */
+    public function getRandomSet(): Set
+    {
+        return Set::select('id', 'scenario')->inRandomOrder()->first();
+    }
+
+    /**
+     * Method updateUserSet
+     *
+     * @param User $user [explicite description]
+     * @param Set $set [explicite description]
+     *
+     * @return User
+     */
+    public function updateUserSet(User $user, Set $set): User
+    {
+        $user->update(['set_id' => $set->id]);
+
+        return $user->refresh();
     }
 
     /**
