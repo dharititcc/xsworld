@@ -105,7 +105,7 @@ class BarRepository extends BaseRepository
         // ->whereIn('status', [Order::ACCEPTED, Order::DELAY_ORDER])
         ->whereHas('order_items', function($query)
         {
-            return $query->whereIn('status', [OrderItem::ACCEPTED, OrderItem::CONFIRM_PICKUP]);
+            return $query->whereIn('status', [OrderItem::ACCEPTED]);
         })
         ->orderBy('orders.remaining_date','asc')
         ->orderByDesc('orders.id')
