@@ -213,6 +213,8 @@
                     name        = parent.find('input[name="variation_name"]'),
                     price       = parent.find('input[name="variation_price"]');
 
+                $this.closest('.modal-body').find('.error').remove();
+
                 // validation variation form
                 if( name.val() == '' )
                 {

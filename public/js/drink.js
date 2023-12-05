@@ -220,6 +220,7 @@
                     price       = parent.find('input[name="variation_price"]'),
                     countVariation = context.selectors.drinkModal.find('.modal-body').find('.variety').children().length;
 
+                $this.closest('.modal-body').find('.error').remove();
                 // validation variation form
                 if( name.val() == '' )
                 {
