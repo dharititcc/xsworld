@@ -56,11 +56,11 @@ class Spin extends Model
     }
 
     /**
-     * Method getWinningStatusAttribute
+     * Method getSpinTypeAttribute
      *
      * @return string
     */
-    public function getWinningStatusAttribute(): string
+    public function getSpinTypeAttribute(): string
     {
         return self::SPIN_STATUS[$this->status];
     }
