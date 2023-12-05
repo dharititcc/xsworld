@@ -12,6 +12,17 @@ class Spin extends Model
 
     protected $table = 'spins';
 
+    const ONE_X     = 0;
+    const FIVE_X    = 1;
+    const TEN_X     = 2;
+
+
+    const SPIN_STATUS = [
+        self::ONE_X     => '1X',
+        self::FIVE_X    => '5X',
+        self::TEN_X     => '10X',
+    ];
+
     /**
      * The attributes that are mass assignable.
      *
@@ -42,5 +53,15 @@ class Spin extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
+    }
+
+    /**
+     * Method getWinningStatusAttribute
+     *
+     * @return string
+    */
+    public function getWinningStatusAttribute(): string
+    {
+        return self::SPIN_STATUS[$this->status];
     }
 }
