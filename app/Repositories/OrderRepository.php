@@ -484,7 +484,7 @@ class OrderRepository extends BaseRepository
             $membership = config('xs.silver_membership');
         } else if ($points > config('xs.silver') && $points <= config('xs.gold')) {
             $membership = config('xs.gold_membership');
-        } else if ($points >= config('xs.platinum')) {
+        } else if ($points > config('xs.gold')) {
             $membership = config('xs.platinum_membership');
         } else {
             $membership = config('xs.bronze_membership');
