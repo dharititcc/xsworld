@@ -49,7 +49,7 @@ trait SpinWheel
             case Spin::FIVE_X:
                 // return 1 / 15; // Gold users have a constant chance of 1 in 15
                 // logic to get counter and range
-                $range = $this->getRangeBy5($spinCount);
+                $range = $this->getRangeBy3($spinCount);
 
                 return $this->getOneXWinningByRange15($user, $type, $range);
             case Spin::TEN_X:
@@ -81,19 +81,19 @@ trait SpinWheel
     }
 
     /**
-     * Method getRangeBy5
+     * Method getRangeBy3
      *
      * @param int $counter [explicite description]
      *
      * @return array
      */
-    public function getRangeBy5($counter): array
+    public function getRangeBy3($counter): array
     {
         $number     = $counter;
-        $roundDown  = floor($number/15);
-        $newNumber  = $roundDown*15;
+        $roundDown  = floor($number/3);
+        $newNumber  = $roundDown*3;
         $start      = $newNumber+1;
-        $end        = $newNumber+15;
+        $end        = $newNumber+3;
 
         return [$start, $end];
     }
@@ -224,7 +224,7 @@ trait SpinWheel
             }
             else
             {
-                if( $records->count() == 14 )
+                if( $records->count() == 2 )
                 {
                     return true;
                 }
@@ -397,27 +397,14 @@ trait SpinWheel
                 // update user credits if win
                 if( $data['is_winner'] == 1 )
                 {
-                    for( $i = 0; $i < 5; $i++ )
-                    {
-                        $winner = 0;
-                        if( $i == 4 )
-                        {
-                            $winner = 1;
-                        }
-                        // insert spin record
-                        $this->insertSpinResult($user, ['type' => Spin::FIVE_X, 'is_winner' => $winner]);
-                    }
                     $amountWin = $user->credit_amount + 5;
                 }
                 else
                 {
-                    for( $i = 0; $i < 5; $i++ )
-                    {
-                        // insert spin record
-                        $this->insertSpinResult($user, ['type' => Spin::FIVE_X, 'is_winner' => $data['is_winner']]);
-                    }
                     $amountWin = $user->credit_amount + 0;
                 }
+                // insert spin record
+                $this->insertSpinResult($user, ['type' => Spin::FIVE_X, 'is_winner' => $data['is_winner']]);
                 break;
             case Spin::TEN_X:
                 // update user points
