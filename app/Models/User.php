@@ -300,7 +300,7 @@ class User extends Authenticatable
      */
     public function getReferralLinkAttribute()
     {
-        $url = 'https://xsworld.page.link/?link='.env('APP_URL').'/?referral='.$this->referral_code.'&ibi=com.xsworld.iOS&isi=1074964262&efr=1&apn=com.itcc.xsworld&efr=1';
+        $url = 'https://xsworld.page.link/?link=https://express.itcc.net.au/?referral='.$this->referral_code.'&ibi=com.xsworld.iOS&isi=1074964262&efr=1&apn=com.itcc.xsworld&efr=1';
 
         //IOS : https://xsworld.page.link/?link=https://express.itcc.net.au/?referral=Manthan&ibi=com.xsworld.iOS&isi=1074964262&efr=1&apn=com.itcc.xsworld&efr=1
 
