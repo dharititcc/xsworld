@@ -62,6 +62,6 @@ class Spin extends Model
     */
     public function getSpinTypeAttribute(): string
     {
-        return self::SPIN_STATUS[$this->status];
+        return self::SPIN_STATUS[$this->type];
     }
 }
