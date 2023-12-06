@@ -1219,6 +1219,7 @@ class OrderRepository extends BaseRepository
         // get order items and store into order items table
         foreach ($reOrderItems as  $item) {
             // $item->offsetUnset('order_id');
+            $item->status = OrderItem::PENDNIG;
             $newOrderItem = $newOrder->order_items()->create($item->toArray());
 
             // create addons
