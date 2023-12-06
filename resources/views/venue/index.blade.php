@@ -6,8 +6,8 @@
 
             <div class="outrbox">
                 <div class="row">
-                    <div class="col-md-4">
-                        <div class="grey-brd-box">
+                    <div class="col-lg-6 col-xl-6 col-xxl-4 m-xxl-space act-grid-2">
+                        <div class="grey-brd-box m-sm-space">
                             <div class="title">
                                 <h2>Opening Times</h2> <a href="javascript:void(0);" class="edit venue_popup_modal ">EDIT</a>
                             </div>
@@ -33,7 +33,7 @@
 
                             </div>
                         </div>
-                        <div class="grey-brd-box mt-4">
+                        <div class="grey-brd-box mt-lg-4">
                             <div class="title">
                                 <h2>Venue Settings</h2> <a href="#" class="edit">EDIT</a>
                             </div>
@@ -76,7 +76,7 @@
                             <button class="bor-btn w-100 font-30 top-bor" type="button">Support</button>
                         </div>
                     </div>
-                    <div class="col-md-4 review-box-outer">
+                    <div class="col-lg-6 col-xl-6 col-xxl-4 m-xxl-space review-box-outer">
                         <div class="grey-brd-box h-100">
                             <div class="title">
                                 <h2>Reviews</h2>
@@ -132,7 +132,7 @@
                             @endif
                         </div>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-lg-12 col-xl-12 col-xxl-4 ">
                         <div class="grey-brd-box">
                             <div class="title">
                                 <h2>Venue Identity</h2> <a href="javascript:void(0);" class="edit venue_res_image">EDIT</a>

@@ -204,12 +204,6 @@
                 $alertas.validate().resetForm();
                 $alertas.find('.error').remove();
             });
-
-            $('#sidebarToggle1').on('click', function(e) {
-                e.preventDefault();
-
-                $('body').removeClass('sb-sidenav-toggled');
-            });
         });
 
     $('.add_category').on("click",function() {

@@ -3,11 +3,6 @@
 @include('restaurant.partials.foodtopbar')
 @endsection
 @section('content')
-<style>
-    table.dataTable tbody tr {
-        background-color: #0f0e0e !important;
-    }
-</style>
 <div class="outrbox">
     <h2 class="yellow mb-4">Category Preview Tiles</h2>
     <div class="grid colmn-6 mb-3">

@@ -368,14 +368,17 @@
         {
             $('.is_favorite').click(function(e)
             {
-                var is_favorite = $(this).data('is_favorite');
-                if(is_favorite === 0){
+                var $this = $(this);
+
+                var is_favorite = $this.data('is_favorite');
+                console.log(!is_favorite);
+                if(!is_favorite){
                     $('.is_favorite').removeClass('null');
-                    $(this).attr('data-is_favorite',1);
-                    // $(this).data('is_favorite',1);
+                    $this.attr('data-is_favorite', 1);
+                    // $this.data('is_favorite',1);
                     $('#is_featured').val(1);
                 }else{
-                    $(this).data('is_favorite',0);
+                    $this.attr('data-is_favorite', 0);
                     $('#is_featured').val(0);
                     $('.is_favorite').addClass('null');
                 }
