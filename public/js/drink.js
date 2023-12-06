@@ -121,6 +121,7 @@
             drinkVariationModal:jQuery('#addDrink'),
             addVariationBtn:    jQuery('#add_variation_btn'),
             favoriteBtn:        jQuery('.favorite'),
+            allCheck:           jQuery('#allcheck'),
         },
 
         init: function (){
@@ -140,6 +141,7 @@
             context.closeDrinkModal();
             context.openVariationModal();
             context.closeVariationModal();
+            XS.Common.allCheckBox();
             XS.Common.fileReaderBind();
             context.addVariation();
             context.removeVariation();

@@ -142,6 +142,7 @@
             context.openFoodModal();
             context.closeFoodModal();
             XS.Common.fileReaderBind();
+            XS.Common.allCheckBox();
             context.addVariation();
             context.removeVariation();
             context.favoriteStatusUpdate();
