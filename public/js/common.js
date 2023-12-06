@@ -153,6 +153,16 @@ var XS_Admin = {}; // common variable used in all the files of the backend
             });
         },
 
+
+        allCheckBox: function()
+        {
+            $('#allcheck').on('click', function(){
+                // Get all rows with search applied
+                $('.drink_datatable tbody :checkbox').prop('checked', $(this).is(':checked'));
+                e.stopImmediatePropagation();
+             });
+        },
+
         /**
          * Handle Swal Confirm
          * @param {*} message
@@ -347,6 +357,7 @@ var XS_Admin = {}; // common variable used in all the files of the backend
                         table.ajax.reload();
                         $this.removeClass('enable_clicked');
                     }
+                    $('#allcheck').prop( "checked", false );
                 });
             });
         },
@@ -383,6 +394,7 @@ var XS_Admin = {}; // common variable used in all the files of the backend
                     if (willDelete) {
                         table.ajax.reload();
                     }
+                    $('#allcheck').prop( "checked", false );
                     $this.removeClass('disable_clicked');
                 });
             });

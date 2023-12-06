@@ -298,6 +298,12 @@
             load_data(data);
         });
 
+        $('#allcheck').on('click', function(){
+                // Get all rows with search applied
+                $('.drink_datatable tbody :checkbox').prop('checked', $(this).is(':checked'));
+                e.stopImmediatePropagation();
+        });
+
         $(document).ready(function() {
             $('.checkboxitem').click(function() {
                 if ($(this).is(':checked')) {
@@ -308,14 +314,14 @@
                 }
             });
 
-            $('#allcheck').click(function(e) {
-                e.preventDefault();
-                $('input[name="id"]').attr('checked', 'checked');
-                // $(this).val('uncheck all');
-            }, function() {
-                $('input[name="id"]').removeAttr('checked');
-                //$(this).val('check all');
-            })
+            // $('#allcheck').click(function(e) {
+            //     e.preventDefault();
+            //     $('input[name="id"]').attr('checked', 'checked');
+            //     // $(this).val('uncheck all');
+            // }, function() {
+            //     $('input[name="id"]').removeAttr('checked');
+            //     //$(this).val('check all');
+            // })
         });
         $("#addonpopup").validate({
             rules: {

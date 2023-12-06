@@ -32,7 +32,8 @@ class DatabaseSeeder extends Seeder
             MixtureSeeder::class,
             // OrderSeeder::class,
             DaySeeder::class,
-            KitchenUserSeeder::class
+            KitchenUserSeeder::class,
+            SetSeeder::class,
         ]);
     }
 }

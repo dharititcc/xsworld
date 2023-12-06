@@ -121,6 +121,7 @@
             drinkVariationModal:jQuery('#addDrink'),
             addVariationBtn:    jQuery('#add_variation_btn'),
             favoriteBtn:        jQuery('.favorite'),
+            allCheck:           jQuery('#allcheck'),
         },
 
         init: function (){
@@ -140,6 +141,7 @@
             context.closeDrinkModal();
             context.openVariationModal();
             context.closeVariationModal();
+            XS.Common.allCheckBox();
             XS.Common.fileReaderBind();
             context.addVariation();
             context.removeVariation();
@@ -220,6 +222,7 @@
                     price       = parent.find('input[name="variation_price"]'),
                     countVariation = context.selectors.drinkModal.find('.modal-body').find('.variety').children().length;
 
+                $this.closest('.modal-body').find('.error').remove();
                 // validation variation form
                 if( name.val() == '' )
                 {

@@ -3,7 +3,7 @@ $('.show_confirm').click(function(event) {
     event.preventDefault();
     swal({
         title: `Are you sure you want to delete this Records?`,
-        text: "It will gone forevert",
+        // text: "It will gone forevert",
         icon: "warning",
         buttons: true,
         dangerMode: true,

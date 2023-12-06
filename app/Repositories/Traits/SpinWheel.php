@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Traits;
 
+use App\Models\Set;
 use App\Models\Spin;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
@@ -47,18 +48,71 @@ trait SpinWheel
                     return $this->getOneXWinningByRange17($user, $type, $range);
                 }
             case Spin::FIVE_X:
-                // return 1 / 15; // Gold users have a constant chance of 1 in 15
                 // logic to get counter and range
-                $range = $this->getRangeBy5($spinCount);
+                $range = $this->getRangeBy3($spinCount);
 
                 return $this->getOneXWinningByRange15($user, $type, $range);
             case Spin::TEN_X:
-                // return 1 / 13; // Platinum users have a constant chance of 1 in 13
+
                 // logic to get counter and range
-                $range = $this->getRangeBy13($spinCount);
+                $range = $this->getRangeBy4($spinCount);
+
+                $records        = $this->getSpinCountRange($user, $type, $range);
+
+                if( $records->count() == 0 )
+                {
+                    // get random set for user and update
+                    $set = $this->getRandomSet();
+
+                    // update user set
+                    $user = $this->updateUserSet($user, $set);
+                }
+                else
+                {
+                    $set = $this->getSet($user->set_id);
+                }
+
+                return $this->getOneXWinningByRange13($user, $type, $range, $set, $records);
             default:
                 return 0; // Default to no chance
         }
+    }
+
+    /**
+     * Method getSet
+     *
+     * @param int $set [explicite description]
+     *
+     * @return Set
+     */
+    public function getSet(int $set): Set
+    {
+        return Set::findOrFail($set);
+    }
+
+    /**
+     * Method getRandomSet
+     *
+     * @return \App\Models\Set
+     */
+    public function getRandomSet(): Set
+    {
+        return Set::select('id', 'scenario')->inRandomOrder()->first();
+    }
+
+    /**
+     * Method updateUserSet
+     *
+     * @param User $user [explicite description]
+     * @param Set $set [explicite description]
+     *
+     * @return User
+     */
+    public function updateUserSet(User $user, Set $set): User
+    {
+        $user->update(['set_id' => $set->id]);
+
+        return $user->refresh();
     }
 
     /**
@@ -81,19 +135,37 @@ trait SpinWheel
     }
 
     /**
-     * Method getRangeBy5
+     * Method getRangeBy3
      *
      * @param int $counter [explicite description]
      *
      * @return array
      */
-    public function getRangeBy5($counter): array
+    public function getRangeBy3($counter): array
     {
         $number     = $counter;
-        $roundDown  = floor($number/15);
-        $newNumber  = $roundDown*15;
+        $roundDown  = floor($number/3);
+        $newNumber  = $roundDown*3;
         $start      = $newNumber+1;
-        $end        = $newNumber+15;
+        $end        = $newNumber+3;
+
+        return [$start, $end];
+    }
+
+    /**
+     * Method getRangeBy4
+     *
+     * @param int $counter [explicite description]
+     *
+     * @return array
+     */
+    public function getRangeBy4($counter): array
+    {
+        $number     = $counter;
+        $roundDown  = floor($number/4);
+        $newNumber  = $roundDown*4;
+        $start      = $newNumber+1;
+        $end        = $newNumber+4;
 
         return [$start, $end];
     }
@@ -224,7 +296,7 @@ trait SpinWheel
             }
             else
             {
-                if( $records->count() == 14 )
+                if( $records->count() == 2 )
                 {
                     return true;
                 }
@@ -237,6 +309,36 @@ trait SpinWheel
 
         // random
         return $this->getWinning(1,15);
+    }
+
+    /**
+     * Method getOneXWinningByRange13
+     *
+     * @param User $user [explicite description]
+     * @param int $type [explicite description]
+     * @param array $range [explicite description]
+     * @param Set $set [explicite description]
+     * @param Collection $records [explicite description]
+     *
+     * @return bool
+     */
+    public function getOneXWinningByRange13(User $user, int $type, array $range, Set $set, Collection $records): bool
+    {
+        $scenarios      = $set->scenario;
+        $scenariosArr   = explode(',', $scenarios);
+        $recordsCounter = $records->count();
+        $result         = 0;
+
+        if( $recordsCounter )
+        {
+            $result = $scenariosArr[$recordsCounter];
+        }
+        else
+        {
+            $result = $scenariosArr[$recordsCounter];
+        }
+
+        return (bool) $result;
     }
 
     /**
@@ -397,27 +499,14 @@ trait SpinWheel
                 // update user credits if win
                 if( $data['is_winner'] == 1 )
                 {
-                    for( $i = 0; $i < 5; $i++ )
-                    {
-                        $winner = 0;
-                        if( $i == 4 )
-                        {
-                            $winner = 1;
-                        }
-                        // insert spin record
-                        $this->insertSpinResult($user, ['type' => Spin::FIVE_X, 'is_winner' => $winner]);
-                    }
                     $amountWin = $user->credit_amount + 5;
                 }
                 else
                 {
-                    for( $i = 0; $i < 5; $i++ )
-                    {
-                        // insert spin record
-                        $this->insertSpinResult($user, ['type' => Spin::FIVE_X, 'is_winner' => $data['is_winner']]);
-                    }
                     $amountWin = $user->credit_amount + 0;
                 }
+                // insert spin record
+                $this->insertSpinResult($user, ['type' => Spin::FIVE_X, 'is_winner' => $data['is_winner']]);
                 break;
             case Spin::TEN_X:
                 // update user points
@@ -426,25 +515,14 @@ trait SpinWheel
                 // update user credits if win
                 if( $data['is_winner'] == 1 )
                 {
-                    for( $i = 0; $i < 10; $i++ )
-                    {
-                        $winner = 0;
-                        if( $i == 9 )
-                        {
-                            $winner = 1;
-                        }
-                        // insert spin record
-                        $this->insertSpinResult($user, ['type' => Spin::TEN_X, 'is_winner' => $winner]);
-                    }
+                    // insert spin record
+                    $this->insertSpinResult($user, ['type' => Spin::TEN_X, 'is_winner' => $data['is_winner']]);
                     $amountWin = $user->credit_amount + 5;
                 }
                 else
                 {
-                    for( $i = 0; $i < 10; $i++ )
-                    {
-                        // insert spin record
-                        $this->insertSpinResult($user, ['type' => Spin::TEN_X, 'is_winner' => $data['is_winner']]);
-                    }
+                    // insert spin record
+                    $this->insertSpinResult($user, ['type' => Spin::TEN_X, 'is_winner' => $data['is_winner']]);
                     $amountWin = $user->credit_amount + 0;
                 }
                 break;
