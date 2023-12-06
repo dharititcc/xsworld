@@ -3,11 +3,6 @@
     @include('restaurant.partials.mixertopbar')
 @endsection
 @section('content')
-    <style>
-        table.dataTable tbody tr {
-            background-color: #0f0e0e !important;
-        }
-    </style>
     <div class="outrbox">
         <div class="sort-by d-flex mb-4">
             <h2 class="yellow">Sort By</h2>
@@ -193,14 +188,6 @@
                 //alert("Your browser doesn't support to File API")
                 XS.Common.handleSwalSuccessWithoutReload("Your browser doesn't support to File API.");
             }
-
-        jQuery(document).ready(function() {
-            $('#sidebarToggle1').on('click', function(e) {
-                e.preventDefault();
-
-                $('body').removeClass('sb-sidenav-toggled');
-            });
-        });
 
         function formatDate(date) {
             var d = new Date(date),

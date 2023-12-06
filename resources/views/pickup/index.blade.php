@@ -123,13 +123,13 @@
                             <input id="pickup_id" type="hidden" class="pickup_id" name="pickup_id" />
                             <input id="types" type="hidden" class="types" name="types" value="" />
                         </div>
-                        <div class="form-group grey-brd-box custom-upload mb-5 image_box">
+                        <div class="grey-brd-box custom-upload image_box">
                             <input id="upload" type="file" class="files" name="files" accept="image/*" hidden />
                             <label for="upload"><span> Add Zone Feature Image <br> (This can be changed & is mandatory).</span> <i class="icon-plus"></i></label>
                             <span id="Errorfiles"></span>
                         </div>
                     </div>
-                    <button class="bor-btn w-100 font-26" id="pickup_submitBtn" type="submit">Save</button>
+                    <button class="bor-btn w-100 font-26 mt-4" id="pickup_submitBtn" type="submit">Save</button>
             </div>
 
         </div>

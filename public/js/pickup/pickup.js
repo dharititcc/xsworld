@@ -34,7 +34,7 @@ $(document).ready(function() {
         $this.find('#pickupForm').find('#pickup_id').val('');
         var $alertas = $('#pickupForm');
         $alertas.validate().resetForm();
-        $alertas.find('.error').removeClass('error');
+        $this.find('#pickupForm').find('.error').remove();
     });
 
     //image preview
@@ -99,7 +99,7 @@ $('#pickup_submitBtn').click(function(e) {
                     required: "Please upload Images"
                 }
             },
-            
+
             submitHandler: function(form) {
                 formsubmit(form)
             }
@@ -139,7 +139,7 @@ function formsubmit(form) {
         pickup_id = $('#pickup_id').val();
         photo = $('#upload').prop('files')[0];
         types = $('#types').val();
-    
+
     data.append('name',name);
     data.append('photo',photo);
     data.append('pickup_id',pickup_id);
@@ -150,7 +150,9 @@ function formsubmit(form) {
         route = routeUpdate.replace(':ID', pickup_id),
         data.append('_method','PUT');
     }
-    
+
+    jQuery(form).find('.error').remove();
+
     $.ajax({
         url:route,
         type:'POST',
@@ -158,12 +160,45 @@ function formsubmit(form) {
         processData: false,
         contentType: false,
         success: function(res) {
-            $('#pickup_submitBtn').html('Submit');
-            $('#pickup_submitBtn').attr('disabled',false);
             // alert('Pickup point has been submitted successfully');
             document.getElementById('pickupForm').reset();
             // location.reload(true);
             XS.Common.handleSwalSuccess('Pickup point has been submitted successfully.');
+        },
+        error: function(xhr)
+        {
+            if( xhr.status === 422 )
+            {
+                var {error} = xhr.responseJSON,
+                    fields  = jQuery(form).find('input[type="file"]'),
+                    messages= error.message;
+
+                $.each(messages, function(eIndex, eMessage)
+                {
+                    fields.each(function(index, elem)
+                    {
+                        if( jQuery(elem).attr('type') == 'file' )
+                        {
+                            jQuery(elem).closest('.image_box').after(`<span class="error mb-2 d-block">${eMessage[0]}</span>`);
+                        }
+                        else
+                        {
+                            jQuery(elem).after(`<span class="error">${eMessage[0]}</span>`);
+                        }
+                    });
+                });
+            }
+
+            if( xhr.status === 403 )
+            {
+                var {error} = xhr.responseJSON;
+                jQuery(form).find('input[type="text"]').after(`<span class="error">${error.message}</span>`)
+            }
+        },
+        complete: function()
+        {
+            $('#pickup_submitBtn').html('Save');
+            $('#pickup_submitBtn').attr('disabled',false);
         }
     });
 }

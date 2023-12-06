@@ -33,6 +33,12 @@
             {
                 body.classList.remove('home')
             }
+
+            $('#sidebarToggle1').on('click', function(e) {
+                e.preventDefault();
+
+                $('body').removeClass('sb-sidenav-toggled');
+            });
         </script>
         @yield('pagescript')
     </body>
