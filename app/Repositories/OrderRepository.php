@@ -1192,9 +1192,10 @@ class OrderRepository extends BaseRepository
         $user                   = auth()->user();
         $orderAgain             = $user->orders()->where('restaurant_id', $data['restaurant_id'])->where('type',Order::ORDER)->whereNotIn('status',[Order::CUSTOMER_CANCELED,Order::RESTAURANT_CANCELED,Order::RESTAURANT_TOXICATION])->orderByDesc('id')->first();
 
+        $resName = Restaurant::select('name')->where('id',$data['restaurant_id'])->first();
         if( !isset($orderAgain->id) )
         {
-            throw new GeneralException('There is no order');
+            throw new GeneralException('You have not placed order yet from ' . $resName['name']);
         }
 
         $user->loadMissing(['latest_cart', 'latest_cart.restaurant']);
