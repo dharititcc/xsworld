@@ -18,12 +18,12 @@ class AddonsController extends Controller
     public function index(Request $request)
     {
         $restaurant = session('restaurant')->loadMissing(['main_categories']);
-        $foodCategory = $restaurant->main_categories()->with(['children'])->where('name', 'Food')->first();
-        if($foodCategory)
-        {
-            $foodCategories = $foodCategory->children;
-            $foodSubCategory = $foodCategory->children->pluck('id');
-        }
+        // $foodCategory = $restaurant->main_categories()->with(['children'])->where('name', 'Food')->first();
+        // if($foodCategory)
+        // {
+        //     $foodCategories = $foodCategory->children;
+        //     $foodSubCategory = $foodCategory->children->pluck('id');
+        // }
         $drinkCategory = $restaurant->main_categories()->with(['children'])->where('name', 'Drinks')->first();
         if($drinkCategory)
         {
