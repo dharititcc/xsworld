@@ -69,6 +69,7 @@ class User extends Authenticatable
         'is_mobile_verify',
         'referral_code',
         'referrer_id',
+        'set_id',
         'email_verified_at'
     ];
 
