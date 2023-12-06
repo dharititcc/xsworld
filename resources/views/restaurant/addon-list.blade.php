@@ -61,16 +61,16 @@
                                         <span>{{ $child->name }}</span>
                                     </label>
                                 @endforeach
-                                @foreach ($food_categories as $child)
+                                {{-- @foreach ($food_categories as $child)
                                     <label>
                                         <?php  ?>
                                         <input type="checkbox" name="category[]" id="category" value="{{ $child->id }}">
                                         <span>{{ $child->name }}</span>
                                     </label>
-                                @endforeach
+                                @endforeach --}}
                             </div>
                         </div>
-                        <button class="bor-btn w-100 font-26" id="submitBtn" type="submit">Save</button>
+                        <button class="bor-btn w-100 font-26 mt-4" id="submitBtn" type="submit">Save</button>
                     </form>
                 </div>
             </div>
@@ -324,6 +324,7 @@
             // })
         });
         $("#addonpopup").validate({
+            ignore: [],
             rules: {
                 name: {
                     required: true,
@@ -333,6 +334,9 @@
                     required: true,
                     number: true,
                     maxlength: 10
+                },
+                "category[]": {
+                    required: true,
                 },
                 image: {
                     required: true,
@@ -349,8 +353,18 @@
                 price: {
                     required: "Please enter price",
                 },
+                "category[]": {
+                    required: "Please Select category",
+                },
                 image: {
                     required: "Please enter files", //accept: 'Not an image!'
+                }
+            },
+            errorPlacement: function (error, element) {
+                if (element.attr("type") == "checkbox") {
+                    error.insertAfter($(element).closest('div'));
+                } else {
+                    error.insertAfter($(element));
                 }
             },
             submitHandler: function(form) {
