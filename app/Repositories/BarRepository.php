@@ -7,6 +7,7 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\User;
 use App\Repositories\BaseRepository;
+use App\Repositories\Traits\CreditPoint;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
@@ -16,6 +17,7 @@ use Illuminate\Support\Collection;
 */
 class BarRepository extends BaseRepository
 {
+    use CreditPoint;
     /**
     * Associated Repository Model.
     */
@@ -217,11 +219,6 @@ class BarRepository extends BaseRepository
         return $order;
     }
 
-    public function userCreditAmountUpdated(User $user,$remaingAmount)
-    {
-        User::where('id', $user->id)->update(['credit_amount' => $remaingAmount]);
-        return true;
-    }
     /**
      * Method updateStatusOrder
      *
@@ -329,7 +326,7 @@ class BarRepository extends BaseRepository
                 $userCreditAmountBalance = $user->credit_amount;
                 $refundCreditAmount = $order->credit_amount;
                 $totalCreditAmount = $userCreditAmountBalance + $refundCreditAmount;
-                $this->userCreditAmountUpdated($user,$totalCreditAmount);
+                $this->updateUserPoints($user, ['credit_amount' => $totalCreditAmount]);
                 $title                      = "Venue is processing your order";
                 $message                    = "Your Order #".$order_id." is canceled by venue";
                 $send_notification          = sendNotification($title,$message,$user_tokens,$order_id);
@@ -359,7 +356,7 @@ class BarRepository extends BaseRepository
                 $userCreditAmountBalance = $user->credit_amount;
                 $refundCreditAmount = $order->credit_amount;
                 $totalCreditAmount = $userCreditAmountBalance + $refundCreditAmount;
-                $this->userCreditAmountUpdated($user,$totalCreditAmount);
+                $this->updateUserPoints($user, ['credit_amount' => $totalCreditAmount]);
                 $title                      = "Venue is processing your order";
                 $message                    = "Your Order #".$order_id." is intoxicated by venue";
                 $send_notification          = sendNotification($title,$message,$user_tokens,$order_id);
@@ -374,7 +371,7 @@ class BarRepository extends BaseRepository
                 $userCreditAmountBalance = $user->credit_amount;
                 $refundCreditAmount = $order->credit_amount;
                 $totalCreditAmount = $userCreditAmountBalance + $refundCreditAmount;
-                $this->userCreditAmountUpdated($user,$totalCreditAmount);
+                $this->updateUserPoints($user, ['credit_amount' => $totalCreditAmount]);
                 $title                      = "Venue is processing your order";
                 $message                    = "Your Order #".$order_id." is denied by venue";
                 $send_notification          = sendNotification($title,$message,$user_tokens,$order_id);
