@@ -659,7 +659,7 @@ class OrderRepository extends BaseRepository
             if( $order->total != $credit_amount )
             {
                 $paymentArr = [
-                    'amount'        => $amount * 100,
+                    'amount'        => number_format($amount, 2) * 100,
                     'currency'      => $order->restaurant->currency->code,
                     'customer'      => $user->stripe_customer_id,
                     'capture'       => false,
