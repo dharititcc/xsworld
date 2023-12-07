@@ -540,7 +540,7 @@
                         pattern: "Please enter a valid price format (e.g., 100.50).",
                     },
                     image: {
-                        required: "Please enter files", //accept: 'Not an image!'
+                        required: "Please upload files", //accept: 'Not an image!'
                     },
                     'category_id[]': {
                         required: "Please select category",

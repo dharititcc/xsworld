@@ -124,7 +124,7 @@
                             <input id="types" type="hidden" class="types" name="types" value="" />
                         </div>
                         <div class="grey-brd-box custom-upload image_box">
-                            <input id="upload" type="file" class="files" name="files" accept="image/*" hidden />
+                            <input id="upload" type="file" class="files" name="files" id="files" accept="image/*" hidden />
                             <label for="upload"><span> Add Zone Feature Image <br> (This can be changed & is mandatory).</span> <i class="icon-plus"></i></label>
                             <span id="Errorfiles"></span>
                         </div>

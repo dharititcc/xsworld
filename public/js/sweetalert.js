@@ -11,6 +11,7 @@ $('.show_confirm').click(function(event) {
         .then((willDelete) => {
             if (willDelete) {
                 form.submit();
+                XS.Common.handleSwalSuccess('Record Deleted successfully.');
             }
         });
 });
