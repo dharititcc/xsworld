@@ -131,6 +131,7 @@ Route::middleware(['guest'])->group(function()
     {
         // verify email
         Route::get('verify/{token}', 'XSWorldVerificationController@verify')->name('verify-email');
+        Route::get('token-expiry', 'XSWorldVerificationController@tokenExpiry')->name('token-expiry');
 
         Route::get('verification-success/{token}', 'XSWorldVerificationController@verificationSuccess')->name('verification-success');
     });
