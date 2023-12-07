@@ -19,7 +19,7 @@ return new class extends Migration
             $table->dropColumn('order_id');
             $table->string('model_name')->after('order_id');
             $table->unsignedBigInteger('model_id')->after('model_name');
-            $table->decimal('points',14,2)->after('model_id');
+            $table->decimal('points',14,2)->after('model_id')->comment("Negative number contains debit");
             $table->unsignedTinyInteger('type')->default(1)->comment('0-Debit,1=Credit')->after('points');
         });
     }

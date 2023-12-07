@@ -14,22 +14,11 @@ trait CreditPoint
      * @param User $user [explicite description]
      * @param array $data [explicite description]
      *
-     * @return bool
-     * @throws \App\Exceptions\GeneralException
+     * @return \App\Models\CreditPointsHistory
      */
-    public function insertCreditPoints(User $user, array $data): bool
+    public function insertCreditPoints(User $user, array $data): CreditPointsHistory
     {
-        $creditPoint = CreditPointsHistory::create($data);
-
-        if( isset( $creditPoint->id ) )
-        {
-            return $this->updateUserPoints($user, [
-                'points' => $data['points'],
-                'credit_amount' => $data['amount']
-            ]);
-        }
-
-        throw new GeneralException('Failed to create credit point history.');
+        return $user->credit_points()->create($data);
     }
 
     /**

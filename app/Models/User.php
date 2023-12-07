@@ -217,7 +217,7 @@ class User extends Authenticatable
     {
         return $this->hasMany(Order::class, 'user_id', 'id')->where('type', Order::ORDER);
     }
-    
+
     /**
      * Get all of the waiter_order for the User
      *
@@ -303,5 +303,15 @@ class User extends Authenticatable
 
         // Android : https://xsworld.page.link/?link=https://express.itcc.net.au/?referral=Manthan&apn=com.itcc.xsworld&efr=1
         return $url;
+    }
+
+    /**
+     * Get all of the credit_points for the User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function credit_points(): HasMany
+    {
+        return $this->hasMany(CreditPointsHistory::class, 'user_id', 'id');
     }
 }

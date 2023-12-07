@@ -9,6 +9,8 @@ use Illuminate\Database\Eloquent\Collection;
 
 trait SpinWheel
 {
+    use CreditPoint;
+
     /**
      * Method calculateWinningChance
      *
@@ -471,12 +473,13 @@ trait SpinWheel
         $pointsToDebit = 60;
         $amountWin     = 0;
         $updatedPoints = 0;
+        $spin           = new Spin();
 
         switch($data['type'])
         {
             case Spin::ONE_X:
                 // insert spin record
-                $this->insertSpinResult($user, ['type' => Spin::ONE_X, 'is_winner' => $data['is_winner']]);
+                $spin = $this->insertSpinResult($user, ['type' => Spin::ONE_X, 'is_winner' => $data['is_winner']]);
 
                 // update user points
                 $updatedPoints = $user->points - $pointsToDebit;
@@ -506,7 +509,7 @@ trait SpinWheel
                     $amountWin = $user->credit_amount + 0;
                 }
                 // insert spin record
-                $this->insertSpinResult($user, ['type' => Spin::FIVE_X, 'is_winner' => $data['is_winner']]);
+                $spin = $this->insertSpinResult($user, ['type' => Spin::FIVE_X, 'is_winner' => $data['is_winner']]);
                 break;
             case Spin::TEN_X:
                 // update user points
@@ -516,19 +519,19 @@ trait SpinWheel
                 if( $data['is_winner'] == 1 )
                 {
                     // insert spin record
-                    $this->insertSpinResult($user, ['type' => Spin::TEN_X, 'is_winner' => $data['is_winner']]);
+                    $spin = $this->insertSpinResult($user, ['type' => Spin::TEN_X, 'is_winner' => $data['is_winner']]);
                     $amountWin = $user->credit_amount + 5;
                 }
                 else
                 {
                     // insert spin record
-                    $this->insertSpinResult($user, ['type' => Spin::TEN_X, 'is_winner' => $data['is_winner']]);
+                    $spin = $this->insertSpinResult($user, ['type' => Spin::TEN_X, 'is_winner' => $data['is_winner']]);
                     $amountWin = $user->credit_amount + 0;
                 }
                 break;
             default:
                 // insert spin record
-                $this->insertSpinResult($user, ['type' => Spin::ONE_X, 'is_winner' => $data['is_winner']]);
+                $spin = $this->insertSpinResult($user, ['type' => Spin::ONE_X, 'is_winner' => $data['is_winner']]);
 
                 // update user points
                 $updatedPoints = $user->points - $pointsToDebit;
@@ -546,10 +549,22 @@ trait SpinWheel
                 break;
         }
 
-        $user->update([
+        // insert credit point histories table
+        $arrCreditPoint = [
+            'model_name' => '\App\Models\Spin',
+            'model_id'   => $spin->id,
+            'points'     => $pointsToDebit * -1,
+            'type'       => 0
+        ];
+
+        $userArr = [
             'points'        => $updatedPoints,
             'credit_amount' => $amountWin
-        ]);
+        ];
+
+        $this->insertCreditPoints($user, $arrCreditPoint);
+
+        $this->updateUserPoints($user, $userArr);
 
         return true;
     }

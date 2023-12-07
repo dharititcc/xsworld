@@ -9,14 +9,21 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class CreditPointsHistory extends Model
 {
     use HasFactory;
+
+    /** @var string $table */
     protected $table = 'credit_points_histories';
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
     protected $fillable = [
         'user_id',
-        'order_id',
-        'credit_point',
-        'debit_points',
-        'total'
+        'model_name',
+        'model_id',
+        'points',
+        'type'
     ];
 
     /**
@@ -28,15 +35,4 @@ class CreditPointsHistory extends Model
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
-
-    /**
-     * Get the order that owns the OrderReview
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-    */
-    public function order(): BelongsTo
-    {
-        return $this->belongsTo(Order::class, 'order_id', 'id');
-    }
-
 }
