@@ -21,7 +21,11 @@
                 type="time"
                 value="{{ isset( $res_time->id ) && $res_time->close_time ? $res_time->close_time : '' }}"
             >
-            <label for="time" class="times">@if($res_time->start_time) {{$res_time->start_time}} - {{$res_time->close_time}} @else - @endif</label>
+            @if(isset($res_time) && $res_time->start_time)
+                <label for="time" class="times"> {{$res_time->start_time}} - {{$res_time->close_time}} </label>
+            @else 
+                <label for="time" class="times"> - </label>
+            @endif
         </div>
     </td>
 </tr>
