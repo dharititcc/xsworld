@@ -497,7 +497,8 @@ trait SpinWheel
                 break;
             case Spin::FIVE_X:
                 // update user points
-                $updatedPoints = $user->points - ($pointsToDebit*5);
+                $pointsToDebit = $pointsToDebit*5;
+                $updatedPoints = $user->points - ($pointsToDebit);
 
                 // update user credits if win
                 if( $data['is_winner'] == 1 )
@@ -513,7 +514,8 @@ trait SpinWheel
                 break;
             case Spin::TEN_X:
                 // update user points
-                $updatedPoints = $user->points - ($pointsToDebit*10);
+                $pointsToDebit = $pointsToDebit*10;
+                $updatedPoints = $user->points - ($pointsToDebit);
 
                 // update user credits if win
                 if( $data['is_winner'] == 1 )
