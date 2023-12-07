@@ -206,15 +206,28 @@ class BarRepository extends BaseRepository
                 }
             }
             // point added to user account
-            $points                     = $order->total * 3;
-            $update['points']           = $user->points + round($points);
-            $user->update($update);
-            $creditArr['user_id']       = $user->id;
-            $creditArr['order_id']      = $order->id;
-            $creditArr['credit_point']  = $order->total;
-            $creditArr['total']         = $update['points'];
+            // $points                     = $order->total * 3;
+            // $update['points']           = $user->points + round($points);
+            // $user->update($update);
+            // $creditArr['user_id']       = $user->id;
+            // $creditArr['order_id']      = $order->id;
+            // $creditArr['credit_point']  = $order->total;
+            // $creditArr['total']         = $update['points'];
 
-            CreditPointsHistory::create($creditArr);
+            // add credit point history
+            $points         = $order->total * 3;
+            $totalPoints    = $user->points + round($points);
+
+
+            $this->insertCreditPoints($user, [
+                'model_name'    => '\App\Models\Order',
+                'model_id'      => $order->id,
+                'points'        => $totalPoints,
+                'type'          => 1
+            ]);
+
+            // update user's points
+            $this->updateUserPoints($user, ['points' => $totalPoints]);
         }
         return $order;
     }
@@ -326,6 +339,7 @@ class BarRepository extends BaseRepository
                 $userCreditAmountBalance = $user->credit_amount;
                 $refundCreditAmount = $order->credit_amount;
                 $totalCreditAmount = $userCreditAmountBalance + $refundCreditAmount;
+                // update user's credit amount
                 $this->updateUserPoints($user, ['credit_amount' => $totalCreditAmount]);
                 $title                      = "Venue is processing your order";
                 $message                    = "Your Order #".$order_id." is canceled by venue";
@@ -356,6 +370,7 @@ class BarRepository extends BaseRepository
                 $userCreditAmountBalance = $user->credit_amount;
                 $refundCreditAmount = $order->credit_amount;
                 $totalCreditAmount = $userCreditAmountBalance + $refundCreditAmount;
+                // update user's credit amount
                 $this->updateUserPoints($user, ['credit_amount' => $totalCreditAmount]);
                 $title                      = "Venue is processing your order";
                 $message                    = "Your Order #".$order_id." is intoxicated by venue";
@@ -371,6 +386,7 @@ class BarRepository extends BaseRepository
                 $userCreditAmountBalance = $user->credit_amount;
                 $refundCreditAmount = $order->credit_amount;
                 $totalCreditAmount = $userCreditAmountBalance + $refundCreditAmount;
+                // update user's credit amount
                 $this->updateUserPoints($user, ['credit_amount' => $totalCreditAmount]);
                 $title                      = "Venue is processing your order";
                 $message                    = "Your Order #".$order_id." is denied by venue";

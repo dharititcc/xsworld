@@ -656,6 +656,7 @@ class OrderRepository extends BaseRepository
                 ];
                 $remaingAmount = $userCreditAmountBalance - $credit_amount;
 
+                // update user's credit amount
                 $this->updateUserPoints($user, ['credit_amount' => $remaingAmount]);
             }
 
@@ -685,6 +686,7 @@ class OrderRepository extends BaseRepository
                 ];
                 $remaingAmount = $userCreditAmountBalance - $credit_amount;
 
+                // update user's credit amount
                 $this->updateUserPoints($user, ['credit_amount' => $remaingAmount]);
             }
 
@@ -746,6 +748,7 @@ class OrderRepository extends BaseRepository
 
             $order->update($updateArr);
             $totalCreditAmount = $userCreditAmountBalance + $refundCreditAmount;
+            // update user's credit amount
             $this->updateUserPoints($user, ['credit_amount' => $totalCreditAmount]);
 
             $bartitle           = "Order canceled";
