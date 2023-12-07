@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Exceptions\GeneralException;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Carbon\Carbon;
@@ -29,10 +30,16 @@ class XSWorldVerificationController extends Controller
 
         $user = User::query()->select(['id', 'email', 'verification_code'])->where('verification_code', $token)->first();
 
-        $user->email_verified_at = Carbon::now();
-        // $user->verification_code = null;
+        if( !isset($user->id) )
+        {
+            return redirect()->route('auth.token-expiry');
+        }
 
-        $user->save();
+        if(isset($user->email_verified_at))
+        {
+            $user->email_verified_at = Carbon::now();
+            $user->save();
+        }
 
         return redirect()->route('auth.verification-success', ['token' => $token]);
     }
@@ -62,5 +69,15 @@ class XSWorldVerificationController extends Controller
         $user->save();
 
         return view('auth.verification');
+    }
+
+    /**
+     * Method tokenExpiry
+     *
+     * @return view
+     */
+    public function tokenExpiry()
+    {
+        return view('auth.token-expiry');
     }
 }
