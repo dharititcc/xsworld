@@ -88,6 +88,8 @@ $('#pickup_submitBtn').click(function(e) {
                 },
                 files: {
                     required:true,
+                    accept: "image/*",
+                    extension: "png|jpg|jpeg",
                 },
             },
             messages: {
@@ -96,8 +98,9 @@ $('#pickup_submitBtn').click(function(e) {
                     maxlength: "Your name maxlength should be 50 characters long."
                 },
                 files: {
-                    required: "Please upload Images"
-                }
+                    required: "Please select a file to upload",
+                    extension: "Please upload a file with a valid extension (png, jpg, or jpeg)",
+                },
             },
 
             submitHandler: function(form) {
@@ -111,12 +114,21 @@ $('#pickup_submitBtn').click(function(e) {
                     required: true,
                     maxlength: 50
                 },
+                files: {
+                    required:true,
+                    accept: "image/*",
+                    extension: "png|jpg|jpeg",
+                },
             },
             messages: {
                 name: {
                     required: "Please enter name",
                     maxlength: "Your name maxlength should be 50 characters long."
-                }
+                },
+                files: {
+                    required: "Please select a file to upload",
+                    extension: "Please upload a file with a valid extension (png, jpg, or jpeg)",
+                },
             },
             submitHandler: function(form) {
                 formsubmit(form);
@@ -153,6 +165,14 @@ function formsubmit(form) {
 
     jQuery(form).find('.error').remove();
 
+    if( jQuery(form).find('.pip').length == 0 )
+    {
+        jQuery(form).find('input[type="file"]').closest('.image_box').after(`<span class="error mb-2 d-block">The image field is required.</span>`);
+        $('#pickup_submitBtn').html('Save');
+        $("#pickup_submitBtn").removeAttr("disabled");
+        return false;
+    }
+    
     $.ajax({
         url:route,
         type:'POST',
@@ -221,7 +241,11 @@ function updatePickup(id) {
             <i class="icon-trash remove"></i>
             </div>`;
             $('.image_box').children('.pip').remove();
-            $('#upload').after(image);
+            if( res.data.image!= "" )
+            {
+                $("#upload").after(image);
+            }
+            // $('#upload').after(image);
             $('.remove').click(function() {
                 $(this).parent('.pip').remove();
             });

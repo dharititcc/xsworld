@@ -278,7 +278,7 @@
                         maxlength: "Your name maxlength should be 20 characters long."
                     },
                     image: {
-                        required: "Please enter files", //accept: 'Not an image!'
+                        required: "Please upload files", //accept: 'Not an image!'
                     }
                 },
                 submitHandler: function(form) {

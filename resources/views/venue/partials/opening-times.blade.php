@@ -2,11 +2,12 @@
     <th>{{$name}}</th>
     <td>
         <div class="restaurant-timing"><input type="hidden" name="res_id" id="res_id" data-id="{{$id}}">
+            <?php //dd($key); ?>
             <input
                 class="start_time form-control invert"
                 style="display: none"
                 data-day_id="{{$key}}"
-                value="{{$key}}"
+                {{-- value="{{$key}}" --}}
                 name="start_time[{{$key}}]"
                 type="time"
                 value="{{ isset( $res_time->id ) && $res_time->start_time ? $res_time->start_time : '' }}"
@@ -20,7 +21,7 @@
                 type="time"
                 value="{{ isset( $res_time->id ) && $res_time->close_time ? $res_time->close_time : '' }}"
             >
-            <label for="time" class="times">-</label>
+            <label for="time" class="times">@if($res_time->start_time) {{$res_time->start_time}} - {{$res_time->close_time}} @else - @endif</label>
         </div>
     </td>
 </tr>
