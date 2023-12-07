@@ -13,17 +13,32 @@ var XS_Admin = {}; // common variable used in all the files of the backend
             });
         },
 
-        checkNumberInput: function(e)
+        isFavorite: function()
         {
+            $('.is_favorite').click(function(e)
+            {
+                var is_favorite = $(this).data('is_favorite');
+                if(is_favorite === 0){
+                    $('.is_favorite').removeClass('null');
+                    $(this).attr('data-is_favorite',1);
+                    $(this).data('is_favorite',1);
+                    $('#is_featured').val(1);
+                }else{
+                    $(this).data('is_favorite',0);
+                    $('#is_featured').val(0);
+                    $('.is_favorite').addClass('null');
+                }
+            });
+        },
+
+        checkNumberInput: function (e) {
             var val = this.value;
             var re = /^([0-9]+[\.]?[0-9]?[0-9]?|[0-9]+)$/g;
             var re1 = /^([0-9]+[\.]?[0-9]?[0-9]?|[0-9]+)/g;
-            if (re.test(val))
-            {
+            if (re.test(val)) {
                 //do something here
             }
-            else
-            {
+            else {
                 val = re1.exec(val);
                 if (val) {
                     this.value = val[0];
@@ -130,12 +145,10 @@ var XS_Admin = {}; // common variable used in all the files of the backend
                 icon: "success",
                 title: message
             }).then((value) => {
-                if( url )
-                {
+                if (url) {
                     window.location.href = url;
                 }
-                else
-                {
+                else {
                     window.location.reload();
                 }
             });
@@ -154,13 +167,12 @@ var XS_Admin = {}; // common variable used in all the files of the backend
         },
 
 
-        allCheckBox: function()
-        {
-            $('#allcheck').on('click', function(){
+        allCheckBox: function () {
+            $('#allcheck').on('click', function () {
                 // Get all rows with search applied
                 $('.drink_datatable tbody :checkbox').prop('checked', $(this).is(':checked'));
                 e.stopImmediatePropagation();
-             });
+            });
         },
 
         /**
@@ -242,8 +254,7 @@ var XS_Admin = {}; // common variable used in all the files of the backend
 
         /** Datatable related stuff */
         DataTable: {
-            getPageLengthDatatable: function()
-            {
+            getPageLengthDatatable: function () {
                 return [[10, 25, 50, -1], [10, 25, 50, "All"]];
             }
         },
@@ -253,26 +264,25 @@ var XS_Admin = {}; // common variable used in all the files of the backend
          * @param {*} elem 
          * @param {*} options 
          */
-        initializeRequestEditor: function(elem, options = {})
-        {
+        initializeRequestEditor: function (elem, options = {}) {
             var defaults = {
                 target: elem,
-                menubar:false,
+                menubar: false,
                 statusbar: false,
                 plugins: 'link',
                 min_height: 100,
                 height: 500,
                 content_style: "p { margin: 0; } h1,h2,h3,h4,h5,h6 { margin: 0; }",
                 toolbar: 'styleselect | bold italic underline | link',
-                default_link_target:"_blank",
+                default_link_target: "_blank",
                 style_formats: [
-                    {title: 'Paragraph', format: 'p'},
-                    {title: 'Heading 1', format: 'h1'},
-                    {title: 'Heading 2', format: 'h2'},
-                    {title: 'Heading 3', format: 'h3'},
-                    {title: 'Heading 4', format: 'h4'},
-                    {title: 'Heading 5', format: 'h5'},
-                    {title: 'Heading 6', format: 'h6'}
+                    { title: 'Paragraph', format: 'p' },
+                    { title: 'Heading 1', format: 'h1' },
+                    { title: 'Heading 2', format: 'h2' },
+                    { title: 'Heading 3', format: 'h3' },
+                    { title: 'Heading 4', format: 'h4' },
+                    { title: 'Heading 5', format: 'h5' },
+                    { title: 'Heading 6', format: 'h6' }
                 ],
                 setup: function (editor) {
                     editor.on('change', function () {
@@ -291,26 +301,25 @@ var XS_Admin = {}; // common variable used in all the files of the backend
          * @param {*} elem 
          * @param {*} options 
          */
-        initializeRequestEditorBySelector: function(selector, options = {})
-        {
+        initializeRequestEditorBySelector: function (selector, options = {}) {
             var defaults = {
                 selector: selector,
-                menubar:false,
+                menubar: false,
                 statusbar: false,
                 plugins: 'link',
                 min_height: 100,
                 height: 500,
                 content_style: "p { margin: 0; } h1,h2,h3,h4,h5,h6 { margin: 0; }",
                 toolbar: 'styleselect | bold italic underline | link',
-                default_link_target:"_blank",
+                default_link_target: "_blank",
                 style_formats: [
-                    {title: 'Paragraph', format: 'p'},
-                    {title: 'Heading 1', format: 'h1'},
-                    {title: 'Heading 2', format: 'h2'},
-                    {title: 'Heading 3', format: 'h3'},
-                    {title: 'Heading 4', format: 'h4'},
-                    {title: 'Heading 5', format: 'h5'},
-                    {title: 'Heading 6', format: 'h6'}
+                    { title: 'Paragraph', format: 'p' },
+                    { title: 'Heading 1', format: 'h1' },
+                    { title: 'Heading 2', format: 'h2' },
+                    { title: 'Heading 3', format: 'h3' },
+                    { title: 'Heading 4', format: 'h4' },
+                    { title: 'Heading 5', format: 'h5' },
+                    { title: 'Heading 6', format: 'h6' }
                 ],
                 setup: function (editor) {
                     editor.on('change', function () {
@@ -324,20 +333,18 @@ var XS_Admin = {}; // common variable used in all the files of the backend
             tinymce.init(options);
         },
 
-        enableSweetAlert: function(table)
-        {            
-            $('#enable').click(function(event) {
-                var $this   = $(this),
-                    form    = $(this).closest("form"),
-                    data    = [],
-                    i       = 0;
+        enableSweetAlert: function (table) {
+            $('#enable').click(function (event) {
+                var $this = $(this),
+                    form = $(this).closest("form"),
+                    data = [],
+                    i = 0;
                 event.preventDefault();
 
                 $this.addClass('enable_clicked');
-            
+
                 // check if atleast one item selected
-                if( $('.checkboxitem:checked').length == 0 )
-                {
+                if ($('.checkboxitem:checked').length == 0) {
                     swal({
                         title: `Please select atleast one item?`,
                         icon: "warning",
@@ -345,37 +352,35 @@ var XS_Admin = {}; // common variable used in all the files of the backend
                     });
                     return false;
                 }
-            
+
                 swal({
                     title: `Are you sure you want to Enable this Records?`,
                     icon: "warning",
                     buttons: true,
                     dangerMode: true,
                 })
-                .then((willDelete) => {
-                    if (willDelete) {
-                        table.ajax.reload();
-                        $this.removeClass('enable_clicked');
-                    }
-                    $('#allcheck').prop( "checked", false );
-                });
+                    .then((willDelete) => {
+                        if (willDelete) {
+                            table.ajax.reload();
+                            $this.removeClass('enable_clicked');
+                        }
+                        $('#allcheck').prop("checked", false);
+                    });
             });
         },
 
-        disableSweetAlert: function(table)
-        {            
-            $('#disable').click(function(event) {
-                var $this   = $(this),
-                    form    = $(this).closest("form"),
-                    data    = [],
-                    i       = 0;
+        disableSweetAlert: function (table) {
+            $('#disable').click(function (event) {
+                var $this = $(this),
+                    form = $(this).closest("form"),
+                    data = [],
+                    i = 0;
                 event.preventDefault();
 
                 $this.addClass('disable_clicked');
-            
+
                 // check if atleast one item selected
-                if( $('.checkboxitem:checked').length == 0 )
-                {
+                if ($('.checkboxitem:checked').length == 0) {
                     swal({
                         title: `Please select atleast one item?`,
                         icon: "warning",
@@ -383,54 +388,51 @@ var XS_Admin = {}; // common variable used in all the files of the backend
                     });
                     return false;
                 }
-            
+
                 swal({
                     title: `Are you sure you want to Disable this Records?`,
                     icon: "warning",
                     buttons: true,
                     dangerMode: true,
                 })
-                .then((willDelete) => {
-                    if (willDelete) {
-                        table.ajax.reload();
-                    }
-                    $('#allcheck').prop( "checked", false );
-                    $this.removeClass('disable_clicked');
-                });
+                    .then((willDelete) => {
+                        if (willDelete) {
+                            table.ajax.reload();
+                        }
+                        $('#allcheck').prop("checked", false);
+                        $this.removeClass('disable_clicked');
+                    });
             });
         },
 
-        reinitSortableTinymce: function()
-        {
+        reinitSortableTinymce: function () {
             const templRequestDiv = document.getElementById('tempRequestDiv');
 
-            $(templRequestDiv).find('.request_accordion').each(function(index, elem){
+            $(templRequestDiv).find('.request_accordion').each(function (index, elem) {
                 // destroy tinymce
                 tinyMCE.execCommand('mceRemoveEditor', 'false', $(elem).find('.ckeditor').attr('id'));
 
                 // initialize ckeditor
-                setTimeout(function() {
+                setTimeout(function () {
                     NBC.Common.initializeRequestEditor($(elem).find('.ckeditor').get(0));
                 }, 1000);
 
                 // initialize drop
                 var dropzoneControl = $(elem).find('div.my_upload')[0].dropzone;
                 // check if dropzone already attached
-                if( dropzoneControl === undefined )
-                {
+                if (dropzoneControl === undefined) {
                     $(elem).find('div.my_upload').dropzone(initializeDropzone());
                 }
             });
         },
 
-        insertAtIndex: function(index, parentElement, content)
-        {
-            if(index === 0) {
+        insertAtIndex: function (index, parentElement, content) {
+            if (index === 0) {
                 $(parentElement).prepend(content);
                 return;
             }
             // $("#tempRequestDiv > div:nth-child(" + (index) + ")").after(content); // working solution
-            $(parentElement).children().eq(index-1).after(content);
+            $(parentElement).children().eq(index - 1).after(content);
         },
 
         /**
@@ -438,8 +440,7 @@ var XS_Admin = {}; // common variable used in all the files of the backend
          * @param {*} date
          * @returns
          */
-        formatDate: function(date)
-        {
+        formatDate: function (date) {
             var context = this;
 
             var d = new Date(date),
@@ -455,37 +456,34 @@ var XS_Admin = {}; // common variable used in all the files of the backend
             return [day, month, year].join('-');
         },
 
-        fileReaderBind: function()
-        {
+        fileReaderBind: function () {
             if (window.File && window.FileList && window.FileReader) {
-                $(".files").on("change", function(e) {
-                    var clickedButton   = this,
-                        files           = e.target.files,
-                        filesLength     = files.length;
+                $(".files").on("change", function (e) {
+                    var clickedButton = this,
+                        files = e.target.files,
+                        filesLength = files.length;
 
                     for (var i = 0; i < filesLength; i++) {
                         var f = files[i],
                             fileReader = new FileReader();
 
-                        fileReader.onload = (function(e)
-                        {
-                            var file        = e.target,
-                                data        = fileReader.result,
-                                thumbnail   = `
+                        fileReader.onload = (function (e) {
+                            var file = e.target,
+                                data = fileReader.result,
+                                thumbnail = `
                                     <div class="pip">
                                         <img class="imageThumb" src="${e.target.result}" title="${f.name}" />
                                         <i class="icon-trash remove"></i>
                                     </div>
                                 `;
 
-                            if (!data.match(/^data:image\//))
-                            {
+                            if (!data.match(/^data:image\//)) {
                                 XS.Common.handleSwalError('Please select image only.');
                                 return false;
                             }
 
                             $(thumbnail).insertAfter(clickedButton);
-                            $(".remove").click(function() {
+                            $(".remove").click(function () {
                                 $(this).parent(".pip").remove();
                             });
                         });
@@ -498,15 +496,14 @@ var XS_Admin = {}; // common variable used in all the files of the backend
             }
         },
 
-        randomId: function(length)
-        {
+        randomId: function (length) {
             let result = '';
             const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
             const charactersLength = characters.length;
             let counter = 0;
             while (counter < length) {
-            result += characters.charAt(Math.floor(Math.random() * charactersLength));
-            counter += 1;
+                result += characters.charAt(Math.floor(Math.random() * charactersLength));
+                counter += 1;
             }
             return result;
         },
