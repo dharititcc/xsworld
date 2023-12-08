@@ -172,6 +172,17 @@ class UserRepository extends BaseRepository
                     $refer_user['points']   = $refer_user->points + UserReferrals::FROM_USER_POINTS;
                     $refer_user->update();
 
+                    // insert credit point histories table
+
+                    $arrCreditPoint = [
+                        'model_name' => '\App\Models\User',
+                        'model_id'   => $refer_user->id,
+                        'points'     => UserReferrals::FROM_USER_POINTS,
+                        'type'       => 1
+                    ];
+
+                    $this->insertCreditPoints($refer_user, $arrCreditPoint);
+
                     $referred_data['from_user_id']                  = $refer_user->id;
                     $referred_data['points_earned_by_to_user']      = UserReferrals::FROM_USER_POINTS;
                     $referred_data['points_earned_by_from_user']    = UserReferrals::TO_USER_POINTS;
@@ -205,9 +216,31 @@ class UserRepository extends BaseRepository
                     'name' => 'Cash'
                 ]);
 
+                // insert credit point histories table
+
+                $arrCreditPoint = [
+                    'model_name' => '\App\Models\User',
+                    'model_id'   => $user->id,
+                    'points'     => User::SIGN_UP_POINTS,
+                    'type'       => 1
+                ];
+
+                $this->insertCreditPoints($user, $arrCreditPoint);
+
                 // Latest user id for to_user_id in User referrals
                 if(isset($referred_user->id))
                 {
+                    // insert credit point histories table
+
+                    $arrCreditPoint = [
+                        'model_name' => '\App\Models\User',
+                        'model_id'   => $user->id,
+                        'points'     => UserReferrals::TO_USER_POINTS,
+                        'type'       => 1
+                    ];
+
+                    $this->insertCreditPoints($user, $arrCreditPoint);
+
                     $referred_id['to_user_id']  = $user->id;
                     $referred_user->update($referred_id);
                 }
@@ -238,6 +271,17 @@ class UserRepository extends BaseRepository
                 $refer_user['points']   = $refer_user->points + UserReferrals::FROM_USER_POINTS;
                 $refer_user->update();
 
+                // insert credit point histories table
+
+                $arrCreditPoint = [
+                    'model_name' => '\App\Models\User',
+                    'model_id'   => $refer_user->id,
+                    'points'     => UserReferrals::FROM_USER_POINTS,
+                    'type'       => 1
+                ];
+
+                $this->insertCreditPoints($refer_user, $arrCreditPoint);
+
                 $referred_data['from_user_id']                  = $refer_user->id;
                 $referred_data['points_earned_by_to_user']      = UserReferrals::FROM_USER_POINTS;
                 $referred_data['points_earned_by_from_user']    = UserReferrals::TO_USER_POINTS;
@@ -265,9 +309,30 @@ class UserRepository extends BaseRepository
                 $user['referral_code']      = referralCode();
                 $user->update($str);
 
+                // insert credit point histories table
+
+                $arrCreditPoint = [
+                    'model_name' => '\App\Models\User',
+                    'model_id'   => $user->id,
+                    'points'     => User::SIGN_UP_POINTS,
+                    'type'       => 1
+                ];
+
+                $this->insertCreditPoints($user, $arrCreditPoint);
+
                 // Latest user id for to_user_id in User referrals
                 if(isset($referred_user->id))
                 {
+                     // insert credit point histories table
+
+                     $arrCreditPoint = [
+                        'model_name' => '\App\Models\User',
+                        'model_id'   => $user->id,
+                        'points'     => UserReferrals::TO_USER_POINTS,
+                        'type'       => 1
+                    ];
+
+                    $this->insertCreditPoints($user, $arrCreditPoint);
                     $referred_id['to_user_id']  = $user->id;
                     $referred_user->update($referred_id);
                 }

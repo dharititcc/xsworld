@@ -15,6 +15,7 @@ use App\Models\RestaurantWaiter;
 use App\Models\User;
 use App\Models\UserPaymentMethod;
 use App\Repositories\BaseRepository;
+use App\Repositories\Traits\CreditPoint;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
@@ -30,6 +31,8 @@ use Stripe\Token;
 */
 class OrderRepository extends BaseRepository
 {
+    use CreditPoint;
+
     /**
     * Associated Repository Model.
     */
@@ -652,7 +655,9 @@ class OrderRepository extends BaseRepository
                     'restaurant_table_id'   => ($table_id) ? $table_id : null,
                 ];
                 $remaingAmount = $userCreditAmountBalance - $credit_amount;
-                $this->userCreditAmountUpdated($user,$remaingAmount);
+
+                // update user's credit amount
+                $this->updateUserPoints($user, ['credit_amount' => $remaingAmount]);
             }
 
 
@@ -680,7 +685,9 @@ class OrderRepository extends BaseRepository
                     'restaurant_table_id'   => ($table_id) ? $table_id : null,
                 ];
                 $remaingAmount = $userCreditAmountBalance - $credit_amount;
-                $this->userCreditAmountUpdated($user,$remaingAmount);
+
+                // update user's credit amount
+                $this->updateUserPoints($user, ['credit_amount' => $remaingAmount]);
             }
 
             $order->update($updateArr);
@@ -702,12 +709,6 @@ class OrderRepository extends BaseRepository
         }
 
         return $order;
-    }
-
-	public function userCreditAmountUpdated(User $user,$remaingAmount)
-    {
-        User::where('id', $user->id)->update(['credit_amount' => $remaingAmount]);
-        return true;
     }
 
     /**
@@ -747,7 +748,8 @@ class OrderRepository extends BaseRepository
 
             $order->update($updateArr);
             $totalCreditAmount = $userCreditAmountBalance + $refundCreditAmount;
-            $this->userCreditAmountUpdated($user,$totalCreditAmount);
+            // update user's credit amount
+            $this->updateUserPoints($user, ['credit_amount' => $totalCreditAmount]);
 
             $bartitle           = "Order canceled";
             $barmessage         = "Order #".$order->id." is canceled by customer";

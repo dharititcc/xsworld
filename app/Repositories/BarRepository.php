@@ -7,6 +7,7 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\User;
 use App\Repositories\BaseRepository;
+use App\Repositories\Traits\CreditPoint;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
@@ -16,6 +17,7 @@ use Illuminate\Support\Collection;
 */
 class BarRepository extends BaseRepository
 {
+    use CreditPoint;
     /**
     * Associated Repository Model.
     */
@@ -204,24 +206,32 @@ class BarRepository extends BaseRepository
                 }
             }
             // point added to user account
-            $points                     = $order->total * 3;
-            $update['points']           = $user->points + round($points);
-            $user->update($update);
-            $creditArr['user_id']       = $user->id;
-            $creditArr['order_id']      = $order->id;
-            $creditArr['credit_point']  = $order->total;
-            $creditArr['total']         = $update['points'];
+            // $points                     = $order->total * 3;
+            // $update['points']           = $user->points + round($points);
+            // $user->update($update);
+            // $creditArr['user_id']       = $user->id;
+            // $creditArr['order_id']      = $order->id;
+            // $creditArr['credit_point']  = $order->total;
+            // $creditArr['total']         = $update['points'];
 
-            CreditPointsHistory::create($creditArr);
+            // add credit point history
+            $points         = $order->total * 3;
+            $totalPoints    = $user->points + round($points);
+
+
+            $this->insertCreditPoints($user, [
+                'model_name'    => '\App\Models\Order',
+                'model_id'      => $order->id,
+                'points'        => $totalPoints,
+                'type'          => 1
+            ]);
+
+            // update user's points
+            $this->updateUserPoints($user, ['points' => $totalPoints]);
         }
         return $order;
     }
 
-    public function userCreditAmountUpdated(User $user,$remaingAmount)
-    {
-        User::where('id', $user->id)->update(['credit_amount' => $remaingAmount]);
-        return true;
-    }
     /**
      * Method updateStatusOrder
      *
@@ -254,7 +264,7 @@ class BarRepository extends BaseRepository
                         $old_time           = Carbon::parse($order->remaining_date);
                         $remaining_date     = $old_time->addMinutes($apply_time);
                         $old_time           = Carbon::parse($remaining_date)->isPast();
-                        if($old_time == true)
+                        if($old_time === true)
                         {
                             $current_time       = Carbon::now();
                             $remaining_date     = $current_time->addMinutes($apply_time);
@@ -329,7 +339,8 @@ class BarRepository extends BaseRepository
                 $userCreditAmountBalance = $user->credit_amount;
                 $refundCreditAmount = $order->credit_amount;
                 $totalCreditAmount = $userCreditAmountBalance + $refundCreditAmount;
-                $this->userCreditAmountUpdated($user,$totalCreditAmount);
+                // update user's credit amount
+                $this->updateUserPoints($user, ['credit_amount' => $totalCreditAmount]);
                 $title                      = "Venue is processing your order";
                 $message                    = "Your Order #".$order_id." is canceled by venue";
                 $send_notification          = sendNotification($title,$message,$user_tokens,$order_id);
@@ -359,7 +370,8 @@ class BarRepository extends BaseRepository
                 $userCreditAmountBalance = $user->credit_amount;
                 $refundCreditAmount = $order->credit_amount;
                 $totalCreditAmount = $userCreditAmountBalance + $refundCreditAmount;
-                $this->userCreditAmountUpdated($user,$totalCreditAmount);
+                // update user's credit amount
+                $this->updateUserPoints($user, ['credit_amount' => $totalCreditAmount]);
                 $title                      = "Venue is processing your order";
                 $message                    = "Your Order #".$order_id." is intoxicated by venue";
                 $send_notification          = sendNotification($title,$message,$user_tokens,$order_id);
@@ -374,7 +386,8 @@ class BarRepository extends BaseRepository
                 $userCreditAmountBalance = $user->credit_amount;
                 $refundCreditAmount = $order->credit_amount;
                 $totalCreditAmount = $userCreditAmountBalance + $refundCreditAmount;
-                $this->userCreditAmountUpdated($user,$totalCreditAmount);
+                // update user's credit amount
+                $this->updateUserPoints($user, ['credit_amount' => $totalCreditAmount]);
                 $title                      = "Venue is processing your order";
                 $message                    = "Your Order #".$order_id." is denied by venue";
                 $send_notification          = sendNotification($title,$message,$user_tokens,$order_id);
