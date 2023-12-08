@@ -71,7 +71,7 @@ class Order extends Model
         self::PARTIAL_REFUND            => 'Partially Refund',
         self::FULL_REFUND               => 'Full Refund',
         self::DELAY_ORDER               => 'Delay Order',
-        self::CUSTOMER_CANCELED         => 'Customer Cancelled',
+        self::CUSTOMER_CANCELED         => 'Cancelled',
         self::READYFORPICKUP            => 'Kitchen ready for pickup',
         self::KITCHEN_CONFIRM           => 'Kitchen confirm order',
         self::WAITER_PENDING            => 'Waiter Pending',
