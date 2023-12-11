@@ -8,6 +8,7 @@ use App\Models\Restaurant;
 use App\Models\RestaurantTable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use DataTables;
 
 class HomeController extends Controller
 {
@@ -72,7 +73,37 @@ class HomeController extends Controller
                     })
                     ->groupBy(DB::raw("DATE(created_at)"))
                     ->get();
-        // dd($order);
+
+
+            // $orders     = $restaurant->orders()
+            //         ->with(['order_items','order_items.restaurant_item'])
+            //         ->where('status',Order::CONFIRM_PICKUP)
+            //         ->where(function($query)
+            //         {
+            //             $query->where('created_at', '>=', '2023-11-28')
+            //                 ->orWhere('created_at', '<=','2023-11-30');
+            //         })
+            //         ->groupBy(DB::raw("DATE(created_at)"));
+
+            // $data = $orders->orderByDesc('id')->get();
+            // dd($data);
+        if($request->ajax())
+        {
+            $orders     = $restaurant->orders()
+                    ->with(['order_items','order_items.restaurant_item'])
+                    ->where('status',Order::CONFIRM_PICKUP)
+                    ->where(function($query)
+                    {
+                        $query->where('created_at', '>=', '2023-11-28')
+                            ->orWhere('created_at', '<=','2023-11-30');
+                    })
+                    ->groupBy(DB::raw("DATE(created_at)"));
+
+            $data = $orders->orderByDesc('id')->get();
+            return Datatables::of($data)
+                ->make(true);
+                // dd($orders->order_items);
+        }
         // echo common()->formatSql($order);die;
         // foreach($orders as $order)
         // {

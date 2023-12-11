@@ -1,7 +1,75 @@
 (function () {
     XS.Analytic = {
+        table: null,
+        tableColumns: [
+        {
+            "data": "", // can be null or undefined ->type
+            "defaultContent": "",
+            "width": "5%",
+            "sortable": false,
+            render: function (data, type, row) {
+                return `<label class="cst-check"><input name="id" class="checkboxitem" type="checkbox" value="${row.id}"><span class="checkmark"></span></label>`
+            }
+        },
+        {
+            "data": "name", // can be null or undefined ->type
+            "width": "25%",
+            "defaultContent": "",
+            render: function (data, type, row) {
+                console.log(row.order_items.restaurant_item);
+                var color = (row.order_items.restaurant_item.is_available == 1) ? "green" : "red";
+                return `<div class="prdname ${color}"> ${row.order_items.restaurant_item.name} </div>
+                        <a href="javascript:void(0);" data-id="${row.id}" class="drink_modal edit">Edit</a>
+                        <div class="add-date">Added ${XS.Common.formatDate(row.created_at)}</div>`
+            }
+        },
+        {
+            "data": "type", // can be null or undefined
+            "defaultContent": "",
+            "width": "15%",
+            "bSortable": false,
+            render: function (data, type, row) {
+                var text = "";
+                // if (row.variations.length > 0) {
+                //     for (let i = 0; i < row.variations.length; i++) {
+                //         text += '<label class="">' + row.variations[i]['name'] + "</label>";
+                //     }
+                //     return text
+                // }
+                return ""
+            }
+        },
+        {
+            "data": "price", // can be null or undefined
+            "defaultContent": "",
+            "width": "10%",
+            "bSortable": false,
+            render: function (data, type, row) {
+                var text = "";
+                // if (row.variations.length > 0) {
+                //     for (let i = 0; i < row.variations.length; i++) {
+                //         text += `<label class="price">${moduleConfig.currency}${row.variations[i]['price']}</label>`;
+                //     }
+                //     return text
+                // }
+                return `<label class="price">${moduleConfig.currency}${row.order_items.restaurant_item.price}</label>`;
+            }
+        },
+       
+        {
+            "data": "favorite", // can be null or undefined
+            "defaultContent": "",
+            "width": "5%",
+            "class": "dt-center",
+            "bSortable": false,
+            render: function (data, type, row) {
+                return `<a href="javascript:void(0)" class="favorite ${row.order_items.restaurant_item.is_featured == 0 ? 'null' : ''} "  data-is_featured="${row.order_items.restaurant_item.is_featured == 0 ? 1 : 0}" data-id="${row.order_items.restaurant_item.id}"></a>`
+            }
+        }
+        ],
         selectors: {
             drinkModal: jQuery('#wd930'),
+            drinkTable:         jQuery('.drink_datatable'),
         },
 
         init: function (){
@@ -10,9 +78,35 @@
 
         addHandler: function (){
             var context = this;
-
+            context.makeDatatable();
             context.getChart();
         },
+
+
+        makeDatatable: function (){
+            var context     = this;
+
+            context.table = context.selectors.drinkTable.DataTable({
+                processing: true,
+                serverSide: true,
+                searching: false,
+                order: [[1, 'asc']],
+                ajax: {
+                    url: moduleConfig.getAccessibles,
+                    type: 'get',
+                    data: function(data)
+                    {
+                        var checkboxes = $.map($('input[name="id"]:checked'), function(c){return c.value; });
+                    },
+                },
+                columns: context.tableColumns,
+                drawCallback: function ( settings )
+                {
+                    context.selectors.drinkTable.find('tbody tr').find('td:first').addClass('dt-center');
+                }
+            });
+        },
+
 
         getChart: function()
         {
