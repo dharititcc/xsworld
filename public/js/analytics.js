@@ -66,12 +66,12 @@
                 },
 
 
-                data: {
-                    csvURL: 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/analytics.csv',
-                    beforeParse: function (csv) {
-                        return csv.replace(/\n\n/g, '\n');
-                    }
-                },
+                // data: {
+                //     csvURL: 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/analytics.csv',
+                //     beforeParse: function (csv) {
+                //         return csv.replace(/\n\n/g, '\n');
+                //     }
+                // },
 
                 title: {
                     text: 'Daily sessions',
@@ -144,7 +144,7 @@
                         label: {
                             connectorAllowed: false
                           },
-                        pointStart: 2020
+                        pointStart: 2023
                     }
                 },
 
@@ -153,7 +153,8 @@
                     lineWidth: 4,
                     marker: {
                         radius: 4
-                    }
+                    },
+                    data: orders,
                 }, {
                     name: 'New users'
                 }],
