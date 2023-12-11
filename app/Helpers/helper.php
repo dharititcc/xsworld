@@ -330,7 +330,8 @@ if (! function_exists('sendNotification')) {
                     'sound'                 => 'mySound',
                     // 'notification_type'  => $type,
                     'image'                 =>'',
-                    'order_id'              => $orderid
+                    'order_id'              => (string)$orderid,
+                    "click_action"          =>".ui.sidemenu.orderhistory.OrderStatusActivity"
                 ];
 
                 $extraNotificationData = ["data" => $notification];
