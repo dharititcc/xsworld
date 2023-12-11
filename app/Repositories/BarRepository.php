@@ -381,7 +381,10 @@ class BarRepository extends BaseRepository
             {
                 // DENY_ORDER and process for refund
                 $updateArr['status']            = $status;
-
+                if($order->charge_id)
+                {
+                    $this->refundCharge($order);
+                }
                 $order->update($updateArr);
                 $userCreditAmountBalance = $user->credit_amount;
                 $refundCreditAmount = $order->credit_amount;
