@@ -331,7 +331,7 @@ if (! function_exists('sendNotification')) {
                     // 'notification_type'  => $type,
                     'image'                 =>'',
                     'order_id'              => (string)$orderid,
-                    "click_action"          =>"OrderStatusActivity"
+                    "click_action"          =>".ui.sidemenu.orderhistory.OrderStatusActivity"
                 ];
 
                 $extraNotificationData = ["data" => $notification];
