@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AccountManager\Bar\BarPickZoneController;
 use App\Http\Controllers\Drinks\DrinkController;
+use App\Http\Controllers\LeaveImpersonateController;
 use App\Http\Controllers\Table\RestaurantTableController;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
@@ -17,6 +18,10 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
+Route::impersonate();
+
+Route::get('leave-imporsonate', 'LeaveImpersonateController@leave')->name('leave');
+
 Route::get('seed', function()
 {
     Artisan::call('cache:clear');

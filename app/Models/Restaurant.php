@@ -323,7 +323,7 @@ class Restaurant extends Model
         $buttons = '<div class="action-box">
             ' . $this->getEditButtonAttribute('btn btn-warning btn-sm') . '
             ' . $this->getDeleteButtonAttribute('btn btn-danger btn-sm') . '
-                <a href="javascript:0" class="act-btn"><i class="icon-user"></i></a>
+                <a class="act-btn" href="'.route('impersonate', $this->owners()->first()).'" title="Impersonate this user"><i class="icon-user"></i></a>
             </div>';
 
         return $buttons;

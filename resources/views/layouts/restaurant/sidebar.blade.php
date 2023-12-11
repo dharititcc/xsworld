@@ -25,6 +25,10 @@
             <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
                 @csrf
             </form>
+
+        @impersonating($guard = null)
+            <a href="{{ route('leave') }}">Leave impersonation</a>
+        @endImpersonating
   </div>
     <div class="sidebar-footer"><label> what will it be today?</label> <span class="year">2023</span></div>
 </div>
