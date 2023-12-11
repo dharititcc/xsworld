@@ -1204,7 +1204,7 @@ class OrderRepository extends BaseRepository
 
         $latestCart = $user->latest_cart;
 
-        if( isset( $latestCart->id ) && ($latestCart->restaurant->id ==  $data['restaurant_id']) )
+        if( isset( $latestCart->id ) )
         {
             // check restaurant id available in the cart
             $latestCart->delete();
