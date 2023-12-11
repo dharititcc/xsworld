@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Day;
+use App\Models\Order;
 use App\Models\Restaurant;
 use App\Models\RestaurantTable;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class HomeController extends Controller
 {
@@ -56,9 +58,26 @@ class HomeController extends Controller
         $restaurant->refresh();
 
         $categories = $restaurant->categories()->with(['children_parent'])->whereNotNull('parent_id')->get();
-        // dd($categories);
+        $orders     = $restaurant->orders()->select(DB::raw("COUNT(*) as count"))->where('status',Order::COMPLETED)->where(function ($query) {
+                $query->where('created_at', '>', '2023-11-28')
+                    ->orWhere('created_at', '=','2023-11-30');
+        })->pluck('count');
+        // dd($orders);
+        // echo common()->formatSql($orders);die;
+        // foreach($orders as $order)
+        // {
+        //     $orderItems = $order->order_items()->get();
+        //     foreach($orderItems as $orderItem)
+        //     {
+
+        //     }
+        //     restaurant_item()->get();
+        //     dd($order);
+        // }
+        
         return view('analytics.index', [
-            'categories' => $categories
+            'categories' => $categories,
+            'orders'    => $orders,
         ]);
     }
 }

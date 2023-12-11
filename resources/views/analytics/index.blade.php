@@ -78,6 +78,7 @@
         </div>
         <div style="color: #fff;">
             table comes here
+            {{$orders}}
         </div>
     </div>
 </div>
@@ -95,7 +96,7 @@
     var moduleConfig = {
         tableAjax: "{!! route('restaurants.drinks.index') !!}",
     };
-
+    var orders =  <?php echo json_encode($orders) ?>;
     $(document).ready(function() {
         XS.Analytic.init();
     });
