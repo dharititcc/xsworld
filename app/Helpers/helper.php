@@ -330,7 +330,8 @@ if (! function_exists('sendNotification')) {
                     'sound'                 => 'mySound',
                     // 'notification_type'  => $type,
                     'image'                 =>'',
-                    'order_id'              => $orderid
+                    'order_id'              => $orderid,
+                    "click_action"          =>"OrderStatusActivity"
                 ];
 
                 $extraNotificationData = ["data" => $notification];
