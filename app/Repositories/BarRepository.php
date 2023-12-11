@@ -222,7 +222,7 @@ class BarRepository extends BaseRepository
             $this->insertCreditPoints($user, [
                 'model_name'    => '\App\Models\Order',
                 'model_id'      => $order->id,
-                'points'        => $totalPoints,
+                'points'        => $points,
                 'type'          => 1
             ]);
 
