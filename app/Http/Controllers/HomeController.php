@@ -32,8 +32,22 @@ class HomeController extends Controller
         // dd(session('restaurant'));
         if( access()->isRestaurantOwner() )
         {
-            $restaurant = session('restaurant');
-            $restaurant->refresh();
+            $user = access()->user();
+            $user->loadMissing(['restaurants']);
+
+            if( session('restaurant') )
+            {
+                $restaurant = session('restaurant');
+                $restaurant->refresh();
+            }
+            else
+            {
+                $restaurantData = $user->restaurants()->first();
+                $restaurant = session(['restaurant' => $restaurantData]);
+
+                return redirect()->route('home');
+            }
+
             $res_tables = RestaurantTable::where('restaurant_id',$restaurant->id)->get();
             $active_tbl = RestaurantTable::where(['restaurant_id' => $restaurant->id, 'status' =>RestaurantTable::ACTIVE])->count();
             $days = Day::all();

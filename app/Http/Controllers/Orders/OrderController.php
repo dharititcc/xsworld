@@ -24,6 +24,7 @@ class OrderController extends Controller
         ])
         ->where('restaurant_id', $restaurant->id)
         ->where('type', Order::ORDER)
+        ->orderBy('id','desc')
         ->paginate(15);
 
         return view('order.order-history', compact('orders', 'restaurant'));

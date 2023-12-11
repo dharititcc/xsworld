@@ -188,6 +188,7 @@ return [
         App\Providers\RouteServiceProvider::class,
         App\Providers\TelescopeServiceProvider::class,
         Yajra\DataTables\DataTablesServiceProvider::class,
+        Lab404\Impersonate\ImpersonateServiceProvider::class,
 
     ],
 
