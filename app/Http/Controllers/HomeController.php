@@ -58,12 +58,22 @@ class HomeController extends Controller
         $restaurant->refresh();
 
         $categories = $restaurant->categories()->with(['children_parent'])->whereNotNull('parent_id')->get();
-        $orders     = $restaurant->orders()->select(DB::raw("COUNT(*) as count"))->where('status',Order::COMPLETED)->where(function ($query) {
-                $query->where('created_at', '>', '2023-11-28')
-                    ->orWhere('created_at', '=','2023-11-30');
-        })->pluck('count');
-        // dd($orders);
-        // echo common()->formatSql($orders);die;
+        // $orders     = $restaurant->orders()->select(DB::raw("COUNT(*) as count"))->where('status',Order::COMPLETED)->where(function ($query) {
+        //         $query->where('created_at', '>', '2023-11-28')
+        //             ->orWhere('created_at', '=','2023-11-30');
+        // })->pluck('count');
+
+        $order     = $restaurant->orders()->select(DB::raw("SUM(total) as total_orders_rs, DATE(created_at) as day"))
+                    ->where('status',Order::CONFIRM_PICKUP)
+                    ->where(function($query)
+                    {
+                        $query->where('created_at', '>=', '2023-11-28')
+                            ->orWhere('created_at', '<=','2023-11-30');
+                    })
+                    ->groupBy(DB::raw("DATE(created_at)"))
+                    ->get();
+        // dd($order);
+        // echo common()->formatSql($order);die;
         // foreach($orders as $order)
         // {
         //     $orderItems = $order->order_items()->get();
@@ -77,7 +87,8 @@ class HomeController extends Controller
         
         return view('analytics.index', [
             'categories' => $categories,
-            'orders'    => $orders,
+            // 'orders'    => $orders,
+            'order'     => $order,
         ]);
     }
 }

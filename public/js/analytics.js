@@ -56,109 +56,157 @@
             });
 
 
+            // Highcharts.chart('mygraph', {
+            //     chart: {
+            //         scrollablePlotArea: {
+            //             minWidth: 700
+            //         },
+            //         className: 'analytic-chart',
+            //         backgroundColor:'transparent',
+            //     },
+
+
+            //     // data: {
+            //     //     csvURL: 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/analytics.csv',
+            //     //     beforeParse: function (csv) {
+            //     //         return csv.replace(/\n\n/g, '\n');
+            //     //     }
+            //     // },
+
+            //     title: {
+            //         text: 'Daily sessions',
+            //         align: 'left',
+            //         color: '#fff'
+            //     },
+
+            //     subtitle: {
+            //         text: null,
+            //         align: 'center',
+            //         // y: 14
+            //     },
+
+            //     xAxis: {
+            //         tickInterval: 7 * 24 * 3600 * 1000, // one week
+            //         tickWidth: 0,
+            //         gridLineWidth: 1,
+            //         labels: {
+            //             align: 'center',
+            //             x: 3,
+            //             y: -3
+            //         }
+            //     },
+
+            //     yAxis: [{ // left y axis
+            //         title: {
+            //             text: null
+            //         },
+            //         labels: {
+            //             align: 'left',
+            //             x: 3,
+            //             y: 16,
+            //             format: '{value:.,0f}'
+            //         },
+            //         showFirstLabel: false
+            //          }, { // right y axis
+            //         linkedTo: 0,
+            //         gridLineWidth: 0,
+            //         opposite: true,
+            //         title: {
+            //             text: null
+            //         },
+            //         labels: {
+            //             align: 'right',
+            //             x: -3,
+            //             y: 16,
+            //             format: '{value:.,0f}'
+            //         },
+            //         showFirstLabel: false
+            //     }],
+
+            //     legend: {
+            //         align: 'left',
+            //         verticalAlign: 'bottom',
+            //         borderWidth: 0
+            //     },
+
+            //     tooltip: {
+            //         shared: true,
+            //         crosshairs: true
+            //     },
+
+            //     plotOptions: {
+            //         series: {
+            //             cursor: 'pointer',
+            //             className: 'popup-on-click',
+            //             marker: {
+            //                 lineWidth: 1
+            //             },
+            //             label: {
+            //                 connectorAllowed: false
+            //               },
+            //             pointStart: 2023
+            //         }
+            //     },
+
+            //     series: [{
+            //         name: 'All sessions',
+            //         lineWidth: 4,
+            //         marker: {
+            //             radius: 4
+            //         },
+            //         data: orders,
+            //     }, {
+            //         name: 'New users'
+            //     }],
+                
+            // });
+
+
             Highcharts.chart('mygraph', {
-                chart: {
-                    scrollablePlotArea: {
-                        minWidth: 700
-                    },
-                    className: 'analytic-chart',
-                    backgroundColor:'transparent',
-                },
-
-
-                // data: {
-                //     csvURL: 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/analytics.csv',
-                //     beforeParse: function (csv) {
-                //         return csv.replace(/\n\n/g, '\n');
-                //     }
-                // },
-
                 title: {
-                    text: 'Daily sessions',
-                    align: 'left',
-                    color: '#fff'
+                    text: 'New User Growth, 2020'
                 },
-
                 subtitle: {
-                    text: null,
-                    align: 'center',
-                    // y: 14
+                    text: null
                 },
-
                 xAxis: {
-                    tickInterval: 7 * 24 * 3600 * 1000, // one week
-                    tickWidth: 0,
-                    gridLineWidth: 1,
-                    labels: {
-                        align: 'center',
-                        x: 3,
-                        y: -3
+                    // categories: ['1','5', '10', '15', '20', '25', '30'
+                    // ]
+                },
+                yAxis: {
+                    title: {
+                        text: 'Number of New Users'
                     }
                 },
-
-                yAxis: [{ // left y axis
-                    title: {
-                        text: null
-                    },
-                    labels: {
-                        align: 'left',
-                        x: 3,
-                        y: 16,
-                        format: '{value:.,0f}'
-                    },
-                    showFirstLabel: false
-                     }, { // right y axis
-                    linkedTo: 0,
-                    gridLineWidth: 0,
-                    opposite: true,
-                    title: {
-                        text: null
-                    },
-                    labels: {
-                        align: 'right',
-                        x: -3,
-                        y: 16,
-                        format: '{value:.,0f}'
-                    },
-                    showFirstLabel: false
-                }],
-
                 legend: {
-                    align: 'left',
-                    verticalAlign: 'bottom',
-                    borderWidth: 0
+                    layout: 'vertical',
+                    align: 'right',
+                    verticalAlign: 'middle'
                 },
-
-                tooltip: {
-                    shared: true,
-                    crosshairs: true
-                },
-
                 plotOptions: {
                     series: {
-                        cursor: 'pointer',
-                        className: 'popup-on-click',
-                        marker: {
-                            lineWidth: 1
-                        },
-                        label: {
-                            connectorAllowed: false
-                          },
-                        pointStart: 2023
+                        allowPointSelect: true
                     }
                 },
-
                 series: [{
-                    name: 'All sessions',
-                    lineWidth: 4,
-                    marker: {
-                        radius: 4
-                    },
-                    data: orders,
-                }, {
-                    name: 'New users'
-                }],
-                
+                    name: 'New Users',
+                    data: order
+                },
+            ],
+                responsive: {
+                    rules: [{
+                        condition: {
+                            maxWidth: 500
+                        },
+                        chartOptions: {
+                            legend: {
+                                layout: 'horizontal',
+                                align: 'center',
+                                verticalAlign: 'bottom'
+                            }
+                        }
+                    }]
+                }
             });
         },
     }
