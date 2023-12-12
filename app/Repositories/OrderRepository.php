@@ -423,8 +423,16 @@ class OrderRepository extends BaseRepository
             $nextMembership     = config('xs.platinum_membership');
             $nextMembership_value   = config('xs.platinum');
         }
-        $points     = $user->points;
-        $next_membership_percentage     = ($points * 100) / $nextMembership_value;
+        $points         = $this->getMembershipPoints($user);
+        $currentPoints  = 0;
+
+        if( $points['current_points'] > 0 )
+        {
+            $currentPoints = $points['current_points'];
+        }
+
+        $next_membership_percentage     = ($currentPoints * 100) / $nextMembership_value;
+
         $data   = [
             'current_membership'            => $membership,
             'next_membership'               => $nextMembership,
@@ -495,23 +503,20 @@ class OrderRepository extends BaseRepository
         // quarter logic goes here
         $previousQuarter    = get_previous_quarter();
         $currentQuarter     = get_current_quarter();
-        // get quarter completed orders sum of the user
-        $previousQuarterOrders = $user
-            ->orders()
-            ->where('status', Order::CONFIRM_PICKUP)
-            ->where(function ($query) use ($previousQuarter) {
-                $query->whereRaw(DB::raw("DATE(created_at) BETWEEN '{$previousQuarter['start_date']}' AND '{$previousQuarter['end_date']}'"));
-            })
-            ->get();
-        $currentQuarterOrders = $user
-            ->orders()
-            ->where('status', Order::CONFIRM_PICKUP)
-            ->where(function ($query) use ($currentQuarter) {
-                $query->whereRaw(DB::raw("DATE(created_at) BETWEEN '{$currentQuarter['start_date']}' AND '{$currentQuarter['end_date']}'"));
-            })
-            ->get();
-        $previousQuarterPoints = $previousQuarterOrders->sum('total');
-        $currentQuarterPoints = $currentQuarterOrders->sum('total');
+        // get previous quarter points
+        $previousQuarterOrders = $user->credit_points()->where(function ($query) use ($previousQuarter) {
+            $query->whereRaw(DB::raw("DATE(created_at) BETWEEN '{$previousQuarter['start_date']}' AND '{$previousQuarter['end_date']}'"));
+        })
+        ->get();
+        // echo common()->formatSql($previousQuarterOrders);die;
+        // get current quarter points
+        $currentQuarterOrders = $user->credit_points()->where(function ($query) use ($currentQuarter) {
+            $query->whereRaw(DB::raw("DATE(created_at) BETWEEN '{$currentQuarter['start_date']}' AND '{$currentQuarter['end_date']}'"));
+        })
+        ->get();
+        // echo common()->formatSql($currentQuarterOrders);die;
+        $previousQuarterPoints = $previousQuarterOrders->sum('points');
+        $currentQuarterPoints = $currentQuarterOrders->sum('points');
 
         return [
             'current_points' => $currentQuarterPoints,
