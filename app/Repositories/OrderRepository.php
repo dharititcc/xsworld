@@ -470,6 +470,28 @@ class OrderRepository extends BaseRepository
      */
     public function getMembership(User $user):string
     {
+        $points = $this->getMembershipPoints($user);
+
+        if ($points['current_points'] > $points['previous_points']) {
+            // current quarter membership
+            $membership = $this->getMembershipType($points['current_points']);
+        } else {
+            // previous quarter membership
+            $membership = $this->getMembershipType($points['previous_points']);
+        }
+
+        return $membership;
+    }
+
+    /**
+     * Method getMembershipPoints
+     *
+     * @param User $user [explicite description]
+     *
+     * @return array
+     */
+    public function getMembershipPoints(User $user): array
+    {
         // quarter logic goes here
         $previousQuarter    = get_previous_quarter();
         $currentQuarter     = get_current_quarter();
@@ -491,15 +513,10 @@ class OrderRepository extends BaseRepository
         $previousQuarterPoints = $previousQuarterOrders->sum('total');
         $currentQuarterPoints = $currentQuarterOrders->sum('total');
 
-        if ($currentQuarterPoints > $previousQuarterPoints) {
-            // current quarter membership
-            $membership = $this->getMembershipType($currentQuarterPoints);
-        } else {
-            // previous quarter membership
-            $membership = $this->getMembershipType($previousQuarterPoints);
-        }
-
-        return $membership;
+        return [
+            'current_points' => $currentQuarterPoints,
+            'previous_points'=> $previousQuarterPoints
+        ];
     }
 
     /**
