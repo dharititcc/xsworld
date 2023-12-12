@@ -331,15 +331,16 @@ if (! function_exists('sendNotification')) {
                     // 'notification_type'  => $type,
                     'image'                 =>'',
                     'order_id'              => $orderid,
-                    "click_action"          => (string)$orderid
+                    // "click_action"          => (string)$orderid
                 ];
 
-                $extraNotificationData = ["data" => $notification];
+                $newArray = array_merge($notification, ["click_action" => (string)$orderid]);
+
                 $post_data = [
                     'registration_ids'    => $tokens, //multple token array
                     // 'to'                    => $tokens, //single token
                     'notification'          => $notification,
-                    'data'                  => $extraNotificationData
+                    'data'                  => $newArray
                 ];
 
                 $crl = curl_init();
