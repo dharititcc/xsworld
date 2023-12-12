@@ -81,7 +81,7 @@
                 <table width="100%" class="drink_datatable">
                     <thead>
                         <tr valign="middle">
-                            <th class="dt-left"><label class="cst-check"><input type="checkbox" id="allcheck" value=""><span class="checkmark"></span></label></th>
+                            <th class="dt-left"><label class="cst-check"></label></th>
                             <th>Name</th>
                             <th class="type">Type</th>
                             <th class="price">Price</th>
@@ -108,6 +108,7 @@
 <script type="text/javascript">
     var moduleConfig = {
         tableAjax: "{!! route('restaurants.drinks.index') !!}",
+        currency: "{!! $restaurant->country->symbol !!}"
     };
     var order =  <?php echo json_encode($order) ?>;
     $(document).ready(function() {
