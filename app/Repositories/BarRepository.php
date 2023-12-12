@@ -362,7 +362,7 @@ class BarRepository extends BaseRepository
             {
                 // RESTAURANT_TOXICATION and process for refund
                 $updateArr['status']            = $status;
-                if($order->charge_id)
+                if(isset($order->charge_id))
                 {
                     $this->refundCharge($order);
                 }
@@ -381,10 +381,12 @@ class BarRepository extends BaseRepository
             {
                 // DENY_ORDER and process for refund
                 $updateArr['status']            = $status;
-                if($order->charge_id)
+
+                if(isset($order->charge_id) && $order->amount > 0)
                 {
                     $this->refundCharge($order);
                 }
+
                 $order->update($updateArr);
                 $userCreditAmountBalance = $user->credit_amount;
                 $refundCreditAmount = $order->credit_amount;
@@ -406,6 +408,13 @@ class BarRepository extends BaseRepository
         }
 
         return $order;
+    }
+
+    public function retrieveCharge(string $charge)
+    {
+        $stripe = new Stripe();
+
+        return $stripe->retrieveCharge($charge);
     }
 
     /**
