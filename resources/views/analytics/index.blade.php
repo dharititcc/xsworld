@@ -77,8 +77,21 @@
             <div id="mygraph"></div>
         </div>
         <div style="color: #fff;">
-            table comes here
-            {{$orders}}
+            <div class="data-table drinks scroll-y h-600 table-responsive">
+                <table width="100%" class="drink_datatable">
+                    <thead>
+                        <tr valign="middle">
+                            <th class="dt-left"><label class="cst-check"><input type="checkbox" id="allcheck" value=""><span class="checkmark"></span></label></th>
+                            <th>Name</th>
+                            <th class="type">Type</th>
+                            <th class="price">Price</th>
+                            <th class="popularity">Popularity</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
@@ -96,7 +109,7 @@
     var moduleConfig = {
         tableAjax: "{!! route('restaurants.drinks.index') !!}",
     };
-    var orders =  <?php echo json_encode($orders) ?>;
+    var order =  <?php echo json_encode($order) ?>;
     $(document).ready(function() {
         XS.Analytic.init();
     });
