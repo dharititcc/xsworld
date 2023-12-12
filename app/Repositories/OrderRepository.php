@@ -404,11 +404,18 @@ class OrderRepository extends BaseRepository
         throw new GeneralException('There is no order found.');
     }
 
-    public function nextMemberShipValue($membership)
+    /**
+     * Method nextMemberShipValue
+     *
+     * @param $membership $membership [explicite description]
+     *
+     * @return array
+     */
+    public function nextMemberShipValue($membership): array
     {
         if($membership == config('xs.silver_membership'))
         {
-            $nextMembership     = config('xs.gold_membership');
+            $nextMembership         = config('xs.gold_membership');
             $nextMembership_value   = config('xs.gold');
         } else if($membership == config('xs.bronze_membership')) {
             $nextMembership     = config('xs.silver_membership');
@@ -420,32 +427,37 @@ class OrderRepository extends BaseRepository
             $nextMembership     = config('xs.platinum_membership');
             $nextMembership_value   = config('xs.platinum');
         }
+
         return $membership = [
             'nextMembership'        => $nextMembership,
             'nextMembership_value'  => $nextMembership_value,
         ];
     }
 
-    function getRankBenifit()
+    /**
+     * Method getRankBenifit
+     *
+     * @return array
+     */
+    function getRankBenifit(): array
     {
         $user   = auth()->user();
         $membership = $this->getMembership($user);
-        
+
         $nextMembership = $this->nextMemberShipValue($membership);
         $points         = $this->getMembershipPoints($user);
-        $currentPoints  = 0;
 
-        if( $points['current_points'] > 0 )
-        {
-            $currentPoints = $points['current_points'];
-        }
+        $membershipEnd        = $nextMembership['nextMembership_value'][0] - 1;
+        $membershipDifference = $nextMembership['nextMembership_value'][1] - $membershipEnd;
+        $currentMembershipDiff= $membershipEnd - $points['current_points'];
+        $actualPoints         = $membershipDifference - $currentMembershipDiff;
 
-        $next_membership_percentage     = ($currentPoints * 100) / $nextMembership['nextMembership_value'];
+        $nextMembershipValue = ($actualPoints * 100) / $membershipDifference;
 
         $data   = [
             'current_membership'            => $membership,
             'next_membership'               => $nextMembership['nextMembership'],
-            'next_membership_percentage'    =>  number_format($next_membership_percentage,2,".",","),
+            'next_membership_percentage'    => (string) round($nextMembershipValue, 0),
             'rank_benifit_text'             => 'Complementary beverage on your birthday. Discounted options on certain & selected drinks , daily specials. '
         ];
         return $data;
@@ -543,12 +555,17 @@ class OrderRepository extends BaseRepository
     public function getMembershipType(float $points): string
     {
         $membership = config('xs.bronze_membership');
-
-        if ($points > config('xs.bronze') && $points <= config('xs.silver')) {
+                        //      >0                                   <=100
+        if ($points > config('xs.bronze')[0] && $points <= config('xs.bronze')[1]) {
+            $membership = config('xs.bronze_membership');
+            //                  >100                                 <=200
+        } else if ($points > config('xs.bronze')[1] && $points <= config('xs.silver')[1]) {
             $membership = config('xs.silver_membership');
-        } else if ($points > config('xs.silver') && $points <= config('xs.gold')) {
+            //                  >200                                 <=300
+        } else if ($points > config('xs.silver')[1] && $points <= config('xs.gold')[1]) {
             $membership = config('xs.gold_membership');
-        } else if ($points > config('xs.gold')) {
+            //                  >300
+        } else if ($points > config('xs.gold')[1]) {
             $membership = config('xs.platinum_membership');
         } else {
             $membership = config('xs.bronze_membership');
