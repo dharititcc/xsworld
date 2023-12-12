@@ -192,6 +192,15 @@ class OrderController extends APIController
         }
     }
 
+    public function rankBenefits()
+    {
+        $data       =   $this->repository->getRankBenifit();
+        if($data)
+        {
+            return $this->respondSuccess('Rank data found', $data);
+        }
+    }
+
     /**
      * Method deleteItem
      *

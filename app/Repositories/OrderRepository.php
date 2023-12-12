@@ -404,6 +404,36 @@ class OrderRepository extends BaseRepository
         throw new GeneralException('There is no order found.');
     }
 
+    function getRankBenifit()
+    {
+        $user   = auth()->user();
+        $membership = $this->getMembership($user);
+        // dd($membership);
+        if($membership == config('xs.silver_membership'))
+        {
+            $nextMembership     = config('xs.gold_membership');
+            $nextMembership_value   = config('xs.gold');
+        } else if($membership == config('xs.bronze_membership')) {
+            $nextMembership     = config('xs.silver_membership');
+            $nextMembership_value   = config('xs.silver');
+        } else if($membership == config('xs.gold_membership')) {
+            $nextMembership     = config('xs.platinum_membership');
+            $nextMembership_value   = config('xs.platinum');
+        } else {
+            $nextMembership     = config('xs.platinum_membership');
+            $nextMembership_value   = config('xs.platinum');
+        }
+        $points     = $user->points;
+        $next_membership_percentage     = ($points * 100) / $nextMembership_value;
+        $data   = [
+            'current_membership'            => $membership,
+            'next_membership'               => $nextMembership,
+            'next_membership_percentage'    =>  number_format($next_membership_percentage,2,".",","),
+            'rank_benifit_text'             => 'Complementary beverage on your birthday. Discounted options on certain & selected drinks , daily specials. '
+        ];
+        return $data;
+    }
+
     /**
      * Method getCartCount
      *
