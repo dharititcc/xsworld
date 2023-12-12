@@ -404,11 +404,8 @@ class OrderRepository extends BaseRepository
         throw new GeneralException('There is no order found.');
     }
 
-    function getRankBenifit()
+    public function nextMemberShipValue($membership)
     {
-        $user   = auth()->user();
-        $membership = $this->getMembership($user);
-        // dd($membership);
         if($membership == config('xs.silver_membership'))
         {
             $nextMembership     = config('xs.gold_membership');
@@ -423,6 +420,18 @@ class OrderRepository extends BaseRepository
             $nextMembership     = config('xs.platinum_membership');
             $nextMembership_value   = config('xs.platinum');
         }
+        return $membership = [
+            'nextMembership'        => $nextMembership,
+            'nextMembership_value'  => $nextMembership_value,
+        ];
+    }
+
+    function getRankBenifit()
+    {
+        $user   = auth()->user();
+        $membership = $this->getMembership($user);
+        
+        $nextMembership = $this->nextMemberShipValue($membership);
         $points         = $this->getMembershipPoints($user);
         $currentPoints  = 0;
 
@@ -431,11 +440,11 @@ class OrderRepository extends BaseRepository
             $currentPoints = $points['current_points'];
         }
 
-        $next_membership_percentage     = ($currentPoints * 100) / $nextMembership_value;
+        $next_membership_percentage     = ($currentPoints * 100) / $nextMembership['nextMembership_value'];
 
         $data   = [
             'current_membership'            => $membership,
-            'next_membership'               => $nextMembership,
+            'next_membership'               => $nextMembership['nextMembership'],
             'next_membership_percentage'    =>  number_format($next_membership_percentage,2,".",","),
             'rank_benifit_text'             => 'Complementary beverage on your birthday. Discounted options on certain & selected drinks , daily specials. '
         ];
