@@ -39,7 +39,6 @@
                                                 <div class="col-md-6">
                                                     <input type="text" name="street2" id="street2" class="form-control vari1" placeholder="Street2">
                                                 </div>
-                                                
                                             </div>
                                         </div>
                                         <div class="form-group full-w-form">
@@ -60,7 +59,6 @@
                                         </div>
                                         <div class="form-group full-w-form">
                                             <div class="row">
-                                                
                                                 <div class="col-md-6">
                                                     <input type="text" name="city" id="city" class="form-control vari1" placeholder="City">
                                                 </div>
@@ -69,7 +67,7 @@
                                                 </div>
                                             </div>
                                         </div>
-        
+
                                         <textarea id="description" name="description" placeholder="Description" class="prd-desc h-96"></textarea>
                                     </div>
                                 </div>
@@ -113,14 +111,12 @@
                                                 </div>
                                             </div>
                                             </div>
-                                                
+
                                             </div>
                                         </div>
                                         <!-- end static -->
-                                    
                                 </div>
                             </div>
-                            
                         </div>
                     </div>
                 </div>
