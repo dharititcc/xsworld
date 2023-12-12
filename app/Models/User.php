@@ -307,6 +307,16 @@ class User extends Authenticatable
     }
 
     /**
+     * Get all of the referrals for the User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function referrals(): HasMany
+    {
+        return $this->hasMany(self::class, 'referrer_id', 'id');
+    }
+
+    /**
      * Get all of the credit_points for the User
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
