@@ -708,7 +708,7 @@ class OrderRepository extends BaseRepository
         $credit_amount      = $data['credit_amount'] ? $data['credit_amount'] : null;
         $amount             = $data['amount'] ? $data['amount'] : null;
         $table_id           = $data['table_id'] ? $data['table_id'] : null;
-        $order              = Order::findOrFail($data['order_id'])->with(['restaurant']);
+        $order              = Order::with(['restaurant'])->findOrFail($data['order_id']);
         $user               = $order->user_id ? User::findOrFail($order->user_id) : auth()->user();
         $devices            = $user->devices()->pluck('fcm_token')->toArray();
 
