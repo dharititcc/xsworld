@@ -8,19 +8,19 @@
             "width": "5%",
             "sortable": false,
             render: function (data, type, row) {
-                return `<label class="cst-check"><input name="id" class="checkboxitem" type="checkbox" value="${row.id}"><span class="checkmark"></span></label>`
+                return ''
             }
         },
         {
             "data": "name", // can be null or undefined ->type
-            "width": "25%",
+            "width": "30%",
             "defaultContent": "",
             render: function (data, type, row) {
-                console.log(row.order_items.restaurant_item);
-                var color = (row.order_items.restaurant_item.is_available == 1) ? "green" : "red";
-                return `<div class="prdname ${color}"> ${row.order_items.restaurant_item.name} </div>
-                        <a href="javascript:void(0);" data-id="${row.id}" class="drink_modal edit">Edit</a>
-                        <div class="add-date">Added ${XS.Common.formatDate(row.created_at)}</div>`
+                for (let i = 0; i < row.order_items.length; i++) {
+                    var color = (row.order_items[i].restaurant_item.is_available == 1) ? "green" : "red";
+                    return `<div class="prdname ${color}"> ${row.order_items[i].restaurant_item.name} </div>
+                            <div class="add-date">Added ${XS.Common.formatDate(row.created_at)}</div>`
+                }
             }
         },
         {
@@ -30,12 +30,12 @@
             "bSortable": false,
             render: function (data, type, row) {
                 var text = "";
-                // if (row.variations.length > 0) {
-                //     for (let i = 0; i < row.variations.length; i++) {
-                //         text += '<label class="">' + row.variations[i]['name'] + "</label>";
-                //     }
-                //     return text
-                // }
+                if (row.order_items.length > 0) {
+                    for (let i = 0; i < row.order_items.length; i++) { //[i].variations
+                        text += '<label class="">' + row.order_items[i].restaurant_item.variations[i]['name'] + "</label>";
+                    }
+                    return text
+                }
                 return ""
             }
         },
@@ -46,13 +46,13 @@
             "bSortable": false,
             render: function (data, type, row) {
                 var text = "";
-                // if (row.variations.length > 0) {
-                //     for (let i = 0; i < row.variations.length; i++) {
-                //         text += `<label class="price">${moduleConfig.currency}${row.variations[i]['price']}</label>`;
-                //     }
-                //     return text
-                // }
-                return `<label class="price">${moduleConfig.currency}${row.order_items.restaurant_item.price}</label>`;
+                if (row.order_items.length > 0) {
+                    for (let i = 0; i < row.order_items.length; i++) {
+                        text += `<label class="price">${moduleConfig.currency}${row.order_items[i].restaurant_item.variations[i]['price']}</label>`;
+                    }
+                    return text
+                }
+                return `<label class="price">${moduleConfig.currency}${row.order_items[0].price}</label>`;
             }
         },
        
@@ -63,13 +63,15 @@
             "class": "dt-center",
             "bSortable": false,
             render: function (data, type, row) {
-                return `<a href="javascript:void(0)" class="favorite ${row.order_items.restaurant_item.is_featured == 0 ? 'null' : ''} "  data-is_featured="${row.order_items.restaurant_item.is_featured == 0 ? 1 : 0}" data-id="${row.order_items.restaurant_item.id}"></a>`
+                for (let i = 0; i < row.order_items.length; i++) {
+                    return `<a href="javascript:void(0)" class="favorite ${row.order_items[i].restaurant_item.is_featured == 0 ? 'null' : ''} "  data-is_featured="${row.order_items[i].restaurant_item.is_featured == 0 ? 1 : 0}" data-id="${row.order_items[i].restaurant_item.id}"></a>`
+                }
             }
         }
         ],
         selectors: {
-            drinkModal: jQuery('#wd930'),
-            drinkTable:         jQuery('.drink_datatable'),
+            drinkModal:     jQuery('#wd930'),
+            drinkTable:     jQuery('.drink_datatable'),
         },
 
         init: function (){

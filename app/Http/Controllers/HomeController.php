@@ -69,7 +69,7 @@ class HomeController extends Controller
      */
     public function analytics(Request $request)
     {
-        $restaurant = session('restaurant');
+        $restaurant = session('restaurant')->loadMissing(['main_categories', 'country']);
         $restaurant->refresh();
 
         $categories = $restaurant->categories()->with(['children_parent'])->whereNotNull('parent_id')->get();
@@ -87,24 +87,10 @@ class HomeController extends Controller
                     })
                     ->groupBy(DB::raw("DATE(created_at)"))
                     ->get();
-
-
-            // $orders     = $restaurant->orders()
-            //         ->with(['order_items','order_items.restaurant_item'])
-            //         ->where('status',Order::CONFIRM_PICKUP)
-            //         ->where(function($query)
-            //         {
-            //             $query->where('created_at', '>=', '2023-11-28')
-            //                 ->orWhere('created_at', '<=','2023-11-30');
-            //         })
-            //         ->groupBy(DB::raw("DATE(created_at)"));
-
-            // $data = $orders->orderByDesc('id')->get();
-            // dd($data);
         if($request->ajax())
         {
             $orders     = $restaurant->orders()
-                    ->with(['order_items','order_items.restaurant_item'])
+                    ->with(['order_items','order_items.restaurant_item','order_items.restaurant_item.category', 'restaurant','order_items.restaurant_item.variations'])
                     ->where('status',Order::CONFIRM_PICKUP)
                     ->where(function($query)
                     {
@@ -116,7 +102,6 @@ class HomeController extends Controller
             $data = $orders->orderByDesc('id')->get();
             return Datatables::of($data)
                 ->make(true);
-                // dd($orders->order_items);
         }
         // echo common()->formatSql($order);die;
         // foreach($orders as $order)
@@ -131,9 +116,9 @@ class HomeController extends Controller
         // }
         
         return view('analytics.index', [
-            'categories' => $categories,
-            // 'orders'    => $orders,
-            'order'     => $order,
+            'categories'    => $categories,
+            'restaurant'    => $restaurant,
+            'order'         => $order,
         ]);
     }
 }
