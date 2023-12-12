@@ -776,7 +776,7 @@ class OrderRepository extends BaseRepository
         $order->refresh();
         $order->loadMissing(['items']);
 
-        $text = $order->restaurant->name. 'is processing your order';
+        $text               = $order->restaurant->name. ' is processing your order';
         $title              = $text;
         $message            = "Your Order is #".$order->id." placed";
         $orderid            = $order->id;

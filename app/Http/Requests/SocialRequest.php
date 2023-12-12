@@ -37,7 +37,6 @@ class SocialRequest extends FormRequest
             'country'               => 'required',
             'country_code'          => 'required',
             'fcm_token'             => 'required',
-            'social_id'             => 'nullable',
             'registration_type'     => [
                                             'required',
                                             Rule::in(User::EMAIL, User::PHONE, User::GOOGLE, User::FACEBOOK,User::APPLE)
