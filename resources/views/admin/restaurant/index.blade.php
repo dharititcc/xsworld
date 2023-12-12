@@ -35,7 +35,8 @@
 <script src="{{ asset('js/admin/restaurant.js') }}"></script>
 <script type="text/javascript">
     var moduleConfig = {
-        tableAjax: "{!! route('admin.restaurant.table') !!}"
+        tableAjax:          "{!! route('admin.restaurant.table') !!}",
+        storeRestaurant:    "{!! route('admin.restaurant.store') !!}"
     };
 
     $(document).ready(function() {

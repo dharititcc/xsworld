@@ -64,8 +64,9 @@
 
         /** selectors for customers */
         selectors: {
-            restaurantTable: jQuery('.restaurant_datatable'),
-            search: jQuery('#search')
+            restaurantTable:    jQuery('.restaurant_datatable'),
+            search:             jQuery('#search'),
+            restaurantForm:     jQuery('#create_update_restaurant')
         },
 
         init: function()
@@ -80,6 +81,9 @@
             context.makeDatatable();
             context.searchFilter();
             context.openModal();
+            XS.Common.fileReaderBind();
+
+            context.restaurantFormSubmit();
 
             /** Search place */
             jQuery('body').on('keyup', '#street1, #street2, [name="country_id"], #state, #city', function() {
@@ -187,6 +191,26 @@
             context.selectors.search.on('keyup', function()
             {
                 context.table.ajax.reload();
+            });
+        },
+
+        restaurantFormSubmit: function()
+        {
+            var context = this;
+
+            context.selectors.restaurantForm.on('submit', function(e)
+            {
+                e.preventDefault();
+
+                // ajax start
+
+                var $this       = $(this),
+                    formData    = new FormData($this.get(0));
+
+                jQuery.ajax(
+                {
+                    url: moduleConfig.storeRestaurant
+                });
             });
         },
 
