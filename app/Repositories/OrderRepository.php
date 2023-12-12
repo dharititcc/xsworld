@@ -458,6 +458,7 @@ class OrderRepository extends BaseRepository
             'current_membership'            => $membership,
             'next_membership'               => $nextMembership['nextMembership'],
             'next_membership_percentage'    => (string) round($nextMembershipValue, 0),
+            'referrals_points'              => $user->referrals->count() * 60,
             'rank_benifit_text'             => 'Complementary beverage on your birthday. Discounted options on certain & selected drinks , daily specials. '
         ];
         return $data;
