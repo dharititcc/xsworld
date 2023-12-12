@@ -708,7 +708,7 @@ class OrderRepository extends BaseRepository
         $credit_amount      = $data['credit_amount'] ? $data['credit_amount'] : null;
         $amount             = $data['amount'] ? $data['amount'] : null;
         $table_id           = $data['table_id'] ? $data['table_id'] : null;
-        $order              = Order::findOrFail($data['order_id']);
+        $order              = Order::findOrFail($data['order_id'])->with(['restaurant']);
         $user               = $order->user_id ? User::findOrFail($order->user_id) : auth()->user();
         $devices            = $user->devices()->pluck('fcm_token')->toArray();
 
@@ -776,7 +776,8 @@ class OrderRepository extends BaseRepository
         $order->refresh();
         $order->loadMissing(['items']);
 
-        $title              = "Venue is processing your order";
+        $text = $order->restaurant->name. 'is processing your order';
+        $title              = $text;
         $message            = "Your Order is #".$order->id." placed";
         $orderid            = $order->id;
         $send_notification  = sendNotification($title,$message,$devices,$orderid);
