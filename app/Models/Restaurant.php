@@ -34,6 +34,7 @@ class Restaurant extends Model
         // 'address',
         'street1',
         'street2',
+        'country_id',
         'city',
         'state',
         'postcode',
@@ -337,7 +338,7 @@ class Restaurant extends Model
      */
     public function getEditButtonAttribute($class = '')
     {
-        return '<a href="'.route('admin.restaurant.edit', $this->id).'" class="act-btn"><i class="icon-pencil"></i></a>';
+        return '<a href="'.route('admin.restaurant.edit', $this->id).'" class="act-btn res-edit"><i class="icon-pencil"></i></a>';
     }
 
     /**
@@ -350,7 +351,7 @@ class Restaurant extends Model
     {
         // if(!$this->trashed())
         // {
-            return '<a href="'.route('admin.restaurant.destroy', $this->id).'" class="act-btn"><i class="icon-trash"></i></a>';
+            return '<a href="'.route('admin.restaurant.destroy', $this->id).'" class="act-btn res-delete"><i class="icon-trash"></i></a>';
         // }
     }
 }

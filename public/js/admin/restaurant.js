@@ -64,9 +64,11 @@
 
         /** selectors for customers */
         selectors: {
-            restaurantTable:    jQuery('.restaurant_datatable'),
-            search:             jQuery('#search'),
-            restaurantForm:     jQuery('#create_update_restaurant')
+            restaurantTable:            jQuery('.restaurant_datatable'),
+            search:                     jQuery('#search'),
+            restaurantForm:             jQuery('#create_update_restaurant'),
+            restaurantSubmitBtn:        jQuery('#submitBtn'),
+            restaurantDelete:           jQuery('.res-delete'),
         },
 
         init: function()
@@ -81,6 +83,9 @@
             context.makeDatatable();
             context.searchFilter();
             context.openModal();
+            context.closeRestaurantModal();
+            // context.addRestaurantFormValidation();
+            context.deleteRestaurant();
             XS.Common.fileReaderBind();
 
             context.restaurantFormSubmit();
@@ -185,12 +190,117 @@
             });
         },
 
+        closeRestaurantModal: function()
+        {
+            var context = this;
+            jQuery('#wd930').on('hide.bs.modal', function()
+            {
+                var $this = $(this);
+
+                context.selectors.restaurantForm.get(0).reset();
+                context.selectors.restaurantForm.validate().resetForm();
+                context.selectors.restaurantForm.find('.error').removeClass('error');
+                context.selectors.restaurantForm.find('input[name="_method"]').remove();
+                context.selectors.restaurantForm.removeAttr('action');
+                $this.find('.pip').remove();
+                $this.find('.cstm-catgory').find('input[name="category_id[]"]').prop('checked', false);
+                context.selectors.restaurantForm.find('.variation_hidden').remove();
+            });
+        },
+
+
         searchFilter: function(){
             var context = this;
 
             context.selectors.search.on('keyup', function()
             {
                 context.table.ajax.reload();
+            });
+        },
+
+        deleteRestaurant: function()
+        {
+            $('.res-delete').click(function(event) {
+                var form =  $(this).closest("form");
+                event.preventDefault();
+                swal({
+                    title: `Are you sure you want to delete this Records?`,
+                    // text: "It will gone forevert",
+                    icon: "warning",
+                    buttons: true,
+                    dangerMode: true,
+                })
+                    .then((willDelete) => {
+                        if (willDelete) {
+                            form.submit();
+                            XS.Common.handleSwalSuccess('Record Deleted successfully.');
+                        }
+                    });
+            });
+        },
+
+        addRestaurantFormValidation: function()
+        {
+            var context = this;
+            context.selectors.restaurantForm.validate({
+                rules: {
+                    name: {
+                        required: true,
+                    },
+                    street1: {
+                        required: true,
+                    },
+                    description: {
+                        required: true,
+                    },
+                    
+                    first_name: {
+                        required: true,
+                    },
+                    image: {
+                        required: true,
+                    },
+                    email: {
+                        required: true,
+                    },
+                    country_id: {
+                        required: true,
+                    },
+                    phone: {
+                        required: true,
+                    },
+                    city: {
+                        required: true,
+                    },
+                    password: {
+                        required: true
+                    },
+                },
+                messages: {
+                    name: {
+                        required: "Please enter Restaurant name",
+                        maxlength: "Your name maxlength should be 50 characters long."
+                    },
+                    first_name: {
+                        required: "Please enter first name",
+                        maxlength: "Your name maxlength should be 50 characters long."
+                    },
+                    image: {
+                        required: "Please upload files", //accept: 'Not an image!'
+                    },
+                },
+                errorPlacement: function (error, element) {
+                    if (element.attr("type") == "checkbox") {
+                        error.insertAfter($(element).closest('div'));
+                    } else if( element.attr("type") == 'file' ) {
+                        error.insertAfter($(element).closest('div'));
+                    }else{
+                        error.insertAfter($(element));
+                    }
+                },
+                submitHandler: function() {
+                    context.restaurantFormSubmit(context.selectors.restaurantForm.get(0));
+                }
             });
         },
 
@@ -206,10 +316,52 @@
 
                 var $this       = $(this),
                     formData    = new FormData($this.get(0));
+                    XS.Common.btnProcessingStart(context.selectors.restaurantSubmitBtn);
+
+                    context.selectors.restaurantForm.find('.error').remove();
 
                 jQuery.ajax(
                 {
-                    url: moduleConfig.storeRestaurant
+                    url: moduleConfig.storeRestaurant,
+                    type: "POST",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    headers: {
+                        'X-CSRF-TOKEN': jQuery('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function(response) {
+                        document.getElementById("create_update_restaurant").reset();
+                        XS.Common.handleSwalSuccess('Restaurant form has been submitted successfully.');
+                    },
+                    error: function(jqXHR, exception)
+                    {
+                        if( jqXHR.status === 422 )
+                        {
+                            const {error}   = jqXHR.responseJSON;
+                            const {message} = error;
+
+                            $.each(message, function(index, val)
+                            {
+                                var elem = context.selectors.restaurantForm.find(`[name="${index}"]`);
+
+                                if(elem.is("input:file"))
+                                {
+                                    elem.closest('.featured-img').after(`<label class="error">${val[0]}</label>`);
+                                }
+                                else
+                                {
+                                    elem.after(`<label class="error">${val[0]}</label>`);
+                                }
+                                
+                                
+                            });
+                        }
+                    },
+                    complete: function()
+                    {
+                        XS.Common.btnProcessingStop(context.selectors.restaurantSubmitBtn);
+                    }
                 });
             });
         },
@@ -241,5 +393,13 @@
                 }
             });
         },
+
+        getRestaurantData: function(id)
+        {
+            var context = this;
+            $.ajax({
+                
+            })
+        }
     }
 })();
