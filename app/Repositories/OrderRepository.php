@@ -1320,11 +1320,24 @@ class OrderRepository extends BaseRepository
             $latestCart->delete();
         }
 
-        $reOrder                = $orderAgain;
-        $reOrderItems           = $reOrder->order_items;
-        $newOrder               = $reOrder->replicate();
-        $newOrder->type         = Order::CART;
-        $newOrder->status       = Order::PENDNIG;
+        $reOrder                        = $orderAgain;
+        $reOrderItems                   = $reOrder->order_items;
+        $newOrder                       = $reOrder->replicate();
+        $newOrder->type                 = Order::CART;
+        $newOrder->status               = Order::PENDNIG;
+        $newOrder->credit_amount        = 0.00;
+        $newOrder->transaction_id       = null;
+        $newOrder->card_id              = null;
+        $newOrder->charge_id            = null;
+        $newOrder->apply_time           = null;
+        $newOrder->last_delayed_time    = null;
+        $newOrder->remaining_date       = null;
+        $newOrder->accepted_date        = null;
+        $newOrder->pickup_point_id      = null;
+        $newOrder->pickup_point_user_id = null;
+        $newOrder->waiter_id            = null;
+        $newOrder->restaurant_table_id  = null;
+
         $newOrder->save();
 
         $reOrderItems->loadMissing(['addons','mixer']);
