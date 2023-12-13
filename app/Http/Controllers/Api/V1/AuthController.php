@@ -526,7 +526,7 @@ class AuthController extends APIController
             'email_verified_at'     => Carbon::now(),
             'social_id'             => $request->social_id,
             'points'                => User::SIGN_UP_POINTS,
-            'social_id'             => $request->social_id,
+            // 'social_id'             => $request->social_id,
             'referral_code'         => $request->referral_code
         ];
 

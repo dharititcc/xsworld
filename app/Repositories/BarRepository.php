@@ -244,7 +244,7 @@ class BarRepository extends BaseRepository
         $order_id          = $data['order_id'] ? $data['order_id'] : null;
         $status            = $data['status'] ? $data['status'] : null;
         $apply_time        = $data['apply_time'] ? $data['apply_time'] : null;
-        $order             = Order::findOrFail($order_id);
+        $order             = Order::with(['restaurant'])->findOrFail($order_id);
         $updateArr         = [];
         $user              = $order->user_id ? User::findOrFail($order->user_id) : auth()->user();
         $user_tokens       = $user->devices()->pluck('fcm_token')->toArray();
