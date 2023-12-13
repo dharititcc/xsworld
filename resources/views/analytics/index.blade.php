@@ -12,9 +12,9 @@
                 <ul>
                     <li><a href="#" class="active">General Overview</a></li>
                     @if ($categories->count())
-                        @foreach ($categories as $category)
-                            <li><a href="#">{{ $category->children_parent->name }} - {{ $category->name }}</a></li>
-                        @endforeach
+                    @foreach ($categories as $category)
+                    <li><a href="#">{{ $category->children_parent->name }} - {{ $category->name }}</a></li>
+                    @endforeach
                     @endif
                 </ul>
             </div>
@@ -76,22 +76,19 @@
             <!-- <img src="img/demo-graph.jpg" alt=""> -->
             <div id="mygraph"></div>
         </div>
-        <div style="color: #fff;">
-            <div class="data-table drinks scroll-y h-600 table-responsive">
-                <table width="100%" class="drink_datatable">
-                    <thead>
-                        <tr valign="middle">
-                            <th class="dt-left"><label class="cst-check"></label></th>
-                            <th>Name</th>
-                            <th class="type">Type</th>
-                            <th class="price">Price</th>
-                            <th class="popularity">Popularity</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>
-            </div>
+        <div class="data-table drinks scroll-y h-600 table-responsive">
+            <table width="100%" class="drink_datatable">
+                <thead>
+                    <tr valign="middle">
+                        <th>Name</th>
+                        <th>Type</th>
+                        <th>Price</th>
+                        <th>No. Of Unit Sold</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
@@ -110,7 +107,7 @@
         tableAjax: "{!! route('restaurants.drinks.index') !!}",
         currency: "{!! $restaurant->country->symbol !!}"
     };
-    var order =  <?php echo json_encode($order) ?>;
+    var order = <?php echo json_encode($order) ?>;
     $(document).ready(function() {
         XS.Analytic.init();
     });
