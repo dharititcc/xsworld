@@ -1,7 +1,7 @@
 <!-- Global popup -->
 <div class="modal fade" id="wd930" tabindex="0" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-xl justify-content-center">
-        <form name="adddrink" id="create_update_restaurant" method="post">
+        <form name="addrestaurant" id="create_update_restaurant" method="post">
             @csrf
             <div class="modal-content">
                 <div class="modal-header dri-heder">
@@ -34,17 +34,17 @@
                                         <div class="form-group full-w-form">
                                             <div class="row">
                                                 <div class="col-md-6">
-                                                    <input type="text" name="street1" id="street1" class="form-control vari1" placeholder="Street1">
+                                                    <input type="text" name="street1" id="street1" class="form-control " placeholder="Street1">
                                                 </div>
                                                 <div class="col-md-6">
-                                                    <input type="text" name="street2" id="street2" class="form-control vari1" placeholder="Street2">
+                                                    <input type="text" name="street2" id="street2" class="form-control " placeholder="Street2">
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="form-group full-w-form">
                                             <div class="row">
                                                 <div class="col-md-6">
-                                                    <select class="form-control vari1" name="country_id">
+                                                    <select class="form-control " name="country_id">
                                                         <option>Select Country</option>
                                                         <option value="1">India</option>
                                                         <option value="2">United States of America</option>
@@ -52,7 +52,7 @@
                                                     </select>
                                                 </div>
                                                 <div class="col-md-6">
-                                                    <input type="text" name="state" id="state" class="form-control vari1" placeholder="State">
+                                                    <input type="text" name="state" id="state" class="form-control " placeholder="State">
                                                 </div>
 
                                             </div>
@@ -60,10 +60,10 @@
                                         <div class="form-group full-w-form">
                                             <div class="row">
                                                 <div class="col-md-6">
-                                                    <input type="text" name="city" id="city" class="form-control vari1" placeholder="City">
+                                                    <input type="text" name="city" id="city" class="form-control " placeholder="City">
                                                 </div>
                                                 <div class="col-md-6">
-                                                    <input type="text" name="postcode" id="postcode" class="form-control vari1" placeholder="Postcode">
+                                                    <input type="text" name="postcode" id="postcode" class="form-control " placeholder="Postcode">
                                                 </div>
                                             </div>
                                         </div>
@@ -80,34 +80,34 @@
                                         <div class="form-group full-w-form">
                                             <div class="row">
                                                 <div class="col-md-12 form-group ">
-                                                    <input type="text" name="street1" id="street1" class="form-control vari1" placeholder="First Name">
+                                                    <input type="text" name="first_name" id="first_name" class="form-control " placeholder="First Name">
                                                 </div>
                                             </div>
                                             <div class="form-group full-w-form">
                                                 <div class="row">
                                                 <div class="col-md-12">
-                                                    <input type="text" name="street2" id="street2" class="form-control vari1" placeholder="last Name">
-                                                </div>
-                                            </div>
-                                            </div>
-                                            <div class="form-group full-w-form">
-                                                <div class="row">
-                                                <div class="col-md-12">
-                                                    <input type="text" name="street2" id="street2" class="form-control vari1" placeholder="Email">
+                                                    <input type="text" name="last_name" id="last_name" class="form-control " placeholder="last Name">
                                                 </div>
                                             </div>
                                             </div>
                                             <div class="form-group full-w-form">
                                                 <div class="row">
                                                 <div class="col-md-12">
-                                                    <input type="text" name="street2" id="street2" class="form-control vari1" placeholder="password">
+                                                    <input type="text" name="email" id="email" class="form-control " placeholder="Email">
+                                                </div>
+                                            </div>
+                                            </div>
+                                            <div class="form-group full-w-form">
+                                                <div class="row">
+                                                <div class="col-md-12">
+                                                    <input type="password" name="password" id="password" class="form-control " placeholder="password">
                                                 </div>
                                             </div>
                                             </div>
                                                 <div class="form-group full-w-form">
                                                     <div class="row">
                                                 <div class="col-md-12">
-                                                    <input type="text" name="street2" id="street2" class="form-control vari1" placeholder="Phone">
+                                                    <input type="text" name="phone" id="phone" class="form-control " placeholder="Phone">
                                                 </div>
                                             </div>
                                             </div>

@@ -411,25 +411,38 @@ class OrderRepository extends BaseRepository
      *
      * @return array
      */
-    public function nextMemberShipValue($membership): array
+    public function nextMemberShipValue(array $membership): array
     {
-        if($membership == config('xs.silver_membership'))
+        // dd($membership);
+        if($membership['membership'] == config('xs.silver_membership') && $membership['membership_level'] == config('xs.silver_level'))
         {
             $nextMembership         = config('xs.gold_membership');
+            $nextMembership_level   = config('xs.gold_level');
             $nextMembership_value   = config('xs.gold');
-        } else if($membership == config('xs.bronze_membership')) {
-            $nextMembership     = config('xs.silver_membership');
+
+        } else if($membership['membership'] == config('xs.bronze_membership') && $membership['membership_level'] == config('xs.bronze_level')) {
+
+            $nextMembership         = config('xs.silver_membership');
+            $nextMembership_level   = config('xs.silver_level');
             $nextMembership_value   = config('xs.silver');
-        } else if($membership == config('xs.gold_membership')) {
-            $nextMembership     = config('xs.platinum_membership');
+
+        } else if($membership['membership'] == config('xs.gold_membership') && $membership['membership_level'] == config('xs.gold_level')) {
+
+            $nextMembership         = config('xs.platinum_membership');
+            $nextMembership_level   = config('xs.platinum_level');
             $nextMembership_value   = config('xs.platinum');
+
         } else {
-            $nextMembership     = config('xs.platinum_membership');
+
+            $nextMembership         = config('xs.platinum_membership');
+            $nextMembership_level   = config('xs.platinum_level');
             $nextMembership_value   = config('xs.platinum');
+
         }
 
         return $membership = [
             'nextMembership'        => $nextMembership,
+            'nextMembership_level'  => $nextMembership_level,
             'nextMembership_value'  => $nextMembership_value,
         ];
     }
@@ -449,14 +462,17 @@ class OrderRepository extends BaseRepository
 
         $membershipEnd        = $nextMembership['nextMembership_value'][0] - 1;
         $membershipDifference = $nextMembership['nextMembership_value'][1] - $membershipEnd;
+
         $currentMembershipDiff= $membershipEnd - $points['current_points'];
         $actualPoints         = $membershipDifference - $currentMembershipDiff;
 
         $nextMembershipValue = ($actualPoints * 100) / $membershipDifference;
 
         $data   = [
-            'current_membership'            => $membership,
+            'current_membership'            => $membership['membership'],
+            'current_membership_level'      => $membership['membership_level'],
             'next_membership'               => $nextMembership['nextMembership'],
+            'next_membership_level'         => $nextMembership['nextMembership_level'],
             'next_membership_percentage'    => (string) round($nextMembershipValue, 0),
             'referrals_points'              => $user->referrals->count() * 60,
             'rank_benifit_text'             => 'Complementary beverage on your birthday. Discounted options on certain & selected drinks , daily specials. '
@@ -485,7 +501,9 @@ class OrderRepository extends BaseRepository
             'order_id'          => $user->latest_cart->id ?? 0,
             'credit_amount'     => (float) $creditAmount,
             'points'            => (int) $user->points,
-            'membership'        => $membership
+            // 'membership'        => $membership,
+            'membership'            => $membership['membership'],
+            'membership_level'      => $membership['membership_level'],
         ];
 
         return $cart;
@@ -496,9 +514,9 @@ class OrderRepository extends BaseRepository
      *
      * @param User $user [explicite description]
      *
-     * @return string
+     * @return array
      */
-    public function getMembership(User $user):string
+    public function getMembership(User $user):array
     {
         $points = $this->getMembershipPoints($user);
 
@@ -551,28 +569,39 @@ class OrderRepository extends BaseRepository
      *
      * @param float $points [explicite description]
      *
-     * @return string
+     * @return array
      */
-    public function getMembershipType(float $points): string
+    public function getMembershipType(float $points): array
     {
-        $membership = config('xs.bronze_membership');
+        $membership         = config('xs.bronze_membership');
+        $membership_level   = config('xs.bronze_level');
                         //      >0                                   <=100
         if ($points > config('xs.bronze')[0] && $points <= config('xs.bronze')[1]) {
-            $membership = config('xs.bronze_membership');
+            $membership         = config('xs.bronze_membership');
+            $membership_level   = config('xs.bronze_level');
             //                  >100                                 <=200
         } else if ($points > config('xs.bronze')[1] && $points <= config('xs.silver')[1]) {
-            $membership = config('xs.silver_membership');
+            $membership         = config('xs.silver_membership');
+            $membership_level   = config('xs.silver_level');
             //                  >200                                 <=300
         } else if ($points > config('xs.silver')[1] && $points <= config('xs.gold')[1]) {
-            $membership = config('xs.gold_membership');
+            $membership         = config('xs.gold_membership');
+            $membership_level   = config('xs.gold_level');
             //                  >300
         } else if ($points > config('xs.gold')[1]) {
-            $membership = config('xs.platinum_membership');
+            $membership         = config('xs.platinum_membership');
+            $membership_level   = config('xs.platinum_level');
         } else {
-            $membership = config('xs.bronze_membership');
+            $membership         = config('xs.bronze_membership');
+            $membership_level   = config('xs.bronze_level');
         }
 
-        return $membership;
+        return $membership = [
+            'membership'        => $membership,
+            'membership_level'  => $membership_level,
+        ];
+
+        // return $membership;
     }
 
     /**
@@ -1291,11 +1320,24 @@ class OrderRepository extends BaseRepository
             $latestCart->delete();
         }
 
-        $reOrder                = $orderAgain;
-        $reOrderItems           = $reOrder->order_items;
-        $newOrder               = $reOrder->replicate();
-        $newOrder->type         = Order::CART;
-        $newOrder->status       = Order::PENDNIG;
+        $reOrder                        = $orderAgain;
+        $reOrderItems                   = $reOrder->order_items;
+        $newOrder                       = $reOrder->replicate();
+        $newOrder->type                 = Order::CART;
+        $newOrder->status               = Order::PENDNIG;
+        $newOrder->credit_amount        = 0.00;
+        $newOrder->transaction_id       = null;
+        $newOrder->card_id              = null;
+        $newOrder->charge_id            = null;
+        $newOrder->apply_time           = null;
+        $newOrder->last_delayed_time    = null;
+        $newOrder->remaining_date       = null;
+        $newOrder->accepted_date        = null;
+        $newOrder->pickup_point_id      = null;
+        $newOrder->pickup_point_user_id = null;
+        $newOrder->waiter_id            = null;
+        $newOrder->restaurant_table_id  = null;
+
         $newOrder->save();
 
         $reOrderItems->loadMissing(['addons','mixer']);

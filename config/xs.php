@@ -22,8 +22,9 @@ return [
     | Bronze membership contain the bronze color in the app.
     |
     */
-    'bronze'    => [0, 100],
-    'bronze_membership' => 'BRONZE',
+    'bronze'                => [0, 100],
+    'bronze_membership'     => 'BRONZE',
+    'bronze_level'          => 1,
 
     /*
     |--------------------------------------------------------------------------
@@ -33,8 +34,9 @@ return [
     | Silver membership contain the silver color in the app.
     |
     */
-    'silver'    => [101, 200],
-    'silver_membership' => 'SILVER',
+    'silver'                => [101, 200],
+    'silver_membership'     => 'SILVER',
+    'silver_level'          => 2,
 
     /*
     |--------------------------------------------------------------------------
@@ -44,8 +46,9 @@ return [
     | Gold membership contain the golden color in the app.
     |
     */
-    'gold'      => [201, 300],
-    'gold_membership' => 'GOLD',
+    'gold'                  => [201, 300],
+    'gold_membership'       => 'GOLD',
+    'gold_level'            => 3,
 
     /*
     |--------------------------------------------------------------------------
@@ -55,6 +58,7 @@ return [
     | Platinum membership contain the platinum color in the app.
     |
     */
-    'platinum'  => [300],
-    'platinum_membership' => 'PLATINUM',
+    'platinum'              => [300],
+    'platinum_membership'   => 'PLATINUM',
+    'platinum_level'        => 4
 ];
