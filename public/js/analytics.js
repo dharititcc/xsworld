@@ -3,68 +3,53 @@
         table: null,
         tableColumns: [
         {
-            "data": "", // can be null or undefined ->type
-            "defaultContent": "",
-            "width": "5%",
-            "sortable": false,
-            render: function (data, type, row) {
-                return ''
-            }
-        },
-        {
             "data": "name", // can be null or undefined ->type
-            "width": "30%",
+            "width": "35%",
             "defaultContent": "",
-            render: function (data, type, row) {
-                for (let i = 0; i < row.order_items.length; i++) {
-                    var color = (row.order_items[i].restaurant_item.is_available == 1) ? "green" : "red";
-                    return `<div class="prdname ${color}"> ${row.order_items[i].restaurant_item.name} </div>
-                            <div class="add-date">Added ${XS.Common.formatDate(row.created_at)}</div>`
-                }
+            render: function (data, type, row)
+            {
+                console.log(row);
+                return `${row.restaurant_item.name}`;
             }
         },
         {
-            "data": "type", // can be null or undefined
+            "data": "type", // can be null or undefined ->type
+            "width": "20%",
             "defaultContent": "",
-            "width": "15%",
-            "bSortable": false,
-            render: function (data, type, row) {
-                var text = "";
-                if (row.order_items.length > 0) {
-                    for (let i = 0; i < row.order_items.length; i++) { //[i].variations
-                        text += '<label class="">' + row.order_items[i].restaurant_item.variations[i]['name'] + "</label>";
-                    }
-                    return text
+            render: function (data, type, row)
+            {
+                if( row.variation )
+                {
+                    return `${row.variation_name}`;
                 }
-                return ""
+
+                return `-`;
             }
         },
         {
             "data": "price", // can be null or undefined
             "defaultContent": "",
-            "width": "10%",
+            "width": "20%",
             "bSortable": false,
             render: function (data, type, row) {
-                var text = "";
-                if (row.order_items.length > 0) {
-                    for (let i = 0; i < row.order_items.length; i++) {
-                        text += `<label class="price">${moduleConfig.currency}${row.order_items[i].restaurant_item.variations[i]['price']}</label>`;
-                    }
-                    return text
-                }
-                return `<label class="price">${moduleConfig.currency}${row.order_items[0].price}</label>`;
+                return `${row.order.restaurant.country.symbol}${row.restaurant_item.price}`;
             }
         },
-       
         {
-            "data": "favorite", // can be null or undefined
+            "data": "count", // can be null or undefined
             "defaultContent": "",
-            "width": "5%",
-            "class": "dt-center",
+            "width": "25%",
             "bSortable": false,
             render: function (data, type, row) {
-                for (let i = 0; i < row.order_items.length; i++) {
-                    return `<a href="javascript:void(0)" class="favorite ${row.order_items[i].restaurant_item.is_featured == 0 ? 'null' : ''} "  data-is_featured="${row.order_items[i].restaurant_item.is_featured == 0 ? 1 : 0}" data-id="${row.order_items[i].restaurant_item.id}"></a>`
+                if( row.variation_id )
+                {
+                    var cal = parseInt(row.variation_count) * parseInt(row.variation_qty_sum);
+                    return `${cal} Units Sold`;
+                }
+                else
+                {
+                    var cal = parseInt(row.total_item ? row.total_item : 0) * parseInt(row.total_quantity ? row.total_quantity : 0)
+                    return `${cal} Units Sold`;
                 }
             }
         }
@@ -92,14 +77,10 @@
                 processing: true,
                 serverSide: true,
                 searching: false,
-                order: [[1, 'asc']],
+                order: [[0, 'asc']],
                 ajax: {
                     url: moduleConfig.getAccessibles,
-                    type: 'get',
-                    data: function(data)
-                    {
-                        var checkboxes = $.map($('input[name="id"]:checked'), function(c){return c.value; });
-                    },
+                    type: 'get'
                 },
                 columns: context.tableColumns,
                 drawCallback: function ( settings )

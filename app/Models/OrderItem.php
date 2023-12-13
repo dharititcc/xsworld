@@ -131,4 +131,52 @@ class OrderItem extends Model
     {
         return $this->hasOne(self::class, 'parent_item_id', 'id')->where('type', RestaurantItem::MIXER);
     }
+
+    /**
+     * Get the addon type items
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeAddon(Builder $query): Builder
+    {
+        return $this->scopeItemType($query, Item::ADDON);
+    }
+
+    /**
+     * Get the item type items
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeItem(Builder $query): Builder
+    {
+        return $this->scopeItemType($query, Item::ITEM);
+    }
+
+    /**
+     * Get the mixer type items
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeMixer(Builder $query): Builder
+    {
+        return $this->scopeItemType($query, Item::MIXER);
+    }
+
+    /**
+     * Get the item type
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeItemType(Builder $query, $value): Builder
+    {
+        return $query->where('type', $value);
+    }
 }
