@@ -478,7 +478,8 @@ class AuthController extends APIController
             'user_type'             => User::CUSTOMER,
             'points'                => User::SIGN_UP_POINTS,
             'social_id'             => $request->social_id,
-            'referral_code'         => $request->referral_code
+            'referral_code'         => $request->referral_code,
+            'fcm_token'             => $request->fcm_token
         ];
 
         $user = $this->repository->create($dataArr);
