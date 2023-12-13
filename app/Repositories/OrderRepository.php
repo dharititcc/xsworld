@@ -1336,7 +1336,11 @@ class OrderRepository extends BaseRepository
         $newOrder->pickup_point_id      = null;
         $newOrder->pickup_point_user_id = null;
         $newOrder->waiter_id            = null;
+        $newOrder->served_date          = null;
+        $newOrder->completion_date      = null;
         $newOrder->restaurant_table_id  = null;
+        $newOrder->created_at           = Carbon::now();
+        $newOrder->updated_at           = Carbon::now();
 
         $newOrder->save();
 
