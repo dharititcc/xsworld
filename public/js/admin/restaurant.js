@@ -220,22 +220,46 @@
 
         deleteRestaurant: function()
         {
-            $('.res-delete').click(function(event) {
-                var form =  $(this).closest("form");
-                event.preventDefault();
-                swal({
-                    title: `Are you sure you want to delete this Records?`,
-                    // text: "It will gone forevert",
-                    icon: "warning",
-                    buttons: true,
-                    dangerMode: true,
-                })
-                    .then((willDelete) => {
-                        if (willDelete) {
-                            form.submit();
-                            XS.Common.handleSwalSuccess('Record Deleted successfully.');
-                        }
-                    });
+            
+            var context = this;
+            // context.selectors.restaurantDelete.click(function(event) {
+            //     alert('hi');
+            //     var form =  $(this).closest("form");
+            //     event.preventDefault();
+            //     swal({
+            //         title: `Are you sure you want to delete this Records?`,
+            //         // text: "It will gone forevert",
+            //         icon: "warning",
+            //         buttons: true,
+            //         dangerMode: true,
+            //     })
+            //         .then((willDelete) => {
+            //             if (willDelete) {
+            //                 form.submit();
+            //                 XS.Common.handleSwalSuccess('Record Deleted successfully.');
+            //             }
+            //         });
+            // });
+
+            $('.res-delete').on("click",function(){
+                alert('hi');
+                var id = $(this).data("id");
+               
+                $.ajax(
+                {
+                    url: "admin.restaurant/"+id,
+                    type: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': jQuery('meta[name="csrf-token"]').attr('content')
+                    },
+                    data: {
+                        "id": id,
+                    },
+                    success: function (){
+                        XS.Common.handleSwalSuccess('Restaurant form has been Deleted successfully.');
+                    }
+                });
+               
             });
         },
 
