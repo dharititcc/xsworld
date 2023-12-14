@@ -7,7 +7,7 @@
                 <div class="modal-header dri-heder">
                     <div class="head-left">
                         <button type="button" class="back" data-bs-dismiss="modal" aria-label="Close"><i class="icon-left"></i></button>
-                        <h2><span class="model_title"> </span> Create</h2>
+                        <h2><span class="model_title"> </span> </h2>
                     </div>
                     <div class="head-right">
                         <button class="bor-btn" id="submitBtn" type="submit">Save</button>
@@ -44,7 +44,7 @@
                                         <div class="form-group full-w-form">
                                             <div class="row">
                                                 <div class="col-md-6">
-                                                    <select class="form-control " name="country_id">
+                                                    <select class="form-control " name="country_id" id="country_id">
                                                         <option>Select Country</option>
                                                         <option value="1">India</option>
                                                         <option value="2">United States of America</option>

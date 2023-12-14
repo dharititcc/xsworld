@@ -68,6 +68,7 @@
             search:                     jQuery('#search'),
             restaurantForm:             jQuery('#create_update_restaurant'),
             restaurantSubmitBtn:        jQuery('#submitBtn'),
+            restaurantModalTitle:       jQuery('.model_title'),
             restaurantDelete:           jQuery('.res-delete'),
         },
 
@@ -180,11 +181,25 @@
 
         openModal: function()
         {
-            jQuery('.create-restaurant').on('click', function(e)
+            var context = this;
+            jQuery('body').on('click', '.create-restaurant', function(e)
             {
                 e.preventDefault();
+                var $this           = jQuery(this);
+                var restaurantId    = $(this).data('id');
 
-                var $this = jQuery(this);
+                    if(restaurantId == undefined)
+                    {
+                        context.selectors.restaurantModalTitle.html('Create');
+                        context.selectors.restaurantForm.attr('action', moduleConfig.storeRestaurant);
+                        context.restaurantFormSubmit(context.selectors.restaurantForm.get(0));
+                    } else {
+                        context.selectors.restaurantModalTitle.html('Edit');
+                        context.selectors.restaurantForm.attr('action', moduleConfig.updateRestaurant.replace(':ID', restaurantId));
+                        context.getRestaurantData(restaurantId);
+                        context.restaurantFormSubmit(context.selectors.restaurantForm.get(0));
+                        context.selectors.restaurantForm.append(`<input type="hidden" name="_method" value="PUT" />`);
+                    }
 
                 jQuery('#wd930').modal('show');
             });
@@ -222,25 +237,6 @@
         {
             
             var context = this;
-            // context.selectors.restaurantDelete.click(function(event) {
-            //     alert('hi');
-            //     var form =  $(this).closest("form");
-            //     event.preventDefault();
-            //     swal({
-            //         title: `Are you sure you want to delete this Records?`,
-            //         // text: "It will gone forevert",
-            //         icon: "warning",
-            //         buttons: true,
-            //         dangerMode: true,
-            //     })
-            //         .then((willDelete) => {
-            //             if (willDelete) {
-            //                 form.submit();
-            //                 XS.Common.handleSwalSuccess('Record Deleted successfully.');
-            //             }
-            //         });
-            // });
-
             context.selectors.restaurantTable.on("click", '.res-delete', function(){
                 var id = $(this).data("id");
 
@@ -271,9 +267,6 @@
                             form.submit();
                         }
                     });
-               
-                
-               
             });
         },
 
@@ -342,7 +335,7 @@
             });
         },
 
-        restaurantFormSubmit: function()
+        restaurantFormSubmit: function(form)
         {
             var context = this;
 
@@ -360,7 +353,7 @@
 
                 jQuery.ajax(
                 {
-                    url: moduleConfig.storeRestaurant,
+                    url: $(form).attr('action'),
                     type: "POST",
                     data: formData,
                     processData: false,
@@ -436,8 +429,24 @@
         {
             var context = this;
             $.ajax({
-                
-            })
+                url: moduleConfig.getRestaurant.replace(':ID',id),
+                type: "GET",
+                success: function(res){
+                    console.log(res);
+                    $("#name").val(res.data.name);
+                    $("#street1").val(res.data.street1);
+                    $("#street2").val(res.data.street2);
+                    $("#state").val(res.data.state);
+                    $("#city").val(res.data.city);
+                    $("#postcode").val(res.data.postcode);
+                    $("#description").val(res.data.specialisation);
+                    $("#first_name").val(res.data.first_name);
+                    $("#last_name").val(res.data.last_name);
+                    $("#email").val(res.data.email);
+                    $("#password").val(res.data.password);
+                    $("#phone").val(res.data.phone);
+                }
+            });
         }
     }
 })();

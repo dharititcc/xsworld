@@ -338,7 +338,8 @@ class Restaurant extends Model
      */
     public function getEditButtonAttribute($class = '')
     {
-        return '<a href="'.route('admin.restaurant.edit', $this->id).'" class="act-btn res-edit"><i class="icon-pencil"></i></a>';
+        return '<a href="javascript:void(0);" class="act-btn create-restaurant" data-id="'.$this->id.'"><i class="icon-pencil"></i></a>';
+        //'.route('admin.restaurant.edit', $this->id).'
     }
 
     /**
