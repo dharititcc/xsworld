@@ -259,6 +259,7 @@ class BarRepository extends BaseRepository
                     $updateArr['accepted_date']         = Carbon::now();
                     $time                               = $order->apply_time;
                     $updateArr['apply_time']            = $apply_time + $time;
+                    $updateArr['last_delayed_time']     = $apply_time;
                     if(isset($order->remaining_date))
                     {
                         $current_time       = Carbon::parse();
