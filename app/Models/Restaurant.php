@@ -351,7 +351,7 @@ class Restaurant extends Model
     {
         // if(!$this->trashed())
         // {
-            return '<a href="javascript:void(0);" class="act-btn res-delete" data-id=" '.$this->id.' "><i class="icon-trash"></i></a>';
+            return '<a href="javascript:void(0);" class="act-btn res-delete" data-id="'.$this->id.'"><i class="icon-trash"></i></a>';
         // } href="'.route('admin.restaurant.destroy', $this->id).'"
     }
 }

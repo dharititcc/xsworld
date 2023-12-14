@@ -78,7 +78,7 @@ class RestaurantController extends Controller
     private function upload($file, $model)
     {
         //Move Uploaded File
-        $destinationPath = public_path(DIRECTORY_SEPARATOR.'storage'.DIRECTORY_SEPARATOR.'restaurant');
+        $destinationPath = public_path(DIRECTORY_SEPARATOR.'storage'.DIRECTORY_SEPARATOR.'restaurants');
         $profileImage = date('YmdHis') . "." . $file->getClientOriginalExtension();
         $file->move($destinationPath, $profileImage);
 
@@ -119,6 +119,12 @@ class RestaurantController extends Controller
      */
     public function destroy(string $id)
     {
-        dd('Hii');
+        $delete = Restaurant::find($id);
+        $user = $delete->owners()->first();
+        $user->delete();
+        $delete->delete();
+        return response()->json([
+            'success' => 'Restaurant deleted successfully!'
+        ]);
     }
 }

@@ -241,24 +241,38 @@
             //         });
             // });
 
-            $('.res-delete').on("click",function(){
-                alert('hi');
+            context.selectors.restaurantTable.on("click", '.res-delete', function(){
                 var id = $(this).data("id");
+
+
+                swal({
+                    title: `Are you sure you want to delete this Records?`,
+                    // text: "It will gone forevert",
+                    icon: "warning",
+                    buttons: true,
+                    dangerMode: true,
+                })
+                    .then((willDelete) => {
+                        if (willDelete) {
+                            $.ajax(
+                            {
+                                url: moduleConfig.deleteRestaurant.replace(':ID', id),
+                                type: 'DELETE',
+                                headers: {
+                                    'X-CSRF-TOKEN': jQuery('meta[name="csrf-token"]').attr('content')
+                                },
+                                data: {
+                                    "id": id,
+                                },
+                                success: function (){
+                                    XS.Common.handleSwalSuccess('Restaurant form has been Deleted successfully.');
+                                }
+                            });
+                            form.submit();
+                        }
+                    });
                
-                $.ajax(
-                {
-                    url: "admin.restaurant/"+id,
-                    type: 'DELETE',
-                    headers: {
-                        'X-CSRF-TOKEN': jQuery('meta[name="csrf-token"]').attr('content')
-                    },
-                    data: {
-                        "id": id,
-                    },
-                    success: function (){
-                        XS.Common.handleSwalSuccess('Restaurant form has been Deleted successfully.');
-                    }
-                });
+                
                
             });
         },
