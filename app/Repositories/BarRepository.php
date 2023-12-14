@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Repositories\BaseRepository;
 use App\Repositories\Traits\CreditPoint;
 use Carbon\Carbon;
+use Carbon\CarbonInterval;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 
@@ -261,14 +262,37 @@ class BarRepository extends BaseRepository
                     $updateArr['last_delayed_time']     = $apply_time;
                     if(isset($order->remaining_date))
                     {
-                        $old_time           = Carbon::parse($order->remaining_date);
-                        $remaining_date     = $old_time->addMinutes($apply_time);
-                        $old_time           = Carbon::parse($remaining_date)->isPast();
-                        if($old_time === true)
+                        $current_time       = Carbon::parse();
+                        $remaining_time     = $current_time->diffInSeconds($order->remaining_date);
+                        $calculateMinute    = CarbonInterval::seconds($remaining_time)->cascade();
+                        $remainingMinute    = $calculateMinute->toArray()['minutes'];
+                        $old_time           = Carbon::parse($order->remaining_date)->isPast();
+                        if($remainingMinute > 0 && $old_time === false)
                         {
-                            $current_time       = Carbon::now();
-                            $remaining_date     = $current_time->addMinutes($apply_time);
+                            $newminute                          = $remainingMinute + $apply_time;
+                            $updateArr['last_delayed_time']     = $newminute;
+                            $old_time                           = Carbon::parse($order->remaining_date);
+                            $remaining_date                     = $old_time->addMinutes($newminute);
+                            $old_time                           = Carbon::parse($remaining_date)->isPast();
+                            if($old_time === true)
+                            {
+                                $current_time       = Carbon::now();
+                                $remaining_date     = $current_time->addMinutes($apply_time);
+                            }
                         }
+                        else
+                        {
+                            $updateArr['last_delayed_time']     = $apply_time;
+                            $old_time                           = Carbon::parse($order->remaining_date);
+                            $remaining_date                     = $old_time->addMinutes($apply_time);
+                            $old_time                           = Carbon::parse($remaining_date)->isPast();
+                            if($old_time === true)
+                            {
+                                $current_time       = Carbon::now();
+                                $remaining_date     = $current_time->addMinutes($apply_time);
+                            }
+                        }
+                        // dd($updateArr);
                     }
                     else
                     {
