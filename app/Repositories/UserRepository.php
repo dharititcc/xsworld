@@ -193,6 +193,11 @@ class UserRepository extends BaseRepository
             }
 
             $user = User::create($data);
+            if( isset($data['fcm_token']) )
+            {
+                // inser device entry
+                $user->devices()->create(['fcm_token' => $data['fcm_token']]);
+            }
             if( $data['user_type'] == User::CUSTOMER )
             {
                 // verification email send and send verification code
@@ -291,6 +296,11 @@ class UserRepository extends BaseRepository
             }
 
             $user = User::create($data);
+            if( isset($data['fcm_token']) )
+            {
+                // inser device entry
+                $user->devices()->create(['fcm_token' => $data['fcm_token']]);
+            }
             if( $data['user_type'] == User::CUSTOMER )
             {
                 $qr_url = URL::current();
