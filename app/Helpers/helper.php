@@ -3,6 +3,7 @@
 use App\Exceptions\GeneralException;
 use App\Models\Category;
 use Carbon\Carbon;
+use Carbon\CarbonPeriod;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use Twilio\Rest\Client;
@@ -393,6 +394,23 @@ if (! function_exists('get_previous_quarter')) {
             'start_date'=> $getPreviousQuarter->firstOfQuarter()->format('Y-m-d'),
             'end_date'  => $getPreviousQuarter->lastOfQuarter()->format('Y-m-d'),
         ];
+    }
+}
+
+if( ! function_exists('get_dates_period') )
+{
+    /**
+     * Method get_dates_period
+     *
+     * @param string $startDate [explicite description]
+     * @param string $endDate [explicite description]
+     *
+     * @return array
+     */
+    function get_dates_period($startDate, $endDate): array
+    {
+        $period = CarbonPeriod::create($startDate, $endDate);
+        return $period->toArray();
     }
 }
 
