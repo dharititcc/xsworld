@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Drinks;
 
+use App\Exceptions\GeneralException;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\RestaurantItem;
@@ -9,6 +10,7 @@ use App\Models\Category;
 use App\Models\Restaurant;
 use App\Models\RestaurantVariation;
 use DataTables;
+use Illuminate\Support\Facades\DB;
 
 class DrinkController extends Controller
 {
@@ -127,6 +129,13 @@ class DrinkController extends Controller
                 "restaurant_id"         => $restaurant->id
             ];
 
+            // check if item name exist
+
+            if( $this->checkUniqueDrink($request, $restaurant) )
+            {
+                throw new GeneralException('The item name is already exist.');
+            }
+
             $newRestaurantItem = RestaurantItem::create($drinkArr);
             $variationArr = [];
             if($drinkArr['is_variable'] == 1)
@@ -155,6 +164,20 @@ class DrinkController extends Controller
             }
         }
         return $newRestaurantItem->refresh();
+    }
+
+     /**
+     * Method checkUniqueDrink
+     *
+     * @param Request $request [explicite description]
+     * @param Restaurant $restaurant [explicite description]
+     *
+     * @return int
+     */
+    private function checkUniqueDrink(Request  $request, Restaurant $restaurant)
+    {
+        $text = strtolower($request->name);
+        return RestaurantItem::whereRaw(DB::raw("LOWER(`name`) = '{$text}'"))->where('restaurant_id', $restaurant->id)->count();
     }
 
     /**
