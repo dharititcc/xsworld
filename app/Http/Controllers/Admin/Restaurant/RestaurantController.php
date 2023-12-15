@@ -44,6 +44,7 @@ class RestaurantController extends Controller
             'state'         => $request->state,
             'city'          => $request->city,
             'postcode'      => $request->postcode,
+            'type'          => $request->type,
             'specialisation'=> $request->description,
         ];
         $restaurant = Restaurant::create($addressInfo);
@@ -102,6 +103,7 @@ class RestaurantController extends Controller
             'street2'           => $restaurant['street2'],
             'city'              => $restaurant['city'],
             'state'             => $restaurant['state'],
+            'type'              => $restaurant['type'],
             'country_id'       => $restaurant['country_id'],
             'image'             => $restaurant['attachment'] ? asset('storage/restaurants/'.$restaurant['attachment']['stored_name']) : '',
             'postcode'          => $restaurant['postcode'],

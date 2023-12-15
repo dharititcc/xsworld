@@ -18,7 +18,7 @@
                         <div class="col-md-4">
                             <div class="grey-brd-box d-flex featured-img">
                                 <input id="upload" type="file" class="files" name="image" accept="image/*" hidden />
-                                <label for="upload" class="lbl-upload min-h-424"><span class="img-text"> Restaurant Image</span> <i class="icon-plus add-edit"></i></label>
+                                <label for="upload" class="lbl-upload min-h-424"><span class="img-text">  </span> <i class="icon-plus add-edit"></i></label>
                             </div>
                         </div>
                         <div class="col-md-8">

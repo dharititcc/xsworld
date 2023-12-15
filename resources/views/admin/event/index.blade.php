@@ -9,7 +9,7 @@
         <div class="searchbox"><input type="text" name="search" id="search" class="searchbar" placeholder="Find an event"></div>
     </div>
     <div class="data-table drinks table-responsive">
-        <table width="100%" class="event_datatable drink_datatable">
+        <table width="100%" class="restaurant_datatable drink_datatable">
             <thead>
                 <tr valign="middle">
                     <th class="dt-left"><label class="cst-check"><input type="checkbox" id="allcheck" value=""><span class="checkmark"></span></label></th>
@@ -26,17 +26,26 @@
     </div>
 </div>
 
+@include('admin.restaurant.partials.create-restaurant')
+
 @endsection
 @section('pagescript')
 @parent
+<script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBzaUUaqbCwcmb_TMSSnEQ5q0Qr5Sib7i4&libraries=places&callback=Function.prototype" defer></script>
 <script src="{{ asset('js/admin/event.js') }}"></script>
+<script src="{{ asset('js/admin/restaurant.js') }}"></script>
 <script type="text/javascript">
     var moduleConfig = {
-        tableAjax: "{!! route('admin.event.table') !!}"
+        tableAjax: "{!! route('admin.event.table') !!}",
+        storeRestaurant:    "{!! route('admin.restaurant.store') !!}",
+        deleteRestaurant:   "{!! route('admin.restaurant.destroy',':ID') !!}",
+        getRestaurant:      "{!! route('admin.restaurant.show',':ID') !!}",
+        updateRestaurant:    "{!! route('admin.restaurant.update',':ID') !!}",
     };
 
     $(document).ready(function() {
-        XS_Admin.Event.init();
+        XS_Admin.Event.makeDatatable();
+        XS_Admin.Restaurant.init();
     });
 </script>
 @endsection

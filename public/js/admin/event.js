@@ -55,7 +55,7 @@
 
         /** selectors for customers */
         selectors: {
-            eventTable: jQuery('.event_datatable'),
+            eventTable: jQuery('.restaurant_datatable'),
             search: jQuery('#search')
         },
 

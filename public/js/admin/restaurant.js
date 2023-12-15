@@ -81,11 +81,11 @@
         {
             var context = this;
 
-            context.makeDatatable();
+            context.makeDatatables();
             context.searchFilter();
             context.openModal();
             context.closeRestaurantModal();
-            // context.addRestaurantFormValidation();
+            // context.editRestaurantFormValidation();
             context.deleteRestaurant();
             XS.Common.fileReaderBind();
 
@@ -186,7 +186,14 @@
             {
                 e.preventDefault();
                 var $this           = jQuery(this);
-                var restaurantId    = $(this).data('id');
+                var restaurantId    = $(this).data('id'),
+                    type            = $(this).data('type');
+
+                    if(type == 2) {
+                        $(".img-text").html('Event Image');
+                    } else {
+                        $(".img-text").html('Restaurant Image');
+                    }
 
                     if(restaurantId == undefined)
                     {
@@ -196,10 +203,12 @@
                         context.selectors.restaurantModalTitle.html('Edit');
                         context.selectors.restaurantForm.attr('action', moduleConfig.updateRestaurant.replace(':ID', restaurantId));
                         context.getRestaurantData(restaurantId);
+                        // context.editRestaurantFormValidation();
                         context.restaurantFormSubmit(context.selectors.restaurantForm.get(0));
                         context.selectors.restaurantForm.append(`<input type="hidden" name="_method" value="PUT" />`);
                     }
 
+                    context.selectors.restaurantForm.append(`<input type="hidden" name="type" id="type" value=${type} />`);
                 jQuery('#wd930').modal('show');
             });
         },
@@ -215,10 +224,9 @@
                 context.selectors.restaurantForm.validate().resetForm();
                 context.selectors.restaurantForm.find('.error').removeClass('error');
                 context.selectors.restaurantForm.find('input[name="_method"]').remove();
+                context.selectors.restaurantForm.find('input[name="type"]').remove();
                 context.selectors.restaurantForm.removeAttr('action');
                 $this.find('.pip').remove();
-                $this.find('.cstm-catgory').find('input[name="category_id[]"]').prop('checked', false);
-                context.selectors.restaurantForm.find('.variation_hidden').remove();
             });
         },
 
@@ -269,7 +277,7 @@
             });
         },
 
-        addRestaurantFormValidation: function()
+        editRestaurantFormValidation: function()
         {
             var context = this;
             context.selectors.restaurantForm.validate({
@@ -396,7 +404,7 @@
             });
         },
 
-        makeDatatable: function()
+        makeDatatables: function()
         {
             var context = this;
 
@@ -431,7 +439,6 @@
                 url: moduleConfig.getRestaurant.replace(':ID',id),
                 type: "GET",
                 success: function(res){
-                    console.log(res);
                     $("#name").val(res.data.name);
                     $("#street1").val(res.data.street1);
                     $("#street2").val(res.data.street2);
@@ -442,10 +449,11 @@
                     $("#first_name").val(res.data.first_name);
                     $("#last_name").val(res.data.last_name);
                     $("#email").val(res.data.email);
-                    // $("#password").val(res.data.password);
+                    $("#password").val(res.data.password);
                     $("#phone").val(res.data.phone);
                     $('select option[value="'+res.data.country_id+'"]').attr("selected",true);
                     $("#id").val(res.data.id);
+                    $("#type").val(res.data.type);
                     
 
                     var image = `
