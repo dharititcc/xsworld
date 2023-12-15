@@ -192,7 +192,6 @@
                     {
                         context.selectors.restaurantModalTitle.html('Create');
                         context.selectors.restaurantForm.attr('action', moduleConfig.storeRestaurant);
-                        context.restaurantFormSubmit(context.selectors.restaurantForm.get(0));
                     } else {
                         context.selectors.restaurantModalTitle.html('Edit');
                         context.selectors.restaurantForm.attr('action', moduleConfig.updateRestaurant.replace(':ID', restaurantId));
@@ -443,8 +442,27 @@
                     $("#first_name").val(res.data.first_name);
                     $("#last_name").val(res.data.last_name);
                     $("#email").val(res.data.email);
-                    $("#password").val(res.data.password);
+                    // $("#password").val(res.data.password);
                     $("#phone").val(res.data.phone);
+                    $('select option[value="'+res.data.country_id+'"]').attr("selected",true);
+                    $("#id").val(res.data.id);
+                    
+
+                    var image = `
+                            <div class="pip">
+                                <img class="imageThumb" src="${res.data.image != "" ? res.data.image : ''}" title=""/>
+                                <i class="icon-trash remove"></i>
+                            </div>`;
+
+                    if(res.data.image != "")
+                    {
+                        $(".image_box").children('.pip').remove();
+                        $("#upload").after(image);
+                    }
+
+                    $(".remove").click(function() {
+                        $(this).parent('.pip').remove();
+                    })
                 }
             });
         }

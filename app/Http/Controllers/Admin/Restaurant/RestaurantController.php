@@ -94,7 +94,7 @@ class RestaurantController extends Controller
      */
     public function show(Restaurant $restaurant)
     {
-        $restaurant->loadMissing(['owners']);
+        $restaurant->loadMissing(['owners','attachment']);
         $restaurant = $restaurant->toArray();
         $restaurant = [
             'name'              => $restaurant['name'],
@@ -102,8 +102,11 @@ class RestaurantController extends Controller
             'street2'           => $restaurant['street2'],
             'city'              => $restaurant['city'],
             'state'             => $restaurant['state'],
+            'country_id'       => $restaurant['country_id'],
+            'image'             => $restaurant['attachment'] ? asset('storage/restaurants/'.$restaurant['attachment']['stored_name']) : '',
             'postcode'          => $restaurant['postcode'],
             'specialisation'    => $restaurant['specialisation'],
+            'id'                => $restaurant['owners'][0]['id'],
             'first_name'        => $restaurant['owners'][0]['first_name'],
             'last_name'         => $restaurant['owners'][0]['last_name'],
             'email'             => $restaurant['owners'][0]['email'],
@@ -127,15 +130,15 @@ class RestaurantController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Restaurant $restaurant)
+    public function update(RestaurantRequest $request, Restaurant $restaurant)
     {
         
-        // $currency_id = Currency::select('id')->where('id', $request->country_id)->first();
+        $currency_id = Currency::select('id')->where('id', $request->country_id)->first();
         $addressInfo    = [
             'name'          => $request->name,
             'street1'       => $request->street1,
             'street2'       => $request->street2,
-            // 'currency_id'   => $currency_id->id,
+            'currency_id'   => $currency_id->id,
             'country_id'    => (int)$request->country_id,
             'state'         => $request->state,
             'city'          => $request->city,

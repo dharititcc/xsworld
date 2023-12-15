@@ -1,7 +1,7 @@
 <!-- Global popup -->
 <div class="modal fade" id="wd930" tabindex="0" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-xl justify-content-center">
-        <form name="addrestaurant" id="create_update_restaurant" method="post">
+        <form name="addrestaurant" id="create_update_restaurant" method="post" enctype="multipart/form-data">
             @csrf
             <div class="modal-content">
                 <div class="modal-header dri-heder">
@@ -24,6 +24,7 @@
                         <div class="col-md-8">
                             <div class="form-group mb-4">
                                 <input type="text" name="name" id="name" class="form-control vari3" placeholder="Restaurant Name">
+                                <input type="hidden" name="id" id="id" value="" />
                             </div>
                             <div class="row">
                                 <div class="col-md-8">
