@@ -4,7 +4,7 @@
 @endsection
 @section('content')
 <div class="row">
-    <div class="col-md-4 no-pd">
+    <div class="col-md-3 no-pd">
         <h2 class="yellow pd-20 gold-border">General Overview</h2>
 
         <div class="pd-20">
@@ -64,7 +64,7 @@
         </div>
 
     </div>
-    <div class="col-md-8 no-pd gold-border-left">
+    <div class="col-md-9 no-pd gold-border-left">
         <div class="d-flex mb-4 justify-content-between doubl-line gold-border align-items-center">
             <h2 class="yellow pd-20">24th July - 24th Aug 2023</h2>
             <div class="display-range pd-20">

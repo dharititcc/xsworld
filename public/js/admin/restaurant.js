@@ -203,7 +203,6 @@
                         context.selectors.restaurantForm.attr('action', moduleConfig.updateRestaurant.replace(':ID', restaurantId));
                         context.editRestaurantFormValidation();
                         context.getRestaurantData(restaurantId);
-                        // context.restaurantFormSubmit(context.selectors.restaurantForm.get(0));
                         context.selectors.restaurantForm.append(`<input type="hidden" name="_method" value="PUT" />`);
                     }
 
@@ -290,7 +289,6 @@
                     description: {
                         required: true,
                     },
-                    
                     first_name: {
                         required: true,
                     },
@@ -338,7 +336,72 @@
             });
         },
 
+<<<<<<< HEAD
         restaurantFormSubmit: function()
+=======
+        editRestaurantFormValidation: function()
+        {
+            var context = this;
+            context.selectors.restaurantForm.validate({
+                rules: {
+                    name: {
+                        required: true,
+                    },
+                    street1: {
+                        required: true,
+                    },
+                    description: {
+                        required: true,
+                    },
+                    first_name: {
+                        required: true,
+                    },
+                    email: {
+                        required: true,
+                    },
+                    country_id: {
+                        required: true,
+                    },
+                    phone: {
+                        required: true,
+                    },
+                    city: {
+                        required: true,
+                    },
+                    password: {
+                        required: true
+                    },
+                },
+                messages: {
+                    name: {
+                        required: "Please enter Restaurant name",
+                        maxlength: "Your name maxlength should be 50 characters long."
+                    },
+                    first_name: {
+                        required: "Please enter first name",
+                        maxlength: "Your name maxlength should be 50 characters long."
+                    },
+                    image: {
+                        required: "Please upload files", //accept: 'Not an image!'
+                    },
+                },
+                errorPlacement: function (error, element) {
+                    if (element.attr("type") == "checkbox") {
+                        error.insertAfter($(element).closest('div'));
+                    } else if( element.attr("type") == 'file' ) {
+                        error.insertAfter($(element).closest('div'));
+                    }else{
+                        error.insertAfter($(element));
+                    }
+                },
+                submitHandler: function() {
+                    context.restaurantFormSubmit(context.selectors.restaurantForm.get(0));
+                }
+            });
+        },
+
+        restaurantFormSubmit: function(form)
+>>>>>>> origin/milan
         {
             var context = this;
 
@@ -452,6 +515,7 @@
 
                     var image = `
                             <div class="pip">
+                                <input type="hidden" name="image" value="${res.data.image != "" ? res.data.image : ''}" accept="image/*">
                                 <img class="imageThumb" src="${res.data.image != "" ? res.data.image : ''}" title=""/>
                                 <i class="icon-trash remove"></i>
                             </div>`;

@@ -65,6 +65,13 @@
         addHandler: function (){
             var context = this;
             context.makeDatatable();
+            context.filterChart();
+        },
+
+        filterChart: function()
+        {
+            context = this;
+
             context.getChart();
         },
 
@@ -99,7 +106,7 @@
                 chart: {
                     renderTo: 'mygraph',
                     type: 'line',
-                    backgroundColor: '#000'
+                    backgroundColor: 'transparent'
                 },
                 title: {
                     text: 'Comparison of Sugar, Rice and Wheat Flour'
@@ -126,9 +133,9 @@
                     }
                 },
                 legend: {
-                    layout: 'vertical',
-                    align: 'center',
-                    verticalAlign: 'top'
+                    align: 'left',
+                    verticalAlign: 'bottom',
+                    borderWidth: 0
                 },
                 plotOptions: {
                     series: {
