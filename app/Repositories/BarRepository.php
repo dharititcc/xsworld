@@ -252,80 +252,8 @@ class BarRepository extends BaseRepository
 
         if(isset($order->id))
         {
-            if($status == Order::DELAY_ORDER || $status == Order::ACCEPTED)
-            {
-                if( isset($apply_time) && $apply_time > 0 )
-                {
-                    $updateArr['accepted_date']         = Carbon::now();
-                    $time                               = $order->apply_time;
-                    $updateArr['apply_time']            = $apply_time + $time;
-                    $updateArr['last_delayed_time']     = $apply_time;
-                    if(isset($order->remaining_date))
-                    {
-                        $current_time       = Carbon::parse();
-                        $remaining_time     = $current_time->diffInSeconds($order->remaining_date);
-                        $calculateMinute    = CarbonInterval::seconds($remaining_time)->cascade();
-                        $remainingMinute    = $calculateMinute->toArray()['minutes'];
-                        $old_time           = Carbon::parse($order->remaining_date)->isPast();
-                        if($remainingMinute > 0 && $old_time === false)
-                        {
-                            $newminute                          = $remainingMinute + $apply_time;
-                            $updateArr['last_delayed_time']     = $newminute;
-                            $old_time                           = Carbon::parse($order->remaining_date);
-                            $remaining_date                     = $old_time->addMinutes($newminute);
-                            $old_time                           = Carbon::parse($remaining_date)->isPast();
-                            if($old_time === true)
-                            {
-                                $current_time       = Carbon::now();
-                                $remaining_date     = $current_time->addMinutes($apply_time);
-                            }
-                        }
-                        else
-                        {
-                            $updateArr['last_delayed_time']     = $apply_time;
-                            $old_time                           = Carbon::parse($order->remaining_date);
-                            $remaining_date                     = $old_time->addMinutes($apply_time);
-                            $old_time                           = Carbon::parse($remaining_date)->isPast();
-                            if($old_time === true)
-                            {
-                                $current_time       = Carbon::now();
-                                $remaining_date     = $current_time->addMinutes($apply_time);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        $current_time       = Carbon::now();
-                        $remaining_date     = $current_time->addMinutes($apply_time);
-                    }
-                    $updateArr['remaining_date']    = $remaining_date;
-                    $updateArr['status']            = $status;
-
-                    // order items status update if the status is accepted
-                    if( $status != Order::DELAY_ORDER )
-                    {
-                        $this->orderItemStatusUpdated($order_id, Order::ACCEPTED);
-
-                        $title                      = $order->restaurant->name. " is processing your order";
-                        $message                    = $order->restaurant->name. " has accepted your order #".$order_id;
-                        $send_notification          = sendNotification($title,$message,$user_tokens,$order_id);
-                    }
-
-                    // update order
-                    $order->update($updateArr);
-
-                    if($status == Order::DELAY_ORDER)
-                    {
-                        $title                      = $order->restaurant->name. " is processing your order";
-                        $message                    = "Your Order #".$order_id." is delayed by ".$order->restaurant->name;
-                        $send_notification          = sendNotification($title,$message,$user_tokens,$order_id);
-                    }
-                }
-                else
-                {
-                    throw new GeneralException('Apply time should greater than zero.');
-                }
-            }
+            // update status to accepted or delay order
+            $this->updateAcceptedDelayStatus($status, $apply_time, $order, $user_tokens);
 
             if($status == Order::COMPLETED)
             {
@@ -431,6 +359,88 @@ class BarRepository extends BaseRepository
         }
 
         return $order;
+    }
+
+    /**
+     * Method updateAcceptedDelayStatus
+     *
+     * @param int $status [explicite description]
+     * @param int $apply_time [explicite description]
+     * @param Order $order [explicite description]
+     * @param User $user [explicite description]
+     * @param array $user_tokens [explicite description]
+     *
+     * @return void
+     */
+    public function updateAcceptedDelayStatus(int $status, int $apply_time, Order $order, array $user_tokens)
+    {
+        if($status == Order::DELAY_ORDER || $status == Order::ACCEPTED)
+        {
+            if( isset($apply_time) && $apply_time > 0 )
+            {
+                $currentTime        = Carbon::now();
+                $currentTimeClone   = $currentTime->clone();
+
+                if( $status == Order::ACCEPTED )
+                {
+                    $orderArr = [
+                        'apply_time'        => $apply_time,
+                        'accepted_date'     => $currentTime,
+                        'remaining_date'    => $currentTimeClone->addMinutes($apply_time),
+                        'last_delayed_time' => $apply_time,
+                        'status'            => Order::ACCEPTED
+                    ];
+
+                    // update order
+                    $order->update($orderArr);
+
+                    // send notification for accepted
+                    $this->orderItemStatusUpdated($order->id, Order::ACCEPTED);
+
+                    $title                      = $order->restaurant->name. " is processing your order";
+                    $message                    = $order->restaurant->name. " has accepted your order #".$order->id;
+                    $send_notification          = sendNotification($title,$message,$user_tokens,$order->id);
+                }
+
+                if( $status == Order::DELAY_ORDER )
+                {
+                    // check current time is past
+                    $remainingTime  = Carbon::parse($order->remaining_date);
+                    $remTime        = $remainingTime->clone();
+
+                    // dd($remainingTime <= $currentTimeClone);
+                    if( $remainingTime <= $currentTimeClone )
+                    {
+                        // if true then calculate apply time from current time
+                        $remainingTimeDb = $currentTimeClone->addMinutes($apply_time);
+                    }
+                    else
+                    {
+                        $remainingTimeDb = $remTime->addMinutes($apply_time);
+                        // dd($remainingTimeDb);
+                    }
+                    // dd($remainingTimeDb);
+                    $orderArr = [
+                        'apply_time'        => $apply_time,
+                        'last_delayed_time' => $order->apply_time,
+                        'remaining_date'    => $remainingTimeDb,
+                        'status'            => Order::DELAY_ORDER
+                    ];
+
+                    // // update order
+                    $order->update($orderArr);
+
+                    // send notification for delay order
+                    $title                      = $order->restaurant->name. " is processing your order";
+                    $message                    = "Your Order #".$order->id." is delayed by ".$order->restaurant->name;
+                    $send_notification          = sendNotification($title,$message,$user_tokens,$order->id);
+                }
+            }
+            else
+            {
+                throw new GeneralException('Apply time should greater than zero.');
+            }
+        }
     }
 
     public function retrieveCharge(string $charge)
