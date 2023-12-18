@@ -28,8 +28,7 @@ class RestaurantUpdateRequest extends FormRequest
             'street1'       => 'required',
             'first_name'    => 'required',
             'city'          => 'required',
-            'image'         => 'image|mimes:png,jpg,jpeg'
-            
+            'image'         => 'required|image|mimes:png,jpg,jpeg'
         ];
     }
 }

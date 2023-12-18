@@ -280,43 +280,11 @@
             var context = this;
             context.selectors.restaurantForm.validate({
                 rules: {
-                    name: {
-                        required: true,
-                    },
-                    street1: {
-                        required: true,
-                    },
-                    description: {
-                        required: true,
-                    },
-                    first_name: {
-                        required: true,
-                    },
                     image: {
-                        required: true,
-                    },
-                    email: {
-                        required: true,
-                    },
-                    country_id: {
-                        required: true,
-                    },
-                    phone: {
-                        required: true,
-                    },
-                    city: {
                         required: true,
                     },
                 },
                 messages: {
-                    name: {
-                        required: "Please enter Restaurant name",
-                        maxlength: "Your name maxlength should be 50 characters long."
-                    },
-                    first_name: {
-                        required: "Please enter first name",
-                        maxlength: "Your name maxlength should be 50 characters long."
-                    },
                     image: {
                         required: "Please upload files", //accept: 'Not an image!'
                     },
@@ -336,10 +304,9 @@
             });
         },
 
-        restaurantFormSubmit: function()
+        restaurantFormSubmit: function(form)
         {
             var context = this;
-
             context.selectors.restaurantForm.on('submit', function(e)
             {
                 e.preventDefault();
