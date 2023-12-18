@@ -292,7 +292,6 @@ class BarRepository extends BaseRepository
                                 $remaining_date     = $current_time->addMinutes($apply_time);
                             }
                         }
-                        // dd($updateArr);
                     }
                     else
                     {
@@ -300,7 +299,7 @@ class BarRepository extends BaseRepository
                         $remaining_date     = $current_time->addMinutes($apply_time);
                     }
                     $updateArr['remaining_date']    = $remaining_date;
-                    $updateArr['status']    = $status;
+                    $updateArr['status']            = $status;
 
                     // order items status update if the status is accepted
                     if( $status != Order::DELAY_ORDER )
