@@ -336,72 +336,7 @@
             });
         },
 
-<<<<<<< HEAD
         restaurantFormSubmit: function()
-=======
-        editRestaurantFormValidation: function()
-        {
-            var context = this;
-            context.selectors.restaurantForm.validate({
-                rules: {
-                    name: {
-                        required: true,
-                    },
-                    street1: {
-                        required: true,
-                    },
-                    description: {
-                        required: true,
-                    },
-                    first_name: {
-                        required: true,
-                    },
-                    email: {
-                        required: true,
-                    },
-                    country_id: {
-                        required: true,
-                    },
-                    phone: {
-                        required: true,
-                    },
-                    city: {
-                        required: true,
-                    },
-                    password: {
-                        required: true
-                    },
-                },
-                messages: {
-                    name: {
-                        required: "Please enter Restaurant name",
-                        maxlength: "Your name maxlength should be 50 characters long."
-                    },
-                    first_name: {
-                        required: "Please enter first name",
-                        maxlength: "Your name maxlength should be 50 characters long."
-                    },
-                    image: {
-                        required: "Please upload files", //accept: 'Not an image!'
-                    },
-                },
-                errorPlacement: function (error, element) {
-                    if (element.attr("type") == "checkbox") {
-                        error.insertAfter($(element).closest('div'));
-                    } else if( element.attr("type") == 'file' ) {
-                        error.insertAfter($(element).closest('div'));
-                    }else{
-                        error.insertAfter($(element));
-                    }
-                },
-                submitHandler: function() {
-                    context.restaurantFormSubmit(context.selectors.restaurantForm.get(0));
-                }
-            });
-        },
-
-        restaurantFormSubmit: function(form)
->>>>>>> origin/milan
         {
             var context = this;
 
