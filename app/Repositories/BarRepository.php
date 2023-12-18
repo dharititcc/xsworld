@@ -307,8 +307,8 @@ class BarRepository extends BaseRepository
                     {
                         $this->orderItemStatusUpdated($order_id, Order::ACCEPTED);
 
-                        $title                      = "Venue is processing your order";
-                        $message                    = "Venue has accepted your order #".$order_id;
+                        $title                      = $order->restaurant->name. " is processing your order";
+                        $message                    = $order->restaurant->name. " has accepted your order #".$order_id;
                         $send_notification          = sendNotification($title,$message,$user_tokens,$order_id);
                     }
 
@@ -317,8 +317,8 @@ class BarRepository extends BaseRepository
 
                     if($status == Order::DELAY_ORDER)
                     {
-                        $title                      = "Venue is processing your order";
-                        $message                    = "Your Order #".$order_id." is delayed by venue";
+                        $title                      = $order->restaurant->name. " is processing your order";
+                        $message                    = "Your Order #".$order_id." is delayed by ".$order->restaurant->name;
                         $send_notification          = sendNotification($title,$message,$user_tokens,$order_id);
                     }
                 }
@@ -345,8 +345,8 @@ class BarRepository extends BaseRepository
                 // update order data
                 $order->update($updateArr);
 
-                $title                      = "Venue is processing your order";
-                $message                    = "Your Order #".$order_id." is completed by venue";
+                $title                      = $order->restaurant->name. " is processing your order";
+                $message                    = "Your Order #".$order_id." is completed by ".$order->restaurant->name;
                 $send_notification          = sendNotification($title,$message,$user_tokens,$order_id);
             }
 
@@ -365,8 +365,8 @@ class BarRepository extends BaseRepository
                 $totalCreditAmount = $userCreditAmountBalance + $refundCreditAmount;
                 // update user's credit amount
                 $this->updateUserPoints($user, ['credit_amount' => $totalCreditAmount]);
-                $title                      = "Venue is processing your order";
-                $message                    = "Your Order #".$order_id." is canceled by venue";
+                $title                      = $order->restaurant->name. " is processing your order";
+                $message                    = "Your Order #".$order_id." is canceled by".$order->restaurant->name;
                 $send_notification          = sendNotification($title,$message,$user_tokens,$order_id);
             }
 
@@ -377,8 +377,8 @@ class BarRepository extends BaseRepository
                 $this->orderItemStatusUpdated($order_id,OrderItem::CONFIRM_PICKUP);
                 $order = $this->allOrderCompletedlogic($order,$updateArr,$user);
                 $order->update($updateArr);
-                $title                      = "Venue is processing your order";
-                $message                    = "Your Order #".$order_id." is pick up from the venue ";
+                $title                      = $order->restaurant->name. " is processing your order";
+                $message                    = "Your Order #".$order_id." is pick up from the ".$order->restaurant->name;
                 $send_notification          = sendNotification($title,$message,$user_tokens,$order_id);
             }
 
@@ -396,8 +396,8 @@ class BarRepository extends BaseRepository
                 $totalCreditAmount = $userCreditAmountBalance + $refundCreditAmount;
                 // update user's credit amount
                 $this->updateUserPoints($user, ['credit_amount' => $totalCreditAmount]);
-                $title                      = "Venue is processing your order";
-                $message                    = "Your Order #".$order_id." is intoxicated by venue";
+                $title                      = $order->restaurant->name. " is processing your order";
+                $message                    = "Your Order #".$order_id." is intoxicated by ".$order->restaurant->name;
                 $send_notification          = sendNotification($title,$message,$user_tokens,$order_id);
             }
 
@@ -417,8 +417,8 @@ class BarRepository extends BaseRepository
                 $totalCreditAmount = $userCreditAmountBalance + $refundCreditAmount;
                 // update user's credit amount
                 $this->updateUserPoints($user, ['credit_amount' => $totalCreditAmount]);
-                $title                      = "Venue is processing your order";
-                $message                    = "Your Order #".$order_id." is denied by venue";
+                $title                      = $order->restaurant->name. " is processing your order";
+                $message                    = "Your Order #".$order_id." is denied by ".$order->restaurant->name;
                 $send_notification          = sendNotification($title,$message,$user_tokens,$order_id);
             }
 

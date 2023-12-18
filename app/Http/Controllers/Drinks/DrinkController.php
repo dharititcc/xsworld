@@ -129,11 +129,11 @@ class DrinkController extends Controller
                 "restaurant_id"         => $restaurant->id
             ];
 
-            // check if item name exist
+            // check if product exist
 
             if( $this->checkUniqueDrink($request, $restaurant) )
             {
-                throw new GeneralException('The item name is already exist.');
+                throw new GeneralException('The Product is already exist.');
             }
 
             $newRestaurantItem = RestaurantItem::create($drinkArr);
