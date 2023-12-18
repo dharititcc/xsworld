@@ -85,9 +85,10 @@
                         </div>
                         <div class="col-md-8">
                             <div class="form-group mb-4">
-                                <input type="text" name="name" id="name" class="form-control vari3" placeholder="Product Name">
+                                <input type="text" name="name" id="name" class="form-control vari3 duplicate_product" placeholder="Product Name">
                                 <input id="product_type" type="hidden" class="product_type" name="is_variable" />
                                 <input id="is_featured" type="hidden" class="is_featured" name="is_featured" />
+                                {{-- <span class="error" id="duplicate_product"></span> --}}
                             </div>
                             <div class="grid colmn-5 cstm-catgory">
                                 @foreach ($categories as $category)
