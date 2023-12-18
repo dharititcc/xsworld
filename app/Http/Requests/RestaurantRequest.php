@@ -23,13 +23,13 @@ class RestaurantRequest extends FormRequest
     {
         return [
             'name'          => 'required|string|max:20',
-            'email'         => 'required|unique:users,email',
-            'phone'         => 'required|digits:10|unique:users,phone',
+            'email'         => 'required|unique:users,email,'.$this->id,
+            'phone'         => 'required|digits:10|unique:users,phone,'.$this->id,
             'street1'       => 'required',
             'first_name'    => 'required',
             'city'          => 'required',
             'password'      => 'required',
-            'image'         => 'required|image'
+            'image'         => 'required|image|mimes:png,jpg,jpeg'
             
         ];
     }

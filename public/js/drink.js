@@ -614,6 +614,15 @@
                     document.getElementById("drinkpopup").reset();
                     XS.Common.handleSwalSuccess('Drink form has been submitted successfully.');
                 },
+                error: function(xhr)
+                {
+                    if( xhr.status == 403 )
+                    {
+                        var {error} = xhr.responseJSON;
+                        context.selectors.drinkForm.find('.duplicate_product').after(`<span class="error">${error.message}</span>`);
+                        // $this.closest('#add_form_category').find('.cat_name').after(`<span class="error">${error.message}</span>`);
+                    }
+                },
                 complete: function()
                 {
                     XS.Common.btnProcessingStop(context.selectors.drinkSubmitBtn);

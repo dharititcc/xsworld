@@ -68,6 +68,7 @@
             search:                     jQuery('#search'),
             restaurantForm:             jQuery('#create_update_restaurant'),
             restaurantSubmitBtn:        jQuery('#submitBtn'),
+            restaurantModalTitle:       jQuery('.model_title'),
             restaurantDelete:           jQuery('.res-delete'),
         },
 
@@ -80,11 +81,11 @@
         {
             var context = this;
 
-            context.makeDatatable();
+            context.makeDatatables();
             context.searchFilter();
             context.openModal();
             context.closeRestaurantModal();
-            // context.addRestaurantFormValidation();
+            // context.editRestaurantFormValidation();
             context.deleteRestaurant();
             XS.Common.fileReaderBind();
 
@@ -180,12 +181,36 @@
 
         openModal: function()
         {
-            jQuery('.create-restaurant').on('click', function(e)
+            var context = this;
+            jQuery('body').on('click', '.create-restaurant', function(e)
             {
                 e.preventDefault();
+                var $this           = jQuery(this);
+                var restaurantId    = $(this).data('id'),
+                    type            = $(this).data('type');
 
-                var $this = jQuery(this);
+                    if(type == 2) {
+                        $(".img-text").html('Event Image');
+                    } else {
+                        $(".img-text").html('Restaurant Image');
+                    }
 
+                    if(restaurantId == undefined)
+                    {
+                        context.selectors.restaurantModalTitle.html('Create');
+                        context.selectors.restaurantForm.attr('action', moduleConfig.storeRestaurant);
+                    } else {
+                        context.selectors.restaurantModalTitle.html('Edit');
+                        context.editRestaurantFormValidation();
+                        context.selectors.restaurantForm.attr('action', moduleConfig.updateRestaurant.replace(':ID', restaurantId));
+                        context.getRestaurantData(restaurantId);
+                        // context.editRestaurantFormValidation();
+                        // console.log(context.selectors.restaurantForm.get(0));return false;
+                        context.restaurantFormSubmit(context.selectors.restaurantForm.get(0));
+                        context.selectors.restaurantForm.append(`<input type="hidden" name="_method" value="PUT" />`);
+                    }
+
+                    context.selectors.restaurantForm.append(`<input type="hidden" name="type" id="type" value=${type} />`);
                 jQuery('#wd930').modal('show');
             });
         },
@@ -201,10 +226,9 @@
                 context.selectors.restaurantForm.validate().resetForm();
                 context.selectors.restaurantForm.find('.error').removeClass('error');
                 context.selectors.restaurantForm.find('input[name="_method"]').remove();
+                context.selectors.restaurantForm.find('input[name="type"]').remove();
                 context.selectors.restaurantForm.removeAttr('action');
                 $this.find('.pip').remove();
-                $this.find('.cstm-catgory').find('input[name="category_id[]"]').prop('checked', false);
-                context.selectors.restaurantForm.find('.variation_hidden').remove();
             });
         },
 
@@ -220,9 +244,12 @@
 
         deleteRestaurant: function()
         {
-            $('.res-delete').click(function(event) {
-                var form =  $(this).closest("form");
-                event.preventDefault();
+            
+            var context = this;
+            context.selectors.restaurantTable.on("click", '.res-delete', function(){
+                var id = $(this).data("id");
+
+
                 swal({
                     title: `Are you sure you want to delete this Records?`,
                     // text: "It will gone forevert",
@@ -232,14 +259,27 @@
                 })
                     .then((willDelete) => {
                         if (willDelete) {
+                            $.ajax(
+                            {
+                                url: moduleConfig.deleteRestaurant.replace(':ID', id),
+                                type: 'DELETE',
+                                headers: {
+                                    'X-CSRF-TOKEN': jQuery('meta[name="csrf-token"]').attr('content')
+                                },
+                                data: {
+                                    "id": id,
+                                },
+                                success: function (){
+                                    XS.Common.handleSwalSuccess('Restaurant form has been Deleted successfully.');
+                                }
+                            });
                             form.submit();
-                            XS.Common.handleSwalSuccess('Record Deleted successfully.');
                         }
                     });
             });
         },
 
-        addRestaurantFormValidation: function()
+        editRestaurantFormValidation: function()
         {
             var context = this;
             context.selectors.restaurantForm.validate({
@@ -253,7 +293,6 @@
                     description: {
                         required: true,
                     },
-                    
                     first_name: {
                         required: true,
                     },
@@ -304,7 +343,68 @@
             });
         },
 
-        restaurantFormSubmit: function()
+        editRestaurantFormValidation: function()
+        {
+            var context = this;
+            context.selectors.restaurantForm.validate({
+                rules: {
+                    name: {
+                        required: true,
+                    },
+                    street1: {
+                        required: true,
+                    },
+                    description: {
+                        required: true,
+                    },
+                    first_name: {
+                        required: true,
+                    },
+                    email: {
+                        required: true,
+                    },
+                    country_id: {
+                        required: true,
+                    },
+                    phone: {
+                        required: true,
+                    },
+                    city: {
+                        required: true,
+                    },
+                    password: {
+                        required: true
+                    },
+                },
+                messages: {
+                    name: {
+                        required: "Please enter Restaurant name",
+                        maxlength: "Your name maxlength should be 50 characters long."
+                    },
+                    first_name: {
+                        required: "Please enter first name",
+                        maxlength: "Your name maxlength should be 50 characters long."
+                    },
+                    image: {
+                        required: "Please upload files", //accept: 'Not an image!'
+                    },
+                },
+                errorPlacement: function (error, element) {
+                    if (element.attr("type") == "checkbox") {
+                        error.insertAfter($(element).closest('div'));
+                    } else if( element.attr("type") == 'file' ) {
+                        error.insertAfter($(element).closest('div'));
+                    }else{
+                        error.insertAfter($(element));
+                    }
+                },
+                submitHandler: function() {
+                    context.restaurantFormSubmit(context.selectors.restaurantForm.get(0));
+                }
+            });
+        },
+
+        restaurantFormSubmit: function(form)
         {
             var context = this;
 
@@ -322,7 +422,7 @@
 
                 jQuery.ajax(
                 {
-                    url: moduleConfig.storeRestaurant,
+                    url: $(form).attr('action'),
                     type: "POST",
                     data: formData,
                     processData: false,
@@ -366,7 +466,7 @@
             });
         },
 
-        makeDatatable: function()
+        makeDatatables: function()
         {
             var context = this;
 
@@ -398,8 +498,44 @@
         {
             var context = this;
             $.ajax({
-                
-            })
+                url: moduleConfig.getRestaurant.replace(':ID',id),
+                type: "GET",
+                success: function(res){
+                    $("#name").val(res.data.name);
+                    $("#street1").val(res.data.street1);
+                    $("#street2").val(res.data.street2);
+                    $("#state").val(res.data.state);
+                    $("#city").val(res.data.city);
+                    $("#postcode").val(res.data.postcode);
+                    $("#description").val(res.data.specialisation);
+                    $("#first_name").val(res.data.first_name);
+                    $("#last_name").val(res.data.last_name);
+                    $("#email").val(res.data.email);
+                    $("#password").val(res.data.password);
+                    $("#phone").val(res.data.phone);
+                    $('select option[value="'+res.data.country_id+'"]').attr("selected",true);
+                    $("#id").val(res.data.id);
+                    $("#type").val(res.data.type);
+                    
+
+                    var image = `
+                            <div class="pip">
+                                <input type="hidden" name="image" value="${res.data.image != "" ? res.data.image : ''}" accept="image/*">
+                                <img class="imageThumb" src="${res.data.image != "" ? res.data.image : ''}" title=""/>
+                                <i class="icon-trash remove"></i>
+                            </div>`;
+
+                    if(res.data.image != "")
+                    {
+                        $(".image_box").children('.pip').remove();
+                        $("#upload").after(image);
+                    }
+
+                    $(".remove").click(function() {
+                        $(this).parent('.pip').remove();
+                    })
+                }
+            });
         }
     }
 })();

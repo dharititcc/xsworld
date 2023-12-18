@@ -1,12 +1,14 @@
 <?php
 
 use App\Http\Controllers\AccountManager\Bar\BarPickZoneController;
+use App\Http\Controllers\Admin\Restaurant\RestaurantController;
 use App\Http\Controllers\Drinks\DrinkController;
 use App\Http\Controllers\LeaveImpersonateController;
 use App\Http\Controllers\Table\RestaurantTableController;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -179,6 +181,7 @@ Route::middleware(['admin'])->group(function()
         {
             Route::resource('/restaurant', 'RestaurantController');
             Route::post('/restaurant/get', 'RestaurantTableController')->name('restaurant.table');
+            Route::delete('restaurant/{id}', 'RestaurantController@destroy')->name('admin.restaurant.destroy');
         });
     });
 });

@@ -36,7 +36,10 @@
 <script type="text/javascript">
     var moduleConfig = {
         tableAjax:          "{!! route('admin.restaurant.table') !!}",
-        storeRestaurant:    "{!! route('admin.restaurant.store') !!}"
+        storeRestaurant:    "{!! route('admin.restaurant.store') !!}",
+        deleteRestaurant:   "{!! route('admin.restaurant.destroy',':ID') !!}",
+        getRestaurant:      "{!! route('admin.restaurant.show',':ID') !!}",
+        updateRestaurant:    "{!! route('admin.restaurant.update',':ID') !!}",
     };
 
     $(document).ready(function() {
