@@ -85,16 +85,15 @@
             context.searchFilter();
             context.openModal();
             context.closeRestaurantModal();
-            // context.editRestaurantFormValidation();
             context.deleteRestaurant();
             XS.Common.fileReaderBind();
 
             context.restaurantFormSubmit();
 
             /** Search place */
-            jQuery('body').on('keyup', '#street1, #street2, [name="country_id"], #state, #city', function() {
-                context.initAutocomplete($(this));
-            });
+            // jQuery('body').on('keyup', '#street1, #street2, [name="country_id"], #state, #city', function() {
+            //     context.initAutocomplete($(this));
+            // });
         },
 
         initAutocomplete: function(elem)
@@ -202,9 +201,9 @@
                     } else {
                         context.selectors.restaurantModalTitle.html('Edit');
                         context.selectors.restaurantForm.attr('action', moduleConfig.updateRestaurant.replace(':ID', restaurantId));
+                        context.editRestaurantFormValidation();
                         context.getRestaurantData(restaurantId);
-                        // context.editRestaurantFormValidation();
-                        context.restaurantFormSubmit(context.selectors.restaurantForm.get(0));
+                        // context.restaurantFormSubmit(context.selectors.restaurantForm.get(0));
                         context.selectors.restaurantForm.append(`<input type="hidden" name="_method" value="PUT" />`);
                     }
 
@@ -310,9 +309,6 @@
                     city: {
                         required: true,
                     },
-                    password: {
-                        required: true
-                    },
                 },
                 messages: {
                     name: {
@@ -342,7 +338,7 @@
             });
         },
 
-        restaurantFormSubmit: function(form)
+        restaurantFormSubmit: function()
         {
             var context = this;
 
@@ -360,7 +356,7 @@
 
                 jQuery.ajax(
                 {
-                    url: $(form).attr('action'),
+                    url: $this.attr('action'), // Use $this.attr('action') instead of $(form).attr('action')
                     type: "POST",
                     data: formData,
                     processData: false,
@@ -391,8 +387,6 @@
                                 {
                                     elem.after(`<label class="error">${val[0]}</label>`);
                                 }
-                                
-                                
                             });
                         }
                     },
@@ -449,7 +443,7 @@
                     $("#first_name").val(res.data.first_name);
                     $("#last_name").val(res.data.last_name);
                     $("#email").val(res.data.email);
-                    $("#password").val(res.data.password);
+                    // $("#password").val(res.data.password);
                     $("#phone").val(res.data.phone);
                     $('select option[value="'+res.data.country_id+'"]').attr("selected",true);
                     $("#id").val(res.data.id);
