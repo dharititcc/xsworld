@@ -31,7 +31,7 @@ class BarOrderListingResource extends JsonResource
             // 'user_payment_method'       => '',
             // 'credit_amount'              => $this->credit_amount,
             'apply_time'                => $this->apply_time ?? 0,
-            'last_delayed_time'         => $this->last_delayed_time ?? 0,
+            'last_delayed_time'         => $this->last_delayed_time*60 ?? 0,
             'remaining_time'            => $this->remainingtime,
             'remaining_date'            => isset($this->remaining_date) ? $this->remaining_date : '',
             'created_date'              => Carbon::parse($this->created_at)->toDateTimeString(),
