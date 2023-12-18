@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin\Restaurant;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\RestaurantRequest;
+use App\Http\Requests\RestaurantUpdateRequest;
 use App\Models\Currency;
 use App\Models\Restaurant;
 use App\Models\User;
@@ -132,7 +133,7 @@ class RestaurantController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(RestaurantRequest $request, Restaurant $restaurant)
+    public function update(RestaurantUpdateRequest $request, Restaurant $restaurant)
     {
         
         $currency_id = Currency::select('id')->where('id', $request->country_id)->first();
