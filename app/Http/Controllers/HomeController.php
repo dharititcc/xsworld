@@ -79,8 +79,7 @@ class HomeController extends Controller
     {
         $restaurant = session('restaurant')->loadMissing(['main_categories', 'country']);
         $categories = $restaurant->categories()->with(['children_parent'])->whereNotNull('parent_id')->get();
-        $chartData  = $this->repository->getChart($restaurant);
-        // dd($chartData);
+
         if($request->ajax())
         {
             $items = $this->repository->getAnalyticsTableData($restaurant);
@@ -91,8 +90,26 @@ class HomeController extends Controller
 
         return view('analytics.index', [
             'categories'    => $categories,
-            'restaurant'    => $restaurant,
-            'order'         => $chartData,
+            'restaurant'    => $restaurant
+        ]);
+    }
+
+    /**
+     * Method filterAnalytics
+     *
+     * @param Request $request [explicite description]
+     *
+     * @return \Illuminate\Http\Response|\Illuminate\Contracts\Routing\ResponseFactory
+     */
+    public function filterAnalytics(Request $request)
+    {
+        $restaurant = session('restaurant')->loadMissing(['main_categories', 'country']);
+        $chartData  = $this->repository->getChart($restaurant);
+        // dd($chartData);
+        return response()->json([
+            'message' => 'Hello Test',
+            'data'    => $chartData['data'],
+            'x'       => $chartData['dates'],
         ]);
     }
 }

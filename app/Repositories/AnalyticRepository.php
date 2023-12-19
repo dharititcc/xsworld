@@ -76,57 +76,64 @@ class AnalyticRepository extends BaseRepository
      */
     public function getChart(Restaurant $restaurant): array
     {
-        $dates      = get_dates_period('2023-11-15', '2023-12-15');
+        $restaurant->loadMissing(['sub_categories']);
+        $dates      = get_dates_period('2023-12-08', '2023-12-15');
         $newDates   = array_map(function($date)
         {
             return $date->format('Y-m-d');
         }, $dates);
+        $newData    = [];
 
-        $graphData  = ['x' => $newDates];
+        // get categories pluck
+        $categories = $restaurant->sub_categories;
 
-        if( !empty( $newDates ) )
+        foreach( $categories as $kCat => $category )
         {
-            foreach( $newDates as $key => $date )
+            $newData[$kCat]['name'] = $category->name;
+            $total = [];
+            if( !empty( $newDates ) )
             {
-                $items = OrderItem::query()
-                ->select(
-                    [
-                        'order_items.restaurant_item_id',
-                        DB::raw("DATE(orders.created_at) AS order_date"),
-                        DB::raw("SUM(order_items.total) AS total"),
-                        'restaurant_items.category_id'
-                    ]
-                )
-                ->leftJoin('orders', 'orders.id', '=', 'order_items.order_id')
-                ->leftJoin('restaurant_items', 'restaurant_items.id', '=', 'order_items.restaurant_item_id')
-                ->where('orders.status', Order::CONFIRM_PICKUP)
-                ->where('orders.restaurant_id', $restaurant->id)
-                ->where('order_items.type', Item::ITEM)
-                ->where(function($query) use($date)
+                foreach( $newDates as $kDate => $date )
                 {
-                    $query->whereRaw("DATE(orders.created_at) = '{$date}'");
-                })
-                ->groupBy('restaurant_items.category_id')
-                ->get();
+                    $dates = [];
+                    $result = DB::select(
+                        "SELECT
+                            categories.name,
+                            SUM(order_items.total) AS total_txn,
+                            DATE(order_items.created_at) AS order_date
+                        FROM categories
+                        RIGHT JOIN restaurant_items on restaurant_items.category_id = categories.id
+                        RIGHT JOIN order_items ON order_items.restaurant_item_id = restaurant_items.id
+                        where restaurant_items.type = ".Item::ITEM."
+                        AND categories.restaurant_id = {$restaurant->id}
+                        AND categories.id = {$category->id}
+                        AND categories.deleted_at IS NULL
+                        AND restaurant_items.deleted_at IS NULL
+                        AND DATE(order_items.created_at) = '{$date}'
+                        GROUP BY categories.id, DATE(order_items.created_at)"
+                    );
 
-                // echo common()->formatSql($items);die;
-                // dump($items);
-                if( $items->count() )
-                {
-                    foreach( $items as $item )
+                    if( !empty( $result ) )
                     {
-                        $graphData[$key]['x'] = $item->order_date;
-                        $graphData[$key]['y'] = $item->total;
+                        if( isset( $newData[$kCat]['name'] ) && $newData[$kCat]['name'] == $category->name )
+                        {
+                            $total[] = (float) $result[0]->total_txn;
+                        }
                     }
-                }
-                else
-                {
-                    $graphData[$key]['x'] = $date;
-                    $graphData[$key]['y'] = 0;
+                    else
+                    {
+                        if( isset( $newData[$kCat]['name'] ) && $newData[$kCat]['name'] == $category->name )
+                        {
+                            $total[] = 0;
+                        }
+                    }
+
+                    $dates[] = $date;
                 }
             }
-        }
 
-        return $graphData;
+            $newData[$kCat]['data']     = $total;
+        }
+        return ['data' => $newData, 'dates' => $newDates];
     }
 }
