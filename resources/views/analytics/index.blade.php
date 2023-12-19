@@ -77,7 +77,7 @@
             <div id="mygraph">
             </div>
         </div>
-        <div class="data-table drinks scroll-y h-600 table-responsive">
+        <div class="data-table drinks table-responsive pt-4">
             <table width="100%" class="drink_datatable">
                 <thead>
                     <tr valign="middle">

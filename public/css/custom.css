@@ -152,6 +152,14 @@ a.grey-brd-box.lable-box:hover{ border-color: var(--bs-light);}
 #sidebar-wrapper::-webkit-scrollbar-track { background:transparent; border-radius:0px; }
 #sidebar-wrapper::-webkit-scrollbar-thumb { background:rgba(255, 255, 255, 0.0); border-radius:0px; }
 
+.dataTables_scrollBody:hover::-webkit-scrollbar-thumb {background:rgba(255, 255, 255, 0.09);}
+.dataTables_scrollBody::-webkit-scrollbar { width:5px; }
+.dataTables_scrollBody::-webkit-scrollbar-track { background:transparent; border-radius:0px; }
+.dataTables_scrollBody::-webkit-scrollbar-thumb { background:rgba(255, 255, 255, 0.0); border-radius:0px; }
+
+.orders .dataTables_info{padding-left: 0.85em;}
+.orders .dataTables_paginate {padding-right: 0.85em;}
+
 .swal-button:focus{box-shadow:none; } 
 
 .swal-button,
@@ -689,6 +697,9 @@ table.dataTable thead th{ padding: 1.1rem .4rem;}
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+
+.orders .dataTables_length{margin-left: 10px;}
+
 
 /* responsive */
 

@@ -88,7 +88,7 @@
                 data: {'is_featured':'Test','id':1},
                 success: function(res)
                 {
-                    console.log(res);
+                    // console.log(res);
                     context.getChart(res);
                 },
                 complete: function()
@@ -98,6 +98,10 @@
             });
         },
 
+        /**
+         * Get Chart
+         * @param {*} chartResponse
+         */
         getChart: function(chartResponse)
         {
             var context     = this,
@@ -112,7 +116,7 @@
                     backgroundColor: 'transparent'
                 },
                 title: {
-                    text: 'Comparison of Sugar, Rice and Wheat Flour'
+                    text: ''
                 },
                 xAxis: {
                     categories: chartResponse.x
@@ -164,6 +168,9 @@
         },
 
 
+        /**
+         * Make Datatable
+         */
         makeDatatable: function (){
             var context     = this;
 
@@ -171,6 +178,8 @@
                 processing: true,
                 serverSide: true,
                 searching: false,
+                scrollCollapse: true,
+                scrollY: '500px',
                 order: [[0, 'asc']],
                 ajax: {
                     url: moduleConfig.getAccessibles,
