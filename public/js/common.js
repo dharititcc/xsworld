@@ -241,7 +241,9 @@ var XS_Admin = {}; // common variable used in all the files of the backend
          * @param {*} elem
          */
         showLoader: function (elem) {
-            NBC.Common.removeClass(elem, 'd-none');
+            // NBC.Common.removeClass(elem, 'd-none');
+            var div = $(`<div class="loader"></div>`);
+            div.appendTo(elem);
         },
 
         /**
@@ -249,7 +251,7 @@ var XS_Admin = {}; // common variable used in all the files of the backend
          * @param {*} elem
          */
         hideLoader: function (elem) {
-            NBC.Common.addClass(elem, 'd-none');
+            document.querySelectorAll('.loader').remove();
         },
 
         /** Datatable related stuff */
