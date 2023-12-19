@@ -251,7 +251,7 @@ var XS_Admin = {}; // common variable used in all the files of the backend
          * @param {*} elem
          */
         hideLoader: function (elem) {
-            document.querySelectorAll('.loader').remove();
+            jQuery('.loader').remove();
         },
 
         /** Datatable related stuff */
