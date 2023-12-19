@@ -421,7 +421,7 @@ class BarRepository extends BaseRepository
                     }
                     // dd($remainingTimeDb);
                     $orderArr = [
-                        'apply_time'        => $apply_time,
+                        'apply_time'        => $apply_time + $order->apply_time,
                         'last_delayed_time' => $order->apply_time,
                         'remaining_date'    => $remainingTimeDb,
                         'status'            => Order::DELAY_ORDER
