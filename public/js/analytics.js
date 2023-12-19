@@ -66,12 +66,18 @@
         addHandler: function (){
             var context = this;
             context.makeDatatable();
+            context.bindChart();
             context.filterChart();
         },
 
         filterChart: function()
         {
             context = this;
+        },
+
+        bindChart: function()
+        {
+            var context = this;
 
             context.getChart([]);
 
@@ -96,7 +102,7 @@
                     XS.Common.hideLoader(jQuery('#mygraph'));
                 },
             });
-        },
+        }
 
         /**
          * Get Chart
