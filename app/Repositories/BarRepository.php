@@ -252,8 +252,11 @@ class BarRepository extends BaseRepository
 
         if(isset($order->id))
         {
-            // update status to accepted or delay order
-            $this->updateAcceptedDelayStatus($status, $apply_time, $order, $user_tokens);
+            if( $apply_time )
+            {
+                // update status to accepted or delay order
+                $this->updateAcceptedDelayStatus($status, $apply_time, $order, $user_tokens);
+            }
 
             if($status == Order::COMPLETED)
             {

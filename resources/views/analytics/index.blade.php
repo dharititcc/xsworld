@@ -74,9 +74,10 @@
         </div>
         <div class="graph">
             <!-- <img src="img/demo-graph.jpg" alt=""> -->
-            <div id="mygraph"></div>
+            <div id="mygraph">
+            </div>
         </div>
-        <div class="data-table drinks scroll-y h-600 table-responsive">
+        <div class="data-table drinks table-responsive pt-4">
             <table width="100%" class="drink_datatable">
                 <thead>
                     <tr valign="middle">
@@ -105,9 +106,10 @@
 <script type="text/javascript">
     var moduleConfig = {
         tableAjax: "{!! route('restaurants.drinks.index') !!}",
-        currency: "{!! $restaurant->country->symbol !!}"
+        currency: "{!! $restaurant->country->symbol !!}",
+        graphUrl: "{!! route('filter.analytics') !!}"
     };
-    var order = <?php echo json_encode($order) ?>;
+
     $(document).ready(function() {
         XS.Analytic.init();
     });
