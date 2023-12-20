@@ -62,7 +62,7 @@
                                         <div class="form-group full-w-form start_end_date" style="display: none">
                                             <div class="row">
                                                 <div class="col-md-6">
-                                                    <input type="datetime-local" class="form-control " id="start_date" name="start_date">
+                                                    <input type="datetime-local" class="form-control " id="start_date" name="start_date" >
                                                 </div>
                                                 <div class="col-md-6">
                                                     <input type="datetime-local"  class="form-control " id="end_date" name="end_date">

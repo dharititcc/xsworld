@@ -170,6 +170,27 @@ Route::middleware(['admin'])->group(function()
             Route::post('/logout', 'LogoutController')->name('logout');
         });
 
+        Route::get('location', function() {
+            // Google Maps API Key 
+            $GOOGLE_API_KEY = 'AIzaSyBzaUUaqbCwcmb_TMSSnEQ5q0Qr5Sib7i4'; 
+            
+            // Address from which the latitude and longitude will be retrieved 
+            $address = 'B-101-104 sakar 7, near patang hotel, Nehru bridge, corner, Ashram Rd'; 
+            
+            // Formatted address 
+            $formatted_address = str_replace(' ', '+', $address); 
+            
+            // Get geo data from Google Maps API by address 
+            $geocodeFromAddr = file_get_contents("https://maps.googleapis.com/maps/api/geocode/json?address={$formatted_address}&key={$GOOGLE_API_KEY}"); 
+            
+            // Decode JSON data returned by API 
+            $apiResponse = json_decode($geocodeFromAddr); 
+            // Retrieve latitude and longitude from API data 
+            $latitude  = $apiResponse->results[0]->geometry->location->lat;  
+            $longitude = $apiResponse->results[0]->geometry->location->lng;
+            dd("latitude = " . $latitude . " longitude = " . $longitude);
+        });
+
         Route::group(['namespace' => 'Customer', 'prefix' => 'customer'], function()
         {
             Route::resource('/customer', 'CustomerController');
