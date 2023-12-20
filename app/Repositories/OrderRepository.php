@@ -468,6 +468,11 @@ class OrderRepository extends BaseRepository
 
         $nextMembershipValue = ($actualPoints * 100) / $membershipDifference;
 
+        if($membership['membership'] == config('xs.platinum_membership'))
+        {
+            $nextMembershipValue = 100;
+        }
+
         $data   = [
             'current_membership'            => $membership['membership'],
             'current_membership_level'      => $membership['membership_level'],

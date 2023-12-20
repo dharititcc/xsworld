@@ -127,7 +127,6 @@
             let address1 = "";
             let postcode = "";
 
-            console.log(place);
 
             // Get each component of the address from the place details,
             // and then fill-in the corresponding field on the form.
@@ -183,7 +182,6 @@
             var context = this;
             jQuery('body').on('click', '.create-restaurant', function(e)
             {
-                // console.log($(this).data('type'));
                 e.preventDefault();
                 var $this           = jQuery(this);
                 var restaurantId    = $(this).data('id');
@@ -293,6 +291,7 @@
                     },
                     postcode: {
                         required: true,
+                        digits: true,
                     },
                     image: {
                         required: true,
@@ -319,6 +318,7 @@
                     },
                     phone: {
                         required: true,
+                        digits: true,
                     },
                     name: {
                         required: true,
@@ -334,7 +334,6 @@
                     },
                 },
                 errorPlacement: function (error, element) {
-                    console.log(element);
                     if (element.attr("type") == "select") {
                         error.insertAfter($(element).closest('div'));
                     } else if( element.attr("type") === 'file' ) {
@@ -366,12 +365,17 @@
                     first_name: {
                         required: true,
                     },
+                    postcode: {
+                        required: true,
+                        digits: true,
+                    },
                     email: {
                         required: true,
                         email: true,
                     },
                     phone: {
                         required: true,
+                        digits: true,
                     },
                     name: {
                         required: true,
@@ -435,12 +439,15 @@
                         'X-CSRF-TOKEN': jQuery('meta[name="csrf-token"]').attr('content')
                     },
                     success: function(response) {
+                        if(response.type == 2) {
+                            XS.Common.handleSwalSuccess('Event form has been submitted successfully.');
+                        } else {
+                            XS.Common.handleSwalSuccess('Restaurant form has been submitted successfully.');
+                        }
                         document.getElementById("create_update_restaurant").reset();
-                        XS.Common.handleSwalSuccess('Restaurant form has been submitted successfully.');
                     },
                     error: function(jqXHR, exception)
                     {
-                        console.log("error");
                         if( jqXHR.status === 422 )
                         {
                             const {error}   = jqXHR.responseJSON;
@@ -504,7 +511,6 @@
                 url: moduleConfig.getRestaurant.replace(':ID',id),
                 type: "GET",
                 success: function(res){
-                    console.log(res.data);
                     $("#name").val(res.data.name);
                     $("#street1").val(res.data.street1);
                     $("#street2").val(res.data.street2);
