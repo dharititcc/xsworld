@@ -29,6 +29,11 @@ class RestaurantController extends Controller
         //
     }
 
+    public function addressLatLong()
+    {
+        
+    }
+
     /**
      * Store a newly created resource in storage.
      */
@@ -36,6 +41,9 @@ class RestaurantController extends Controller
     {
         // dd($request->all());
         $currency_id = Currency::select('id')->where('id',$request->country_id)->first();
+
+        $address = addressLatLong($request->street1 . $request->street2 . $request->city . $request->state);
+
         $addressInfo    = [
             'name'          => $request->name,
             'street1'       => $request->street1,
@@ -45,6 +53,8 @@ class RestaurantController extends Controller
             'state'         => $request->state,
             'city'          => $request->city,
             'postcode'      => $request->postcode,
+            'latitude'      => $address['latitude'],
+            'longitude'     => $address['longitude'],
             'type'          => $request->type,
             'start_date'    => isset($request->start_date) ? $request->start_date : null,
             'end_date'      => isset($request->end_date) ? $request->end_date : null,
@@ -141,6 +151,8 @@ class RestaurantController extends Controller
     {
         
         $currency_id = Currency::select('id')->where('id', $request->country_id)->first();
+        $address = addressLatLong($request->street1 . $request->street2 . $request->city . $request->state);
+
         $addressInfo    = [
             'name'          => $request->name,
             'street1'       => $request->street1,
@@ -149,6 +161,8 @@ class RestaurantController extends Controller
             'country_id'    => (int)$request->country_id,
             'state'         => $request->state,
             'city'          => $request->city,
+            'latitude'      => $address['latitude'],
+            'longitude'     => $address['longitude'],
             'postcode'      => $request->postcode,
             'start_date'    => isset($request->start_date) ? $request->start_date : '',
             'end_date'      => isset($request->end_date) ? $request->end_date : '',
