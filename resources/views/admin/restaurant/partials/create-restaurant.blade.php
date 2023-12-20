@@ -25,6 +25,7 @@
                             <div class="form-group mb-4">
                                 <input type="text" name="name" id="name" class="form-control vari3" placeholder="Restaurant Name">
                                 <input type="hidden" name="id" id="id" value="" />
+                                <input type="hidden" name="type" id="type" value="" />
                             </div>
                             <div class="row">
                                 <div class="col-md-8">
@@ -56,6 +57,16 @@
                                                     <input type="text" name="state" id="state" class="form-control " placeholder="State">
                                                 </div>
 
+                                            </div>
+                                        </div>
+                                        <div class="form-group full-w-form start_end_date" style="display: none">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <input type="datetime-local" class="form-control " id="start_date" name="start_date">
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <input type="datetime-local"  class="form-control " id="end_date" name="end_date">
+                                                </div>
                                             </div>
                                         </div>
                                         <div class="form-group full-w-form">

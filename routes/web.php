@@ -52,6 +52,7 @@ Route::get('qrcode-with-color', function () {
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 Route::get('/analytics', [App\Http\Controllers\HomeController::class, 'analytics'])->name('analytics');
+Route::post('/filter-analytics', [App\Http\Controllers\HomeController::class, 'filterAnalytics'])->name('filter.analytics');
 Route::get('referral/user/ABC', [App\Http\Controllers\ReferralController::class, 'code'])->name('referral-code');
 // Route::get('apple-app-site-association', [App\Http\Controllers\ReferralController::class, 'iphone'])->name('referral-code-iphone');
 

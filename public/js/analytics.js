@@ -55,6 +55,7 @@
         ],
         selectors: {
             drinkModal:     jQuery('#wd930'),
+            graphContainer: jQuery('#mygraph'),
             drinkTable:     jQuery('.drink_datatable'),
         },
 
@@ -65,61 +66,66 @@
         addHandler: function (){
             var context = this;
             context.makeDatatable();
+            context.bindChart();
             context.filterChart();
         },
 
         filterChart: function()
         {
             context = this;
-
-            context.getChart();
         },
 
-
-        makeDatatable: function (){
-            var context     = this;
-
-            context.table = context.selectors.drinkTable.DataTable({
-                processing: true,
-                serverSide: true,
-                searching: false,
-                order: [[0, 'asc']],
-                ajax: {
-                    url: moduleConfig.getAccessibles,
-                    type: 'get'
-                },
-                columns: context.tableColumns,
-                drawCallback: function ( settings )
-                {
-                    context.selectors.drinkTable.find('tbody tr').find('td:first').addClass('dt-center');
-                }
-            });
-        },
-
-
-        getChart: function()
+        bindChart: function()
         {
-            var context = this,
-                chart   = null;
+            var context = this;
 
-            chart = new Highcharts.Chart({
+            context.getChart([]);
+
+            XS.Common.showLoader(jQuery('#mygraph'));
+
+            jQuery.ajax(
+            {
+                url:moduleConfig.graphUrl,
+                type:'POST',
+                dataType: "json",
+                headers: {
+                    'X-CSRF-TOKEN': jQuery('meta[name="csrf-token"]').attr('content'),
+                },
+                data: {'is_featured':'Test','id':1},
+                success: function(res)
+                {
+                    // console.log(res);
+                    context.getChart(res);
+                },
+                complete: function()
+                {
+                    XS.Common.hideLoader(jQuery('#mygraph'));
+                },
+            });
+        }
+
+        /**
+         * Get Chart
+         * @param {*} chartResponse
+         */
+        getChart: function(chartResponse)
+        {
+            var context     = this,
+                chart       = null,
+                categories  = chartResponse.data,
+                seriesArr   = [];
+
+            context.chart = new Highcharts.Chart({
                 chart: {
                     renderTo: 'mygraph',
                     type: 'line',
                     backgroundColor: 'transparent'
                 },
                 title: {
-                    text: 'Comparison of Sugar, Rice and Wheat Flour'
+                    text: ''
                 },
                 xAxis: {
-                    type: 'datetime',
-                    dateTimeLabelFormats: {
-                       day: '%d %b %Y'    //ex- 01 Jan 2016
-                    },
-                    labels: {
-                        format: '{value:%Y-%m-%d}'
-                    },
-                    tickPixelInterval: 150
+                    categories: chartResponse.x
                 },
                 yAxis: {
                     title: {
@@ -142,14 +148,14 @@
                         label: {
                             connectorAllowed: false
                         },
-                        // pointStart: '2023-Nov-28'
                     }
                 },
-                series: [{
-                    name: 'Installation & Developers',
-                    data: [43934, 48656, 65165, 81827, 112143, 142383,
-                        171533, 165174, 155157, 161454, 154610]
-                }],
+                // series: [{
+                //     name: 'Installation & Developers',
+                //     data: [43934, 48656, 65165, 81827, 112143, 142383,
+                //         171533, 165174]
+                // }],
+                series: categories,
                 responsive: {
                     rules: [{
                         condition: {
@@ -163,6 +169,32 @@
                             }
                         }
                     }]
+                }
+            });
+        },
+
+
+        /**
+         * Make Datatable
+         */
+        makeDatatable: function (){
+            var context     = this;
+
+            context.table = context.selectors.drinkTable.DataTable({
+                processing: true,
+                serverSide: true,
+                searching: false,
+                scrollCollapse: true,
+                scrollY: '500px',
+                order: [[0, 'asc']],
+                ajax: {
+                    url: moduleConfig.getAccessibles,
+                    type: 'get'
+                },
+                columns: context.tableColumns,
+                drawCallback: function ( settings )
+                {
+                    context.selectors.drinkTable.find('tbody tr').find('td:first').addClass('dt-center');
                 }
             });
         },

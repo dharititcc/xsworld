@@ -34,7 +34,7 @@ class RestaurantController extends Controller
      */
     public function store(RestaurantRequest $request)
     {
-
+        // dd($request->all());
         $currency_id = Currency::select('id')->where('id',$request->country_id)->first();
         $addressInfo    = [
             'name'          => $request->name,
@@ -46,6 +46,8 @@ class RestaurantController extends Controller
             'city'          => $request->city,
             'postcode'      => $request->postcode,
             'type'          => $request->type,
+            'start_date'    => isset($request->start_date) ? $request->start_date : null,
+            'end_date'      => isset($request->end_date) ? $request->end_date : null,
             'specialisation'=> $request->description,
         ];
         $restaurant = Restaurant::create($addressInfo);
@@ -105,9 +107,11 @@ class RestaurantController extends Controller
             'city'              => $restaurant['city'],
             'state'             => $restaurant['state'],
             'type'              => $restaurant['type'],
-            'country_id'       => $restaurant['country_id'],
+            'country_id'        => $restaurant['country_id'],
             'image'             => $restaurant['attachment'] ? asset('storage/restaurants/'.$restaurant['attachment']['stored_name']) : '',
             'postcode'          => $restaurant['postcode'],
+            'start_date'        => isset($restaurant['start_date']) ? $restaurant['start_date'] : '',
+            'end_date'          => isset($restaurant['end_date']) ? $restaurant['end_date'] : '',
             'specialisation'    => $restaurant['specialisation'],
             'id'                => $restaurant['owners'][0]['id'],
             'first_name'        => $restaurant['owners'][0]['first_name'],
@@ -146,6 +150,8 @@ class RestaurantController extends Controller
             'state'         => $request->state,
             'city'          => $request->city,
             'postcode'      => $request->postcode,
+            'start_date'    => isset($request->start_date) ? $request->start_date : '',
+            'end_date'      => isset($request->end_date) ? $request->end_date : '',
             'specialisation'=> $request->description,
         ];
         // dd($restaurant);

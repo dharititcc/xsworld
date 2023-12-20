@@ -152,6 +152,14 @@ a.grey-brd-box.lable-box:hover{ border-color: var(--bs-light);}
 #sidebar-wrapper::-webkit-scrollbar-track { background:transparent; border-radius:0px; }
 #sidebar-wrapper::-webkit-scrollbar-thumb { background:rgba(255, 255, 255, 0.0); border-radius:0px; }
 
+.dataTables_scrollBody:hover::-webkit-scrollbar-thumb {background:rgba(255, 255, 255, 0.09);}
+.dataTables_scrollBody::-webkit-scrollbar { width:5px; }
+.dataTables_scrollBody::-webkit-scrollbar-track { background:transparent; border-radius:0px; }
+.dataTables_scrollBody::-webkit-scrollbar-thumb { background:rgba(255, 255, 255, 0.0); border-radius:0px; }
+
+.orders .dataTables_info{padding-left: 0.85em;}
+.orders .dataTables_paginate {padding-right: 0.85em;}
+
 .swal-button:focus{box-shadow:none; } 
 
 .swal-button,
@@ -668,6 +676,30 @@ table.dataTable thead th{ padding: 1.1rem .4rem;}
 .highcharts-color-1 path.highcharts-point{ fill: #fff;}
 
 /* ______________ high chart ___________*/
+
+.graph { position: relative; z-index: 1; }
+
+.loader {
+  position: absolute;
+  left: 50%;
+  top:150px;
+  right: 0;
+  bottom: 0;
+  border: 6px solid #f3f3f3; /* Light grey */
+  border-top: 6px solid #EAC36C; /* Blue */
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.orders .dataTables_length{margin-left: 10px;}
+
 
 /* responsive */
 

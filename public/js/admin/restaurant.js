@@ -88,7 +88,7 @@
             context.deleteRestaurant();
             XS.Common.fileReaderBind();
 
-            context.restaurantFormSubmit();
+            // context.restaurantFormSubmit();
 
             /** Search place */
             // jQuery('body').on('keyup', '#street1, #street2, [name="country_id"], #state, #city', function() {
@@ -183,30 +183,35 @@
             var context = this;
             jQuery('body').on('click', '.create-restaurant', function(e)
             {
+                // console.log($(this).data('type'));
                 e.preventDefault();
                 var $this           = jQuery(this);
-                var restaurantId    = $(this).data('id'),
-                    type            = $(this).data('type');
-
+                var restaurantId    = $(this).data('id');
+                var type            = $(this).data('type');
+                    
                     if(type == 2) {
                         $(".img-text").html('Event Image');
+                        $('.start_end_date').removeAttr("style");
                     } else {
                         $(".img-text").html('Restaurant Image');
+                        $('.start_end_date').attr("style");
                     }
 
                     if(restaurantId == undefined)
                     {
                         context.selectors.restaurantModalTitle.html('Create');
+                        context.addRestaurantFormValidation();
                         context.selectors.restaurantForm.attr('action', moduleConfig.storeRestaurant);
                     } else {
                         context.selectors.restaurantModalTitle.html('Edit');
-                        context.selectors.restaurantForm.attr('action', moduleConfig.updateRestaurant.replace(':ID', restaurantId));
                         context.editRestaurantFormValidation();
+                        context.selectors.restaurantForm.attr('action', moduleConfig.updateRestaurant.replace(':ID', restaurantId));
                         context.getRestaurantData(restaurantId);
                         context.selectors.restaurantForm.append(`<input type="hidden" name="_method" value="PUT" />`);
                     }
 
-                    context.selectors.restaurantForm.append(`<input type="hidden" name="type" id="type" value=${type} />`);
+                    $("#type").val(type);
+                    // context.selectors.restaurantForm.append(`<input type="hidden" name="type" id="type" value=${type} />`);
                 jQuery('#wd930').modal('show');
             });
         },
@@ -222,8 +227,10 @@
                 context.selectors.restaurantForm.validate().resetForm();
                 context.selectors.restaurantForm.find('.error').removeClass('error');
                 context.selectors.restaurantForm.find('input[name="_method"]').remove();
-                context.selectors.restaurantForm.find('input[name="type"]').remove();
+                // context.selectors.restaurantForm.find('input[name="type"]').remove();
+                $("#type").val('');
                 context.selectors.restaurantForm.removeAttr('action');
+                $('.start_end_date').attr("style");
                 $this.find('.pip').remove();
             });
         },
@@ -242,7 +249,7 @@
         {
             
             var context = this;
-            context.selectors.restaurantTable.on("click", '.res-delete', function(){
+            context.selectors.restaurantTable.add('.restaurant_event_datatable').on("click", '.res-delete', function(){
                 var id = $(this).data("id");
 
 
@@ -275,50 +282,109 @@
             });
         },
 
-        editRestaurantFormValidation: function()
+        addRestaurantFormValidation: function()
         {
             var context = this;
             context.selectors.restaurantForm.validate({
+                ignore: [],
                 rules: {
-                    name: {
-                        required: true,
-                    },
-                    street1: {
-                        required: true,
-                    },
-                    description: {
-                        required: true,
-                    },
                     first_name: {
+                        required: true,
+                    },
+                    postcode: {
                         required: true,
                     },
                     image: {
                         required: true,
+                        accept: "image/*",
                     },
-                    email: {
+                    street1: {
+                        required: true,
+                    },
+                    password: {
                         required: true,
                     },
                     country_id: {
                         required: true,
                     },
+                    city: {
+                        required: true,
+                    },
+                    description: {
+                        required: true,
+                    },
+                    email: {
+                        required: true,
+                        email: true,
+                    },
                     phone: {
                         required: true,
                     },
-                    city: {
+                    name: {
                         required: true,
                     },
                 },
                 messages: {
                     name: {
-                        required: "Please enter Restaurant name",
-                        maxlength: "Your name maxlength should be 50 characters long."
-                    },
-                    first_name: {
-                        required: "Please enter first name",
-                        maxlength: "Your name maxlength should be 50 characters long."
+                        required: "Please Enter Name",
                     },
                     image: {
-                        required: "Please upload files", //accept: 'Not an image!'
+                        required: "Please upload files",
+                        accept:    "Only image files are allowed.", //accept: 'Not an image!'
+                    },
+                },
+                errorPlacement: function (error, element) {
+                    console.log(element);
+                    if (element.attr("type") == "select") {
+                        error.insertAfter($(element).closest('div'));
+                    } else if( element.attr("type") === 'file' ) {
+                        error.insertAfter($(element).closest('div'));
+                    }else{
+                        error.insertAfter($(element));
+                    }
+                },
+                submitHandler: function() {
+                    context.restaurantFormSubmit(context.selectors.restaurantForm.get(0));
+                }
+            });
+        },
+
+        editRestaurantFormValidation: function()
+        {
+            var context = this;
+            context.selectors.restaurantForm.validate({
+                rules: {
+                    street1: {
+                        required: true,
+                    },
+                    country_id: {
+                        required: true,
+                    },
+                    city: {
+                        required: true,
+                    },
+                    first_name: {
+                        required: true,
+                    },
+                    email: {
+                        required: true,
+                        email: true,
+                    },
+                    phone: {
+                        required: true,
+                    },
+                    name: {
+                        required: true,
+                    },
+                    image: {
+                        required: true,
+                        accept: "image/*",
+                    },
+                },
+                messages: {
+                    image: {
+                        required: "Please upload files",
+                        accept:    "Only image files are allowed.", //accept: 'Not an image!'
                     },
                 },
                 errorPlacement: function (error, element) {
@@ -336,25 +402,31 @@
             });
         },
 
-        restaurantFormSubmit: function()
+        restaurantFormSubmit: function(form)
         {
             var context = this;
-
-            context.selectors.restaurantForm.on('submit', function(e)
-            {
-                e.preventDefault();
+            // context.selectors.restaurantForm.on('submit', function(e)
+            // {
+                // e.preventDefault();
 
                 // ajax start
 
                 var $this       = $(this),
-                    formData    = new FormData($this.get(0));
+                    formData    = new FormData(form);
                     XS.Common.btnProcessingStart(context.selectors.restaurantSubmitBtn);
 
                     context.selectors.restaurantForm.find('.error').remove();
 
-                jQuery.ajax(
+                // if( jQuery('.pip').length == 0 )
+                // {
+                //     console.log('Image is required');
+                //     XS.Common.btnProcessingStop(context.selectors.restaurantSubmitBtn);
+                //     return false;
+                // }
+
+                $.ajax(
                 {
-                    url: $this.attr('action'), // Use $this.attr('action') instead of $(form).attr('action')
+                    url: $(form).attr('action'), // Use $this.attr('action') instead of $(form).attr('action')
                     type: "POST",
                     data: formData,
                     processData: false,
@@ -368,6 +440,7 @@
                     },
                     error: function(jqXHR, exception)
                     {
+                        console.log("error");
                         if( jqXHR.status === 422 )
                         {
                             const {error}   = jqXHR.responseJSON;
@@ -393,7 +466,7 @@
                         XS.Common.btnProcessingStop(context.selectors.restaurantSubmitBtn);
                     }
                 });
-            });
+            // });
         },
 
         makeDatatables: function()
@@ -431,6 +504,7 @@
                 url: moduleConfig.getRestaurant.replace(':ID',id),
                 type: "GET",
                 success: function(res){
+                    console.log(res.data);
                     $("#name").val(res.data.name);
                     $("#street1").val(res.data.street1);
                     $("#street2").val(res.data.street2);
@@ -445,6 +519,9 @@
                     $("#phone").val(res.data.phone);
                     $('select option[value="'+res.data.country_id+'"]').attr("selected",true);
                     $("#id").val(res.data.id);
+                    $("#type").val(res.data.type);
+                    $("#start_date").val(res.data.start_date);
+                    $("#end_date").val(res.data.end_date);
                     $("#type").val(res.data.type);
                     
 

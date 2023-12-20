@@ -10,7 +10,7 @@
             "width": "5%",
             "sortable": false,
             render: function (data, type, row) {
-                return `<label class="cst-check"><input name="id" class="checkboxitem" type="checkbox" value="${row.id}"><span class="checkmark"></span></label>`
+                return `<label class="cst-check"><input name="id" class="checkboxitem" type="checkbox" data-type="2" value="${row.id}"><span class="checkmark"></span></label>`
             }
         },
         {
@@ -24,7 +24,6 @@
             "defaultContent": "",
             render: function(data, type, row)
             {
-                console.log(row);
 
                 return `
                             ${row.street1},
@@ -55,7 +54,7 @@
 
         /** selectors for customers */
         selectors: {
-            eventTable: jQuery('.restaurant_datatable'),
+            eventTable: jQuery('.restaurant_event_datatable'),
             search: jQuery('#search')
         },
 
