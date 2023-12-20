@@ -18,12 +18,12 @@ class AddonsController extends Controller
     public function index(Request $request)
     {
         $restaurant = session('restaurant')->loadMissing(['main_categories']);
-        $foodCategory = $restaurant->main_categories()->with(['children'])->where('name', 'Food')->first();
-        if($foodCategory)
-        {
-            $foodCategories = $foodCategory->children;
-            $foodSubCategory = $foodCategory->children->pluck('id');
-        }
+        // $foodCategory = $restaurant->main_categories()->with(['children'])->where('name', 'Food')->first();
+        // if($foodCategory)
+        // {
+        //     $foodCategories = $foodCategory->children;
+        //     $foodSubCategory = $foodCategory->children->pluck('id');
+        // }
         $drinkCategory = $restaurant->main_categories()->with(['children'])->where('name', 'Drinks')->first();
         if($drinkCategory)
         {
@@ -44,7 +44,7 @@ class AddonsController extends Controller
                     ->with(['category', 'restaurant','variations'])
                     ->whereHas('restaurant', function($query) use($restaurant)
                     {
-                        return $query->where('id', $restaurant->id)->where('type',1);
+                        return $query->where('restaurants.id', $restaurant->id)->where('restaurant_items.type', RestaurantItem::ADDON);
                     });
                     if (!empty($request->get('search_main')))
                     {
@@ -60,6 +60,7 @@ class AddonsController extends Controller
         return view('restaurant.addon-list', [
             'food_categories' => isset($foodCategories) ? $foodCategories : [],
             'drink_categories'=> isset($drinkCategories) ? $drinkCategories : [],
+            'restaurant'      => $restaurant
         ]);
     }
 

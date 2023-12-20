@@ -21,34 +21,16 @@
                                             <?php $key += 1;
                                                 $id = session('restaurant');;
                                             ?>
-                                                <tr>
-                                                    <th>{{$day->name}}</th>
-                                                    <td>
-                                                        <input type="hidden" name="res_id" id="res_id" data-id = "{{$id->id}}">
-                                                        <input class="start_time" style="display: none" data-day_id ="{{$key}}" value="{{$key}}" name="start_time[{{$key}}]" type="time" value=""
-                                                            placeholder="Start Time"><input class="close_time"
-                                                            placeholder="Close TIme" style="display: none"  name="end_time[{{$key}}]" type="time" value="">
-                                                        <label for="time" class="times">-</label>
-                                                    </td>
-                                                </tr>
+                                                @include('venue.partials.opening-times', ['id' => $id->id, 'key' => $key, 'name' => $day->name])
                                             @endforeach
                                         @else
                                             @foreach ($res_times as $res_time)
-                                                <tr>
-                                                    <th>{{$res_time->day->name}}</th>
-                                                    <td>
-                                                        <input type="hidden" name="res_id" id="res_id" data-id = "{{$res_time->restaurant_id}}">
-                                                        <input class="start_time" style="display: none" value="{{$res_time->start_time}}" name="start_time[{{$res_time->day->id}}]" type="time"
-                                                            placeholder="Start Time"><input class="close_time"
-                                                            placeholder="Close TIme" style="display: none"  name="end_time[{{$res_time->day->id}}]" type="time" value="{{$res_time->close_time}}">
-                                                        <label for="time" class="times">{{($res_time->start_time) ? $res_time->start_time . ' - '. $res_time->close_time : 'Close' }} </label>
-                                                    </td>
-                                                </tr>
+                                                @include('venue.partials.opening-times', ['id' => $res_time->restaurant_id, 'key' => $res_time->day->id, 'name' => $res_time->day->name, 'res_time' => $res_time])
                                             @endforeach
                                         @endif
                                     </form>
                                 </table>
-                                <button class="bor-btn w-100 font-26" id="venue_submitBtn" style="display: none" type="submit">Add Open
+                                <button class="bor-btn w-100 font-26 mt-4" id="venue_submitBtn" style="display: none" type="submit">Add Open
                                     Timming</button>
 
                             </div>

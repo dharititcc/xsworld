@@ -3,11 +3,6 @@
 @include('restaurant.partials.foodtopbar')
 @endsection
 @section('content')
-<style>
-    table.dataTable tbody tr {
-        background-color: #0f0e0e !important;
-    }
-</style>
 <div class="outrbox">
     <h2 class="yellow mb-4">Category Preview Tiles</h2>
     <div class="grid colmn-6 mb-3">
@@ -21,7 +16,7 @@
     </div>
     <div class="sort-by d-flex mb-4">
         <h2 class="yellow">Sort By</h2>
-        <div class="searchbox"><input type="text" name="search" id="search" class="searchbar" placeholder="Find a Drink"></div>
+        <div class="searchbox"><input type="text" name="search" id="search" class="searchbar" placeholder="Find a Item"></div>
     </div>
     <div class="filter-box  mb-4">
         <button class="bor-btn category food_cat active" data-category_id="">All <span class="stock"></span></button>
@@ -30,17 +25,16 @@
         @endforeach
     </div>
     <div class="mb-4 table-en-ds">
-        <button class="bor-btn" id="disable">Disable Drink</button>
-        <button class="bor-btn ms-3" id="enable">Enable Drink</button>
+        <button class="bor-btn" id="disable">Disable Item</button>
+        <button class="bor-btn ms-3" id="enable">Enable Item</button>
     </div>
     <div class="data-table drinks scroll-y h-600 table-responsive">
         <table width="100%" class="drink_datatable">
             <thead>
                 <tr valign="middle">
-                    <th><label class="cst-check"><input type="checkbox" value=""><span class="checkmark"></span></label></th>
-                    <th>
-                        Name
-                    </th>
+                    <th class="dt-left"><label class="cst-check"><input type="checkbox" id="allcheck" value=""><span class="checkmark"></span></label></th>
+                    <th>Name</th>
+                    <th>Category</th>
                     <th class="type">Type</th>
                     <th class="price">Price</th>
                     <th class="popularity">Popularity</th>
@@ -77,15 +71,11 @@
                                 <a href="javascript:void(0)" class="bor-btn product_type active" data-product_type="0">Simple</a>
                                 <a href="javascript:void(0)" class="bor-btn product_type" data-product_type="1">Variable</a>
                             </div>
-                            {{-- <div class="grey-brd-box d-flex featured-img">
-                              <a href="#" class="add-edit"><i class="icon-plus"></i></a>
-                              <span class="img-text">Product Image</span>
-                          </div> --}}
                             <div class="form-group grey-brd-box d-flex featured-img">
                                 <input id="upload" type="file" class="files" name="image" accept="image/*" hidden />
-                                <label for="upload"><span> Product Image</span> <i class="icon-plus"></i></label>
+                                <label for="upload" class="lbl-upload"><span class="img-text"> Product Image</span> <i class="icon-plus add-edit"></i></label>
                             </div>
-                            <input type="text" name="price" id="price" class="form-control vari2 mb-3" placeholder="Enter Price">
+                            <input type="text" name="price" id="price" class="form-control vari2 mb-3 show-error-info" placeholder="Enter Price">
 
                         </div>
                         <div class="col-md-8">
@@ -131,7 +121,7 @@
                     <div class="prd-variation" style="display: none">
                         <div class="head">
                             <h2 class="yellow">Food Variations</h2>
-                            <div class="add-remove"><a href="javascript:void(0);" class="bor-btn plus remove_variation" type="button"><i        class="icon-plus"></i></a> <a href="javascript:void(0);" class="bor-btn minus" type="button"><i class="icon-minus"></i></a></div>
+                            {{-- <div class="add-remove"><a href="javascript:void(0);" class="bor-btn plus remove_variation" type="button"><i        class="icon-plus"></i></a> <a href="javascript:void(0);" class="bor-btn minus" type="button"><i class="icon-minus"></i></a></div> --}}
                         </div>
                         <div class="variety grid colmn-7">
                             {{-- <div class="grey-brd-box item-box">
@@ -187,6 +177,7 @@
         getFood: "{!! route('restaurants.foods.show', ':ID') !!}",
         updateFood: "{!! route('restaurants.foods.update', ':ID') !!}",
         favoriteStatusUpdate: "{!! route('restaurants.favoriteStatusUpdate') !!}",
+        currency: "{!! $restaurant->country->symbol !!}"
     };
     $(document).ready(function()
     {

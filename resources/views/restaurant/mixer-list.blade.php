@@ -3,32 +3,23 @@
     @include('restaurant.partials.mixertopbar')
 @endsection
 @section('content')
-    <style>
-        table.dataTable tbody tr {
-            background-color: #0f0e0e !important;
-        }
-    </style>
     <div class="outrbox">
         <div class="sort-by d-flex mb-4">
             <h2 class="yellow">Sort By</h2>
             <div class="searchbox"><input type="text" name="search" id="search" class="searchbar"
-                    placeholder="Find a Drink"></div>
+                    placeholder="Find a Mixer"></div>
         </div>
         <div class="mb-4 table-en-ds">
-            <button class="bor-btn" id="disable">Disable Drink</button>
-            <button class="bor-btn ms-3" id="enable">Enable Drink</button>
+            <button class="bor-btn" id="disable">Disable Mixer</button>
+            <button class="bor-btn ms-3" id="enable">Enable Mixer</button>
         </div>
         <div class="data-table drinks scroll-y h-600">
             <table width="100%" class="drink_datatable">
                 <thead>
                     <tr valign="middle">
-                        <th><label class="cst-check"><input type="checkbox" value=""><span
-                                    class="checkmark"></span></label></th>
-                        <th>
-                            Name
-                        </th>
+                        <th class="dt-left"><label class="cst-check"><input type="checkbox" id="allcheck" value=""><span class="checkmark"></span></label></th>
+                        <th>Name</th>
                         <th class="price">Price</th>
-                        <th class="popularity">Popularity</th>
                         <th>Status</th>
                     </tr>
                 </thead>
@@ -59,12 +50,12 @@
                                 <input type="number" name="price" class="form-control vari2" placeholder="Mixer Price">
                             </div>
                             <div class="list-catg">
-                                @foreach ($food_categories as $child)
+                                {{-- @foreach ($food_categories as $child)
                                     <label>
                                         <input type="checkbox" name="category[]" id="category" value="{{ $child->id }}">
                                         <span>{{ $child->name }}</span>
                                     </label>
-                                @endforeach
+                                @endforeach --}}
                                 @foreach ($drink_categories as $child)
                                     <label>
                                         <input type="checkbox" name="category[]" id="category" value="{{ $child->id }}">
@@ -73,7 +64,7 @@
                                 @endforeach
                             </div>
                         </div>
-                        <button class="bor-btn w-100 font-26" id="submitBtn" type="submit">Save</button>
+                        <button class="bor-btn w-100 font-26 mt-4" id="submitBtn" type="submit">Save</button>
                     </form>
                 </div>
             </div>
@@ -91,6 +82,7 @@
             'addMixer': "{!! route('restaurants.mixers.store') !!}",
             'getMixer': "{!! route('restaurants.mixers.show', ':ID') !!}",
             'updateMixer': "{!! route('restaurants.mixers.update', ':ID') !!}",
+            currency: "{!! $restaurant->country->symbol !!}"
         };
         var modal = $("#exampleModal");
             // modal open pop up
@@ -193,16 +185,9 @@
                     }
                 });
             } else {
-                alert("Your browser doesn't support to File API")
+                //alert("Your browser doesn't support to File API")
+                XS.Common.handleSwalSuccessWithoutReload("Your browser doesn't support to File API.");
             }
-
-        jQuery(document).ready(function() {
-            $('#sidebarToggle1').on('click', function(e) {
-                e.preventDefault();
-
-                $('body').removeClass('sb-sidenav-toggled');
-            });
-        });
 
         function formatDate(date) {
             var d = new Date(date),
@@ -230,10 +215,12 @@
                     url: moduleConfig.getMixerlist,
                     data: data,
                 },
-                columns: [{
-                        "data": "id", // can be null or undefined
+                columns: [
+                    {
+                        "data": "", // can be null or undefined
                         "defaultContent": "",
-                        "bSortable": false,
+                        "width": "10%",
+                        "sortable": false,
                         render: function(data, type, row) {
                             return '<label class="cst-check"><input name="id" class="checkboxitem" type="checkbox" value="' +
                                 row.id + '"><span class="checkmark"></span></label>'
@@ -242,6 +229,7 @@
                     {
                         "data": "name", // can be null or undefined ->type
                         "defaultContent": "",
+                        "width": "30%",
                         render: function(data, type, row) {
                             var color = (row.is_available == 1) ? "green" : "red";
                             return '<div class="prdname ' + color + '"> ' + row.name +
@@ -253,30 +241,23 @@
                     {
                         "data": "price", // can be null or undefined
                         "defaultContent": "",
+                        "width": "30%",
                         "bSortable": false,
                         render: function(data, type, row) {
                             var text = "";
                             if (row.variations.length > 0) {
                                 for (let i = 0; i < row.variations.length; i++) {
-                                    text += '<label class="price">$' + row.variations[i]['price'] +
-                                        "</label><br>";
+                                    text += `<label class="price">${moduleConfig.currency}${row.variations[i]['price']}</label>`;
                                 }
                                 return text
                             }
-                            return row.price
-                        }
-                    },
-                    {
-                        "data": "description", // can be null or undefined
-                        "defaultContent": "",
-                        "bSortable": false,
-                        render: function(data, type, row) {
-                            return row.description
+                            return `<label class="price">${moduleConfig.currency}${row.price}</label>`;
                         }
                     },
                     {
                         "data": "status", // can be null or undefined
                         "defaultContent": "",
+                        "width": "30%",
                         "bSortable": false,
                         render: function(data, type, row) {
                             var html = '';
@@ -291,7 +272,11 @@
                             return html
                         }
                     },
-                ]
+                ],
+                drawCallback: function ( settings )
+                {
+                    $('.drink_datatable').find('tbody tr').find('td:first').addClass('dt-center');
+                }
             });
         }
 
@@ -300,6 +285,12 @@
             var data = [];
             data['search_main'] = this.value;
             load_data(data);
+        });
+
+        $('#allcheck').on('click', function(){
+                // Get all rows with search applied
+                $('.drink_datatable tbody :checkbox').prop('checked', $(this).is(':checked'));
+                e.stopImmediatePropagation();
         });
 
         $(document).ready(function() {
@@ -313,29 +304,29 @@
                 }
             });
 
-            $('#allcheck').click(function(e) {
-                e.preventDefault();
-                alert();
-                $('input[name="id"]').attr('checked', 'checked');
-                // $(this).val('uncheck all');
-            }, function() {
-                $('input[name="id"]').removeAttr('checked');
-                //$(this).val('check all');
-            })
+            // $('#allcheck').click(function(e) {
+            //     e.preventDefault();
+            //     $('input[name="id"]').attr('checked', 'checked');
+            //     // $(this).val('uncheck all');
+            // }, function() {
+            //     $('input[name="id"]').removeAttr('checked');
+            //     //$(this).val('check all');
+            // })
         });
         $("#mixerpopup").validate({
+            ignore:[],
             rules: {
                 name: {
                     required: true,
                     maxlength: 50
                 },
-                category: {
-                    onecheck: true
-                },
                 price: {
                     required: true,
                     number: true,
                     maxlength: 10
+                },
+                "category[]": {
+                    required: true,
                 },
                 image: {
                     required: true,
@@ -353,8 +344,18 @@
                 price: {
                     required: "Please enter price",
                 },
+                "category[]": {
+                    required: "Please Select category",
+                },
                 image: {
                     required: "Please enter files", //accept: 'Not an image!'
+                }
+            },
+            errorPlacement: function(error, element) {
+                if(element.attr("type") == "checkbox") {
+                    error.insertAfter($(element).closest('div'));
+                } else {
+                    error.insertAfter($(element));
                 }
             },
             submitHandler: function(form) {
@@ -380,8 +381,9 @@
                     success: function(response) {
                         $('#submitBtn').html('Submit');
                         $("#submitBtn").attr("disabled", false);
-                        alert('Mixer has been added successfully');
-                        location.reload(true);
+                        //alert('Mixer has been added successfully');
+                        //location.reload(true);
+                        XS.Common.handleSwalSuccess('Mixer has been added successfully.');
                     }
                 });
             }

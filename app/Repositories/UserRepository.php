@@ -1,22 +1,33 @@
 <?php namespace App\Repositories;
 
 use App\Billing\Stripe;
+use App\Events\GiftCardEvent;
 use App\Events\RegisterEvent;
 use App\Exceptions\GeneralException;
+use App\Mail\PurchaseGiftCard;
 use App\Models\User;
 use App\Models\UserDevices;
+use App\Models\UserGiftCard;
+use App\Models\UserReferrals;
 use App\Models\UsersVerifyMobile;
 use App\Repositories\BaseRepository;
+use App\Repositories\Traits\SpinWheel;
 use File;
 use Illuminate\Foundation\Mix;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Stripe\Source;
 use Stripe\Token;
+use Illuminate\Support\Facades\URL;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 /**
  * Class UserRepository.
 */
 class UserRepository extends BaseRepository
 {
+    use SpinWheel;
+
     /**
      * Associated Repository Model.
      */
@@ -148,19 +159,96 @@ class UserRepository extends BaseRepository
     {
         if( isset( $data['user_type'] ) )
         {
+            if(isset($data['referral_code']))
+            {
+                $refer_user             = User::where('referral_code',$data['referral_code'])->first();
+
+                if(isset($refer_user->id))
+                {
+                    $data['referral_code']  = referralCode();
+                    $data['referrer_id']    = $refer_user->id;
+                    $data['points']         = $data['points'] + UserReferrals::TO_USER_POINTS;
+
+                    $refer_user['points']   = $refer_user->points + UserReferrals::FROM_USER_POINTS;
+                    $refer_user->update();
+
+                    // insert credit point histories table
+
+                    $arrCreditPoint = [
+                        'model_name' => '\App\Models\User',
+                        'model_id'   => $refer_user->id,
+                        'points'     => UserReferrals::FROM_USER_POINTS,
+                        'type'       => 1
+                    ];
+
+                    $this->insertCreditPoints($refer_user, $arrCreditPoint);
+
+                    $referred_data['from_user_id']                  = $refer_user->id;
+                    $referred_data['points_earned_by_to_user']      = UserReferrals::FROM_USER_POINTS;
+                    $referred_data['points_earned_by_from_user']    = UserReferrals::TO_USER_POINTS;
+                    $referred_data['status']                        = UserReferrals::ACCEPTED;
+
+                    $referred_user     = UserReferrals::create($referred_data);
+                }
+            }
+
             $user = User::create($data);
+            if( isset($data['fcm_token']) )
+            {
+                // inser device entry
+                $user->devices()->create(['fcm_token' => $data['fcm_token']]);
+            }
             if( $data['user_type'] == User::CUSTOMER )
             {
                 // verification email send and send verification code
                 event(new RegisterEvent($user));
+                $qr_url = URL::current();
+                $qr_code_image = QrCode::size(500)
+                    ->format('png')
+                    ->backgroundColor(139,149,255,0)
+                    ->generate($qr_url . '/'.$user->id, public_path("customer_qr/qrcode_$user->id.png"));
 
-                $stripe     = new Stripe();
-                $customer   = $stripe->createCustomer($data);
+                $imageName = "qrcode_$user->id.png";
+                User::where('id',$user->id)->update(['cus_qr_code_img' => $imageName]);
+                $user->cus_qr_code_img = $imageName;
+
+                $user['referral_code']     = referralCode();
+                $stripe                    = new Stripe();
+                $customer                  = $stripe->createCustomer($data);
                 $str['stripe_customer_id'] = $customer->id;
                 $user->update($str);
                 $user->payment_methods()->create([
                     'name' => 'Cash'
                 ]);
+
+                // insert credit point histories table
+
+                $arrCreditPoint = [
+                    'model_name' => '\App\Models\User',
+                    'model_id'   => $user->id,
+                    'points'     => User::SIGN_UP_POINTS,
+                    'type'       => 1
+                ];
+
+                $this->insertCreditPoints($user, $arrCreditPoint);
+
+                // Latest user id for to_user_id in User referrals
+                if(isset($referred_user->id))
+                {
+                    // insert credit point histories table
+
+                    $arrCreditPoint = [
+                        'model_name' => '\App\Models\User',
+                        'model_id'   => $user->id,
+                        'points'     => UserReferrals::TO_USER_POINTS,
+                        'type'       => 1
+                    ];
+
+                    $this->insertCreditPoints($user, $arrCreditPoint);
+
+                    $referred_id['to_user_id']  = $user->id;
+                    $referred_user->update($referred_id);
+                }
             }
         }
         return $user;
@@ -177,13 +265,87 @@ class UserRepository extends BaseRepository
     {
         $user = User::where('email', $data['email'])->first();
         if(!$user){
+
+            if(isset($data['referral_code']))
+            {
+                $refer_user             = User::where('referral_code',$data['referral_code'])->first();
+                $data['referral_code']  = referralCode();
+                $data['referrer_id']    = $refer_user->id;
+                $data['points']         = $data['points'] + UserReferrals::TO_USER_POINTS;
+
+                $refer_user['points']   = $refer_user->points + UserReferrals::FROM_USER_POINTS;
+                $refer_user->update();
+
+                // insert credit point histories table
+
+                $arrCreditPoint = [
+                    'model_name' => '\App\Models\User',
+                    'model_id'   => $refer_user->id,
+                    'points'     => UserReferrals::FROM_USER_POINTS,
+                    'type'       => 1
+                ];
+
+                $this->insertCreditPoints($refer_user, $arrCreditPoint);
+
+                $referred_data['from_user_id']                  = $refer_user->id;
+                $referred_data['points_earned_by_to_user']      = UserReferrals::FROM_USER_POINTS;
+                $referred_data['points_earned_by_from_user']    = UserReferrals::TO_USER_POINTS;
+                $referred_data['status']                        = UserReferrals::ACCEPTED;
+
+                $referred_user     = UserReferrals::create($referred_data);
+            }
+
             $user = User::create($data);
+            if( isset($data['fcm_token']) )
+            {
+                // inser device entry
+                $user->devices()->create(['fcm_token' => $data['fcm_token']]);
+            }
             if( $data['user_type'] == User::CUSTOMER )
             {
-                $stripe     = new Stripe();
-                $customer   = $stripe->createCustomer($data);
-                $str['stripe_customer_id'] = $customer->id;
+                $qr_url = URL::current();
+                $qr_code_image = QrCode::size(500)
+                    ->format('png')
+                    ->backgroundColor(139,149,255,0)
+                    ->generate($qr_url . '/'.$user->id, public_path("customer_qr/qrcode_$user->id.png"));
+
+                $imageName = "qrcode_$user->id.png";
+                User::where('id',$user->id)->update(['cus_qr_code_img' => $imageName]);
+                $user->cus_qr_code_img = $imageName;
+
+                $stripe                     = new Stripe();
+                $customer                   = $stripe->createCustomer($data);
+                $str['stripe_customer_id']  = $customer->id;
+                $user['referral_code']      = referralCode();
                 $user->update($str);
+
+                // insert credit point histories table
+
+                $arrCreditPoint = [
+                    'model_name' => '\App\Models\User',
+                    'model_id'   => $user->id,
+                    'points'     => User::SIGN_UP_POINTS,
+                    'type'       => 1
+                ];
+
+                $this->insertCreditPoints($user, $arrCreditPoint);
+
+                // Latest user id for to_user_id in User referrals
+                if(isset($referred_user->id))
+                {
+                     // insert credit point histories table
+
+                     $arrCreditPoint = [
+                        'model_name' => '\App\Models\User',
+                        'model_id'   => $user->id,
+                        'points'     => UserReferrals::TO_USER_POINTS,
+                        'type'       => 1
+                    ];
+
+                    $this->insertCreditPoints($user, $arrCreditPoint);
+                    $referred_id['to_user_id']  = $user->id;
+                    $referred_user->update($referred_id);
+                }
             }
         }
         if( $user instanceof \App\Models\User && isset( $user->id ) )
@@ -461,5 +623,157 @@ class UserRepository extends BaseRepository
         }
         throw new GeneralException('OTP is invalid.');
 
+    }
+
+    /**
+     * Method purchaseGiftCard
+     *
+     * @param array $data [explicite description]
+     *
+     * @return mixed
+     */
+    public function purchaseGiftCard(array $data) : mixed
+    {
+        $user = auth()->user();
+
+        $code = $this->generateRandomString(10);
+
+        if($user->stripe_customer_id != '')
+        {
+            $stripe         = new Stripe();
+            $customer       = $stripe->fetchCustomer($user->stripe_customer_id);
+            $default_card   = $customer->default_source;
+            $amount         = floatval(number_format($data['amount'],2));
+
+            if($default_card)
+            {
+                $paymentArr = [
+                    'amount'        => $amount  * 100,
+                    'currency'      => 'AUD',
+                    'customer'      => $user->stripe_customer_id,
+                    'source'        => $default_card,
+                    'description'   => 'Gift Card Purchase '. $data['name']
+                ];
+
+                $payment_data   = $stripe->createCharge($paymentArr);
+
+                $giftcardArr = [
+                    'user_id'           => $user->id,
+                    'name'              => $data['name'],
+                    'from_user'         => $user->email,
+                    'to_user'           => $data['to_user'],
+                    'amount'            => $data['amount'],
+                    'code'              => $code,
+                    'status'            => UserGiftCard::PENDING,
+                    'transaction_id'    => $payment_data->balance_transaction
+                ];
+
+                $savegiftcard   = UserGiftCard::create($giftcardArr);
+                event(new GiftCardEvent($savegiftcard));
+
+                return $savegiftcard;
+            }
+            throw new GeneralException('Please add Card');
+        }
+
+        throw new GeneralException('Please select default card');
+
+    }
+
+    /**
+     * Method generateRandomString
+     *
+     * @param $length $length [explicite description]
+     *
+     * @return void
+     */
+    function generateRandomString($length = 10)
+    {
+        $characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $randomString = substr(str_shuffle($characters), 0, $length);
+        return $randomString;
+    }
+
+    /**
+     * Method redeemGiftCard
+     *
+     * @param array $input [explicite description]
+     *
+     * @return mixed
+     */
+    function redeemGiftCard(array $input)
+    {
+        if( isset($input['code']) )
+        {
+            $user = auth()->user();
+            $redeem = UserGiftCard::where(['code' => $input['code'] , 'status' => UserGiftCard::PENDING ])->orderBy('id', 'desc')->first();
+
+            if($redeem)
+            {
+                if($user->email != $redeem->from_user)
+                {
+                    $data['status']         = UserGiftCard::REDEEMED;
+                    $data['verify_user_id'] = $user->id;
+                    $redeem->update($data);
+
+                    $users['credit_amount'] = $user->credit_amount + $redeem->amount;
+                    $user->update($users);
+
+                    $user   = [
+                        'credit_amount'     => (float) $user->credit_amount ?? 0,
+                        'points'            => $user->points,
+                    ];
+                    return $user;
+                }
+                else
+                {
+                    throw new GeneralException('You are not redeem your own gift card.');
+                }
+            }
+            throw new GeneralException('Invalid Redeem code.');
+
+        }
+
+        throw new GeneralException('Redeem Code is required.');
+    }
+
+    /**
+     * Method getreferralList
+     *
+     * @return mixed
+     */
+    public function getreferralList()
+    {
+        $user           = auth()->user();
+        $referral_list  = UserReferrals::with(['touser'])->where('from_user_id',$user->id)->get();
+        return $referral_list;
+    }
+
+    /**
+     * Method shareReferral
+     *
+     * @return mixed
+     */
+    public function shareReferral()
+    {
+        $user      = auth()->user();
+        $referArr  = [];
+
+        $referArr['from_user_id'] = $user->id;
+        $referral_list  = UserReferrals::create($referArr);
+        return $referral_list;
+    }
+
+    /**
+     * Method getSpinResult
+     *
+     * @param int $type [explicite description]
+     *
+     * @return bool
+     */
+    public function getSpinResult(int $type): bool
+    {
+        $user = auth()->user();
+        return $this->spinWheel($user, $type);
     }
 }

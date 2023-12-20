@@ -27,5 +27,6 @@ $('#enable').click(function(event) {
             $('.drink_datatable').DataTable().destroy();
             load_data(data);
         }
+        $('#allcheck').prop( "checked", false );
     });
 });

@@ -2,11 +2,15 @@
 
 namespace App\Http\Controllers\Categories;
 
+use App\Exceptions\GeneralException;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Http\Requests\CategoryRequest;
+use App\Http\Requests\UpdateCategoryRequest;
 use App\Http\Resources\CategoryResource;
 use App\Models\Category;
+use App\Models\Restaurant;
+use Illuminate\Support\Facades\DB;
 
 class CategoryController extends Controller
 {
@@ -40,7 +44,7 @@ class CategoryController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(CategoryRequest $request)
     {
         $restaurant = session('restaurant')->loadMissing(['main_categories', 'main_categories.children']);
         $categoryArr = [
@@ -48,6 +52,13 @@ class CategoryController extends Controller
             'parent_id'     => $request->get('parent_id'),
             'restaurant_id' => $restaurant->id,
         ];
+
+        // check if category name exist
+
+        if( $this->checkUniqueCategory($request, $restaurant) )
+        {
+            throw new GeneralException('The category name is already exist.');
+        }
 
         $newCategory = Category::create($categoryArr);
         $newCategory->refresh();
@@ -58,9 +69,31 @@ class CategoryController extends Controller
         return $newCategory->refresh();
     }
 
+    /**
+     * Method checkUniqueCategory
+     *
+     * @param Request $request [explicite description]
+     * @param Restaurant $restaurant [explicite description]
+     *
+     * @return int
+     */
+    private function checkUniqueCategory(Request  $request, Restaurant $restaurant)
+    {
+        $text = strtolower($request->name);
+        return Category::whereRaw(DB::raw("LOWER(`name`) = '{$text}'"))->where('restaurant_id', $restaurant->id)->count();
+    }
+
     public function categoryName(Request $request)
     {
         $restaurant = session('restaurant')->loadMissing(['main_categories', 'main_categories.children']);
+
+        $text = strtolower($request->name);
+
+        if( $this->checkUniqueCategory($request, $restaurant) )
+        {
+            throw new GeneralException('The category name is already exist.');
+        }
+
         $newCategory = Category::updateOrCreate([
             'restaurant_id' => $restaurant->id,
             'name'          => $request->get('name'),
@@ -93,11 +126,11 @@ class CategoryController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  UpdateCategoryRequest  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Category $category)
+    public function update(UpdateCategoryRequest $request, Category $category)
     {
         if(isset($category->id))
         {
@@ -135,19 +168,26 @@ class CategoryController extends Controller
      */
     public function deleteCategories(Request $request)
     {
-        //dd($request->get('category'));
+        // dd($request->get('category'));
         $category = $request->get('category');
-        foreach ($category as $key => $value) {
-            //dd($value);
-            $delete = Category::find($value);
-            if( $delete->items->count() )
+
+        if( !empty( $category ) )
+        {
+            foreach ($category as $key => $value)
             {
-                $delete->items()->delete();
+                //dd($value);
+                $delete = Category::find($value);
+                if( $delete->items->count() )
+                {
+                    $delete->items()->delete();
+                }
+                $delete->delete();
             }
-            $delete->delete();
+
+            return redirect()->back();
         }
 
-        return redirect()->back();
+        throw new GeneralException('Please select atleast one category.');
     }
 
     /**

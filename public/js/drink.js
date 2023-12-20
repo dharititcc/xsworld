@@ -1,9 +1,11 @@
 (function () {
     XS.Drink = {
         table: null,
-        tableColumns: [{
-            "data": "id", // can be null or undefined
+        tableColumns: [
+        {
+            "data": "", // can be null or undefined ->type
             "defaultContent": "",
+            "width": "5%",
             "sortable": false,
             render: function (data, type, row) {
                 return `<label class="cst-check"><input name="id" class="checkboxitem" type="checkbox" value="${row.id}"><span class="checkmark"></span></label>`
@@ -11,17 +13,27 @@
         },
         {
             "data": "name", // can be null or undefined ->type
+            "width": "25%",
             "defaultContent": "",
             render: function (data, type, row) {
                 var color = (row.is_available == 1) ? "green" : "red";
                 return `<div class="prdname ${color}"> ${row.name} </div>
-                            <a href="javascript:void(0);" data-id="${row.id}" class="drink_modal edit">Edit</a>
-                            <div class="add-date">Added ${XS.Common.formatDate(row.created_at)}</div>`
+                        <a href="javascript:void(0);" data-id="${row.id}" class="drink_modal edit">Edit</a>
+                        <div class="add-date">Added ${XS.Common.formatDate(row.created_at)}</div>`
+            }
+        },
+        {
+            "data": "category_name",
+            "defaultContent": "",
+            "width": "10%",
+            render: function (data, type, row) {
+                return data;
             }
         },
         {
             "data": "type", // can be null or undefined
             "defaultContent": "",
+            "width": "15%",
             "bSortable": false,
             render: function (data, type, row) {
                 var text = "";
@@ -37,22 +49,23 @@
         {
             "data": "price", // can be null or undefined
             "defaultContent": "",
+            "width": "10%",
             "bSortable": false,
             render: function (data, type, row) {
                 var text = "";
                 if (row.variations.length > 0) {
                     for (let i = 0; i < row.variations.length; i++) {
-                        text += '<label class="price">$' + row.variations[i]['price'] +
-                            "</label>";
+                        text += `<label class="price">${moduleConfig.currency}${row.variations[i]['price']}</label>`;
                     }
                     return text
                 }
-                return row.price
+                return `<label class="price">${moduleConfig.currency}${row.price}</label>`;
             }
         },
         {
             "data": "description", // can be null or undefined
             "defaultContent": "",
+            "width": "20%",
             "bSortable": false,
             render: function (data, type, row) {
                 var string = row.description;
@@ -67,6 +80,8 @@
         {
             "data": "favorite", // can be null or undefined
             "defaultContent": "",
+            "width": "5%",
+            "class": "dt-center",
             "bSortable": false,
             render: function (data, type, row) {
                 return `<a href="javascript:void(0)" class="favorite ${row.is_featured == 0 ? 'null' : ''} "  data-is_featured="${row.is_featured == 0 ? 1 : 0}" data-id="${row.id}"></a>`
@@ -75,6 +90,7 @@
         {
             "data": "status", // can be null or undefined
             "defaultContent": "",
+            "width": "10%",
             "bSortable": false,
             render: function (data, type, row) {
                 var html = '';
@@ -105,6 +121,7 @@
             drinkVariationModal:jQuery('#addDrink'),
             addVariationBtn:    jQuery('#add_variation_btn'),
             favoriteBtn:        jQuery('.favorite'),
+            allCheck:           jQuery('#allcheck'),
         },
 
         init: function (){
@@ -118,12 +135,13 @@
 
             context.productTypeFilter();
 
-            context.isFavorite();
+            XS.Common.isFavorite();
 
             context.openDrinkModal();
             context.closeDrinkModal();
             context.openVariationModal();
             context.closeVariationModal();
+            XS.Common.allCheckBox();
             XS.Common.fileReaderBind();
             context.addVariation();
             context.removeVariation();
@@ -131,6 +149,10 @@
             context.filterCategoryChange();
             XS.Common.enableSweetAlert(context.table);
             XS.Common.disableSweetAlert(context.table);
+
+            // price input field validation for number
+            context.selectors.drinkVariationModal.find('input[name="variation_price"]').get(0).addEventListener('keyup', XS.Common.checkNumberInput);
+            $('#price').get(0).addEventListener('keyup', XS.Common.checkNumberInput);
         },
 
         filterCategoryChange: function()
@@ -194,10 +216,31 @@
                 e.preventDefault();
 
                 var $this       = $(this),
+                    isValid     = true,
                     parent      = $this.closest('.modal-body'),
                     name        = parent.find('input[name="variation_name"]'),
                     price       = parent.find('input[name="variation_price"]'),
                     countVariation = context.selectors.drinkModal.find('.modal-body').find('.variety').children().length;
+
+                $this.closest('.modal-body').find('.error').remove();
+                // validation variation form
+                if( name.val() == '' )
+                {
+                    isValid = false;
+
+                    name.after(`<span class="error">The variation name field is required.</span>`);
+                }
+
+                if( price.val() == '' )
+                {
+                    isValid = false;
+                    price.after(`<span class="error">The variation price field is required.</span>`);
+                }
+
+                if( !isValid )
+                {
+                    return false;
+                }
 
                 context.addVariationBlock(name.val(), price.val(), countVariation);
 
@@ -270,16 +313,16 @@
         },
 
         makeDatatable: function (){
-            var context     = this;            
+            var context     = this;
 
             context.categoryFilter();
             context.searchFilter();
-            
+
             context.table = context.selectors.drinkTable.DataTable({
                 processing: true,
                 serverSide: true,
                 searching: false,
-                // order: [[1, 'asc']],
+                order: [[1, 'asc']],
                 ajax: {
                     url: moduleConfig.getAccessibles,
                     type: 'get',
@@ -292,7 +335,11 @@
                         data.disable        = $('#disable').get(0).classList.contains('disable_clicked') ? checkboxes : []
                     },
                 },
-                columns: context.tableColumns
+                columns: context.tableColumns,
+                drawCallback: function ( settings )
+                {
+                    context.selectors.drinkTable.find('tbody tr').find('td:first').addClass('dt-center');
+                }
             });
         },
 
@@ -311,30 +358,15 @@
                         'X-CSRF-TOKEN': jQuery('meta[name="csrf-token"]').attr('content'),
                     },
                     data: {'is_featured':is_featured,'id':id},
-                    success: function(res) {
-                        alert('favorite Status has been updated successfully');
-
-                        context.table.ajax.reload();
+                    success: function(res)
+                    {
+                        XS.Common.handleSwalSuccessWithoutReload('Favorite status has been updated successfully.');
+                        setTimeout(function()
+                        {
+                            context.table.ajax.reload();
+                        }, 500);
                     },
                 });
-            });
-        },
-
-        isFavorite: function()
-        {
-            $('.is_favorite').click(function(e)
-            {
-                var is_favorite = $(this).data('is_favorite');
-                if(is_favorite === 0){
-                    $('.is_favorite').removeClass('null');
-                    $(this).attr('data-is_favorite',1);
-                    $(this).data('is_favorite',1);
-                    $('#is_featured').val(1);
-                }else{
-                    $(this).data('is_favorite',0);
-                    $('#is_featured').val(0);
-                    $('.is_favorite').addClass('null');
-                }
             });
         },
 
@@ -345,10 +377,9 @@
             {
                 var $this       = jQuery(this),
                     productType = $this.data('product_type');
-                    // alert(productType)
 
-                    jQuery('.product_type').removeClass('active');
-
+                jQuery('.product_type').removeClass('active');
+                console.log('Product Type', productType);
                 if( productType == 1 )
                 {
                     $('#product_type').val(1);
@@ -491,14 +522,13 @@
                         pattern: "Please enter a valid price format (e.g., 100.50).",
                     },
                     image: {
-                        required: "Please enter files", //accept: 'Not an image!'
+                        required: "Please upload files", //accept: 'Not an image!'
                     },
                     'category_id[]': {
                         required: "Please select category",
                     }
                 },
                 errorPlacement: function (error, element) {
-                    console.log(element);
                     if (element.attr("type") == "checkbox") {
                         error.insertAfter($(element).closest('div'));
                     } else if( element.attr("type") == 'file' ) {
@@ -556,7 +586,6 @@
 
                 },
                 submitHandler: function() {
-                    console.log('edit');
                     context.submitDrinkForm(context.selectors.drinkForm.get(0));
                 }
             });
@@ -582,9 +611,17 @@
                     'X-CSRF-TOKEN': jQuery('meta[name="csrf-token"]').attr('content')
                 },
                 success: function(response) {
-                    alert('Drink form has been submitted successfully');
                     document.getElementById("drinkpopup").reset();
-                    location.reload(true);
+                    XS.Common.handleSwalSuccess('Drink form has been submitted successfully.');
+                },
+                error: function(xhr)
+                {
+                    if( xhr.status == 403 )
+                    {
+                        var {error} = xhr.responseJSON;
+                        context.selectors.drinkForm.find('.duplicate_product').after(`<span class="error">${error.message}</span>`);
+                        // $this.closest('#add_form_category').find('.cat_name').after(`<span class="error">${error.message}</span>`);
+                    }
                 },
                 complete: function()
                 {
@@ -600,7 +637,6 @@
                 url: moduleConfig.drinkGet.replace(':ID',id),
                 type: 'GET',
                 success: function(res) {
-                    console.log(res.data);
                     $('#name').val(res.data.name);
                     $('#ingredients').val(res.data.ingredients);
                     $('#country_of_origin').val(res.data.country_of_origin);
@@ -618,7 +654,7 @@
                         $('.is_favorite').attr('data-is_favorite', 0);
                         $('.is_favorite').addClass('null');
                     }
-                    
+
                     $('#price').val(res.data.price);
                     context.selectors.drinkModal.find('.modal-body').find('.variety').find('.item-box').not('.add_variations').remove();
 

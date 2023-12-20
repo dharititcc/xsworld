@@ -11,10 +11,11 @@
         <a href="{{ route('restaurants.mixers.index') }}" class="{{ Route::is('restaurants.mixers.*') ? 'active' : '' }}">Mixer Management</a>
         <a href="{{ route('restaurants.addons.index') }}" class="{{ Route::is('restaurants.addons.*') ? 'active' : '' }}">Addons Management</a>
         <a href="{{ route('restaurants.waiter.index') }}" class="{{ Route::is('restaurants.waiter.*') ? 'active' : '' }}">Account Manager</a>
-        <a href="#">Analytics</a>
+        <a href="{{ route('analytics') }}" class="{{ Route::is('analytics.*') ? 'active' : '' }}">Analytics</a>
         <a href="{{route('restaurants.pickup.index')}}" class="{{ Route::is('restaurants.pickup.*') ? 'active' : '' }}">Pick-up Zones</a>
         <a href="{{ route('restaurants.table.index') }}" class="{{ Route::is('restaurants.table.*') ? 'active' : '' }}">Table Management</a>
         <a href="{{ route('restaurants.venue.index') }}" class="{{ Route::is('restaurants.venue.*') ? 'active' : '' }}">Bar Management</a>
+        <a href="{{ route('restaurants.orders.index') }}" class="{{ Route::is('restaurants.orders.*') ? 'active' : '' }}">Order History</a>
         <a class="" href="{{ route('logout') }}"
                onclick="event.preventDefault();
                              document.getElementById('logout-form').submit();">
@@ -24,6 +25,10 @@
             <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
                 @csrf
             </form>
+
+        @impersonating($guard = null)
+            <a href="{{ route('leave') }}">Leave impersonation</a>
+        @endImpersonating
   </div>
     <div class="sidebar-footer"><label> what will it be today?</label> <span class="year">2023</span></div>
 </div>

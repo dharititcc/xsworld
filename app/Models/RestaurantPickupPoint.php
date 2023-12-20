@@ -27,6 +27,15 @@ class RestaurantPickupPoint extends Model
         'type',
     ];
 
+    const OFFLINE      = 0;
+    const ONLINE       = 1;
+
+
+    const STATUS = [
+        self::OFFLINE     => 'OFFLINE',
+        self::ONLINE      => 'ONLINE',
+    ];
+
     /**
      * The attributes that should be cast to native types.
      *
@@ -36,16 +45,6 @@ class RestaurantPickupPoint extends Model
         'created_at' => 'datetime',
         'updated_at' => 'datetime'
     ];
-
-    public function ScopeRestaurantget($query,$arg)
-    {
-        return $query->where('restaurant_id',$arg);
-    }
-
-    public function ScopeType($query,$arg)
-    {
-        return $query->where('type',$arg);
-    }
 
     /**
      * Method attachment
@@ -64,7 +63,7 @@ class RestaurantPickupPoint extends Model
      */
     public function restaurant(): BelongsTo
     {
-        return $this->belongsTo(Restaurant::class, 'restaurant_id', 'is');
+        return $this->belongsTo(Restaurant::class, 'restaurant_id', 'id');
     }
 
     /**
@@ -78,16 +77,6 @@ class RestaurantPickupPoint extends Model
     }
 
     /**
-     * Get the pickup_point that owns the RestaurantPickupPoint
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function pickup_point(): BelongsTo
-    {
-        return $this->belongsTo(PickupPoint::class, 'pickup_point_id', 'id');
-    }
-
-    /**
      * Method getImageAttribute
      *
      * @return string
@@ -95,5 +84,54 @@ class RestaurantPickupPoint extends Model
     public function getImageAttribute(): string
     {
         return isset($this->attachment) ? asset('storage/pickup_point/'.$this->attachment->stored_name) : '';
+    }
+
+    /**
+     * Method ScopeRestaurantget
+     *
+     * @param $query $query [explicite description]
+     * @param $arg $arg [explicite description]
+     *
+     * @return mixed
+     */
+    public function ScopeRestaurantget($query,$arg)
+    {
+        return $query->where('restaurant_id',$arg);
+    }
+
+    /**
+     * Method ScopeType
+     *
+     * @param $query $query [explicite description]
+     * @param $arg $arg [explicite description]
+     *
+     * @return mixed
+     */
+    public function ScopeType($query,$arg)
+    {
+        return $query->where('type',$arg);
+    }
+
+    /**
+     * Method ScopeType
+     *
+     * @param $query $query [explicite description]
+     * @param $arg $arg [explicite description]
+     *
+     * @return mixed
+     */
+    public function ScopeStatus($query,$arg)
+    {
+        return $query->where('status',$arg);
+    }
+
+     /**
+     * Method getStatusAttribute
+     *
+     * @return string
+    */
+    public function getPickUpStatusAttribute(): string
+    {
+        return self::STATUS[$this->status];
     }
 }

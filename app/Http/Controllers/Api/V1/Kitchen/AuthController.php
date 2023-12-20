@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\V1\Traits\Authenticate;
 use App\Http\Requests\BartenderLoginRequest;
 use App\Http\Requests\LoginRequest;
 use App\Http\Resources\BartenderUserResource;
+use App\Http\Resources\KitchenResource;
 use App\Http\Resources\UserResource;
 use App\Repositories\UserRepository;
 use Illuminate\Http\Request;
@@ -165,14 +166,17 @@ class AuthController extends APIController
                 'fcm_token'             => $input['fcm_token'],
             ];
 
+            $this->repository->storeDevice($user, ['fcm_token' => $input['fcm_token']]);
+
             $this->repository->update($dataArr, $user);
+            
 
             $token  = $user->createToken('xs_world')->plainTextToken;
             return $this->respond([
                 'status'    =>  true,
                 'message'   =>  'Login successful',
                 'token'     =>  $token,
-                'item'      =>  new UserResource($user),
+                'item'      =>  new KitchenResource($user),
             ]);
         }
 
@@ -227,6 +231,13 @@ class AuthController extends APIController
         {
             // Get user who requested the logout
             $user = auth()->user(); //or Auth::user()
+
+            // revoke device token
+            if( isset( $request->fcm_token ) )
+            {
+                $user->devices()->where('fcm_token', $request->fcm_token)->delete();
+            }
+
             // Revoke current user token
             $user->tokens()->where('id', $user->currentAccessToken()->id)->delete();
         }

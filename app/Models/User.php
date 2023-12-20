@@ -11,11 +11,12 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Lab404\Impersonate\Models\Impersonate;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable, HasApiTokens;
+    use HasFactory, Notifiable, HasApiTokens, Impersonate;
 
     protected $table = 'users';
 
@@ -35,6 +36,8 @@ class User extends Authenticatable
     const USERNAME  = 4;
     const APPLE     = 5;
 
+    const SIGN_UP_POINTS    = 30;
+
     /**
      * The attributes that are mass assignable.
      *
@@ -51,6 +54,7 @@ class User extends Authenticatable
         'user_type',
         'fcm_token',
         'country_id',
+        'cus_qr_code_img',
         'stripe_customer_id',
         'country_code',
         'birth_date',
@@ -59,10 +63,16 @@ class User extends Authenticatable
         'os_version',
         'application_version',
         'model',
-        'credit_points',
+        'credit_amount',
+        'points',
         'username',
         'verification_code',
-        'is_mobile_verify'
+        'is_mobile_verify',
+        'referral_code',
+        'referrer_id',
+        'set_id',
+        'email_verified_at',
+        'social_id'
     ];
 
     /**
@@ -83,6 +93,16 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'phone'             => 'integer',
     ];
+
+    /**
+     * Get all of the spins for the User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function spins(): HasMany
+    {
+        return $this->hasMany(Spin::class, 'user_id', 'id');
+    }
 
     /**
      * Get all of the devices for the User
@@ -112,7 +132,7 @@ class User extends Authenticatable
 
     public function restaurant_waiter()
     {
-        return $this->hasOne(RestaurantWaiter::class,'user_id','id');
+        return $this->hasOne(RestaurantWaiter::class,'user_id','id')->withTrashed();
     }
 
     public function kitchen_pickup_point()
@@ -170,6 +190,16 @@ class User extends Authenticatable
         return isset($this->attachment) ? asset('storage/profile/'.$this->attachment->stored_name) : '';
     }
 
+     /**
+     * Method getQrImageAttribute
+     *
+     * @return string
+     */
+    public function getQrImageAttribute(): string
+    {
+        return isset($this->cus_qr_code_img) ? asset('customer_qr/'.$this->cus_qr_code_img) : '';
+    }
+
     /**
      * Get the pickup_point associated with the User
      *
@@ -188,6 +218,16 @@ class User extends Authenticatable
     public function orders(): HasMany
     {
         return $this->hasMany(Order::class, 'user_id', 'id')->where('type', Order::ORDER);
+    }
+
+    /**
+     * Get all of the waiter_order for the User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function waiter_order(): HasMany
+    {
+        return $this->hasMany(Order::class, 'waiter_id', 'id')->where('type', Order::ORDER);
     }
 
     /**
@@ -250,5 +290,40 @@ class User extends Authenticatable
     public function kitchen(): HasOne
     {
         return $this->hasOne(RestaurantKitchen::class, 'user_id', 'id');
+    }
+
+    /**
+     * Method getReferralLinkAttribute
+     *
+     * @return string
+     */
+    public function getReferralLinkAttribute()
+    {
+        $url = 'https://xsworld.page.link/?link=https://express.itcc.net.au/?referral='.$this->referral_code.'&ibi=com.xsworld.iOS&isi=1074964262&efr=1&apn=com.itcc.xsworld&efr=1';
+
+        //IOS : https://xsworld.page.link/?link=https://express.itcc.net.au/?referral=Manthan&ibi=com.xsworld.iOS&isi=1074964262&efr=1&apn=com.itcc.xsworld&efr=1
+
+        // Android : https://xsworld.page.link/?link=https://express.itcc.net.au/?referral=Manthan&apn=com.itcc.xsworld&efr=1
+        return $url;
+    }
+
+    /**
+     * Get all of the referrals for the User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function referrals(): HasMany
+    {
+        return $this->hasMany(self::class, 'referrer_id', 'id');
+    }
+
+    /**
+     * Get all of the credit_points for the User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function credit_points(): HasMany
+    {
+        return $this->hasMany(CreditPointsHistory::class, 'user_id', 'id');
     }
 }

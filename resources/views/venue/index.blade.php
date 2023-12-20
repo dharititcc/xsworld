@@ -4,14 +4,10 @@
 @endsection
 @section('content')
 
-    </nav>
-    <!-- Page content-->
-    <div class="container-fluid">
-        <main>
             <div class="outrbox">
                 <div class="row">
-                    <div class="col-md-4">
-                        <div class="grey-brd-box">
+                    <div class="col-lg-6 col-xl-6 col-xxl-4 m-xxl-space act-grid-2">
+                        <div class="grey-brd-box m-sm-space">
                             <div class="title">
                                 <h2>Opening Times</h2> <a href="javascript:void(0);" class="edit venue_popup_modal ">EDIT</a>
                             </div>
@@ -32,12 +28,12 @@
                                         @endif
                                     </form>
                                 </table>
-                                <button class="bor-btn w-100 font-26" id="venue_submitBtn" style="display: none" type="submit">Add Open
+                                <button class="bor-btn w-100 font-26 mt-4" id="venue_submitBtn" style="display: none" type="submit">Add Open
                                     Timming</button>
 
                             </div>
                         </div>
-                        <div class="grey-brd-box mt-4">
+                        <div class="grey-brd-box mt-lg-4">
                             <div class="title">
                                 <h2>Venue Settings</h2> <a href="#" class="edit">EDIT</a>
                             </div>
@@ -80,206 +76,63 @@
                             <button class="bor-btn w-100 font-30 top-bor" type="button">Support</button>
                         </div>
                     </div>
-                    <div class="col-md-4">
-                        <div class="grey-brd-box">
+                    <div class="col-lg-6 col-xl-6 col-xxl-4 m-xxl-space review-box-outer">
+                        <div class="grey-brd-box h-100">
                             <div class="title">
                                 <h2>Reviews</h2>
                                 <div class="reviewbox">
-                                    <div class="text-star">5 Star Avg</div>
-                                    <div class="stars"><i class="icon-star"></i><i class="icon-star"></i><i
-                                            class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i>
+                                    <div class="text-star">{{ (float) $restaurant->average_rating }} Star Avg</div>
+                                    <div class="stars">
+                                        @php
+                                            $rating = floor($restaurant->average_rating);
+                                            $fraction = $restaurant->average_rating - $rating;
+                                        @endphp
+                                        @for ($i = 0; $i < $rating; $i++)
+                                            <i class="icon-star"></i>
+                                        @endfor
+                                        @if ($fraction > 0)
+                                            <i class="icon-star-half"></i>
+                                        @endif
                                     </div>
                                 </div>
                             </div>
-                            <div class="scroll-y h-800">
-                                @foreach ($order_reviews as $key => $orderReview)
-                                @php
-                                    // dd($orderReview->reviews[$key]->selectRaw('AVG(orders.reviews.rating) as ratings_average')->groupBy('order_id'));
-                                    $avg_rating = '';
-                                @endphp
+                            <div class="scroll-y review-box-height">
+                                @foreach ($order_reviews as $orderReview)
                                     <div class="line-gradient">
                                         <table width="100%" class="reviewer mb-2">
                                             <tr>
-                                                <td>{{ \Carbon\Carbon::parse($orderReview->created_at)->format('d/m
+                                                <td>{{ \Carbon\Carbon::parse($orderReview->order->created_at)->format('d/m
                                                 Y') }}</td>
                                                 <td>
-                                                    <div class="name">{{$orderReview->user->first_name}}</div>
-                                                    <div class="order">Order {{$orderReview->reviews[$key]->order_id}}</div>
+                                                    <div class="name">{{$orderReview->order->user->first_name}}</div>
+                                                    <div class="order">Order #{{$orderReview->order->id}}</div>
                                                 </td>
-                                                <td><i class="icon-ok-circled"></i> ${{$orderReview->total}}</td>
+                                                <td><i class="icon-ok-circled"></i> ${{$orderReview->order->total}}</td>
                                             </tr>
                                         </table>
-                                        <div class="complete mb-2">Complete <i class="icon-star"></i><i
-                                                class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i><i
-                                                class="icon-star"></i></div>
-
-                                        <div class="d-flex justify-content-between align-items-end">
-                                            <div class="rvnote">{{$orderReview->reviews[$key]->comment}} </div>
-                                            <div class="ord-time">Order Time - {{ \Carbon\Carbon::parse($orderReview->created_at)->format('H:i') }}
+                                        <div class="complete mb-2">Complete
+                                            <div class="stars">
+                                                @for ($i=0; $i<(float) $orderReview->rating; $i++)
+                                                    <i class="icon-star"></i>
+                                                @endfor
                                             </div>
                                         </div>
+
+                                            <div class="rvnote mb-4">{{$orderReview->comment}} </div>
+                                            <div class="ord-time">Order Time - {{ \Carbon\Carbon::parse($orderReview->order->created_at)->format('H:i') }}
+                                            </div>
                                     </div>
                                 @endforeach
-                                {{-- <div class="line-gradient">
-                                    <table width="100%" class="reviewer mb-2">
-                                        <tr>
-                                            <td>12/09
-                                                2023</td>
-                                            <td>
-                                                <div class="name">A. Smithson </div>
-                                                <div class="order">Order #227721</div>
-                                            </td>
-                                            <td><i class="icon-ok-circled"></i> $81.00</td>
-                                        </tr>
-                                    </table>
-                                    <div class="complete mb-2">Complete <i class="icon-star"></i><i
-                                            class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i><i
-                                            class="icon-star"></i></div>
-
-                                    <div class="d-flex justify-content-between align-items-end">
-                                        <div class="rvnote">User written review can go here of it is an extended review the
-                                            box can drop down and the venue can see it. </div>
-                                        <div class="ord-time">Order Time - 09:43</div>
-                                    </div>
-
-                                </div>
-                                <div class="line-gradient">
-                                    <table width="100%" class="reviewer mb-2">
-                                        <tr>
-                                            <td>12/09
-                                                2023</td>
-                                            <td>
-                                                <div class="name">A. Smithson </div>
-                                                <div class="order">Order #227721</div>
-                                            </td>
-                                            <td><i class="icon-ok-circled"></i> $81.00</td>
-                                        </tr>
-                                    </table>
-                                    <div class="complete mb-2">Complete <i class="icon-star"></i><i
-                                            class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i><i
-                                            class="icon-star"></i></div>
-
-                                    <div class="d-flex justify-content-between align-items-end">
-                                        <div class="rvnote">This user left no review.</div>
-                                        <div class="ord-time">Order Time - 09:43</div>
-                                    </div>
-
-                                </div>
-                                <div class="line-gradient">
-                                    <table width="100%" class="reviewer mb-2">
-                                        <tr>
-                                            <td>12/09
-                                                2023</td>
-                                            <td>
-                                                <div class="name">A. Smithson </div>
-                                                <div class="order">Order #227721</div>
-                                            </td>
-                                            <td><i class="icon-ok-circled"></i> $81.00</td>
-                                        </tr>
-                                    </table>
-                                    <div class="complete mb-2">Complete <i class="icon-star"></i><i
-                                            class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i><i
-                                            class="icon-star"></i></div>
-
-                                    <div class="d-flex justify-content-between align-items-end">
-                                        <div class="rvnote">This user left no review.</div>
-                                        <div class="ord-time">Order Time - 09:43</div>
-                                    </div>
-
-                                </div>
-                                <div class="line-gradient">
-                                    <table width="100%" class="reviewer mb-2">
-                                        <tr>
-                                            <td>12/09
-                                                2023</td>
-                                            <td>
-                                                <div class="name">A. Smithson </div>
-                                                <div class="order">Order #227721</div>
-                                            </td>
-                                            <td><i class="icon-ok-circled"></i> $81.00</td>
-                                        </tr>
-                                    </table>
-                                    <div class="complete mb-2">Complete <i class="icon-star"></i><i
-                                            class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i><i
-                                            class="icon-star"></i></div>
-
-                                    <div class="d-flex justify-content-between align-items-end">
-                                        <div class="rvnote">This user left no review.</div>
-                                        <div class="ord-time">Order Time - 09:43</div>
-                                    </div>
-
-                                </div>
-                                <div class="line-gradient">
-                                    <table width="100%" class="reviewer mb-2">
-                                        <tr>
-                                            <td>12/09
-                                                2023</td>
-                                            <td>
-                                                <div class="name">A. Smithson </div>
-                                                <div class="order">Order #227721</div>
-                                            </td>
-                                            <td><i class="icon-ok-circled"></i> $81.00</td>
-                                        </tr>
-                                    </table>
-                                    <div class="complete mb-2">Complete <i class="icon-star"></i><i
-                                            class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i><i
-                                            class="icon-star"></i></div>
-
-                                    <div class="d-flex justify-content-between align-items-end">
-                                        <div class="rvnote">This user left no review.</div>
-                                        <div class="ord-time">Order Time - 09:43</div>
-                                    </div>
-
-                                </div>
-                                <div class="line-gradient">
-                                    <table width="100%" class="reviewer mb-2">
-                                        <tr>
-                                            <td>12/09
-                                                2023</td>
-                                            <td>
-                                                <div class="name">A. Smithson </div>
-                                                <div class="order">Order #227721</div>
-                                            </td>
-                                            <td><i class="icon-ok-circled"></i> $81.00</td>
-                                        </tr>
-                                    </table>
-                                    <div class="complete mb-2">Complete <i class="icon-star"></i><i
-                                            class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i><i
-                                            class="icon-star"></i></div>
-
-                                    <div class="d-flex justify-content-between align-items-end">
-                                        <div class="rvnote">This user left no review.</div>
-                                        <div class="ord-time">Order Time - 09:43</div>
-                                    </div>
-
-                                </div>
-                                <div class="line-gradient">
-                                    <table width="100%" class="reviewer mb-2">
-                                        <tr>
-                                            <td>12/09
-                                                2023</td>
-                                            <td>
-                                                <div class="name">A. Smithson </div>
-                                                <div class="order">Order #227721</div>
-                                            </td>
-                                            <td><i class="icon-ok-circled"></i> $81.00</td>
-                                        </tr>
-                                    </table>
-                                    <div class="complete mb-2">Complete <i class="icon-star"></i><i
-                                            class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i><i
-                                            class="icon-star"></i></div>
-
-                                    <div class="d-flex justify-content-between align-items-end">
-                                        <div class="rvnote">This user left no review.</div>
-                                        <div class="ord-time">Order Time - 09:43</div>
-                                    </div>
-
-                                </div> --}}
                             </div>
 
+                            @if ($order_reviews->total() > 10)
+                            <div class="review-pagination">
+                                {!! $order_reviews->links() !!}
+                            </div>
+                            @endif
                         </div>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-lg-12 col-xl-12 col-xxl-4 ">
                         <div class="grey-brd-box">
                             <div class="title">
                                 <h2>Venue Identity</h2> <a href="javascript:void(0);" class="edit venue_res_image">EDIT</a>
@@ -310,8 +163,6 @@
 
                 </div>
             </div>
-        </main>
-    </div>
 
     <!-- Global popup -->
     <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">

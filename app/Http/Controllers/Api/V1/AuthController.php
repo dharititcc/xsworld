@@ -232,6 +232,13 @@ class AuthController extends APIController
         {
             // Get user who requested the logout
             $user = auth()->user(); //or Auth::user()
+
+            // revoke device token
+            if( isset( $request->fcm_token ) )
+            {
+                $user->devices()->where('fcm_token', $request->fcm_token)->delete();
+            }
+
             // Revoke current user token
             $user->tokens()->where('id', $user->currentAccessToken()->id)->delete();
         }
@@ -468,7 +475,11 @@ class AuthController extends APIController
             'os_version'            => $request->os_version,
             'application_version'   => $request->application_version,
             'model'                 => $request->model,
-            'user_type'             => User::CUSTOMER
+            'user_type'             => User::CUSTOMER,
+            'points'                => User::SIGN_UP_POINTS,
+            'social_id'             => $request->social_id,
+            'referral_code'         => $request->referral_code,
+            'fcm_token'             => $request->fcm_token
         ];
 
         $user = $this->repository->create($dataArr);
@@ -514,7 +525,10 @@ class AuthController extends APIController
             'model'                 => $request->model,
             'user_type'             => User::CUSTOMER,
             'email_verified_at'     => Carbon::now(),
-            'social_id'             => $request->social_id
+            'social_id'             => $request->social_id,
+            'points'                => User::SIGN_UP_POINTS,
+            // 'social_id'             => $request->social_id,
+            'referral_code'         => $request->referral_code
         ];
 
         $user = $this->repository->Socialcreate($dataArr);
@@ -558,7 +572,7 @@ class AuthController extends APIController
 
         return $this->respond([
             'status'    =>  true,
-            'message'   =>  'OTP send succesfully',
+            'message'   =>  'OTP has been sent successfully',
         ]);
     }
 

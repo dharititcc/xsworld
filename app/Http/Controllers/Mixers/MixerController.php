@@ -24,12 +24,12 @@ class MixerController extends Controller
             $drinkCategories = $drinkCategory->children;
             $drinkSubCategory = $drinkCategory->children->pluck('id');
         }
-        $foodCategory  = $restaurant->main_categories()->with(['children'])->where('name', 'Food')->first();
-        if($foodCategory)
-        {
-            $foodCategories = $foodCategory->children;
-            $foodSubCategory = $foodCategory->children->pluck('id');
-        }
+        // $foodCategory  = $restaurant->main_categories()->with(['children'])->where('name', 'Food')->first();
+        // if($foodCategory)
+        // {
+        //     $foodCategories = $foodCategory->children;
+        //     $foodSubCategory = $foodCategory->children->pluck('id');
+        // }
 
         if ($request->ajax())
         {
@@ -58,7 +58,8 @@ class MixerController extends Controller
 
         return view('restaurant.mixer-list', [
             'drink_categories'  => isset($drinkCategories) ? $drinkCategories : [],
-            'food_categories'   => isset($foodCategories) ? $foodCategories : []
+            'food_categories'   => isset($foodCategories) ? $foodCategories : [],
+            'restaurant'        => $restaurant
         ]);
     }
 

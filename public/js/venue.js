@@ -78,12 +78,13 @@
                         'X-CSRF-TOKEN': jQuery('meta[name="csrf-token"]').attr('content')
                     },
                     success: function(res) {
-                        alert('opening Timming Updated successfully');
+                        // alert('opening Timming Updated successfully');
                         context.selectors.venueSubmitBtn.attr("style","display: none");
                         context.selectors.venueStartTime.attr("style","display: none");
                         context.selectors.venueCloseTime.attr("style","display: none");
                         context.selectors.venueLabelTime.show();
-                        location.reload();
+                        // location.reload();
+                        XS.Common.handleSwalSuccess('Opening Timming Updated successfully.');
                     },
                     error:function(request, status, error) {
                         console.log('Error');
@@ -112,10 +113,11 @@
                         'X-CSRF-TOKEN': jQuery('meta[name="csrf-token"]').attr('content')
                     },
                     success: function(res) {
-                        alert('Image Updated successfully');
+                        // alert('Image Updated successfully');
                         context.selectors.venueImageUpload.attr("style","display: none");
                         context.selectors.venueImgSubmitBtn.attr("style","display: none");
-                        location.reload();
+                        // location.reload();
+                        XS.Common.handleSwalSuccess('Image Updated successfully.');
                     },
                     error:function(request, status, error) {
                         console.log('Error');

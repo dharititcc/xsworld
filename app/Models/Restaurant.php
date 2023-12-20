@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
+use Illuminate\Support\Facades\DB;
 
 class Restaurant extends Model
 {
@@ -33,8 +34,12 @@ class Restaurant extends Model
         // 'address',
         'street1',
         'street2',
+        'country_id',
         'city',
         'state',
+        'type',
+        'start_date',
+        'end_date',
         'postcode',
         'phone',
         'specialisation',
@@ -81,16 +86,6 @@ class Restaurant extends Model
     public function orders(): HasMany
     {
         return $this->hasMany(Order::class, 'restaurant_id', 'id');
-    }
-
-    /**
-     * Get all of the ratings for the Restaurant
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasManyThrough
-     */
-    public function ratings(): HasManyThrough
-    {
-        return $this->hasManyThrough(OrderReview::class, Order::class, 'restaurant_id', 'order_id', 'id', 'id');
     }
 
     /**
@@ -215,13 +210,13 @@ class Restaurant extends Model
     }
 
     /**
-     * The items that belong to the Restaurant
+     * The restaurant_pickup_points that belong to the Restaurant
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function pickup_points(): HasMany
+    public function restaurant_pickup_points(): HasMany
     {
-        return $this->hasMany(PickupPoint::class, 'restaurant_id', 'id');
+        return $this->hasMany(RestaurantPickupPoint::class, 'restaurant_id', 'id');
     }
 
     /**
@@ -235,14 +230,38 @@ class Restaurant extends Model
     }
 
     /**
+     * Get all of the reviews for the Restaurant
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(OrderReview::class, 'restaurant_id', 'id');
+    }
+
+    /**
      * Method getAverageRatingAttribute
      *
      * @return float
      */
     public function getAverageRatingAttribute()
     {
-        $rating = $this->ratings()->average('rating');
-        return $rating ? $rating : 0;
+        $rating = $this->reviews()->avg('rating');
+        if( $rating == NULL && $rating == 0)
+        {
+            $rating = 5;
+        }
+        return $rating;
+    }
+
+    /**
+     * Method average
+     *
+     * @return mixed
+     */
+    public function avgReviewRating()
+    {
+        return $this->reviews()->select(DB::raw('avg(rating) as rate'))->first();
     }
 
     /**
@@ -296,5 +315,47 @@ class Restaurant extends Model
         }
 
         return $address;
+    }
+
+    /**
+     * Get Action Buttons Attribute
+     *
+     * @return string
+     */
+    public function getActionButtonsAttribute()
+    {
+        $buttons = '<div class="action-box">
+            ' . $this->getEditButtonAttribute('btn btn-warning btn-sm') . '
+            ' . $this->getDeleteButtonAttribute('btn btn-danger btn-sm') . '
+                <a class="act-btn" href="'.route('impersonate', $this->owners()->first()).'" title="Impersonate this user"><i class="icon-user"></i></a>
+            </div>';
+
+        return $buttons;
+    }
+
+    /**
+     * Get Edit Button Attribute
+     *
+     * @param string $class
+     * @return string
+     */
+    public function getEditButtonAttribute($class = '')
+    {
+        return '<a href="javascript:void(0);" class="act-btn create-restaurant" data-type="'.$this->type.'" data-id="'.$this->id.'"><i class="icon-pencil"></i></a>';
+        //'.route('admin.restaurant.edit', $this->id).'
+    }
+
+    /**
+     * Get Delete Button Attribute
+     *
+     * @param string $class
+     * @return string
+     */
+    public function getDeleteButtonAttribute($class = '')
+    {
+        // if(!$this->trashed())
+        // {
+            return '<a href="javascript:void(0);" class="act-btn res-delete" data-id="'.$this->id.'"><i class="icon-trash"></i></a>';
+        // } href="'.route('admin.restaurant.destroy', $this->id).'"
     }
 }

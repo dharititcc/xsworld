@@ -46,13 +46,13 @@ class RestaurantPickupPointSeeder extends Seeder
                                 foreach( $pickupPointArr as $pickupPoint )
                                 {
                                     // check if pickup point assigned to same bartender
-                                    $checkExist = $restaurant->pickup_points()->where('user_id', $bartender->id)->first();
+                                    $checkExist = $restaurant->restaurant_pickup_points()->where('user_id', $bartender->id)->first();
 
                                     if( !isset( $checkExist->id ) )
                                     {
                                         // TODO: same name of the pickup points for the different bartenders. Remove duplication please.
                                         $pickupPoint['user_id'] = $bartender->id;
-                                        $newPickupPoint = $restaurant->pickup_points()->create($pickupPoint);
+                                        $newPickupPoint = $restaurant->restaurant_pickup_points()->create($pickupPoint);
 
                                         $newPickupPoint->attachment()->create([
                                             'original_name' => str_replace(' ', '_', strtolower($pickupPoint['name'])).'.png',

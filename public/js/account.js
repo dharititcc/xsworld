@@ -44,6 +44,41 @@
             context.openBarModal();
             context.closeBarModal();
             context.pickupPointValidation();
+
+            context.passwordToggle();
+        },
+
+        passwordToggle: function()
+        {
+            var context = this;
+
+            jQuery('.show-password').on('click', function(e)
+            {
+                e.preventDefault();
+
+                var $this = $(this),
+                    type  = $this.attr('data-type');
+
+                    console.log(type);
+                if( type == 0 )
+                {
+                    $this.addClass('icon-eye');
+                    $this.removeClass('icon-eye-off');
+                    $this.attr('data-type', 1);
+
+                    // input type text
+                    $this.closest('.form-group').find('input').attr('type', 'text');
+                }
+                else
+                {
+                    $this.addClass('icon-eye-off');
+                    $this.removeClass('icon-eye');
+                    $this.attr('data-type', 0);
+
+                    // input type password
+                    $this.closest('.form-group').find('input').attr('type', 'password');
+                }
+            });
         },
 
         openWaiterModal: function()
@@ -184,9 +219,10 @@
                     'X-CSRF-TOKEN': jQuery('meta[name="csrf-token"]').attr('content')
                 },
                 success: function(res) {
-                    alert('Waiter has been submitted successfully');
+                    // alert('Waiter has been submitted successfully');
                     document.getElementById('addwaiterform').reset();
-                    location.reload(true);
+                    // location.reload(true);
+                    XS.Common.handleSwalSuccess('Waiter has been submitted successfully.');
                 },
                 error: function(jqXHR, exception)
                 {
@@ -345,9 +381,10 @@
                         'X-CSRF-TOKEN': jQuery('meta[name="csrf-token"]').attr('content')
                     },
                     success: function(res) {
-                        alert('Kitchen has been submitted successfully');
+                        // alert('Kitchen has been submitted successfully');
                         document.getElementById('addkitchenform').reset();
-                        location.reload(true);
+                        // location.reload(true);
+                        XS.Common.handleSwalSuccess('Kitchen has been submitted successfully.');
                     },
                     error: function(jqXHR, exception)
                     {
@@ -462,13 +499,16 @@
                     password: {
                         required:true,
                     },
+                    pickup_points: {
+                        required:true,
+                    },
                 },
                 messages: {
                     barpick_id: {
                         required: "Please enter barpick ID"
                     },
                     pickup_points: {
-                        required: "please select pickup points"
+                        required: "please select pickup location"
                     },
                     password: {
                         required: "Please enter Password"
@@ -487,7 +527,8 @@
                 if ($("#pickup_points").val() == "") {
                     e.preventDefault();
                     //If the "Please Select" option is selected display error.
-                    alert("Please select an option!");
+                    // alert("Please select an option!");
+                    XS.Common.handleSwalSuccessWithoutReload('Please select an option!');
                     return false;
                 }
                 return true;
@@ -535,9 +576,10 @@
                     'X-CSRF-TOKEN': jQuery('meta[name="csrf-token"]').attr('content')
                 },
                 success: function(res) {
-                    alert('Bar pick zone has been submitted successfully');
+                    // alert('Bar pick zone has been submitted successfully');
                     document.getElementById('addbarpickform').reset();
-                    location.reload(true);
+                    // location.reload(true);
+                    XS.Common.handleSwalSuccess('Bar pick zone has been submitted successfully.');
                 },
                 error: function(jqXHR, exception)
                 {

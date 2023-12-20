@@ -23,34 +23,64 @@ class Order extends Model
     const CART  = 1;
     const ORDER = 2;
 
+    // Customer status
     const PENDNIG                       = 0;
+    // const BAR_PENDING                   = 0;
+    const CUSTOMER_CANCELED             = 10;
+
+    // Bartender status
     const ACCEPTED                      = 1;
+    // const BAR_CONFIRM                   = 1;
     const READY                         = 2;
+    // const BAR_READY                     = 2;
     const COMPLETED                     = 3;
-    const RESTAURANT_CANCELED           = 4;
+    // const BAR_COMPLETED                 = 3;
+    const DELAY_ORDER                   = 9;
     const CONFIRM_PICKUP                = 5;
     const RESTAURANT_TOXICATION         = 6;
-    const PARTIAL_REFUND                = 7;
-    const FULL_REFUND                   = 8;
-    const DELAY_ORDER                   = 9;
-    const CUSTOMER_CANCELED             = 10;
+
+    // Kitchen status
     const READYFORPICKUP                = 11;
     const KITCHEN_CONFIRM               = 12;
+
+    //waiter status
+    const WAITER_PENDING                = 15;
+
+    
+    // Admin status
+    const PARTIAL_REFUND                = 7;
+    const FULL_REFUND                   = 8;
+
+    const RESTAURANT_CANCELED           = 4;
+
+    const DENY_ORDER                    = 13;
+
+    /** ORDER CATEGORY TYPES */
+    const DRINK= 0;
+    const FOOD = 1;
+    const BOTH = 2;
 
     const ORDER_STATUS = [
         self::PENDNIG                   => 'Pending',
         self::ACCEPTED                  => 'Accepted',
         self::READY                     => 'Ready',
         self::COMPLETED                 => 'Completed',
-        self::RESTAURANT_CANCELED       => 'Cancelled',
+        self::RESTAURANT_CANCELED       => 'Restaurant Cancelled',
         self::CONFIRM_PICKUP            => 'Order Pickup',
-        self::RESTAURANT_TOXICATION     => 'Cancel due to Intoxication',
+        self::RESTAURANT_TOXICATION     => 'Restaurant Toxication',
         self::PARTIAL_REFUND            => 'Partially Refund',
         self::FULL_REFUND               => 'Full Refund',
         self::DELAY_ORDER               => 'Delay Order',
-        self::CUSTOMER_CANCELED         => 'Cancelled by customer',
+        self::CUSTOMER_CANCELED         => 'Cancelled',
         self::READYFORPICKUP            => 'Kitchen ready for pickup',
         self::KITCHEN_CONFIRM           => 'Kitchen confirm order',
+        self::WAITER_PENDING            => 'Waiter Pending',
+        self::DENY_ORDER                => 'Deny Order',
+        // self::BAR_PENDING               => 'Bar pending',
+        // self::BAR_CONFIRM               => 'Bar accepted/Confirm order',
+        // self::BAR_READY                 => 'Bar ready',
+        // self::BAR_COMPLETED             => 'Bar completed',
+
     ];
 
     /**
@@ -65,22 +95,27 @@ class Order extends Model
         'pickup_point_id',
         'restaurant_table_id',
         'pickup_point_user_id',
+        'waiter_id',
         'type',
         'status',
+        'order_category_type',
         'card_id',
         'charge_id',
         'payment_method_id',
-        'credit_point',
+        'credit_amount',
         'amount',
         'transaction_id',
         'currency_id',
         'apply_time',
+        'last_delayed_time',
         'accepted_date',
+        'remaining_date',
         'cancel_date',
         'served_date',
         'completion_date',
         'total',
-        'cancel_reason'
+        'cancel_reason',
+        'refunded_id'
     ];
 
     /**
@@ -89,9 +124,10 @@ class Order extends Model
      * @var array
      */
     protected $casts = [
-        'created_at'    => 'datetime',
-        'updated_at'    => 'datetime',
-        'accepted_date' => 'datetime'
+        'created_at'        => 'datetime',
+        'updated_at'        => 'datetime',
+        'accepted_date'     => 'datetime',
+        'completion_date'   => 'datetime'
     ];
 
     /**
@@ -102,6 +138,26 @@ class Order extends Model
     public function getOrderStatusAttribute(): string
     {
         return self::ORDER_STATUS[$this->status];
+    }
+
+    /**
+     * Get the restaurant_table that owns the Order
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function restaurant_table(): BelongsTo
+    {
+        return $this->belongsTo(RestaurantTable::class, 'restaurant_table_id', 'id')->withTrashed();
+    }
+
+    /**
+     * Get the restaurant_waiter that owns the Order
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function restaurant_waiter(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'waiter_id', 'id');
     }
 
     /**
@@ -125,13 +181,13 @@ class Order extends Model
     }
 
     /**
-     * Get the pickup_point that owns the Order
+     * Get the restaurant_pickup_point that owns the Order
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function pickup_point(): BelongsTo
+    public function restaurant_pickup_point(): BelongsTo
     {
-        return $this->belongsTo(PickupPoint::class, 'pickup_point_id', 'id');
+        return $this->belongsTo(RestaurantPickupPoint::class, 'pickup_point_id', 'id');
     }
 
     /**
@@ -269,17 +325,24 @@ class Order extends Model
     {
         $remaining_time     = 0;
         $current_time       = Carbon::now();
-        if($this->updated_at)
+        $remaining_time     = $current_time->diffInSeconds($this->remaining_date);
+        $old_time           = Carbon::parse($this->remaining_date)->isPast();
+        if($old_time == true)
         {
-            $updated_time   = Carbon::parse($this->updated_at);
-            $apply_time     = $updated_time->addMinutes($this->apply_time);
-            $remaining_time = $current_time->diffInSeconds($apply_time);
-            $old_time       = Carbon::createFromFormat('Y-m-d H:i:s', $apply_time)->isPast();
-            if($old_time === true)
-            {
-                return 0;
-            }
+            return 0;
         }
+        // $current_time       = Carbon::now();
+        // if($this->accepted_date)
+        // {
+        //     $updated_time   = Carbon::parse($this->accepted_date);
+        //     $apply_time     = $updated_time->addMinutes($this->apply_time);
+        //     $remaining_time = $current_time->diffInSeconds($apply_time);
+        //     $old_time       = Carbon::createFromFormat('Y-m-d H:i:s', $apply_time)->isPast();
+        //     if($old_time === true)
+        //     {
+        //         return 0;
+        //     }
+        // }
         return $remaining_time;
     }
 

@@ -1,23 +1,28 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">Verification</div>
+<div class="d-flex flex-column justify-content-between h-100">
+    <div class="moudle-box">
+		<span>XSBar</span>
+		Terminal Module
+	</div>
 
-                <div class="card-body">
-                    @if (session('resent'))
-                        <div class="alert alert-success" role="alert">
-                            Your email verification is successfull. Please try to login.
-                        </div>
-                    @endif
+    <form class="form-signin" method="POST" action="{{ route('login') }}">
+        <div class="container text-center">
+            <img src="{{ asset('img/logo.png') }}" alt="" class="logo">
 
-                    Your verification is successfull. Please try to login from your app.
-                </div>
+            <div class="form-group green-box">
+                @if (session('resent'))
+                    <div class="alert alert-success" role="alert">
+                        Your email verification is successfull. Please try to login.
+                    </div>
+                @endif
+
+                Your verification is successfull. Please try to login from your app.
             </div>
         </div>
-    </div>
+    </form>
+
+    <div class="moudle-box">Version 0.1</div>
 </div>
 @endsection

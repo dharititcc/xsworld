@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Drinks;
 
+use App\Exceptions\GeneralException;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\RestaurantItem;
@@ -9,6 +10,7 @@ use App\Models\Category;
 use App\Models\Restaurant;
 use App\Models\RestaurantVariation;
 use DataTables;
+use Illuminate\Support\Facades\DB;
 
 class DrinkController extends Controller
 {
@@ -21,7 +23,7 @@ class DrinkController extends Controller
     {
         $subcategory = array();
         $categories = array();
-        $restaurant = session('restaurant')->loadMissing(['main_categories']);
+        $restaurant = session('restaurant')->loadMissing(['main_categories', 'country']);
         $category = $restaurant->main_categories()->with(['children'])->where('name', 'Drinks')->first();
         if($category)
         {
@@ -38,8 +40,18 @@ class DrinkController extends Controller
             {    //not available
                 $data =  $this->updateItemAvailable($request->get('disable'), 0);
             }
-            $data = RestaurantItem::query()->groupBy('name')
+            $data = RestaurantItem::select([
+                'restaurant_items.id',
+                'restaurant_items.name',
+                'restaurant_items.type',
+                'categories.name AS category_name',
+                'restaurant_items.is_available',
+                'restaurant_items.is_featured',
+                'restaurant_items.created_at',
+                'restaurant_items.price'
+            ])
                     ->with(['category', 'restaurant','variations'])
+                    ->leftJoin('categories', 'categories.id', '=', 'restaurant_items.category_id')
                     ->whereHas('restaurant', function($query) use($restaurant)
                     {
                         return $query->where('restaurants.id', $restaurant->id)->where('restaurant_items.type',RestaurantItem::ITEM);
@@ -69,7 +81,12 @@ class DrinkController extends Controller
                 ->make(true);
         }
 
-        return view('restaurant.drinks-list')->with('categories',$categories);
+        return view('restaurant.drinks-list')->with(
+            [
+                'categories' => $categories,
+                'restaurant' => $restaurant
+            ]
+        );
     }
 
     /**
@@ -112,6 +129,13 @@ class DrinkController extends Controller
                 "restaurant_id"         => $restaurant->id
             ];
 
+            // check if product exist
+
+            if( $this->checkUniqueDrink($request, $restaurant) )
+            {
+                throw new GeneralException('The Product is already exist.');
+            }
+
             $newRestaurantItem = RestaurantItem::create($drinkArr);
             $variationArr = [];
             if($drinkArr['is_variable'] == 1)
@@ -142,6 +166,20 @@ class DrinkController extends Controller
         return $newRestaurantItem->refresh();
     }
 
+     /**
+     * Method checkUniqueDrink
+     *
+     * @param Request $request [explicite description]
+     * @param Restaurant $restaurant [explicite description]
+     *
+     * @return int
+     */
+    private function checkUniqueDrink(Request  $request, Restaurant $restaurant)
+    {
+        $text = strtolower($request->name);
+        return RestaurantItem::whereRaw(DB::raw("LOWER(`name`) = '{$text}'"))->where('restaurant_id', $restaurant->id)->count();
+    }
+
     /**
      * Display the specified resource.
      *
@@ -150,13 +188,11 @@ class DrinkController extends Controller
      */
     public function show(RestaurantItem $drink)
     {
-        $categories = RestaurantItem::query()->select('category_id')->where('restaurant_id', $drink->restaurant_id)->where('type', RestaurantItem::ITEM)->where('name', $drink->name)->groupBy('category_id')->pluck('category_id')->toArray();
-
         $restaurantVariation = RestaurantVariation::select('name','price')->where('restaurant_item_id',$drink->id)->get()->toArray();
         $data = [
             'name'          => $drink->name,
             'price'         => $drink->price,
-            'categories'    => $categories,
+            'categories'    => [$drink->category_id],
             'image'         => $drink->attachment ? asset('storage/items/'.$drink->attachment->stored_name) : '',
             'restaurant_id' => $drink->restaurant_id,
             'ingredients'   => $drink->ingredients,
@@ -277,7 +313,6 @@ class DrinkController extends Controller
         //
     }
 
-    
     public function favoriteStatusUpdate(Request $request)
     {
         $restaurant = session('restaurant');

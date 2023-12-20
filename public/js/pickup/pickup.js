@@ -34,7 +34,7 @@ $(document).ready(function() {
         $this.find('#pickupForm').find('#pickup_id').val('');
         var $alertas = $('#pickupForm');
         $alertas.validate().resetForm();
-        $alertas.find('.error').removeClass('error');
+        $this.find('#pickupForm').find('.error').remove();
     });
 
     //image preview
@@ -63,7 +63,8 @@ $(document).ready(function() {
             }
         });
     } else {
-        alert("Your browser doesn't support to File API")
+        // alert("Your browser doesn't support to File API")
+        XS.Common.handleSwalSuccessWithoutReload("Your browser doesn't support to File API.");
     }
 
     $("#sidebarToggle1").on('click',function(e){
@@ -87,6 +88,8 @@ $('#pickup_submitBtn').click(function(e) {
                 },
                 files: {
                     required:true,
+                    accept: "image/*",
+                    extension: "png|jpg|jpeg",
                 },
             },
             messages: {
@@ -95,10 +98,11 @@ $('#pickup_submitBtn').click(function(e) {
                     maxlength: "Your name maxlength should be 50 characters long."
                 },
                 files: {
-                    required: "Please upload Images"
-                }
+                    required: "Please select a file to upload",
+                    extension: "Please upload a file with a valid extension (png, jpg, or jpeg)",
+                },
             },
-            
+
             submitHandler: function(form) {
                 formsubmit(form)
             }
@@ -110,12 +114,21 @@ $('#pickup_submitBtn').click(function(e) {
                     required: true,
                     maxlength: 50
                 },
+                files: {
+                    required:true,
+                    accept: "image/*",
+                    extension: "png|jpg|jpeg",
+                },
             },
             messages: {
                 name: {
                     required: "Please enter name",
                     maxlength: "Your name maxlength should be 50 characters long."
-                }
+                },
+                files: {
+                    required: "Please select a file to upload",
+                    extension: "Please upload a file with a valid extension (png, jpg, or jpeg)",
+                },
             },
             submitHandler: function(form) {
                 formsubmit(form);
@@ -138,7 +151,7 @@ function formsubmit(form) {
         pickup_id = $('#pickup_id').val();
         photo = $('#upload').prop('files')[0];
         types = $('#types').val();
-    
+
     data.append('name',name);
     data.append('photo',photo);
     data.append('pickup_id',pickup_id);
@@ -149,6 +162,16 @@ function formsubmit(form) {
         route = routeUpdate.replace(':ID', pickup_id),
         data.append('_method','PUT');
     }
+
+    jQuery(form).find('.error').remove();
+
+    if( jQuery(form).find('.pip').length == 0 )
+    {
+        jQuery(form).find('input[type="file"]').closest('.image_box').after(`<span class="error mb-2 d-block">The image field is required.</span>`);
+        $('#pickup_submitBtn').html('Save');
+        $("#pickup_submitBtn").removeAttr("disabled");
+        return false;
+    }
     
     $.ajax({
         url:route,
@@ -157,11 +180,45 @@ function formsubmit(form) {
         processData: false,
         contentType: false,
         success: function(res) {
-            $('#pickup_submitBtn').html('Submit');
-            $('#pickup_submitBtn').attr('disabled',false);
-            alert('Pickup point has been submitted successfully');
+            // alert('Pickup point has been submitted successfully');
             document.getElementById('pickupForm').reset();
-            location.reload(true);
+            // location.reload(true);
+            XS.Common.handleSwalSuccess('Pickup point has been submitted successfully.');
+        },
+        error: function(xhr)
+        {
+            if( xhr.status === 422 )
+            {
+                var {error} = xhr.responseJSON,
+                    fields  = jQuery(form).find('input[type="file"]'),
+                    messages= error.message;
+
+                $.each(messages, function(eIndex, eMessage)
+                {
+                    fields.each(function(index, elem)
+                    {
+                        if( jQuery(elem).attr('type') == 'file' )
+                        {
+                            jQuery(elem).closest('.image_box').after(`<span class="error mb-2 d-block">${eMessage[0]}</span>`);
+                        }
+                        else
+                        {
+                            jQuery(elem).after(`<span class="error">${eMessage[0]}</span>`);
+                        }
+                    });
+                });
+            }
+
+            if( xhr.status === 403 )
+            {
+                var {error} = xhr.responseJSON;
+                jQuery(form).find('input[type="text"]').after(`<span class="error">${error.message}</span>`)
+            }
+        },
+        complete: function()
+        {
+            $('#pickup_submitBtn').html('Save');
+            $('#pickup_submitBtn').attr('disabled',false);
         }
     });
 }
@@ -184,7 +241,11 @@ function updatePickup(id) {
             <i class="icon-trash remove"></i>
             </div>`;
             $('.image_box').children('.pip').remove();
-            $('#upload').after(image);
+            if( res.data.image!= "" )
+            {
+                $("#upload").after(image);
+            }
+            // $('#upload').after(image);
             $('.remove').click(function() {
                 $(this).parent('.pip').remove();
             });

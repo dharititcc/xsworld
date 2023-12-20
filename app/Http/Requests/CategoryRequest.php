@@ -24,8 +24,22 @@ class CategoryRequest extends FormRequest
     public function rules()
     {
         return [
-            'name'            => 'required|string',
-            'image'             => 'required|string'
+            'name'            => 'required|string|max:20',
+            'photo'           => 'required|image'
+        ];
+    }
+
+    /**
+     * Get custom messages for validator errors.
+     *
+     * @return array
+     */
+    public function messages()
+    {
+        return [
+            'name.required' => 'The category name field is required.',
+            'name.string'   => 'The category name contains string.',
+            'name.max'      => 'The category name should contain only 20 characters.'
         ];
     }
 }

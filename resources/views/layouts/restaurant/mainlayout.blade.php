@@ -33,6 +33,21 @@
             {
                 body.classList.remove('home')
             }
+
+            if( pathname == '/restaurants/orders' || pathname == '/analytics' )
+            {
+                body.classList.add('orders');
+            }
+            else
+            {
+                body.classList.remove('orders')
+            }
+
+            $('#sidebarToggle1').on('click', function(e) {
+                e.preventDefault();
+
+                $('body').removeClass('sb-sidenav-toggled');
+            });
         </script>
         @yield('pagescript')
     </body>

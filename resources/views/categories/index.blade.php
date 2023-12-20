@@ -36,15 +36,10 @@
                                 </figure>
                             </div>
                         @endforeach
-                        {{-- <a href="javascript:void(0);" onClick="getCategory({{ $category->id }})" data-parent="{{ $category->name }}" data-bs-toggle="modal"
-                            data-bs-target="#exampleModal" class="catg-box add overly">
-                            <figure><i class="icon-plus"> </i></figure>
-                            <!--<input type="text" required="" autofocus=""> -->
-                        </a> --}}
+                        @endif
                         <a href="javascript:void(0);" data-parent="{{ $category->name }}" data-parent_id="{{ $category->id }}" data-type="Add" class="catg-box add overly category_model">
                             <figure><i class="icon-plus"> </i></figure>
                         </a>
-                    @endif
                 </div>
                 @if ($categories->count() !== $cnt)
                     <div class="gldnline-sepr mb-5 mt-5"></div>
@@ -84,17 +79,18 @@
                             <div class="form-group mb-4">
                                 <input type="text" name="name" class="form-control vari2" placeholder="Category Name">
                                 <input id="category_id" type="hidden" class="category_id" name="category_id" />
+                                <span class="error" id="duplicate_category"></span>
                             </div>
                             <div class="form-group mb-4">
                                 <input id="cat_id" type="hidden" class="cat_id" name="cat_id" />
                             </div>
-                            <div class="form-group grey-brd-box custom-upload mb-5 image_box">
+                            <div class="grey-brd-box custom-upload image_box">
                                 <input id="upload" type="file" class="files" name="image" accept="image/*" hidden />
                                 <label for="upload"><span> Add Category Feature Image (This can be changed).</span> <i
                                         class="icon-plus"></i></label>
                             </div>
                         </div>
-                        <button class="bor-btn w-100 font-26" id="submitBtn" type="submit">Save</button>
+                        <button class="bor-btn w-100 font-26 mt-4" id="submitBtn" type="submit">Save</button>
                     </form>
                 </div>
             </div>
@@ -203,15 +199,10 @@
 
                 $this.find('#categorypopup').find('.pip').remove();
                 $this.find('#categorypopup').find('#category_id').val('');
+                $this.find('#categorypopup').find('#duplicate_category').text('');
                 var $alertas = $('#categorypopup');
                 $alertas.validate().resetForm();
-                $alertas.find('.error').removeClass('error');
-            });
-
-            $('#sidebarToggle1').on('click', function(e) {
-                e.preventDefault();
-
-                $('body').removeClass('sb-sidenav-toggled');
+                $alertas.find('.error').remove();
             });
         });
 
@@ -220,6 +211,7 @@
     });
 
     $('#submitCatBtn').on("click", function() {
+        var $this = $(this);
         $.ajaxSetup({
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -228,30 +220,40 @@
 
                 $('#submitBtn').html('Please Wait...');
                 $("#submitBtn").attr("disabled", true);
-                
+
                 var data = new FormData(),
                     cat_name = $( ".cat_name option:selected" ).text();
 
                     console.log(cat_name);
                 data.append('name', cat_name);
-               
+
                 $.ajax({
                     url: moduleConfig.categoryName,
                     type: "POST",
                     data: data,
                     processData: false,
                     contentType: false,
-                    success: function(response) {
-                        console.log(response);
+                    success: function(response)
+                    {
+                        $("#cat_modal").modal('hide');
+                        XS.Common.handleSwalSuccess('Category form has been submitted successfully');
+                    },
+                    error: function(xhr)
+                    {
+                        if( xhr.status == 403 )
+                        {
+                            var {error} = xhr.responseJSON;
+                            $this.closest('#add_form_category').find('.cat_name').after(`<span class="error">${error.message}</span>`);
+                        }
+                    },
+                    complete: function()
+                    {
                         $('#submitBtn').html('Submit');
                         $("#submitBtn").attr("disabled", false);
-                        alert('Category form has been submitted successfully');
-                        document.getElementById("add_form_category").reset();
-                        location.reload(true);
                     }
                 });
     });
-        //if ($("#categorypopup").length > 0) {
+
     $('#submitBtn').click(function(e)
     {
         var crudetype = $('#exampleModal').data('crudetype'); //getter
@@ -260,12 +262,12 @@
                 $("#categorypopup").validate({
                 rules: {
                     name: {
-                        required: true,
                         maxlength: 20
                     },
                     image: {
                         required: true,
                     },
+
                     message: {
                         required: true
                     },
@@ -273,10 +275,10 @@
                 messages: {
                     name: {
                         required: "Please enter name",
-                        maxlength: "Your name maxlength should be 50 characters long."
+                        maxlength: "Your name maxlength should be 20 characters long."
                     },
                     image: {
-                        required: "Please enter files", //accept: 'Not an image!'
+                        required: "Please upload files", //accept: 'Not an image!'
                     }
                 },
                 submitHandler: function(form) {
@@ -289,7 +291,6 @@
             $("#categorypopup").validate({
                 rules: {
                     name: {
-                        required: true,
                         maxlength: 20
                     },
                     message: {
@@ -299,7 +300,7 @@
                 messages: {
                     name: {
                         required: "Please enter name",
-                        maxlength: "Your name maxlength should be 50 characters long."
+                        maxlength: "Your name maxlength should be 20 characters long."
                     }
                 },
                 submitHandler: function(form) {
@@ -308,7 +309,8 @@
             });
         }
     });
-    function formsubmit(from){
+    function formsubmit(form)
+    {
         $.ajaxSetup({
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -326,17 +328,31 @@
                     photo = $('#upload').prop('files')[0];
 
                 data.append('name', name);
-                data.append('photo', photo);
+                if( $('#upload').prop('files').length > 0 )
+                {
+                    data.append('photo', photo);
+                }
                 data.append('category_id', category_id);
                 data.append('parent_id', parent_id);
-                console.log(crudetype);
+
                 if (crudetype === 1) {
                     route = moduleConfig.addCategory;
                 } else {
                     route = moduleConfig.updateCategory.replace(':ID', category_id),
                     data.append('_method', 'PUT');
                 }
-                console.log(route);
+
+                // remove error classes
+                jQuery(form).find('.error').remove();
+
+                if( jQuery(form).find('.pip').length == 0 )
+                {
+                    jQuery(form).find('input[type="file"]').closest('.image_box').after(`<span class="error mb-2 d-block">The image field is required.</span>`);
+                    $('#submitBtn').html('Save');
+                    $("#submitBtn").removeAttr("disabled");
+                    return false;
+                }
+
                 $.ajax({
                     url: route,
                     type: "POST",
@@ -346,113 +362,161 @@
                     success: function(response) {
                         $('#submitBtn').html('Submit');
                         $("#submitBtn").attr("disabled", false);
-                        alert('Category form has been submitted successfully');
-                        document.getElementById("categorypopup").reset();
-                        location.reload(true);
+                        $("#exampleModal").modal('hide');
+                        XS.Common.handleSwalSuccess('Category form has been submitted successfully');
+                    },
+                    error: function(xhr)
+                    {
+                        if( xhr.status === 422 )
+                        {
+                            var {error} = xhr.responseJSON,
+                                fields  = jQuery(form).find('input[type="text"], input[type="file"]'),
+                                messages= error.message;
+
+                            $.each(messages, function(eIndex, eMessage)
+                            {
+                                fields.each(function(index, elem)
+                                {
+                                    if( jQuery(elem).attr('name') ==  eIndex)
+                                    {
+                                        if( jQuery(elem).attr('type') == 'file' )
+                                        {
+                                            jQuery(elem).closest('.image_box').after(`<span class="error mb-2 d-block">${eMessage[0]}</span>`);
+                                        }
+                                        else
+                                        {
+                                            jQuery(elem).after(`<span class="error">${eMessage[0]}</span>`);
+                                        }
+                                    }
+                                });
+                            });
+                        }
+
+                        if( xhr.status === 403 )
+                        {
+                            var {error} = xhr.responseJSON;
+                            jQuery(form).find('input[type="text"]').after(`<span class="error">${error.message}</span>`)
+                        }
+                    },
+                    complete: function()
+                    {
+                        $('#submitBtn').html('Save');
+                        $("#submitBtn").removeAttr("disabled");
                     }
                 });
     }
 
-        function getCategory(id) {
-            $('#category_id').val(id);
-            $('#exampleModal').data('crudetype', 1);
-            $('.model_title').html('Add ');
-        }
+    function getCategory(id)
+    {
+        $('#category_id').val(id);
+        $('#exampleModal').data('crudetype', 1);
+        $('.model_title').html('Add ');
+    }
 
-        function updateCategory(id) {
-            $('.model_title').html('Edit ');
-            $('#cat_id').val(id);
-            $.ajax({
-                url: moduleConfig.getCategory.replace(':ID', id),
-                type: "GET",
-                success: function(response) {
-                    console.log(response);
-                    $("input[name=name]").val(response.data.name);
-                   // $("input[name=file]").val(response.data.image);
-                    var image = `
-                                    <div class="pip">
-                                        <img class="imageThumb" src="${ response.data.image!="" ? response.data.image : '#'}" title="" />
-                                        <i class="icon-trash remove"></i>
-                                    </div>
-                                `;
+    function updateCategory(id)
+    {
+        $('.model_title').html('Edit ');
+        $('#cat_id').val(id);
+        $.ajax({
+            url: moduleConfig.getCategory.replace(':ID', id),
+            type: "GET",
+            success: function(response) {
+                console.log(response);
+                $("input[name=name]").val(response.data.name);
+                // $("input[name=file]").val(response.data.image);
+                var image = `
+                                <div class="pip">
+                                    <img class="imageThumb" src="${ response.data.image!="" ? response.data.image : '#'}" title="${response.data.image_name}" />
+                                    <i class="icon-trash remove"></i>
+                                </div>
+                            `;
 
-                    $(".image_box").children('.pip').remove();
-                    if( response.data.image!= "" )
-                    {
-                        $("#upload").after(image);
-                    }
-                    $(".remove").click(function() {
-                        $(this).parent(".pip").remove();
-                    });
-                    $('#exampleModal').data('crudetype', 0);
-                    $('#exampleModal').modal('show');
-                },
-                error: function(data) {}
-            });
-        }
-        $(function() {
-            $('#disable').click(function(e) {
-                e.preventDefault();
-                $.confirmModal('<label>Are you sure you want to do this?</label>', function(el) {
-                    var data = [];
-                    var i = 0;
-                    data['disable'] = $.map($('input[name="id"]:checked'), function(c) {
-                        return c.value;
-                    })
-                    $('.drink_datatable').DataTable().destroy();
-                    load_data(data);
-                    //console.log(data);
+                $(".image_box").children('.pip').remove();
+                if( response.data.image!= "" )
+                {
+                    $("#upload").after(image);
+                }
+                $(".remove").click(function() {
+                    $(this).parent(".pip").remove();
                 });
+                $('#exampleModal').data('crudetype', 0);
+                $('#exampleModal').modal('show');
+            },
+            error: function(data) {}
+        });
+    }
+    $(function()
+    {
+        $('#disable').click(function(e) {
+            e.preventDefault();
+            $.confirmModal('<label>Are you sure you want to do this?</label>', function(el) {
+                var data = [];
+                var i = 0;
+                data['disable'] = $.map($('input[name="id"]:checked'), function(c) {
+                    return c.value;
+                })
+                $('.drink_datatable').DataTable().destroy();
+                load_data(data);
             });
         });
+    });
 
-        $('.show_confirm').click(function(event) {
-            event.preventDefault();
-            swal({
-                title: `Are you sure you want to delete this Records?`,
-                icon: "warning",
-                buttons: true,
-                dangerMode: true,
-            })
-                .then((willDelete) => {
-                    if (willDelete) {
-                        var category = [],
-                            form     = $(this).closest('form');
+    $('.show_confirm').click(function(event)
+    {
+        event.preventDefault();
+        swal({
+            title: `Are you sure you want to delete this Records?`,
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        })
+        .then((willDelete) => {
+            if (willDelete) {
+                var category = [],
+                    form     = $(this).closest('form');
 
-                        if( form.get(0) )
+                if( form.get(0) )
+                {
+                    category.push(form.closest('.catg-box').find('figure').data('child_id'));
+                }
+                else
+                {
+                    $.each($("input[name='category']:checked"), function(i) {
+                        category[i] = $(this).val();
+                    });
+                }
+
+                $.ajax({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    url: "categories/multidelete",
+                    type: "POST",
+                    data: {
+                        category
+                    },
+                    success: function(response) {
+                        if( category.length > 1 )
                         {
-                            category.push(form.closest('.catg-box').find('figure').data('child_id'));
+                            XS.Common.handleSwalSuccess('Categories deleted successfully.');
                         }
                         else
                         {
-                            $.each($("input[name='category']:checked"), function(i) {
-                                category[i] = $(this).val();
-                            });
+                            XS.Common.handleSwalSuccess('Category deleted successfully.');
                         }
-                        console.log(category);
-                        $.ajax({
-                            headers: {
-                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                            },
-                            url: "categories/multidelete",
-                            type: "POST",
-                            data: {
-                                category
-                            },
-                            success: function(response) {
-                                if( category.length > 1 )
-                                {
-                                    alert('Categories deleted successfully.');
-                                }
-                                else
-                                {
-                                    alert('Category deleted successfully.');
-                                }
-                                location.reload(true);
-                            }
+                    },
+                    error: function(xhr, errors)
+                    {
+                        swal({
+                            title: xhr.responseJSON.error.message,
+                            icon: "warning",
+                            buttons: true,
+                            dangerMode: true,
                         });
                     }
                 });
+            }
         });
+    });
     </script>
 @endsection

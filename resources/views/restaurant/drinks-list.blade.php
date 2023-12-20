@@ -34,11 +34,9 @@
             <table width="100%" class="drink_datatable">
                 <thead>
                     <tr valign="middle">
-                        <th><label class="cst-check"><input type="checkbox" id="allcheck" value=""><span
-                                    class="checkmark"></span></label></th>
-                        <th>
-                            Name
-                        </th>
+                        <th class="dt-left"><label class="cst-check"><input type="checkbox" id="allcheck" value=""><span class="checkmark"></span></label></th>
+                        <th>Name</th>
+                        <th>Category</th>
                         <th class="type">Type</th>
                         <th class="price">Price</th>
                         <th class="popularity">Popularity</th>
@@ -77,23 +75,20 @@
                                 <a href="javascript:void(0);" class="bor-btn product_type active" data-product_type="0">Simple</a>
                                 <a href="javascript:void(0);" class="bor-btn product_type" data-product_type="1">Variable</a>
                             </div>
-                            {{-- <div class="grey-brd-box d-flex featured-img">
-                                <a href="#" class="add-edit"><i class="icon-plus"></i></a>
-                                <span class="img-text">Product Image</span>
-                            </div> --}}
-                            <div class="form-group grey-brd-box d-flex featured-img">
+                            <div class="grey-brd-box d-flex featured-img">
                                 <input id="upload" type="file" class="files" name="image" accept="image/*" hidden />
-                                <label for="upload"><span> Product Image</span> <i
-                                        class="icon-plus"></i></label>
+                                <label for="upload" class="lbl-upload"><span class="img-text"> Product Image</span> <i
+                                        class="icon-plus add-edit"></i></label>
                             </div>
-                            <input type="text" name="price" id="price" class="form-control vari2 mb-3" placeholder="Enter Price">
+                            <input type="text" name="price" id="price" class="form-control vari2 mb-3 show-error-info" placeholder="Enter Price">
 
                         </div>
                         <div class="col-md-8">
                             <div class="form-group mb-4">
-                                <input type="text" name="name" id="name" class="form-control vari3" placeholder="Product Name">
+                                <input type="text" name="name" id="name" class="form-control vari3 duplicate_product" placeholder="Product Name">
                                 <input id="product_type" type="hidden" class="product_type" name="is_variable" />
                                 <input id="is_featured" type="hidden" class="is_featured" name="is_featured" />
+                                {{-- <span class="error" id="duplicate_product"></span> --}}
                             </div>
                             <div class="grid colmn-5 cstm-catgory">
                                 @foreach ($categories as $category)
@@ -137,9 +132,9 @@
                     <div class="prd-variation" style="display: none">
                         <div class="head">
                             <h2 class="yellow">Drink Variations</h2>
-                            <div class="add-remove"><a href="javascript:void(0);" class="bor-btn plus remove_variation" type="button"><i
+                            {{-- <div class="add-remove"><a href="javascript:void(0);" class="bor-btn plus remove_variation" type="button"><i
                                         class="icon-plus"></i></a> <a href="javascript:void(0);" class="bor-btn minus"
-                                    type="button"><i class="icon-minus"></i></a></div>
+                                    type="button"><i class="icon-minus"></i></a></div> --}}
                         </div>
                         <div class="variety grid colmn-7">
                             {{-- <div class="grey-brd-box item-box">
@@ -196,6 +191,7 @@
         drinkUpdate: "{!! route('restaurants.drinks.update', ':ID') !!}",
         drinkGet: "{!! route('restaurants.drinks.show', ':ID') !!}",
         favoriteStatusUpdate: "{!! route('restaurants.favoriteStatusUpdate') !!}",
+        currency: "{!! $restaurant->country->symbol !!}"
     };
 
     $(document).ready(function()

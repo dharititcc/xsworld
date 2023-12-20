@@ -10,7 +10,12 @@ use App\Http\Requests\UpdateProfileRequest;
 use App\Http\Requests\ChangePasswordRequest;
 use App\Http\Requests\DeleteCardRequest;
 use App\Http\Requests\FetchCardRequest;
+use App\Http\Requests\PurchaseGiftCardRequest;
 use App\Http\Requests\UserFavouriteItemsRequest;
+use App\Http\Resources\SpinWinningResource;
+use App\Http\Resources\UserReferralResource;
+use App\Models\Spin;
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;
 
@@ -423,5 +428,134 @@ class UserController extends APIController
         }
 
         throw new GeneralException('Mark default credit card is failed.');
+    }
+
+    /**
+     * Method purchaseGiftCard
+     *
+     * @param PurchaseGiftCardRequest $request [explicite description]
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function purchaseGiftCard(PurchaseGiftCardRequest $request)
+    {
+        $gift_card = $this->repository->purchaseGiftCard($request->validated());
+
+        if( $gift_card )
+        {
+            return $this->respondSuccess('Gift card purchased successfully');
+        }
+
+        throw new GeneralException('Gift card purchase failed.');
+    }
+
+    /**
+     * Method redeemGiftCard
+     *
+     * @param Request $request [explicite description]
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function redeemGiftCard(Request $request)
+    {
+        $input              = $request->all();
+        $redeem_gift_card   = $this->repository->redeemGiftCard($input);
+        if( $redeem_gift_card )
+        {
+            return $this->respondSuccess('Gift card redeemed successfully',$redeem_gift_card);
+        }
+        throw new GeneralException('Gift card redeemed failed.');
+    }
+
+    /**
+     * Method referralList
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function referralList()
+    {
+        $referral_list        = $this->repository->getreferralList();
+
+        if( $referral_list->count() )
+        {
+            return $this->respondSuccess('Referral list Found.', UserReferralResource::collection($referral_list));
+        }
+
+        return $this->respondWithError('Referral not found.');
+    }
+
+    /**
+     * Method shareReferral
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function shareReferral()
+    {
+        $share_referral     = $this->repository->shareReferral();
+    }
+
+    /**
+     * Method getSpinResult
+     *
+     * @param Request $request [explicite description]
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getSpinResult(Request $request)
+    {
+        $resultOneX     = (int) $this->repository->getSpinResult(Spin::ONE_X);
+        $resultFiveX    = (int) $this->repository->getSpinResult(Spin::FIVE_X);
+        $resultTenX     = (int) $this->repository->getSpinResult(Spin::TEN_X);
+
+        return $this->respond([
+            'status' => true,
+            'message'=> 'Spin result before you spin.',
+            'item'   => [
+                'one_x'     => $resultOneX,
+                'five_x'    => $resultFiveX,
+                'ten_x'     => $resultTenX,
+            ]
+        ]);
+    }
+
+    /**
+     * Method storeSpin
+     *
+     * @param Request $request [explicite description]
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function storeSpin(Request $request)
+    {
+        $spin = $this->repository->storeSpin($request->all());
+
+        $resultOneX     = (int) $this->repository->getSpinResult(Spin::ONE_X);
+        $resultFiveX    = (int) $this->repository->getSpinResult(Spin::FIVE_X);
+        $resultTenX     = (int) $this->repository->getSpinResult(Spin::TEN_X);
+
+        return $this->respondSuccess('Spin stored successfully.', [
+            'one_x'     => $resultOneX,
+            'five_x'    => $resultFiveX,
+            'ten_x'     => $resultTenX,
+        ]);
+    }
+
+    /**
+     * Method myWinning
+     *
+     * @param Request $request [explicite description]
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function myWinning(Request $request)
+    {
+        $result = $this->repository->myWinning();
+
+        if( $result->count() )
+        {
+            return $this->respondSuccess('Winning list found.', SpinWinningResource::collection($result));
+        }
+
+        throw new GeneralException('There is no winning in the spin game yet.');
     }
 }

@@ -192,6 +192,15 @@ class OrderController extends APIController
         }
     }
 
+    public function rankBenefits()
+    {
+        $data       =   $this->repository->getRankBenifit();
+        if($data)
+        {
+            return $this->respondSuccess('Rank data found', $data);
+        }
+    }
+
     /**
      * Method deleteItem
      *
@@ -308,5 +317,24 @@ class OrderController extends APIController
         }
 
         return $this->respondWithError('Feedback is not received.');
+    }
+
+    /**
+     * Method reOrder
+     *
+     * @param Request $request [explicite description]
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function reOrder(Request $request)
+    {
+        $input      = $request->all();
+        $reorder    = $this->repository->reOrder($input);
+
+        if(isset($reorder->id))
+        {
+            return $this->respondSuccess('Cart data found', new OrderResource($reorder));
+        }
+        return $this->respondWithError('Failed to Re-order.');
     }
 }

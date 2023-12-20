@@ -1,6 +1,9 @@
 <?php
 
 use App\Exceptions\GeneralException;
+use App\Models\Category;
+use Carbon\Carbon;
+use Carbon\CarbonPeriod;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use Twilio\Rest\Client;
@@ -315,48 +318,122 @@ if (! function_exists('sendNotification')) {
      */
     function sendNotification(String $title, String $message, array $tokens, int $orderid)
     {
+        if( !empty( $tokens ) )
+        {
+            try {
+                $accesstoken = getenv("FCM_TOKEN");
+                $URL = 'https://fcm.googleapis.com/fcm/send';
 
-        try {
-            $accesstoken = getenv("FCM_TOKEN");
-            $URL = 'https://fcm.googleapis.com/fcm/send';
+                $notification = [
+                    'title'                 =>  $title,
+                    'body'                  =>  $message,
+                    'icon'                  =>  'myIcon',
+                    'sound'                 => 'mySound',
+                    // 'notification_type'  => $type,
+                    'image'                 =>'',
+                    'order_id'              => $orderid,
+                    // "click_action"          => (string)$orderid
+                ];
 
-            $notification = [
-                'title'                 =>  $title,
-                'body'                  =>  $message,
-                'icon'                  =>  'myIcon',
-                'sound'                 => 'mySound',
-                // 'notification_type'  => $type,
-                'image'                 =>'',
-                'order_id'              => $orderid
-            ];
+                $newArray = array_merge($notification, ["click_action" => (string)$orderid]);
 
-            $extraNotificationData = ["data" => $notification];
-            $post_data = [
-                'registration_ids'    => $tokens, //multple token array
-                // 'to'                    => $tokens, //single token
-                'notification'          => $notification,
-                'data'                  => $extraNotificationData
-            ];
+                $post_data = [
+                    'registration_ids'    => $tokens, //multple token array
+                    // 'to'                    => $tokens, //single token
+                    'notification'          => $notification,
+                    'data'                  => $newArray
+                ];
 
-            $crl = curl_init();
+                $crl = curl_init();
 
-            $headr = array();
-            $headr[] = 'Content-type: application/json';
-            $headr[] = 'Authorization: Bearer ' . $accesstoken;
-            curl_setopt($crl, CURLOPT_SSL_VERIFYPEER, false);
+                $headr = array();
+                $headr[] = 'Content-type: application/json';
+                $headr[] = 'Authorization: Bearer ' . $accesstoken;
+                curl_setopt($crl, CURLOPT_SSL_VERIFYPEER, false);
 
-            curl_setopt($crl, CURLOPT_URL, $URL);
-            curl_setopt($crl, CURLOPT_HTTPHEADER, $headr);
+                curl_setopt($crl, CURLOPT_URL, $URL);
+                curl_setopt($crl, CURLOPT_HTTPHEADER, $headr);
 
-            curl_setopt($crl, CURLOPT_POST, true);
-            curl_setopt($crl, CURLOPT_POSTFIELDS, json_encode($post_data));
-            curl_setopt($crl, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($crl, CURLOPT_POST, true);
+                curl_setopt($crl, CURLOPT_POSTFIELDS, json_encode($post_data));
+                curl_setopt($crl, CURLOPT_RETURNTRANSFER, true);
 
-            $rest = curl_exec($crl);
-            // dd($rest);
-            return true;
-        } catch (Exception $e) {
-            throw new GeneralException($e->getMessage());
+                $rest = curl_exec($crl);
+                // dd($rest);
+                return true;
+            } catch (Exception $e) {
+                throw new GeneralException($e->getMessage());
+            }
         }
+
+    }
+}
+
+if (! function_exists('cate_name')) {
+    function cate_name(int $cate_id)
+    {
+        $category       = Category::find($cate_id);
+        $category_name  = '';
+        if(isset($category->id))
+        {
+            $category_name = $category->name;
+        }
+        return $category_name;
+    }
+}
+
+if (! function_exists('get_previous_quarter')) {
+    function get_previous_quarter()
+    {
+        $current = Carbon::now();
+
+        // check month and year in quarter
+        $getPreviousQuarter = $current->month($current->month-3);
+
+        return [
+            'start_date'=> $getPreviousQuarter->firstOfQuarter()->format('Y-m-d'),
+            'end_date'  => $getPreviousQuarter->lastOfQuarter()->format('Y-m-d'),
+        ];
+    }
+}
+
+if( ! function_exists('get_dates_period') )
+{
+    /**
+     * Method get_dates_period
+     *
+     * @param string $startDate [explicite description]
+     * @param string $endDate [explicite description]
+     *
+     * @return array
+     */
+    function get_dates_period($startDate, $endDate): array
+    {
+        $period = CarbonPeriod::create($startDate, $endDate);
+        return $period->toArray();
+    }
+}
+
+if (! function_exists('get_current_quarter')) {
+    function get_current_quarter()
+    {
+        $current = Carbon::now();
+
+        return [
+            'start_date'=> $current->firstOfQuarter()->format('Y-m-d'),
+            'end_date'  => $current->lastOfQuarter()->format('Y-m-d'),
+        ];
+    }
+}
+
+if (! function_exists('referralCode')) {
+    function referralCode($length = 8) {
+        $characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
+        $charactersLength = strlen($characters);
+        $randomString = '';
+        for ($i = 0; $i < $length; $i++) {
+            $randomString .= $characters[rand(0, $charactersLength - 1)];
+        }
+        return $randomString;
     }
 }

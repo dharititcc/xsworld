@@ -68,6 +68,7 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'v1', 'as' => 'api.v1.'], fun
         Route::post('/orderhistory', 'OrderController@orderHistory')->name('orderhistory');
         // {api/v1/users/cart}
         Route::get('/cart', 'OrderController@cartCount')->name('cart');
+        Route::get('/rank-benefits', 'OrderController@rankBenefits')->name('rankBenifit');
         // {api/v1/cart/update}
         Route::post('/updatecart', 'OrderController@updateCart')->name('order.update');
         // {api/v1/deleteitem}
@@ -80,6 +81,19 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'v1', 'as' => 'api.v1.'], fun
         Route::post('/orderstatusupdate', 'OrderController@orderStatusUpdate')->name('orderStatusUpdate');
         // {api/v1/order-review}
         Route::post('/order-review', 'OrderController@orderReview')->name('orderReview');
+        // {api/v1/purchase-gift-card}
+        Route::post('/purchase-gift-card', 'UserController@purchaseGiftCard')->name('purchaseGiftCard');
+        // {api/v1/redeem-gift-card}
+        Route::post('/redeem-gift-card', 'UserController@redeemGiftCard')->name('redeemGiftCard');
+        // {api/v1/referral-list}
+        Route::get('/referral-list', 'UserController@referralList')->name('referralList');
+        // {api/v1/share-referral}
+        Route::post('/share-referral', 'UserController@shareReferral')->name('shareReferral');
+        // {api/v1/re-order}
+        Route::post('/re-order', 'OrderController@reOrder')->name('reOrder');
+        Route::get('/spin-status', 'UserController@getSpinResult')->name('user.spin');
+        Route::post('/spin/store', 'UserController@storeSpin')->name('user.spin.store');
+        Route::get('/my-winning', 'UserController@myWinning')->name('user.spin.index');
     });
 
     Route::group(['prefix' => 'users','middleware' => 'auth:api'], function ()
@@ -108,6 +122,12 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'v1', 'as' => 'api.v1.'], fun
         Route::get('get-countries', 'CountryController@index')->name('countries.index');
     });
 
+    Route::group(['prefix' => 'faq'], function ()
+    {
+        // {api/v1/faq/}
+        Route::get('/', 'FaqController@index')->name('faq.index');
+    });
+
     Route::group(['namespace' => 'Bartender', 'prefix' => 'bartender'], function()
     {
         Route::group(['middleware' => ['guest']], function()
@@ -123,9 +143,15 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'v1', 'as' => 'api.v1.'], fun
 
             // orders
             // {api/v1/orderupdate}
-            Route::post('/orderupdate', 'BarController@orderUpdate')->name('barOrderUpdate');
+            Route::post('/orderstatusupdate', 'BarController@orderStatusUpdate')->name('barOrderStatusUpdate');
             // {api/v1/barorderhistory}
             Route::get('/barorderhistory', 'BarController@barOrderHistory')->name('barOrderHistory');
+
+            Route::get('/incomingOrder', 'BarController@incomingOrder')->name('incomingOrder');
+            Route::get('/confirmOrder', 'BarController@confirmOrder')->name('confirmOrder');
+            Route::get('/completedOrder', 'BarController@completedOrder')->name('completedOrder');
+
+
             // {api/v1/completedorderhistory}
             Route::post('/completedorderhistory', 'BarController@completedorderhistory')->name('completedorderhistory');
             Route::get('/show/{order}', 'BarController@show')->name('bar.show');
@@ -156,6 +182,7 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'v1', 'as' => 'api.v1.'], fun
             Route::post('order-update-status','OrderController@updateOrderStauts')->name('kitchen.order.update.status');
             Route::post('order-show','OrderController@orderDetail')->name('kitchen.order.show');
             Route::post('gostatus','OrderController@gostatus')->name('kitchen.gostatus');
+            Route::get('call-waiter','OrderController@callWaiter')->name('kitchen.callWaiter');
 
             // // orders
             // // {api/v1/orderupdate}
@@ -178,9 +205,24 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'v1', 'as' => 'api.v1.'], fun
 
         Route::group(['middleware' => 'auth:api'], function() {
             // {api/v1/waiter/logout}
-            Route::post('logout', [WaiterAuthController::class, 'logout'] )->name('kitchen.logout');
+            Route::post('logout', [WaiterAuthController::class, 'logout'] )->name('waiter.logout');
             Route::get('order-tbl-list',[HomeController::class,'activeTable'])->name('waiter.active.tbl');
-            Route::post('gostatus',[HomeController::class,'gostatus'])->name('kitchen.gostatus');
+            Route::post('gostatus',[HomeController::class,'gostatus'])->name('waiter.gostatus');
+            Route::post('item-search', [HomeController::class,'itemSearchByName'])->name('item.search');
+            Route::post('categoryList', [HomeController::class,'categoryList'])->name('categoryList');
+            Route::post('getFeaturedItemsByCatID', [HomeController::class,'getFeaturedItemsByCatID'])->name('getFeaturedItemsByCatID');
+            Route::post('restaurantItemListByCategory', [HomeController::class,'restaurantItemListByCategory'])->name('restaurantItemListByCategory');
+            Route::post('add-to-cart', [HomeController::class,'addToCart'])->name('addToCart');
+            Route::post('view-cart', [HomeController::class,'viewCart'])->name('viewCart');
+            Route::post('order-history', [HomeController::class,'orderHistory'])->name('orderHistory');
+            Route::post('place-order', [HomeController::class,'placeOrder'])->name('placeOrder');
+            Route::post('update-cart', [HomeController::class,'waiterupdateCart'])->name('waiterupdateCart');
+            Route::post('take-payment', [HomeController::class,'waiterPayment'])->name('waiterPayment');
+            Route::post('add-new-card', [HomeController::class,'addCard'])->name('addCard');
+            Route::post('addCusToTbl', [HomeController::class,'addCusToTbl'])->name('addCusToTbl');
+            Route::get('tbl-list', [HomeController::class,'tableList'])->name('tableList');
+            Route::post('end-session', [HomeController::class,'endWaiterSession'])->name('endWaiterSession');
+
         });
     });
 });

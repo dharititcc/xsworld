@@ -23,7 +23,7 @@ class PickupZoneController extends Controller
         $food_pickup_points = RestaurantPickupPoint::with(['attachment'])->restaurantget($restaurant->id)->type(1)->get();
         $drink_pickup_points = RestaurantPickupPoint::with(['attachment'])->restaurantget($restaurant->id)->type(2)->get();
         $waiters = User::select('id','first_name','username','email')->where('user_type',User::WAITER)->get();
-        
+
         return view('pickup.index',[
             'food_pickup_points' => $food_pickup_points,
             'drink_pickup_points' => $drink_pickup_points,

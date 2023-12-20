@@ -4,122 +4,116 @@
 @endsection
 @section('content')
     <!-- Page content-->
-    <div class="container-fluid">
-        <main>
-            <div class="outrbox">
-                <div class="d-flex mb-4 justify-content-between doubl-line">
-                    <h2 class="yellow">Waiter Accounts</h2>
-                    <div class="count-item">Total: {{ $waiters->count() }}</div>
+    <div class="outrbox">
+        <div class="d-flex mb-4 justify-content-between doubl-line">
+            <h2 class="yellow">Waiter Accounts</h2>
+            <div class="count-item">Total: {{ $waiters->count() }}</div>
+        </div>
+        <div class="grid colmn-5">
+
+            @foreach ($waiters as $waiter)
+                <div class="catg-box overly">
+                    {{-- <button><i class="icon-trash"></i></button>
+                    --}}
+                    <form method="POST" action="{{ route('restaurants.waiter.destroy', $waiter->user->id) }}">
+                        @csrf
+                        <input name="_method" type="hidden" value="DELETE">
+                        <button type="submit" class="show_confirm" data-toggle="tooltip" title='Delete'><i
+                                class="icon-trash"></i></button>
+                    </form>
+
+                    {{-- <button onclick="return deleteConform({{ $waiter->id }});"><i
+                    class="icon-trash"></i></button> --}}
+                    <figure data-type="Edit Waiter"
+                        data-parent_id="{{ $waiter->user->id }}" data-parant="{{ $waiter->user->first_name }}"
+                        class="waiter_popup_modal">
+
+                        <figcaption><span>{{ $waiter->user->username }}</span></figcaption>
+                        {{-- <figcaption><span>{{$waiter->first_name}}</span></figcaption> --}}
+                    </figure>
                 </div>
-                <div class="grid colmn-5">
+            @endforeach
 
-                    @foreach ($waiters as $waiter)
-                        <div class="catg-box overly">
-                            {{-- <button><i class="icon-trash"></i></button>
-                         --}}
-                            <form method="POST" action="{{ route('restaurants.waiter.destroy', $waiter->user->id) }}">
-                                @csrf
-                                <input name="_method" type="hidden" value="DELETE">
-                                <button type="submit" class="show_confirm" data-toggle="tooltip" title='Delete'><i
-                                        class="icon-trash"></i></button>
-                            </form>
+            <a href="javascript:void(0);" class="catg-box add overly kitchen waiter_popup_modal">
+                <figure><i class="icon-plus"> </i></figure>
+            </a>
+        </div>
+        <div class="gldnline-sepr mb-5 mt-5"></div>
+        <div class="d-flex mb-4 justify-content-between doubl-line">
+            <h2 class="yellow">Kitchen Accounts </h2>
+            <div class="count-item">Total: {{ $kitchens->count() }}</div>
+        </div>
+        <div class="grid colmn-5">
 
-                            {{-- <button onclick="return deleteConform({{ $waiter->id }});"><i
-                            class="icon-trash"></i></button> --}}
-                            <figure data-type="Edit Waiter"
-                                data-parent_id="{{ $waiter->user->id }}" data-parant="{{ $waiter->user->first_name }}"
-                                class="waiter_popup_modal">
+            @foreach ($kitchens as $kitchen)
+                <div class="catg-box overly">
+                    {{-- <button><i class="icon-trash"></i></button>
+                    --}}
+                    <form method="POST" action="{{ route('restaurants.kitchen.destroy', $kitchen->user->id) }}">
+                        @csrf
+                        <input name="_method" type="hidden" value="DELETE">
+                        <button type="submit" class="show_confirm" data-toggle="tooltip" title='Delete'><i
+                                class="icon-trash"></i></button>
+                    </form>
 
-                                <figcaption><span>{{ $waiter->user->username }}</span></figcaption>
-                                {{-- <figcaption><span>{{$waiter->first_name}}</span></figcaption> --}}
-                            </figure>
-                        </div>
-                    @endforeach
+                    {{-- <button onclick="return deleteConform({{ $kitchen->id }});"><i
+                        class="icon-trash"></i></button> --}}
+                    <figure data-type="Edit kitchen"
+                        data-parent_id="{{ $kitchen->user->id }}" data-parant="{{ $kitchen->user->first_name }}"
+                        class="kitchen_popup_modal">
 
-                    <a href="javascript:void(0);" class="grey-brd-box waiter_popup_modal waiters add">
-                        <i class="icon-plus"> </i>
-                    </a>
+                        <figcaption><span>{{ $kitchen->user->username }}</span></figcaption>
+                        {{-- <figcaption><span>{{$kitchen->first_name}}</span></figcaption> --}}
+                    </figure>
                 </div>
-                <div class="gldnline-sepr mb-5 mt-5"></div>
-                <div class="d-flex mb-4 justify-content-between doubl-line">
-                    <h2 class="yellow">Kitchen Accounts </h2>
-                    <div class="count-item">Total: {{ $kitchens->count() }}</div>
+            @endforeach
+
+
+            <a href="javascript:void(0);" class="catg-box add overly kitchen kitchen_popup_modal">
+                <figure><i class="icon-plus"> </i></figure>
+                <!--<input type="text" required="" autofocus=""> -->
+            </a>
+        </div>
+        <div class="gldnline-sepr mb-5 mt-5"></div>
+
+        <div class="d-flex mb-4 justify-content-between doubl-line">
+            <h2 class="yellow">Bar Pick Zones Accounts</h2>
+            <div class="count-item">Total: {{ $barpickzones->count() }}</div>
+        </div>
+        <div class="grid colmn-5">
+
+            @foreach ($barpickzones as $barpickzone)
+                <div class="catg-box overly">
+                    {{-- <button><i class="icon-trash"></i></button>
+                    --}}
+                    <form method="POST" action="{{ route('restaurants.barpickzone.destroy', $barpickzone->user->id) }}">
+                        @csrf
+                        <input name="_method" type="hidden" value="DELETE">
+                        <button type="submit" class="show_confirm" data-toggle="tooltip" title='Delete'><i
+                                class="icon-trash"></i></button>
+                    </form>
+
+                    {{-- <button onclick="return deleteConform({{ $barpickzone->user->id }});"><i
+                        class="icon-trash"></i></button> --}}
+                    <figure onclick="getBarpickzone({{ $barpickzone->user->id }})" data-type="Edit Barpickzone"
+                        data-parent_id="{{ $barpickzone->user->id }}" data-parant="{{ $barpickzone->user->first_name }}"
+                        class="barpickzone_popup_modal">
+
+                        <figcaption><span>{{ $barpickzone->user->username }}</span></figcaption>
+                        {{-- <figcaption><span>{{$barpickzone->user->first_name}}</span></figcaption> --}}
+                    </figure>
                 </div>
-                <div class="grid colmn-5">
-
-                    @foreach ($kitchens as $kitchen)
-                        <div class="catg-box overly">
-                            {{-- <button><i class="icon-trash"></i></button>
-                            --}}
-                            <form method="POST" action="{{ route('restaurants.kitchen.destroy', $kitchen->user->id) }}">
-                                @csrf
-                                <input name="_method" type="hidden" value="DELETE">
-                                <button type="submit" class="show_confirm" data-toggle="tooltip" title='Delete'><i
-                                        class="icon-trash"></i></button>
-                            </form>
-
-                            {{-- <button onclick="return deleteConform({{ $kitchen->id }});"><i
-                                class="icon-trash"></i></button> --}}
-                            <figure data-type="Edit kitchen"
-                                data-parent_id="{{ $kitchen->user->id }}" data-parant="{{ $kitchen->user->first_name }}"
-                                class="kitchen_popup_modal">
-
-                                <figcaption><span>{{ $kitchen->user->username }}</span></figcaption>
-                                {{-- <figcaption><span>{{$kitchen->first_name}}</span></figcaption> --}}
-                            </figure>
-                        </div>
-                    @endforeach
-
-
-                    <a href="javascript:void(0);" class="catg-box add overly kitchen kitchen_popup_modal">
-                        <figure><i class="icon-plus"> </i></figure>
-                        <!--<input type="text" required="" autofocus=""> -->
-                    </a>
-                </div>
-                <div class="gldnline-sepr mb-5 mt-5"></div>
-
-                <div class="d-flex mb-4 justify-content-between doubl-line">
-                    <h2 class="yellow">Bar Pick Zones Accounts</h2>
-                    <div class="count-item">Total: {{ $barpickzones->count() }}</div>
-                </div>
-                <div class="grid colmn-5">
-
-                    @foreach ($barpickzones as $barpickzone)
-                        <div class="catg-box overly">
-                            {{-- <button><i class="icon-trash"></i></button>
-                            --}}
-                            <form method="POST" action="{{ route('restaurants.barpickzone.destroy', $barpickzone->user->id) }}">
-                                @csrf
-                                <input name="_method" type="hidden" value="DELETE">
-                                <button type="submit" class="show_confirm" data-toggle="tooltip" title='Delete'><i
-                                        class="icon-trash"></i></button>
-                            </form>
-
-                            {{-- <button onclick="return deleteConform({{ $barpickzone->user->id }});"><i
-                                class="icon-trash"></i></button> --}}
-                            <figure onclick="getBarpickzone({{ $barpickzone->user->id }})" data-type="Edit Barpickzone"
-                                data-parent_id="{{ $barpickzone->user->id }}" data-parant="{{ $barpickzone->user->first_name }}"
-                                class="barpickzone_popup_modal">
-
-                                <figcaption><span>{{ $barpickzone->user->username }}</span></figcaption>
-                                {{-- <figcaption><span>{{$barpickzone->user->first_name}}</span></figcaption> --}}
-                            </figure>
-                        </div>
-                    @endforeach
+            @endforeach
 
 
 
 
-                    <a href="javascript:void(0);" class="catg-box add overly barzone barpickzone_popup_modal">
-                        <figure><i class="icon-plus"> </i></figure>
+            <a href="javascript:void(0);" class="catg-box add overly barzone barpickzone_popup_modal">
+                <figure><i class="icon-plus"> </i></figure>
 
-                        <!--<input type="text" required="" autofocus=""> -->
-                    </a>
-                </div>
-            </div>
-        </main>
-    </div>
-    </div>
+                <!--<input type="text" required="" autofocus=""> -->
+            </a>
+        </div>
     </div>
 
     <!-- Global popup -->
@@ -150,6 +144,7 @@
                             <div class="form-group">
                                 <input type="password" name="password" id="password" class="form-control vari2"
                                     placeholder="Password" autocomplete="off">
+                                    <i class="icon-eye-off show-password" data-type="0"></i>
                                 <span id="Errorpassword"></span>
                             </div>
                         </div>
@@ -184,6 +179,7 @@
                             <div class="form-group mb-4">
                                 <input type="password" name="password" id="password" class="form-control vari2"
                                     placeholder="Password" autocomplete="off">
+                                    <i class="icon-eye-off show-password" data-type="0"></i>
                                 <span id="Errorpassword"></span>
                             </div>
                             {{-- <div class="form-group">
@@ -227,6 +223,7 @@
                             <div class="form-group mb-4">
                                 <input type="password" name="password" id="password" class="form-control vari2"
                                     placeholder="Password" autocomplete="off">
+                                    <i class="icon-eye-off show-password" data-type="0"></i>
                                 <span id="Errorpassword"></span>
                             </div>
                             <div class="form-group">
