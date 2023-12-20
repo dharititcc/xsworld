@@ -437,3 +437,27 @@ if (! function_exists('referralCode')) {
         return $randomString;
     }
 }
+
+if(!function_exists('addressLatLong')) {
+    function addressLatLong($address) {
+        $GOOGLE_API_KEY = env('GOOGLE_API_KEY');
+        // Formatted address 
+        $formatted_address = str_replace(' ', '+', $address); 
+        
+        // Get geo data from Google Maps API by address 
+        $geocodeFromAddr = file_get_contents("https://maps.googleapis.com/maps/api/geocode/json?address={$formatted_address}&key={$GOOGLE_API_KEY}"); 
+        
+        // Decode JSON data returned by API 
+        $apiResponse = json_decode($geocodeFromAddr);
+        // Retrieve latitude and longitude from API data 
+        $latitude  = $apiResponse->results[0]->geometry->location->lat;  
+        $longitude = $apiResponse->results[0]->geometry->location->lng;
+
+        $latlong = [
+            'latitude'  => $latitude,
+            'longitude' => $longitude,
+        ];
+
+        return $latlong;
+    }
+}
