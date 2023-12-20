@@ -80,4 +80,14 @@ class XSWorldVerificationController extends Controller
     {
         return view('auth.token-expiry');
     }
+
+    /**
+     * Method verificationSuccess
+     *
+     * @return view
+     */
+    public function passwordChange()
+    {
+        return view('auth.password-success');
+    }
 }
