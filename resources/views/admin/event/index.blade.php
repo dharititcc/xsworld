@@ -9,7 +9,7 @@
         <div class="searchbox"><input type="text" name="search" id="search" class="searchbar" placeholder="Find an event"></div>
     </div>
     <div class="data-table drinks table-responsive">
-        <table width="100%" class="restaurant_datatable drink_datatable">
+        <table width="100%" class="restaurant_event_datatable drink_datatable">
             <thead>
                 <tr valign="middle">
                     <th class="dt-left"><label class="cst-check"><input type="checkbox" id="allcheck" value=""><span class="checkmark"></span></label></th>

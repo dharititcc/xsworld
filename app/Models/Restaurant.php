@@ -37,6 +37,9 @@ class Restaurant extends Model
         'country_id',
         'city',
         'state',
+        'type',
+        'start_date',
+        'end_date',
         'postcode',
         'phone',
         'specialisation',
@@ -338,7 +341,7 @@ class Restaurant extends Model
      */
     public function getEditButtonAttribute($class = '')
     {
-        return '<a href="javascript:void(0);" class="act-btn create-restaurant" data-id="'.$this->id.'"><i class="icon-pencil"></i></a>';
+        return '<a href="javascript:void(0);" class="act-btn create-restaurant" data-type="'.$this->type.'" data-id="'.$this->id.'"><i class="icon-pencil"></i></a>';
         //'.route('admin.restaurant.edit', $this->id).'
     }
 

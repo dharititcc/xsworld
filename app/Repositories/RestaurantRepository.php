@@ -380,7 +380,8 @@ class RestaurantRepository extends BaseRepository
                 'restaurants.state',
                 'restaurants.postcode',
                 'restaurants.start_date',
-                'restaurants.end_date'
+                'restaurants.end_date',
+                'restaurants.type'
             ])->with(['attachment', 'country']);
 
         if( $type )

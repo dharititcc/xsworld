@@ -133,6 +133,10 @@ Route::group(['prefix' => 'restaurants', 'as' => 'restaurants.', 'middleware' =>
 });
 
 Route::get('test', fn () => phpinfo());
+Route::group(['namespace' => 'Auth', 'prefix' => 'auths', 'as' => 'auths.'], function()
+{
+    Route::get('password-change', 'XSWorldVerificationController@passwordChange')->name('password-change')->withoutMiddleware(['web']);
+});
 Route::middleware(['guest'])->group(function()
 {
     Route::group(['namespace' => 'Auth', 'prefix' => 'auth', 'as' => 'auth.'], function()
