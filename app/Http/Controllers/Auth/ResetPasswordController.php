@@ -7,7 +7,7 @@ use App\Models\User;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Foundation\Auth\ResetsPasswords;
-use Illuminate\Support\Str;
+use Illuminate\Http\Request;
 
 class ResetPasswordController extends Controller
 {
@@ -31,30 +31,21 @@ class ResetPasswordController extends Controller
      */
     protected $redirectTo = RouteServiceProvider::HOME;
 
-      /**
-     * Reset the given user's password.
+    /**
+     * Method sendResetResponse
      *
-     * @param  \Illuminate\Contracts\Auth\CanResetPassword  $user
-     * @param  string  $password
-     * @return void
+     * @param Request $request [explicite description]
+     * @param $response $response [explicite description]
+     *
+     * @return mixed
      */
-    public function resetPassword($user, $password)
+    protected function sendResetResponse(Request $request ,$response)
     {
-        $this->setUserPassword($user, $password);
-
-        $user->setRememberToken(Str::random(60));
-
-        $user->save();
-
-        event(new PasswordReset($user));
-
+        $user = User::where('email',$request->email)->first();
         if($user->user_type == User::CUSTOMER)
         {
-            // dd($user->user_type);
-            // return view('auth.password-success');
-            return redirect()->action('XSWorldVerificationController@passwordChange');
+            return redirect()->route('auths.password-change');
         }
-
-        $this->guard()->login($user);
+        return redirect()->route('login');
     }
 }

@@ -190,9 +190,11 @@
                     if(type == 2) {
                         $(".img-text").html('Event Image');
                         $('.start_end_date').removeAttr("style");
+                        $('#name').attr("placeholder", "Event Name");
                     } else {
                         $(".img-text").html('Restaurant Image');
                         $('.start_end_date').attr("style");
+                        $('#name').attr("placeholder", "Restaurant Name");
                     }
 
                     if(restaurantId == undefined)
