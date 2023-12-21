@@ -460,13 +460,14 @@ class OrderRepository extends BaseRepository
         $nextMembership = $this->nextMemberShipValue($membership);
         $points         = $this->getMembershipPoints($user);
 
-        $membershipEnd        = $nextMembership['nextMembership_value'][0] - 1;
-        $membershipDifference = $nextMembership['nextMembership_value'][1] - $membershipEnd;
-
-        $currentMembershipDiff= $membershipEnd - $points['current_points'];
-        $actualPoints         = $membershipDifference - $currentMembershipDiff;
-
-        $nextMembershipValue = ($actualPoints * 100) / $membershipDifference;
+        if($membership['membership'] != config('xs.platinum_membership'))
+        {
+            $membershipEnd        = $nextMembership['nextMembership_value'][0] - 1;
+            $membershipDifference = $nextMembership['nextMembership_value'][1] - $membershipEnd;
+            $currentMembershipDiff= $membershipEnd - $points['current_points'];
+            $actualPoints         = $membershipDifference - $currentMembershipDiff;
+            $nextMembershipValue  = ($actualPoints * 100) / $membershipDifference;
+        }
 
         if($membership['membership'] == config('xs.platinum_membership'))
         {
