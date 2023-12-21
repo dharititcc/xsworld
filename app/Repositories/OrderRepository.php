@@ -462,7 +462,7 @@ class OrderRepository extends BaseRepository
 
         if( $nextMembership['nextMembership_level'] === config('xs.platinum_level') )
         {
-            $membershipDifference = config('xs.gold')[1] - (config('xs.gold')[0] + 1);
+            $membershipDifference = config('xs.gold')[1] - (config('xs.gold')[0] - 1);
 
             if( $points['current_points'] > config('xs.gold')[1] )
             {
@@ -491,9 +491,9 @@ class OrderRepository extends BaseRepository
                 $currentMembershipDiff= $membershipDifference - $points['current_points'];
             }
 
-            $actualPoints         = $membershipDifference - $currentMembershipDiff;
+            // $actualPoints         = $membershipDifference - $currentMembershipDiff;
 
-            $nextMembershipValue = ($actualPoints * 100) / $membershipDifference;
+            $nextMembershipValue = ($currentMembershipDiff * 100) / $membershipDifference;
         }
 
         if($membership['membership'] == config('xs.platinum_membership'))
@@ -592,8 +592,8 @@ class OrderRepository extends BaseRepository
         $currentQuarterPoints = $currentQuarterOrders->sum('points');
 
         return [
-            'current_points' => $currentQuarterPoints,
-            'previous_points'=> $previousQuarterPoints
+            'current_points' => round($currentQuarterPoints),
+            'previous_points'=> round($previousQuarterPoints)
         ];
     }
 
