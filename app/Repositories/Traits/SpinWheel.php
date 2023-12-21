@@ -56,25 +56,45 @@ trait SpinWheel
                 return $this->getOneXWinningByRange15($user, $type, $range);
             case Spin::TEN_X:
 
-                // logic to get counter and range
-                $range = $this->getRangeBy4($spinCount);
+                // // logic to get counter and range
+                // $range = $this->getRangeBy4($spinCount);
 
-                $records        = $this->getSpinCountRange($user, $type, $range);
+                // $records        = $this->getSpinCountRange($user, $type, $range);
 
-                if( $records->count() == 0 )
+                // if( $records->count() == 0 )
+                // {
+                //     // get random set for user and update
+                //     $set = $this->getRandomSet();
+
+                //     // update user set
+                //     $user = $this->updateUserSet($user, $set);
+                // }
+                // else
+                // {
+                //     $set = $this->getSet($user->set_id);
+                // }
+
+                // return $this->getOneXWinningByRange13($user, $type, $range, $set, $records);
+
+                if( $spinCount > 0 )
                 {
-                    // get random set for user and update
-                    $set = $this->getRandomSet();
+                    // get last winning record of the 10x spin type
+                    $lastRecord = $user->spins()->where('type', Spin::TEN_X)->orderBy('id', 'desc')->first();
 
-                    // update user set
-                    $user = $this->updateUserSet($user, $set);
+                    // check if $spinCount % 3 == 0
+                    if( $spinCount % 13 == 0 )
+                    {
+                        return $lastRecord->is_winner;
+                    }
+                    else
+                    {
+                        return !$lastRecord->is_winner;
+                    }
                 }
                 else
                 {
-                    $set = $this->getSet($user->set_id);
+                    return $this->getWinning(1,13);
                 }
-
-                return $this->getOneXWinningByRange13($user, $type, $range, $set, $records);
             default:
                 return 0; // Default to no chance
         }
@@ -87,20 +107,20 @@ trait SpinWheel
      *
      * @return Set
      */
-    public function getSet(int $set): Set
-    {
-        return Set::findOrFail($set);
-    }
+    // public function getSet(int $set): Set
+    // {
+    //     return Set::findOrFail($set);
+    // }
 
     /**
      * Method getRandomSet
      *
      * @return \App\Models\Set
      */
-    public function getRandomSet(): Set
-    {
-        return Set::select('id', 'scenario')->inRandomOrder()->first();
-    }
+    // public function getRandomSet(): Set
+    // {
+    //     return Set::select('id', 'scenario')->inRandomOrder()->first();
+    // }
 
     /**
      * Method updateUserSet
@@ -110,12 +130,12 @@ trait SpinWheel
      *
      * @return User
      */
-    public function updateUserSet(User $user, Set $set): User
-    {
-        $user->update(['set_id' => $set->id]);
+    // public function updateUserSet(User $user, Set $set): User
+    // {
+    //     $user->update(['set_id' => $set->id]);
 
-        return $user->refresh();
-    }
+    //     return $user->refresh();
+    // }
 
     /**
      * Method getRangeBy17
@@ -161,16 +181,16 @@ trait SpinWheel
      *
      * @return array
      */
-    public function getRangeBy4($counter): array
-    {
-        $number     = $counter;
-        $roundDown  = floor($number/4);
-        $newNumber  = $roundDown*4;
-        $start      = $newNumber+1;
-        $end        = $newNumber+4;
+    // public function getRangeBy4($counter): array
+    // {
+    //     $number     = $counter;
+    //     $roundDown  = floor($number/4);
+    //     $newNumber  = $roundDown*4;
+    //     $start      = $newNumber+1;
+    //     $end        = $newNumber+4;
 
-        return [$start, $end];
-    }
+    //     return [$start, $end];
+    // }
 
     /**
      * Method getRangeBy13
