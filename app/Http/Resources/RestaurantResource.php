@@ -27,6 +27,7 @@ class RestaurantResource extends JsonResource
             'rating'            => (double) round($this->average_rating,1),
             'start_date'        => $this->start_date ?? '',
             'end_date'          => $this->end_date ?? '',
+            'kitchen_time'      => isset($this->restaurant_time) ? RestaurantTimeResource::collection($this->restaurant_time) : [],
             'categories'        => isset($this->main_categories) ? CategoryResource::collection($this->main_categories) : [],
             'pickup_points'     => isset($this->restaurant_pickup_points) ? PickUpPointResource::collection($this->restaurant_pickup_points) : [],
             // 'featured_items'    => RestaurantItemsResource::collection($this->featured_items),
