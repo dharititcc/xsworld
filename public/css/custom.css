@@ -458,6 +458,7 @@ th .sort-icon{ position: absolute; top: 20%;}
 .cstm-catgory input:checked + .category{border-color: #4FDA76; color: #4FDA76; }
 
 .extr-info .form-group{ margin-bottom: 1.5rem;}
+.form-group .show-password{position: absolute; right: 0; top: 0; padding: 16px 10px; height: 100%; cursor: pointer;}
 .extr-info .head{ position: relative; padding:.5rem 0 .75rem 0; border-bottom: 1px solid; border-image-source: var(--gold-line); border-image-slice: 1; margin-bottom: 1.5rem;}
 .extr-info .head .optional-info{ position: absolute; right: 0; top: 0; color: #fff; font-size: 15px; width: 24%; line-height: normal; text-align: right;}
 

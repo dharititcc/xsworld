@@ -255,7 +255,7 @@ class OrderController extends APIController
      *
      * @param PlaceOrderRequest $request [explicite description]
      *
-     * @return void
+     * @return \Illuminate\Http\JsonResponse
      */
     public function placeOrder(PlaceOrderRequest $request)
     {
