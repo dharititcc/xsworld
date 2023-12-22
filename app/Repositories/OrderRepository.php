@@ -489,6 +489,7 @@ class OrderRepository extends BaseRepository
             else
             {
                 $currentMembershipDiff= $membershipDifference - $points['current_points'];
+                $currentMembershipDiff= $membershipDifference - $currentMembershipDiff;
             }
 
             // $actualPoints         = $membershipDifference - $currentMembershipDiff;
@@ -588,8 +589,13 @@ class OrderRepository extends BaseRepository
         })
         ->get();
         // echo common()->formatSql($currentQuarterOrders);die;
-        $previousQuarterPoints = $previousQuarterOrders->sum('points');
-        $currentQuarterPoints = $currentQuarterOrders->sum('points');
+        $previousQuarterPoints  = $previousQuarterOrders->sum('points');
+        $currentQuarterPoints   = $currentQuarterOrders->sum('points');
+
+        if($currentQuarterPoints == 0)
+        {
+            $currentQuarterPoints = $user->points;
+        }
 
         return [
             'current_points' => round($currentQuarterPoints),
