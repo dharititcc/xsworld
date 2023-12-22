@@ -838,11 +838,11 @@ class OrderRepository extends BaseRepository
         $order->refresh();
         $order->loadMissing(['items']);
 
-        // $text               = $order->restaurant->name. ' is processing your order';
-        // $title              = $text;
-        // $message            = "Your Order is #".$order->id." placed";
-        // $orderid            = $order->id;
-        // $send_notification  = sendNotification($title,$message,$devices,$orderid);
+        $text               = $order->restaurant->name. ' is processing your order';
+        $title              = $text;
+        $message            = "Your Order is #".$order->id." placed";
+        $orderid            = $order->id;
+        $send_notification  = sendNotification($title,$message,$devices,$orderid);
 
         $bartitle           = "Order is placed by Customer";
         $barmessage         = "Order is #".$order->id." placed by customer";
