@@ -83,6 +83,8 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'v1', 'as' => 'api.v1.'], fun
         // {api/v1/sendFriendRequest}
         Route::post('/sendFriendRequest', 'OrderController@sendFriendRequest')->name('sendFriendRequest');
         
+        Route::post('/friendRequestStatus', 'OrderController@friendRequestStatus')->name('friendRequestStatus');
+
         // {api/v1/orderstatusupdate}
         Route::post('/orderstatusupdate', 'OrderController@orderStatusUpdate')->name('orderStatusUpdate');
         // {api/v1/order-review}

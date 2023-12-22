@@ -1510,6 +1510,8 @@ class OrderRepository extends BaseRepository
     public function friendRequestStatus(array $data)
     {
         $auth_user = auth()->user();
+        // FriendRequest::where('user_id', $data['user_id'])->where('friend_id', $data['user_id'])
+        //SELECT * FROM `friend_requests` where ( user_id = 3 OR friend_id = 3) AND ( user_id = 18 OR friend_id = 18 );
         $FriendRequest = FriendRequest::create([
             'user_id'   => $data['user_id'],
             'friend_id' => $auth_user->id,

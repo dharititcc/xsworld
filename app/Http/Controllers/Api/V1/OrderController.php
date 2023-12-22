@@ -360,6 +360,7 @@ class OrderController extends APIController
     public function friendRequestStatus(Request $request)
     {
         $input  = $request->all();
+        dd($input);
         $friendStatus   =   $this->repository->friendRequestStatus($input);
     }
 }
