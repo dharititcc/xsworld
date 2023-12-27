@@ -814,7 +814,9 @@ class OrderRepository extends BaseRepository
         $paymentArr        = [];
         $stripe_customer_id = $user->stripe_customer_id;
         // dd($stripe_customer_id);
-
+        if(empty($stripe_customer_id)) {
+            throw new GeneralException('Please ask customer to Add Card details');
+        }
         if(isset($order->id))
         {
             if($order->total == $credit_amount)
