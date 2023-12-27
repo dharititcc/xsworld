@@ -42,9 +42,11 @@ class Order extends Model
     // Kitchen status
     const READYFORPICKUP                = 11;
     const KITCHEN_CONFIRM               = 12;
+    const CURRENTLY_BEING_PREPARED      = 16;
 
     //waiter status
     const WAITER_PENDING                = 15;
+    const IDLE                          = 14;
 
     
     // Admin status
@@ -72,8 +74,9 @@ class Order extends Model
         self::FULL_REFUND               => 'Full Refund',
         self::DELAY_ORDER               => 'Delay Order',
         self::CUSTOMER_CANCELED         => 'Cancelled',
-        self::READYFORPICKUP            => 'Kitchen ready for pickup',
+        self::READYFORPICKUP            => 'ready for Collection',
         self::KITCHEN_CONFIRM           => 'Kitchen confirm order',
+        self::CURRENTLY_BEING_PREPARED  => 'CURRENTLY_BEING_PREPARED',
         self::WAITER_PENDING            => 'Waiter Pending',
         self::DENY_ORDER                => 'Deny Order',
         // self::BAR_PENDING               => 'Bar pending',

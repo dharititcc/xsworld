@@ -1202,6 +1202,7 @@ class OrderRepository extends BaseRepository
                     // 'pickup_point_user_id'  => ($pickup_point_id) ? $pickup_point_id->user_id : null,
                     'credit_amount'         => $credit_amount,
                     'restaurant_table_id'   => ($table_id) ? $table_id : null,
+                    'status'                => Order::CURRENTLY_BEING_PREPARED,
                 ];
             }
 
@@ -1230,6 +1231,7 @@ class OrderRepository extends BaseRepository
                     // 'pickup_point_user_id'  => ($pickup_point_id) ? $pickup_point_id->user_id : null,
                     'credit_amount'         => $credit_amount,
                     'restaurant_table_id'   => ($table_id) ? $table_id : null,
+                    'status'                => Order::CURRENTLY_BEING_PREPARED,
                 ];
             }
 
