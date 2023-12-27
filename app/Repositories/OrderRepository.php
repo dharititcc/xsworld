@@ -1065,11 +1065,10 @@ class OrderRepository extends BaseRepository
     public function customerTable(array $data)
     {
         $getcusTbl = CustomerTable::where('user_id' , $data['user_id'])->where('restaurant_table_id',$data['restaurant_table_id'])->first();
-        // dd($getcusTbl);
         if($getcusTbl) {
+            throw new GeneralException('Already table allocated to this Customer');
             $customerTbl = 0;
         } else {
-
             $customerTbl = CustomerTable::updateOrCreate([
                 'restaurant_table_id' => $data['restaurant_table_id'],
                 'user_id'       => $data['user_id'],

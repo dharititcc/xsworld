@@ -49,7 +49,7 @@ class HomeController extends APIController
         ->get();
         // echo common()->formatSql($orderTbl);die;
         // $orderTbl = Order::with(['user','restaurant','restaurant_table'])->where('waiter_id',$auth_waiter->id)->where('type',Order::CART)->get();
-        $kitchen_status = Order::where('type',Order::ORDER)->where('waiter_id',$auth_waiter->id)->whereIn('status',[Order::KITCHEN_CONFIRM,Order::READYFORPICKUP,Order::WAITER_PENDING, Order::CURRENTLY_BEING_PREPARED])->get();
+        $kitchen_status = Order::where('type',Order::ORDER)->where('waiter_id',$auth_waiter->id)->whereIn('status',[Order::READYFORPICKUP,Order::WAITER_PENDING, Order::CURRENTLY_BEING_PREPARED])->get();  //Order::KITCHEN_CONFIRM, remove
         $data = [
             'active_tables'             => $orderTbl->count() ? TableResource::collection($orderTbl) : [],
             'kitchen_status'            => $kitchen_status->count() ? OrderResource::collection($kitchen_status) : [],
