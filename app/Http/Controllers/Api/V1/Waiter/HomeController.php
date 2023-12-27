@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1\Waiter;
 
+use App\Exceptions\GeneralException;
 use App\Http\Controllers\Api\V1\APIController;
 use App\Http\Requests\AddtocartRequest;
 use App\Http\Requests\OrderHistoryRequest;
@@ -202,8 +203,11 @@ class HomeController extends APIController
     public function addCusToTbl(Request $request)
     {
         $CusToTbl = $this->orderRepository->customerTable($request->all());
+        if(empty($CusToTbl)) {
+            throw new GeneralException('Table Not Addedd');
+        }
+        return $this->respondSuccess("Table Allocated Successfully", $CusToTbl);
         // if($CusToTbl != 0) {
-            return $this->respondSuccess("Table Allocated Successfully", $CusToTbl);
         // } else {
         //     return $this->respondWithError("Table Already Allocated");
             
@@ -213,6 +217,9 @@ class HomeController extends APIController
     public function endWaiterSession(Request $request)
     {
         $CusToTblDel = $this->orderRepository->customerTableDel($request->all());
+        if(!$CusToTblDel) {
+            throw new GeneralException('Table Not Found');
+        }
         return $this->respondSuccess("Table Data Remove Successfully");
     }
 

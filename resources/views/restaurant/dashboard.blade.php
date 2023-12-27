@@ -37,7 +37,8 @@
                         </div>
                         <div class="grey-brd-box m-lg-space">
                             <div class="title">
-                                <h2>Key Insights</h2> <a href="#" class="edit">Disable</a>
+                                <h2>Key Insights</h2> 
+                                {{-- <a href="#" class="edit">Disable</a> --}}
                             </div>
                             <div class="padbox">
                                 <table width="100%" class="opening-time">

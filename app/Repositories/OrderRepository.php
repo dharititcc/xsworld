@@ -5,6 +5,7 @@ use App\Exceptions\GeneralException;
 use App\Models\Category;
 use App\Models\CreditPointsHistory;
 use App\Models\CustomerTable;
+use App\Models\FriendRequest;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\OrderReview;
@@ -1452,20 +1453,72 @@ class OrderRepository extends BaseRepository
 
     public function customerTableDel(array $data)
     {
-        Order::where('id',$data['order_id'])->update(['status' => Order::COMPLETED]);
-        $order = Order::findOrFail($data['order_id']);
-
-        if($order->id){
-            $points                     = $order->total * 3;
-            $update['points']           = $order->user->points + round($points);
-            $$order->user->update($update);
-            $creditArr['user_id']       = $order->user->id;
-            $creditArr['order_id']      = $order->id;
-            $creditArr['credit_point']  = $order->total;
-            $creditArr['total']         = $update['points'];
-            CreditPointsHistory::create($creditArr);
+        if($data['order_id'])
+        {
+            Order::where('id',$data['order_id'])->update(['status' => Order::COMPLETED]);
+            $order = Order::findOrFail($data['order_id']);
+    
+            if($order->id){
+                $points                     = $order->total * 3;
+                $update['points']           = $order->user->points + round($points);
+                $$order->user->update($update);
+                $creditArr['user_id']       = $order->user->id;
+                $creditArr['order_id']      = $order->id;
+                $creditArr['credit_point']  = $order->total;
+                $creditArr['total']         = $update['points'];
+                CreditPointsHistory::create($creditArr);
+            }
         }
         $customerTblDel = CustomerTable::where('user_id' , $data['user_id'])->where('restaurant_table_id',$data['restaurant_table_id'])->delete();
         return $customerTblDel;
+    }
+
+    public function venueUserList(array $data)
+    {
+        $now        = Carbon::now(); //$now->format('Y-m-d H:i:s')
+        $lastHour   = Carbon::now()->subHour(1);
+        // dd($now);
+        // dd($lastHour);
+        // dd($data['restaurant_id']);
+        $venueList  = Order::where('restaurant_id',$data['restaurant_id'])
+                    ->whereNotIn('status', [Order::CUSTOMER_CANCELED])
+                    ->where('type',Order::ORDER)
+                    // ->where('updated_at',)
+                    // ->where('updated_at', function($query) use($lastHour)
+                    // {
+                    //     return $query->where('updated_at', '<', $lastHour);
+                    // })
+                    ->distinct('orders.user_id')
+                    ->get();
+        return $venueList;
+        // dd($venueList);
+    }
+
+
+    public function sendFriendReq(array $data)
+    {
+        $auth_user = auth()->user();
+        $FriendRequest = FriendRequest::create([
+            'user_id'   => $auth_user->id,
+            'friend_id' => $data['user_id'],
+        ]);
+
+        $FriendRequest = FriendRequest::create([
+            'user_id'   => $data['user_id'],
+            'friend_id' => $auth_user->id,
+        ]);
+        return $FriendRequest;
+    }
+
+    public function friendRequestStatus(array $data)
+    {
+        $auth_user = auth()->user();
+        // FriendRequest::where('user_id', $data['user_id'])->where('friend_id', $data['user_id'])
+        //SELECT * FROM `friend_requests` where ( user_id = 3 OR friend_id = 3) AND ( user_id = 18 OR friend_id = 18 );
+        $FriendRequest = FriendRequest::create([
+            'user_id'   => $data['user_id'],
+            'friend_id' => $auth_user->id,
+
+        ]);
     }
 }

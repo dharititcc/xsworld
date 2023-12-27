@@ -13,6 +13,7 @@ use App\Http\Requests\OrderUpdateRequest;
 use App\Http\Requests\PlaceOrderRequest;
 use App\Http\Resources\OrderListResource;
 use App\Http\Resources\OrderResource;
+use App\Http\Resources\VenueUserResource;
 use App\Models\Order;
 use App\Repositories\OrderRepository;
 use Illuminate\Http\Request;
@@ -336,5 +337,30 @@ class OrderController extends APIController
             return $this->respondSuccess('Cart data found', new OrderResource($reorder));
         }
         return $this->respondWithError('Failed to Re-order.');
+    }
+
+    public function venueList(Request $request)
+    {
+        $input  =   $request->all();
+        $venueList  = $this->repository->venueUserList($input);
+        if($venueList)
+        {
+            return $this->respondSuccess('Order', VenueUserResource::collection($venueList));
+        }
+    }
+
+
+    public function sendFriendRequest(Request $request)
+    {
+        $input  = $request->all();
+        $friends    = $this->repository->sendFriendReq($input);
+        return $this->respondSuccess('Friend Request Send Successfully', $friends);
+    }
+
+    public function friendRequestStatus(Request $request)
+    {
+        $input  = $request->all();
+        dd($input);
+        $friendStatus   =   $this->repository->friendRequestStatus($input);
     }
 }
