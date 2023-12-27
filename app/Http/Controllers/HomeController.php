@@ -88,9 +88,15 @@ class HomeController extends Controller
             ->make(true);
         }
 
+        // Total table and active tables
+        $res_tables = RestaurantTable::where('restaurant_id',$restaurant->id)->get();
+        $active_tbl = RestaurantTable::where(['restaurant_id' => $restaurant->id, 'status' =>RestaurantTable::ACTIVE])->count();
+
         return view('analytics.index', [
             'categories'    => $categories,
-            'restaurant'    => $restaurant
+            'restaurant'    => $restaurant,
+            'res_tables'    => $res_tables,
+            'active_tbl'    => $active_tbl
         ]);
     }
 
