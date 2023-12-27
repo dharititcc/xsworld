@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1\Waiter;
 
+use App\Exceptions\GeneralException;
 use App\Http\Controllers\Api\V1\APIController;
 use App\Http\Requests\AddtocartRequest;
 use App\Http\Requests\OrderHistoryRequest;
@@ -48,7 +49,7 @@ class HomeController extends APIController
         ->get();
         // echo common()->formatSql($orderTbl);die;
         // $orderTbl = Order::with(['user','restaurant','restaurant_table'])->where('waiter_id',$auth_waiter->id)->where('type',Order::CART)->get();
-        $kitchen_status = Order::where('type',Order::ORDER)->where('waiter_id',$auth_waiter->id)->whereIn('status',[Order::KITCHEN_CONFIRM,Order::READYFORPICKUP,Order::WAITER_PENDING])->get();
+        $kitchen_status = Order::where('type',Order::ORDER)->where('waiter_id',$auth_waiter->id)->whereIn('status',[Order::READYFORPICKUP,Order::WAITER_PENDING, Order::CURRENTLY_BEING_PREPARED])->get();  //Order::KITCHEN_CONFIRM, remove
         $data = [
             'active_tables'             => $orderTbl->count() ? TableResource::collection($orderTbl) : [],
             'kitchen_status'            => $kitchen_status->count() ? OrderResource::collection($kitchen_status) : [],
@@ -202,8 +203,11 @@ class HomeController extends APIController
     public function addCusToTbl(Request $request)
     {
         $CusToTbl = $this->orderRepository->customerTable($request->all());
+        if(empty($CusToTbl)) {
+            throw new GeneralException('Table Not Addedd');
+        }
+        return $this->respondSuccess("Table Allocated Successfully", $CusToTbl);
         // if($CusToTbl != 0) {
-            return $this->respondSuccess("Table Allocated Successfully", $CusToTbl);
         // } else {
         //     return $this->respondWithError("Table Already Allocated");
             
@@ -213,6 +217,9 @@ class HomeController extends APIController
     public function endWaiterSession(Request $request)
     {
         $CusToTblDel = $this->orderRepository->customerTableDel($request->all());
+        if(!$CusToTblDel) {
+            throw new GeneralException('Table Not Found');
+        }
         return $this->respondSuccess("Table Data Remove Successfully");
     }
 

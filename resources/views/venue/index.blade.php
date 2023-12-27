@@ -139,10 +139,12 @@
                             </div>
                             <div class="padbox">
                                 <form name="addimageform" id="addimageform" method="post">
-                                    <input id="img-upload" type="file" class="files" name="image"  style="display: none" accept="image/*" />
+                                    <div class="form-group">
+                                        <input id="img-upload" type="file" class="files" name="image"  style="display: none" accept="image/*" />
+                                    </div>
                                     <figure class="venue-fig"><img src="{{ $restaurant->image }}" alt=""></figure>
                                 </form>
-                                <button class="bor-btn w-100 font-26" id="venueImg_submitBtn" style="display: none" type="submit">Upload Image</button>
+                                <button class="bor-btn w-100 font-26 mt-4" id="venueImg_submitBtn" style="display: none" type="submit">Upload Image</button>
                             </div>
                         </div>
                         <a href="#"

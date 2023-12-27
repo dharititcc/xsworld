@@ -77,6 +77,14 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'v1', 'as' => 'api.v1.'], fun
         Route::post('/deletecart', 'OrderController@deleteCart')->name('deletecart');
         // {api/v1/placeorder}
         Route::post('/placeorder', 'OrderController@placeOrder')->name('placeorder');
+        // {api/v1/venueList}
+        Route::post('/venueList', 'OrderController@venueList')->name('venueList');
+
+        // {api/v1/sendFriendRequest}
+        Route::post('/sendFriendRequest', 'OrderController@sendFriendRequest')->name('sendFriendRequest');
+        
+        Route::post('/friendRequestStatus', 'OrderController@friendRequestStatus')->name('friendRequestStatus');
+
         // {api/v1/orderstatusupdate}
         Route::post('/orderstatusupdate', 'OrderController@orderStatusUpdate')->name('orderStatusUpdate');
         // {api/v1/order-review}

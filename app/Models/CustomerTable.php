@@ -66,4 +66,14 @@ class CustomerTable extends Model
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
+
+    /**
+     * Get the waiter
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function waiter(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'waiter_id', 'id');
+    }
 }

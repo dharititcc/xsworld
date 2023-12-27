@@ -28,11 +28,11 @@
                 <tbody>
                     <tr>
                         <th>Total Tables</th>
-                        <td> 3</td>
+                        <td> {{$res_tables->count()}} </td>
                     </tr>
                     <tr>
                         <th>Active Tables</th>
-                        <td> 3</td>
+                        <td> {{$active_tbl}} </td>
                     </tr>
                     <tr>
                         <th>Occupied Tables</th>
@@ -46,7 +46,7 @@
                         <th>Staffed Tables</th>
                         <td> 2</td>
                     </tr>
-                    <tr>
+                    {{-- <tr>
                         <th>Additional Option #1</th>
                         <td> 2</td>
                     </tr>
@@ -57,7 +57,7 @@
                     <tr>
                         <th>Additional Option #3</th>
                         <td> 2</td>
-                    </tr>
+                    </tr> --}}
                 </tbody>
             </table>
 

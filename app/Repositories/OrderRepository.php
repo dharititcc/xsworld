@@ -5,6 +5,7 @@ use App\Exceptions\GeneralException;
 use App\Models\Category;
 use App\Models\CreditPointsHistory;
 use App\Models\CustomerTable;
+use App\Models\FriendRequest;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\OrderReview;
@@ -16,6 +17,7 @@ use App\Models\User;
 use App\Models\UserPaymentMethod;
 use App\Repositories\BaseRepository;
 use App\Repositories\Traits\CreditPoint;
+use App\Repositories\Traits\OrderFlow;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
@@ -31,7 +33,7 @@ use Stripe\Token;
 */
 class OrderRepository extends BaseRepository
 {
-    use CreditPoint;
+    use CreditPoint, OrderFlow;
 
     /**
     * Associated Repository Model.
@@ -43,244 +45,6 @@ class OrderRepository extends BaseRepository
 
     public function __construct(UserRepository $userRepository) {
         $this->userRepository = $userRepository;
-    }
-
-    /**
-     * Method addTocart
-     *
-     * @param array $data [explicite description]
-     *
-     * @return mixed
-     */
-    public function addTocart(array $data)
-    {
-        $user       = isset( $data['order']['user_id'] ) ? User::findOrFail($data['order']['user_id']) : auth()->user();
-        $order      = isset( $data['order'] ) ? $data['order'] : [];
-        $orderItems = isset( $data['order_items'] ) ? $data['order_items'] : [];
-
-        $user->loadMissing(['latest_cart', 'latest_cart.restaurant']);
-
-        $latestCart = $user->latest_cart;
-
-        if( isset( $latestCart->id ) && ($latestCart->restaurant->id ==  $order['restaurant_id']) )
-        {
-            // check restaurant id available in the cart
-            return $this->checkSameRestaurantOrder($user, $latestCart, $orderItems);
-        }
-        else
-        {
-            // new order
-            return $this->createOrder($user, $order, $orderItems);
-        }
-
-        throw new GeneralException('Order request is invalid.');
-    }
-
-    /**
-     * Method checkSameRestaurantOrder
-     *
-     * @param User $user [explicite description]
-     * @param Order $order [explicite description]
-     * @param array $orderItems [explicite description]
-     *
-     * @return Order
-     */
-    private function checkSameRestaurantOrder(User $user, Order $order, array $orderItems): Order
-    {
-        // check if order request is available
-        if( isset( $order->id ) && !empty($orderItems) )
-        {
-            if( !empty($orderItems) )
-            {
-                foreach( $orderItems as $item )
-                {
-                    $item['category_id'] = Category::select('parent_id')->where('id',$item['category_id'])->first();
-                    // make proper item array for the table
-                    $itemArr = [
-                        'restaurant_item_id'    => $item['item_id'],
-                        'category_id'           => $item['category_id']->parent_id,
-                        'price'                 => $item['price'],
-                        'quantity'              => $item['quantity'],
-                        'type'                  => RestaurantItem::ITEM,
-                        'total'                 => $item['quantity'] * $item['price']
-                    ];
-
-                    if( isset( $item['variation'] ) && !empty( $item['variation'] ) )
-                    {
-                        $variationArr = [
-                            'restaurant_item_id'    => $item['item_id'],
-                            'category_id'           => $item['category_id']->parent_id,
-                            'parent_item_id'        => null,
-                            'variation_id'          => $item['variation']['id'],
-                            'quantity'              => $item['variation']['quantity'],
-                            'price'                 => $item['variation']['price'],
-                            'type'                  => RestaurantItem::ITEM,
-                            'total'                 => $item['variation']['price'] * $item['variation']['quantity']
-                        ];
-
-                        // add variation in the order items table
-                        $newOrderItem = $this->createOrderItem($order, $variationArr);
-                    }
-                    else
-                    {
-                        $newOrderItem = $this->createOrderItem($order, $itemArr);
-                    }
-
-                    // add item in the order items table
-
-                    // make proper mixer data for the table
-                    if( isset( $item['mixer'] ) && !empty( $item['mixer'] ) )
-                    {
-                        $mixerArr = [
-                            'restaurant_item_id'=> $item['mixer']['id'],
-                            'parent_item_id'    => $newOrderItem->id,
-                            'price'             => $item['mixer']['price'],
-                            'type'              => RestaurantItem::MIXER,
-                            'quantity'          => $item['mixer']['quantity'],
-                            'total'             => $item['mixer']['quantity'] * $item['mixer']['price']
-                        ];
-
-                        // add mixer in the order items table
-                        $mixerItem = $this->createOrderItem($order, $mixerArr);
-                    }
-
-                    // make proper data for addons
-                    if( isset( $item['addons'] ) && !empty( $item['addons'] ) )
-                    {
-                        $addons = $item['addons'];
-
-                        if( !empty( $addons ) )
-                        {
-                            foreach( $addons as $addon )
-                            {
-                                $addonData = [
-                                    'restaurant_item_id'    => $addon['id'],
-                                    'parent_item_id'        => $newOrderItem->id,
-                                    'price'                 => $addon['price'],
-                                    'type'                  => RestaurantItem::ADDON,
-                                    'quantity'              => $addon['quantity'],
-                                    'total'                 => $addon['quantity'] * $addon['price']
-                                ];
-
-                                // add addon in the order items table
-                                $addonItem = $this->createOrderItem($order, $addonData);
-                            }
-                        }
-                    }
-                }
-            }
-
-            $order->refresh();
-            // if( $this->checkOrderCategoryType($order->order_items) )
-            // {
-            //     // update order category to 1
-            //     $order_category_type = 1;
-            // }
-            // else
-            // {
-            //     // update order category to 0
-            //     $order_category_type = 0;
-            // }
-            $order_category_type = $this->checkOrderCategoryType($order->order_items);
-            $order->loadMissing(['items']);
-            $order->update(['total' => $order->items->sum('total'),'order_category_type' => $order_category_type]);
-
-            return $order;
-        }
-
-        throw new GeneralException('Order could not be updated.');
-    }
-
-    /**
-     * Method createOrder
-     *
-     * @param User $user [explicite description]
-     * @param array $data [explicite description]
-     * @param array $orderItems [explicite description]
-     *
-     * @return Order
-     */
-    private function createOrder(User $user, array $data, array $orderItems): Order
-    {
-        $restaurant                     = Restaurant::find($data['restaurant_id']);
-        $order['user_id']               = $user->id;
-        $order['restaurant_id']         = $restaurant->id;
-        $order['currency_id']           = $restaurant->currency_id;
-        $order['waiter_id']             = access()->isWaiter() ? auth()->user()->id : null;
-        $order['restaurant_table_id']   = isset($data['restaurant_table_id']) ? $data['restaurant_table_id'] : null;
-
-        if($order['restaurant_table_id']) {
-            $order['status']    = Order::WAITER_PENDING;
-        }
-
-        $newOrder = Order::create($order);
-
-        $newOrder->refresh();
-        
-
-        if($order['restaurant_table_id']) {
-            CustomerTable::where('user_id' , $user->id)->where('restaurant_table_id',$order['restaurant_table_id'])->update(['order_id' => $newOrder->id]);
-        }
-
-        return $this->checkSameRestaurantOrder($user, $newOrder, $orderItems);
-    }
-
-    /**
-     * Method updateCart
-     *
-     * @param Order $order [explicite description]
-     * @param array $data [explicite description]
-     *
-     * @return Order
-     */
-    public function updateCart(Order $order, array $data): Order
-    {
-        /*[
-            "order_id" => 10
-            "item_id" => 38
-            "quantity" => 5
-        ];*/
-        $user       = auth()->user();
-        $orderItem  = $order->order_items->where('id', $data['item_id'])->first();
-
-        $orderItem->loadMissing(['addons', 'mixer']);
-
-        // update order item quantity
-        $orderItem->update(['quantity' => $data['quantity'], 'total' => $data['quantity'] * $orderItem->price]);
-
-        // check if that item has any addons
-        if( $orderItem->addons->count() )
-        {
-            foreach( $orderItem->addons as $addon )
-            {
-                $addon->update(['quantity' => $data['quantity'], 'total' => $data['quantity'] * $addon->price]);
-            }
-        }
-
-        // check if that item has any mixer
-        if( isset( $orderItem->mixer->id ) )
-        {
-            $orderItem->mixer->update(['quantity' => $data['quantity'], 'total' => $data['quantity'] * $orderItem->mixer->price]);
-        }
-
-        $order->refresh();
-        $order->loadMissing(['items']);
-        $order->update(['total' => $order->items->sum('total')]);
-
-        return $order;
-    }
-
-    /**
-     * Method createOrderItem
-     *
-     * @param Order $order [explicite description]
-     * @param array $data [explicite description]
-     *
-     * @return OrderItem
-     */
-    private function createOrderItem(Order $order, array $data): OrderItem
-    {
-        return $order->items()->create($data);
     }
 
     /**
@@ -689,47 +453,6 @@ class OrderRepository extends BaseRepository
         return $order;
     }
 
-    public function checkOrderCategoryType(Collection $items)
-    {
-        $isOrderCategoryType = 0;
-        $isDrinkCategory = 0;
-        $isFoodCategory = 0;
-        if( $items->count() )
-        {
-            foreach( $items as $item )
-            {
-                $item->loadMissing(['restaurant_item', 'restaurant_item.category.children_parent']);
-
-                $parentCategory = $item->restaurant_item->category->children_parent;
-                
-                if( $parentCategory->name == 'Food' )
-                {
-                    $isFoodCategory = 1;
-                }
-
-                if( $parentCategory->name == 'Drinks' )
-                {
-                    $isDrinkCategory = 1;
-                }
-            }
-        }
-
-        if( $isDrinkCategory === 1 && $isFoodCategory === 1 )
-        {
-            $isOrderCategoryType = 2;
-        }
-        else if( $isDrinkCategory !== 1 && $isFoodCategory === 1 )
-        {
-            $isOrderCategoryType = 1;
-        }
-        else
-        {
-            $isOrderCategoryType = 0;
-        }
-
-        return $isOrderCategoryType;
-    }
-
     /**
      * Method deleteCart
      *
@@ -738,7 +461,7 @@ class OrderRepository extends BaseRepository
      * @return bool
      * @throws \App\Exceptions\GeneralException
      */
-    function deleteCart(array $data): bool
+    public function deleteCart(array $data): bool
     {
         $user       = auth()->user();
         $order_id   = $data['order_id'] ? $data['order_id'] : null;
@@ -754,110 +477,6 @@ class OrderRepository extends BaseRepository
         }
 
         throw new GeneralException('Order is not found.');
-    }
-
-    public function randomPickpickPoint(Order $order)
-    {
-        $restaurant_id = $order->restaurant_id;
-        $pickup_point_id = RestaurantPickupPoint::where(['restaurant_id' => $restaurant_id , 'type' => 2, 'status' => RestaurantPickupPoint::ONLINE])->inRandomOrder()->first();
-        return $pickup_point_id;
-    }
-
-    /**
-     * Method placeOrder
-     *
-     * @param array $data [explicite description]
-     *
-     * @return Order
-     */
-    function placeOrder(array $data): Order
-    {
-        $card_id            = $data['card_id'] ?? null;
-        $credit_amount      = $data['credit_amount'] ? $data['credit_amount'] : null;
-        $amount             = $data['amount'] ? $data['amount'] : null;
-        $table_id           = $data['table_id'] ? $data['table_id'] : null;
-        $order              = Order::with(['restaurant'])->findOrFail($data['order_id']);
-        $user               = $order->user_id ? User::findOrFail($order->user_id) : auth()->user();
-        $devices            = $user->devices()->pluck('fcm_token')->toArray();
-
-        if($order->order_category_type == 2) {
-            $pickup_point_id    = $this->randomPickpickPoint($order);
-        } else {
-            $pickup_point_id    = $data['pickup_point_id'] ? RestaurantPickupPoint::findOrFail($data['pickup_point_id']) : null;
-        }
-
-        $userCreditAmountBalance = $user->credit_amount;
-        $updateArr         = [];
-        $paymentArr        = [];
-
-        if(isset($order->id))
-        {
-            if($order->total <= $credit_amount)
-            {
-                $updateArr = [
-                    'type'                  => Order::ORDER,
-                    'pickup_point_id'       => ($pickup_point_id) ? $pickup_point_id->id : null,
-                    'pickup_point_user_id'  => ($pickup_point_id) ? $pickup_point_id->user_id : null,
-                    'credit_amount'         => $credit_amount,
-                    'restaurant_table_id'   => ($table_id) ? $table_id : null,
-                ];
-                $remaingAmount = $userCreditAmountBalance - $credit_amount;
-
-                // update user's credit amount
-                $this->updateUserPoints($user, ['credit_amount' => $remaingAmount]);
-            }
-
-
-            if( $order->total != $credit_amount )
-            {
-                $paymentArr = [
-                    'amount'        => number_format($amount, 2) * 100,
-                    'currency'      => $order->restaurant->currency->code,
-                    'customer'      => $user->stripe_customer_id,
-                    'capture'       => false,
-                    'source'        => $card_id,
-                    'description'   => $order->id
-                ];
-
-                $stripe         = new Stripe();
-                $payment_data   = $stripe->createCharge($paymentArr);
-
-                $updateArr = [
-                    'type'                  => Order::ORDER,
-                    'card_id'               => $card_id,
-                    'charge_id'             => $payment_data->id,
-                    'pickup_point_id'       => ($pickup_point_id) ? $pickup_point_id->id : null,
-                    'pickup_point_user_id'  => ($pickup_point_id) ? $pickup_point_id->user_id : null,
-                    'credit_amount'         => $credit_amount,
-                    'restaurant_table_id'   => ($table_id) ? $table_id : null,
-                    'amount'                => $amount,
-                ];
-                $remaingAmount = $userCreditAmountBalance - $credit_amount;
-
-                // update user's credit amount
-                $this->updateUserPoints($user, ['credit_amount' => $remaingAmount]);
-            }
-
-            $order->update($updateArr);
-        }
-
-        $order->refresh();
-        $order->loadMissing(['items']);
-
-        $text               = $order->restaurant->name. ' is processing your order';
-        $title              = $text;
-        $message            = "Your Order is #".$order->id." placed";
-        $orderid            = $order->id;
-        $send_notification  = sendNotification($title,$message,$devices,$orderid);
-
-        $bartitle           = "Order is placed by Customer";
-        $barmessage         = "Order is #".$order->id." placed by customer";
-        $bardevices         = $pickup_point_id ? $order->pickup_point_user->devices()->pluck('fcm_token')->toArray() : [];
-        if($pickup_point_id && !empty( $bardevices )) {
-            $bar_notification   = sendNotification($bartitle,$barmessage,$bardevices,$orderid);
-        }
-
-        return $order;
     }
 
     /**
@@ -963,9 +582,13 @@ class OrderRepository extends BaseRepository
         $category_id = $this->categoryGet();
         $orders = Order::whereIn('restaurant_id',$data);
         if($is_history === 0) {
-            $orderTbl = $orders->with(['order_items' => function($query) use($category_id){
-                $query->where('category_id',$category_id);
-            },])->where('type',Order::ORDER)->whereIn('status',[Order::PENDNIG,Order::ACCEPTED,Order::WAITER_PENDING])->whereNotIn('order_category_type', [0])->get();
+            $orderTbl = $orders
+            // ->with(['order_items' => function($query) use($category_id){
+            //     $query->where('category_id',$category_id);
+            // },])
+            ->where('type',Order::ORDER)
+            ->whereIn('status',[Order::PENDNIG,Order::ACCEPTED,Order::WAITER_PENDING,Order::CURRENTLY_BEING_PREPARED])
+            ->whereNotIn('order_category_type', [0])->get();
         } else {
             $orderTbl = $orders->whereIn('status',[Order::COMPLETED,Order::FULL_REFUND, Order::PARTIAL_REFUND, Order::RESTAURANT_CANCELED, Order::CUSTOMER_CANCELED, Order::KITCHEN_CONFIRM])->where('type',Order::ORDER)->whereNotIn('order_category_type', [0])->get();
         }
@@ -987,14 +610,15 @@ class OrderRepository extends BaseRepository
     public function getKitchenCollections(array $data) : Collection
     {
         $category_id = $this->categoryGet();
-        $orders = Order::whereIn('restaurant_id',$data)->with(['order_items' => function($query) use($category_id) { $query->where('category_id', $category_id); }])
+        $orders = Order::whereIn('restaurant_id',$data)
+        // ->with(['order_items' => function($query) use($category_id) { $query->where('category_id', $category_id); }])
         ->where('type', Order::ORDER)
-        // ->where('status', [Order::READYFORPICKUP])
-        ->whereHas('order_items', function($query) use($category_id)
-        {
-            $query->where('category_id',$category_id)
-                ->where('status', OrderItem::COMPLETED);
-        })
+        ->where('status', [Order::READYFORPICKUP])
+        // ->whereHas('order_items', function($query) use($category_id)
+        // {
+        //     $query->where('category_id',$category_id)
+        //         ->where('status', OrderItem::COMPLETED);
+        // })
         ->whereNotIn('order_category_type', [0])
         ->orderByDesc('id')
         ->get();
@@ -1190,7 +814,9 @@ class OrderRepository extends BaseRepository
         $paymentArr        = [];
         $stripe_customer_id = $user->stripe_customer_id;
         // dd($stripe_customer_id);
-
+        if(empty($stripe_customer_id)) {
+            throw new GeneralException('Please ask customer to Add Card details');
+        }
         if(isset($order->id))
         {
             if($order->total == $credit_amount)
@@ -1201,6 +827,7 @@ class OrderRepository extends BaseRepository
                     // 'pickup_point_user_id'  => ($pickup_point_id) ? $pickup_point_id->user_id : null,
                     'credit_amount'         => $credit_amount,
                     'restaurant_table_id'   => ($table_id) ? $table_id : null,
+                    'status'                => Order::CURRENTLY_BEING_PREPARED,
                 ];
             }
 
@@ -1229,6 +856,7 @@ class OrderRepository extends BaseRepository
                     // 'pickup_point_user_id'  => ($pickup_point_id) ? $pickup_point_id->user_id : null,
                     'credit_amount'         => $credit_amount,
                     'restaurant_table_id'   => ($table_id) ? $table_id : null,
+                    'status'                => Order::CURRENTLY_BEING_PREPARED,
                 ];
             }
 
@@ -1432,10 +1060,10 @@ class OrderRepository extends BaseRepository
     public function customerTable(array $data)
     {
         $getcusTbl = CustomerTable::where('user_id' , $data['user_id'])->where('restaurant_table_id',$data['restaurant_table_id'])->first();
-        // if($getcusTbl) {
-        //     $customerTbl = 0;
-        // } else {
-
+        if($getcusTbl) {
+            throw new GeneralException('Already table allocated to this Customer');
+            $customerTbl = 0;
+        } else {
             $customerTbl = CustomerTable::updateOrCreate([
                 'restaurant_table_id' => $data['restaurant_table_id'],
                 'user_id'       => $data['user_id'],
@@ -1443,7 +1071,7 @@ class OrderRepository extends BaseRepository
                 'waiter_id'     => $data['waiter_id']
             ]);
             // $customerTbl = CustomerTable::create($data);
-        // }
+        }
 
         Order::where('type',Order::ORDER)->where('status', Order::PENDNIG)->where('restaurant_table_id',$data['restaurant_table_id'])->where('user_id', $data['user_id'])->update(['waiter_id' => $data['waiter_id']]);
 
@@ -1452,20 +1080,72 @@ class OrderRepository extends BaseRepository
 
     public function customerTableDel(array $data)
     {
-        Order::where('id',$data['order_id'])->update(['status' => Order::COMPLETED]);
-        $order = Order::findOrFail($data['order_id']);
-
-        if($order->id){
-            $points                     = $order->total * 3;
-            $update['points']           = $order->user->points + round($points);
-            $$order->user->update($update);
-            $creditArr['user_id']       = $order->user->id;
-            $creditArr['order_id']      = $order->id;
-            $creditArr['credit_point']  = $order->total;
-            $creditArr['total']         = $update['points'];
-            CreditPointsHistory::create($creditArr);
+        if($data['order_id'])
+        {
+            // Order::where('id',$data['order_id'])->update(['status' => Order::COMPLETED]);
+            $order = Order::findOrFail($data['order_id']);
+    
+            if($order->id){
+                $points                     = $order->total * 3;
+                $update['points']           = $order->user->points + round($points);
+                $order->user->update($update);
+                $creditArr['user_id']       = $order->user->id;
+                $creditArr['order_id']      = $order->id;
+                $creditArr['credit_point']  = $order->total;
+                $creditArr['total']         = $update['points'];
+                CreditPointsHistory::create($creditArr);
+            }
         }
         $customerTblDel = CustomerTable::where('user_id' , $data['user_id'])->where('restaurant_table_id',$data['restaurant_table_id'])->delete();
         return $customerTblDel;
+    }
+
+    public function venueUserList(array $data)
+    {
+        $now        = Carbon::now(); //$now->format('Y-m-d H:i:s')
+        $lastHour   = Carbon::now()->subHour(1);
+        // dd($now);
+        // dd($lastHour);
+        // dd($data['restaurant_id']);
+        $venueList  = Order::where('restaurant_id',$data['restaurant_id'])
+                    ->whereNotIn('status', [Order::CUSTOMER_CANCELED])
+                    ->where('type',Order::ORDER)
+                    // ->where('updated_at',)
+                    // ->where('updated_at', function($query) use($lastHour)
+                    // {
+                    //     return $query->where('updated_at', '<', $lastHour);
+                    // })
+                    ->distinct('orders.user_id')
+                    ->get();
+        return $venueList;
+        // dd($venueList);
+    }
+
+
+    public function sendFriendReq(array $data)
+    {
+        $auth_user = auth()->user();
+        $FriendRequest = FriendRequest::create([
+            'user_id'   => $auth_user->id,
+            'friend_id' => $data['user_id'],
+        ]);
+
+        $FriendRequest = FriendRequest::create([
+            'user_id'   => $data['user_id'],
+            'friend_id' => $auth_user->id,
+        ]);
+        return $FriendRequest;
+    }
+
+    public function friendRequestStatus(array $data)
+    {
+        $auth_user = auth()->user();
+        // FriendRequest::where('user_id', $data['user_id'])->where('friend_id', $data['user_id'])
+        //SELECT * FROM `friend_requests` where ( user_id = 3 OR friend_id = 3) AND ( user_id = 18 OR friend_id = 18 );
+        $FriendRequest = FriendRequest::create([
+            'user_id'   => $data['user_id'],
+            'friend_id' => $auth_user->id,
+
+        ]);
     }
 }
