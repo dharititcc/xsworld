@@ -5,6 +5,7 @@ use App\Exceptions\GeneralException;
 use App\Models\CreditPointsHistory;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\OrderSplit;
 use App\Models\User;
 use App\Repositories\BaseRepository;
 use App\Repositories\Traits\CreditPoint;
@@ -48,7 +49,7 @@ class BarRepository extends BaseRepository
             'order_items.addons',
             'order_items.mixer',
             'order_items.category'
-        ])->whereHas('order_split_drink')->where('pickup_point_id', $user->pickup_point->id);
+        ])->where('pickup_point_id', $user->pickup_point->id);
 
         return $query;
     }
@@ -60,36 +61,16 @@ class BarRepository extends BaseRepository
      */
     public function getIncomingOrder() : Collection
     {
-        // $user = auth()->user();
-        // // dd($user);
-
-        // $user->loadMissing(['pickup_point']);
-        $category_id = $this->categoryGet();
-
         $orders       = $this->orderQuery()
-        ->whereHas('order_items', function($query) use($category_id)
-        {
-            $query->where('category_id',$category_id)
-                ->where('status', OrderItem::PENDNIG);
+        ->whereHas('order_split_drink', function($query){
+            $query->where('status', OrderSplit::PENDING);
         })
-        // ->where(['type'=> Order::ORDER])
-        ->where(['type'=> Order::ORDER , 'status' => Order::PENDNIG])
+        ->where(['type'=> Order::ORDER])
         ->orderBy('id','desc')
         ->get();
 
         return $orders;
     }
-
-    /**
-     * Method checkOrderType
-     *
-     *
-     * @return Collection
-     */
-    // public function checkOrderType(Order $order)
-    // {
-    //     dd('Hii'.$order);
-    // }
 
     /**
      * Method getConfirmedOrder
@@ -98,16 +79,10 @@ class BarRepository extends BaseRepository
      */
     public function getConfirmedOrder() : Collection
     {
-        $user = auth()->user();
-
-        $user->loadMissing(['pickup_point']);
-
         $order       = $this->orderQuery()
-        ->where(['type'=> Order::ORDER ])
-        // ->whereIn('status', [Order::ACCEPTED, Order::DELAY_ORDER])
-        ->whereHas('order_items', function($query)
-        {
-            return $query->whereIn('status', [OrderItem::ACCEPTED]);
+        ->where(['type'=> Order::ORDER])
+        ->whereHas('order_split_drink', function($query){
+            $query->where('status', OrderSplit::ACCEPTED);
         })
         ->orderBy('orders.remaining_date','asc')
         ->orderByDesc('orders.id')
@@ -162,16 +137,11 @@ class BarRepository extends BaseRepository
      */
     public function getBarCollections() : Collection
     {
-
-        $user = auth()->user();
-
-        $user->loadMissing(['pickup_point']);
-
         $order       = $this->orderQuery()
         ->where('type', Order::ORDER)
-        ->whereIn('status', [Order::COMPLETED])
-        // ->orderBy('orders.completion_date', 'asc')
-        // ->orderBy('orders.remaining_date','asc')
+        ->whereHas('order_split_drink', function($query){
+            $query->where('status', OrderSplit::COMPLETED);
+        })
         ->orderBy('orders.id','asc')
         ->get();
 
