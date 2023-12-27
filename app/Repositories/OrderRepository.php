@@ -591,7 +591,7 @@ class OrderRepository extends BaseRepository
         if($is_history === 0) {
             $orderTbl = $orders->with(['order_items' => function($query) use($category_id){
                 $query->where('category_id',$category_id);
-            },])->where('type',Order::ORDER)->whereIn('status',[Order::PENDNIG,Order::ACCEPTED,Order::WAITER_PENDING])->whereNotIn('order_category_type', [0])->get();
+            },])->where('type',Order::ORDER)->whereIn('status',[Order::PENDNIG,Order::ACCEPTED,Order::WAITER_PENDING,Order::CURRENTLY_BEING_PREPARED])->whereNotIn('order_category_type', [0])->get();
         } else {
             $orderTbl = $orders->whereIn('status',[Order::COMPLETED,Order::FULL_REFUND, Order::PARTIAL_REFUND, Order::RESTAURANT_CANCELED, Order::CUSTOMER_CANCELED, Order::KITCHEN_CONFIRM])->where('type',Order::ORDER)->whereNotIn('order_category_type', [0])->get();
         }
