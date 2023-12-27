@@ -1082,13 +1082,13 @@ class OrderRepository extends BaseRepository
     {
         if($data['order_id'])
         {
-            Order::where('id',$data['order_id'])->update(['status' => Order::COMPLETED]);
+            // Order::where('id',$data['order_id'])->update(['status' => Order::COMPLETED]);
             $order = Order::findOrFail($data['order_id']);
     
             if($order->id){
                 $points                     = $order->total * 3;
                 $update['points']           = $order->user->points + round($points);
-                $$order->user->update($update);
+                $order->user->update($update);
                 $creditArr['user_id']       = $order->user->id;
                 $creditArr['order_id']      = $order->id;
                 $creditArr['credit_point']  = $order->total;
