@@ -22,29 +22,30 @@ trait OrderStatus
 
         $order = Order::find($order_id);
         // if($order->order_category_type == 2) {
-            if($status == Order::READYFORPICKUP)
-            {
-                OrderItem::where('order_id',$order_id)->where('category_id',$category_id)->update(['status'=> OrderItem::ACCEPTED]);
-            } else {
-                OrderItem::where('order_id',$order_id)->where('category_id',$category_id)->update(['status' => OrderItem::COMPLETED]);
-                $totalItemCount = OrderItem::where('order_id',$order_id)->whereNotNull('category_id')->count();
-                    // dd($orderItemCount);
-                $totalCompletedItem = OrderItem::where('order_id',$order_id)->where('status', OrderItem::COMPLETED)->count();
-                if($totalItemCount === $totalCompletedItem) {
-                    foreach($order->order_items as $orderitem)
-                    {
-                        if($orderitem->status == OrderItem::COMPLETED ) {
-                            $order->update(['status'=>$status]);
-                            $order->refresh();
-                            $order->loadMissing(['items']);
-                        }
-                    }
-                }
-            }
+            // if($status == Order::READYFORPICKUP)
+            // {
+            //     OrderItem::where('order_id',$order_id)->where('category_id',$category_id)->update(['status'=> OrderItem::ACCEPTED]);
+            // } else {
+            //     OrderItem::where('order_id',$order_id)->where('category_id',$category_id)->update(['status' => OrderItem::COMPLETED]);
+            //     $totalItemCount = OrderItem::where('order_id',$order_id)->whereNotNull('category_id')->count();
+            //         // dd($orderItemCount);
+            //     $totalCompletedItem = OrderItem::where('order_id',$order_id)->where('status', OrderItem::COMPLETED)->count();
+            //     if($totalItemCount === $totalCompletedItem) {
+            //         foreach($order->order_items as $orderitem)
+            //         {
+            //             if($orderitem->status == OrderItem::COMPLETED ) {
+            //                 $order->update(['status'=>$status]);
+            //                 $order->refresh();
+            //                 $order->loadMissing(['items']);
+            //             }
+            //         }
+            //     }
+            // }
 
         // } else {
         //     Order::where('id',$order_id)->update(['status'=>$status]);
         // }
+        $order->update(['status'=>$status]);
         $order_data = Order::with(['order_items' => function($query) use($category_id){
             $query->where('category_id',$category_id);
         },])->find($order_id);
