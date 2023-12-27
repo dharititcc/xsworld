@@ -25,7 +25,7 @@ class TableResource extends JsonResource
             } else if($this->table_order->status == Order::READYFORPICKUP) {
                 $status     = $this->table_order->order_status;
             } else {
-                $status     = Order::IDLE;
+                $status     = $this->table_order->order_status;
             }
         }
         return [
