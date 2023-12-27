@@ -6,6 +6,7 @@ use App\Models\Category;
 use App\Models\CustomerTable;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\OrderSplit;
 use App\Models\Restaurant;
 use App\Models\RestaurantItem;
 use App\Models\RestaurantPickupPoint;
@@ -54,8 +55,10 @@ trait OrderFlow
      *
      * @return Order
      */
-    private function checkSameRestaurantOrder(User $user, Order $order, array $orderItems): Order
+    public function checkSameRestaurantOrder(User $user, Order $order, array $orderItems): Order
     {
+        $subOrderTotal  = 0;
+        $parentCategory = null;
         // check if order request is available
         if( isset( $order->id ) && !empty($orderItems) )
         {
@@ -63,22 +66,40 @@ trait OrderFlow
             {
                 foreach( $orderItems as $item )
                 {
-                    $item['category_id'] = Category::select('parent_id')->where('id',$item['category_id'])->first();
+                    $category = Category::with(['children_parent'])->find($item['category_id']);
+                    $parentCategory = $category->parent_id;
+
+                    // order split create
+                    $checkExistOrderSplit = $order->order_splits()->where('category_id', $parentCategory)->first();
+
+                    if( !isset($checkExistOrderSplit->id) )
+                    {
+                        // create order split row
+                        $checkExistOrderSplit = $this->createOrderSplit([
+                            'order_id'      => $order->id,
+                            'category_id'   => $parentCategory
+                        ]);
+                    }
+
                     // make proper item array for the table
                     $itemArr = [
                         'restaurant_item_id'    => $item['item_id'],
-                        'category_id'           => $item['category_id']->parent_id,
+                        'category_id'           => $parentCategory,
+                        'order_split_id'        => $checkExistOrderSplit->id,
                         'price'                 => $item['price'],
                         'quantity'              => $item['quantity'],
                         'type'                  => RestaurantItem::ITEM,
                         'total'                 => $item['quantity'] * $item['price']
                     ];
 
+                    $subOrderTotal += $item['quantity'] * $item['price'];
+
                     if( isset( $item['variation'] ) && !empty( $item['variation'] ) )
                     {
                         $variationArr = [
                             'restaurant_item_id'    => $item['item_id'],
-                            'category_id'           => $item['category_id']->parent_id,
+                            'category_id'           => $parentCategory,
+                            'order_split_id'        => $checkExistOrderSplit->id,
                             'parent_item_id'        => null,
                             'variation_id'          => $item['variation']['id'],
                             'quantity'              => $item['variation']['quantity'],
@@ -86,6 +107,8 @@ trait OrderFlow
                             'type'                  => RestaurantItem::ITEM,
                             'total'                 => $item['variation']['price'] * $item['variation']['quantity']
                         ];
+
+                        $subOrderTotal += $item['variation']['price'] * $item['variation']['quantity'];
 
                         // add variation in the order items table
                         $newOrderItem = $this->createOrderItem($order, $variationArr);
@@ -102,12 +125,15 @@ trait OrderFlow
                     {
                         $mixerArr = [
                             'restaurant_item_id'=> $item['mixer']['id'],
+                            'order_split_id'    => $checkExistOrderSplit->id,
                             'parent_item_id'    => $newOrderItem->id,
                             'price'             => $item['mixer']['price'],
                             'type'              => RestaurantItem::MIXER,
                             'quantity'          => $item['mixer']['quantity'],
                             'total'             => $item['mixer']['quantity'] * $item['mixer']['price']
                         ];
+
+                        $subOrderTotal += $item['mixer']['quantity'] * $item['mixer']['price'];
 
                         // add mixer in the order items table
                         $mixerItem = $this->createOrderItem($order, $mixerArr);
@@ -123,6 +149,7 @@ trait OrderFlow
                             foreach( $addons as $addon )
                             {
                                 $addonData = [
+                                    'order_split_id'        => $checkExistOrderSplit->id,
                                     'restaurant_item_id'    => $addon['id'],
                                     'parent_item_id'        => $newOrderItem->id,
                                     'price'                 => $addon['price'],
@@ -130,6 +157,8 @@ trait OrderFlow
                                     'quantity'              => $addon['quantity'],
                                     'total'                 => $addon['quantity'] * $addon['price']
                                 ];
+
+                                $subOrderTotal += $addon['quantity'] * $addon['price'];
 
                                 // add addon in the order items table
                                 $addonItem = $this->createOrderItem($order, $addonData);
@@ -158,6 +187,18 @@ trait OrderFlow
         }
 
         throw new GeneralException('Order could not be updated.');
+    }
+
+    /**
+     * Method createOrderSplit
+     *
+     * @param array $data [explicite description]
+     *
+     * @return OrderSplit
+     */
+    public function createOrderSplit(array $data): OrderSplit
+    {
+        return OrderSplit::create($data);
     }
 
     /**
@@ -246,7 +287,7 @@ trait OrderFlow
      *
      * @return OrderItem
      */
-    private function createOrderItem(Order $order, array $data): OrderItem
+    public function createOrderItem(Order $order, array $data): OrderItem
     {
         return $order->items()->create($data);
     }
@@ -389,10 +430,24 @@ trait OrderFlow
         $bartitle           = "Order is placed by Customer";
         $barmessage         = "Order is #".$order->id." placed by customer";
         $bardevices         = $pickup_point_id ? $order->pickup_point_user->devices()->pluck('fcm_token')->toArray() : [];
-        if($pickup_point_id && !empty( $bardevices )) {
+        if(!empty( $bardevices )) {
             $bar_notification   = sendNotification($bartitle,$barmessage,$bardevices,$orderid);
         }
 
         return $order;
+    }
+
+    /**
+     * Method randomPickpickPoint
+     *
+     * @param Order $order [explicite description]
+     *
+     * @return RestaurantPickupPoint
+     */
+    public function randomPickpickPoint(Order $order): RestaurantPickupPoint
+    {
+        $restaurant_id = $order->restaurant_id;
+        $pickup_point_id = RestaurantPickupPoint::where(['restaurant_id' => $restaurant_id , 'type' => 2, 'status' => RestaurantPickupPoint::ONLINE])->inRandomOrder()->first();
+        return $pickup_point_id;
     }
 }

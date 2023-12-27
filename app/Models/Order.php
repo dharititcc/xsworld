@@ -408,4 +408,14 @@ class Order extends Model
         }
         return $served_time;
     }
+
+    /**
+     * Get all of the order_splits for the Order
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function order_splits(): HasMany
+    {
+        return $this->hasMany(OrderSplit::class, 'order_id', 'id');
+    }
 }

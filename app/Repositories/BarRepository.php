@@ -31,22 +31,20 @@ class BarRepository extends BaseRepository
      */
     private function orderQuery(): Builder
     {
-
         $user = auth()->user();
-        // foreach($user->pickup_point->restaurant->main_categories as $category)
-        // {
-        //     if($category->name == "Drinks") {
-        //         $category_id = $category->id;
-        //     }
-        // }
 
         $category_id = $this->categoryGet();
 
         $user->loadMissing(['pickup_point']);
 
         return Order::with([
+            'user',
             'order_items' => function($query) use($category_id){
                 $query->where('category_id',$category_id);
+            },
+            'order_splits' => function($query) use($category_id)
+            {
+                $query->where('category_id', $category_id);
             },
             'order_items.addons',
             'order_items.mixer',
@@ -498,6 +496,12 @@ class BarRepository extends BaseRepository
     public function categoryGet()
     {
         $user = auth()->user();
+        $user->loadMissing([
+            'pickup_point',
+            'pickup_point.restaurant',
+            'pickup_point.restaurant.main_categories'
+        ]);
+
         foreach($user->pickup_point->restaurant->main_categories as $category)
         {
             if($category->name == "Drinks") {

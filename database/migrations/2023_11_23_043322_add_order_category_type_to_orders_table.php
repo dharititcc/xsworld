@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('orders', function (Blueprint $table) {
-            $table->tinyInteger('order_category_type')->default(0)->comment('Both Food&Drinks = 1')->after('status');
+            $table->tinyInteger('order_category_type')->default(0)->comment('0=Drink, 1=Food, 2=Food & Drink')->after('status');
         });
     }
 
