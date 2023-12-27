@@ -357,10 +357,17 @@ trait OrderFlow
         $user               = $order->user_id ? User::findOrFail($order->user_id) : auth()->user();
         $devices            = $user->devices()->pluck('fcm_token')->toArray();
 
+        // If order contains food and drink both
         if($order->order_category_type == 2) {
             $pickup_point_id    = $this->randomPickpickPoint($order);
         } else {
             $pickup_point_id    = $data['pickup_point_id'] ? RestaurantPickupPoint::findOrFail($data['pickup_point_id']) : null;
+        }
+
+        // handle if pickup point exist or bartender associated
+        if( !isset( $pickup_point_id->id ) && !isset( $pickup_point_id->user_id ) )
+        {
+            throw new GeneralException('There is no pickup point or bartender assiociated.');
         }
 
         $userCreditAmountBalance = $user->credit_amount;
@@ -442,9 +449,9 @@ trait OrderFlow
      *
      * @param Order $order [explicite description]
      *
-     * @return RestaurantPickupPoint
+     * @return null|RestaurantPickupPoint
      */
-    public function randomPickpickPoint(Order $order): RestaurantPickupPoint
+    public function randomPickpickPoint(Order $order): ?RestaurantPickupPoint
     {
         $restaurant_id = $order->restaurant_id;
         $pickup_point_id = RestaurantPickupPoint::where(['restaurant_id' => $restaurant_id , 'type' => 2, 'status' => RestaurantPickupPoint::ONLINE])->inRandomOrder()->first();

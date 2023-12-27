@@ -39,6 +39,7 @@ class BarRepository extends BaseRepository
 
         return Order::with([
             'user',
+            'restaurant_pickup_point',
             'order_items' => function($query) use($category_id){
                 $query->where('category_id',$category_id);
             },

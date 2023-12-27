@@ -13,10 +13,24 @@ class OrderSplit extends Model
     /** @var string $table */
     protected $table = 'order_splits';
 
-    const PENDING = 0;
+    /** BAR STATUSES START */
+    const PENDING               = 0;
+    const ACCEPTED              = 1;
+    const COMPLETED             = 3;
+    const CONFIRM_PICKUP        = 5;
+    const RESTAURANT_TOXICATION = 6;
+    const DELAY_ORDER           = 9;
+    const DENY_ORDER            = 13;
+    /** BAR STATUS END */
 
     const STATUS = [
-        self::PENDING => 'Pending'
+        self::PENDING               => 'Pending',
+        self::ACCEPTED              => 'Accepted',
+        self::COMPLETED             => 'Completed', // Bar ready
+        self::CONFIRM_PICKUP        => 'Confirm Pickup', // customer or waiter collected
+        self::RESTAURANT_TOXICATION => 'Cancelled due to intoxication', // restaurant cancelled order
+        self::DELAY_ORDER           => 'Delay',
+        self::DENY_ORDER            => 'Deny' // restaurant cancelled the order due to some reason (e.g. stock or item not available)
     ];
 
     /**
