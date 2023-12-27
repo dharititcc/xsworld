@@ -57,8 +57,9 @@ trait OrderFlow
      */
     public function checkSameRestaurantOrder(User $user, Order $order, array $orderItems): Order
     {
-        $subOrderTotal  = 0;
-        $parentCategory = null;
+        $subOrderTotal      = 0;
+        $isFoodAvailable    = 0;
+        $parentCategory     = null;
         // check if order request is available
         if( isset( $order->id ) && !empty($orderItems) )
         {
@@ -66,18 +67,19 @@ trait OrderFlow
             {
                 foreach( $orderItems as $item )
                 {
-                    $category = Category::with(['children_parent'])->find($item['category_id']);
-                    $parentCategory = $category->parent_id;
+                    $category           = Category::with(['children_parent'])->find($item['category_id']);
+                    $parentCategory     = $category->parent_id;
+                    $isFoodAvailable    = $category->children_parent->name == 'Food' ? 1 : 0;
 
                     // order split create
-                    $checkExistOrderSplit = $order->order_splits()->where('category_id', $parentCategory)->first();
+                    $checkExistOrderSplit = $order->order_splits()->where('is_food', $isFoodAvailable)->first();
 
                     if( !isset($checkExistOrderSplit->id) )
                     {
                         // create order split row
                         $checkExistOrderSplit = $this->createOrderSplit([
                             'order_id'      => $order->id,
-                            'category_id'   => $parentCategory
+                            'is_food'       => $isFoodAvailable
                         ]);
                     }
 

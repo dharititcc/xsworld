@@ -180,4 +180,14 @@ class OrderItem extends Model
     {
         return $query->where('type', $value);
     }
+
+    /**
+     * Get the order_split that owns the OrderItem
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function order_split(): BelongsTo
+    {
+        return $this->belongsTo(OrderSplit::class, 'order_split_id', 'id');
+    }
 }

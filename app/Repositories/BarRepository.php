@@ -33,24 +33,24 @@ class BarRepository extends BaseRepository
     {
         $user = auth()->user();
 
-        $category_id = $this->categoryGet();
+        // $category_id = $this->categoryGet();
 
         $user->loadMissing(['pickup_point']);
 
-        return Order::with([
+        $query = Order::with([
             'user',
             'restaurant_pickup_point',
-            'order_items' => function($query) use($category_id){
-                $query->where('category_id',$category_id);
-            },
-            'order_splits' => function($query) use($category_id)
-            {
-                $query->where('category_id', $category_id);
-            },
+            'order_split_drink',
+            'order_split_drink.items',
+            // 'order_items' => function($query) use($category_id){
+            //     $query->where('category_id',$category_id);
+            // },
             'order_items.addons',
             'order_items.mixer',
             'order_items.category'
-        ])->where('pickup_point_id', $user->pickup_point->id);
+        ])->whereHas('order_split_drink')->where('pickup_point_id', $user->pickup_point->id);
+
+        return $query;
     }
 
     /**
@@ -60,10 +60,10 @@ class BarRepository extends BaseRepository
      */
     public function getIncomingOrder() : Collection
     {
-        $user = auth()->user();
-        // dd($user);
+        // $user = auth()->user();
+        // // dd($user);
 
-        $user->loadMissing(['pickup_point']);
+        // $user->loadMissing(['pickup_point']);
         $category_id = $this->categoryGet();
 
         $orders       = $this->orderQuery()

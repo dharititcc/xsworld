@@ -418,4 +418,24 @@ class Order extends Model
     {
         return $this->hasMany(OrderSplit::class, 'order_id', 'id');
     }
+
+    /**
+     * Get the order_split_drink associated with the Order
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function order_split_drink(): HasOne
+    {
+        return $this->hasOne(OrderSplit::class, 'order_id', 'id')->where('is_food', 0);
+    }
+
+    /**
+     * Get the order_split_food associated with the Order
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function order_split_food(): HasOne
+    {
+        return $this->hasOne(OrderSplit::class, 'order_id', 'id')->where('is_food', 1);
+    }
 }

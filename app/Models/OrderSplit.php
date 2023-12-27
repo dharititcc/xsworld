@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class OrderSplit extends Model
 {
@@ -41,7 +42,7 @@ class OrderSplit extends Model
     protected $fillable = [
         'order_id',
         'status',
-        'category_id'
+        'is_food'
     ];
 
     /**
@@ -54,8 +55,23 @@ class OrderSplit extends Model
         return $this->belongsTo(Order::class, 'order_id', 'id');
     }
 
-    public function getStatusNameAttribute()
+    /**
+     * Method getStatusNameAttribute
+     *
+     * @return string
+     */
+    public function getStatusNameAttribute(): string
     {
         return self::STATUS[$this->status];
+    }
+
+    /**
+     * Get all of the items for the OrderSplit
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function items(): HasMany
+    {
+        return $this->hasMany(OrderItem::class, 'order_split_id', 'id')->where('type', RestaurantItem::ITEM);
     }
 }

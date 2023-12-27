@@ -14,12 +14,11 @@ return new class extends Migration
         Schema::create('order_splits', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('order_id')->nullable();
-            $table->unsignedBigInteger('category_id')->nullable();
+            $table->unsignedTinyInteger('is_food')->default(0)->comment('0=Drink, 1=Food');
             $table->unsignedTinyInteger('status')->default(0);
             $table->timestamps();
 
             $table->foreign('order_id')->references('id')->on('orders')->cascadeOnDelete();
-            $table->foreign('category_id')->references('id')->on('categories')->cascadeOnDelete();
         });
 
         Schema::table('order_items', function (Blueprint $table) {
