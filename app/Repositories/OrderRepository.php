@@ -479,13 +479,6 @@ class OrderRepository extends BaseRepository
         throw new GeneralException('Order is not found.');
     }
 
-    public function randomPickpickPoint(Order $order)
-    {
-        $restaurant_id = $order->restaurant_id;
-        $pickup_point_id = RestaurantPickupPoint::where(['restaurant_id' => $restaurant_id , 'type' => 2, 'status' => RestaurantPickupPoint::ONLINE])->inRandomOrder()->first();
-        return $pickup_point_id;
-    }
-
     /**
      * Method updateOrderStatus
      *
@@ -1065,11 +1058,10 @@ class OrderRepository extends BaseRepository
     public function customerTable(array $data)
     {
         $getcusTbl = CustomerTable::where('user_id' , $data['user_id'])->where('restaurant_table_id',$data['restaurant_table_id'])->first();
-        // dd($getcusTbl);
         if($getcusTbl) {
+            throw new GeneralException('Already table allocated to this Customer');
             $customerTbl = 0;
         } else {
-
             $customerTbl = CustomerTable::updateOrCreate([
                 'restaurant_table_id' => $data['restaurant_table_id'],
                 'user_id'       => $data['user_id'],
