@@ -1453,18 +1453,21 @@ class OrderRepository extends BaseRepository
 
     public function customerTableDel(array $data)
     {
-        Order::where('id',$data['order_id'])->update(['status' => Order::COMPLETED]);
-        $order = Order::findOrFail($data['order_id']);
-
-        if($order->id){
-            $points                     = $order->total * 3;
-            $update['points']           = $order->user->points + round($points);
-            $$order->user->update($update);
-            $creditArr['user_id']       = $order->user->id;
-            $creditArr['order_id']      = $order->id;
-            $creditArr['credit_point']  = $order->total;
-            $creditArr['total']         = $update['points'];
-            CreditPointsHistory::create($creditArr);
+        if($data['order_id'])
+        {
+            Order::where('id',$data['order_id'])->update(['status' => Order::COMPLETED]);
+            $order = Order::findOrFail($data['order_id']);
+    
+            if($order->id){
+                $points                     = $order->total * 3;
+                $update['points']           = $order->user->points + round($points);
+                $$order->user->update($update);
+                $creditArr['user_id']       = $order->user->id;
+                $creditArr['order_id']      = $order->id;
+                $creditArr['credit_point']  = $order->total;
+                $creditArr['total']         = $update['points'];
+                CreditPointsHistory::create($creditArr);
+            }
         }
         $customerTblDel = CustomerTable::where('user_id' , $data['user_id'])->where('restaurant_table_id',$data['restaurant_table_id'])->delete();
         return $customerTblDel;
