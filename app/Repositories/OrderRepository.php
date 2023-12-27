@@ -589,9 +589,13 @@ class OrderRepository extends BaseRepository
         $category_id = $this->categoryGet();
         $orders = Order::whereIn('restaurant_id',$data);
         if($is_history === 0) {
-            $orderTbl = $orders->with(['order_items' => function($query) use($category_id){
-                $query->where('category_id',$category_id);
-            },])->where('type',Order::ORDER)->whereIn('status',[Order::PENDNIG,Order::ACCEPTED,Order::WAITER_PENDING,Order::CURRENTLY_BEING_PREPARED])->whereNotIn('order_category_type', [0])->get();
+            $orderTbl = $orders
+            // ->with(['order_items' => function($query) use($category_id){
+            //     $query->where('category_id',$category_id);
+            // },])
+            ->where('type',Order::ORDER)
+            ->whereIn('status',[Order::PENDNIG,Order::ACCEPTED,Order::WAITER_PENDING,Order::CURRENTLY_BEING_PREPARED])
+            ->whereNotIn('order_category_type', [0])->get();
         } else {
             $orderTbl = $orders->whereIn('status',[Order::COMPLETED,Order::FULL_REFUND, Order::PARTIAL_REFUND, Order::RESTAURANT_CANCELED, Order::CUSTOMER_CANCELED, Order::KITCHEN_CONFIRM])->where('type',Order::ORDER)->whereNotIn('order_category_type', [0])->get();
         }
@@ -613,14 +617,15 @@ class OrderRepository extends BaseRepository
     public function getKitchenCollections(array $data) : Collection
     {
         $category_id = $this->categoryGet();
-        $orders = Order::whereIn('restaurant_id',$data)->with(['order_items' => function($query) use($category_id) { $query->where('category_id', $category_id); }])
+        $orders = Order::whereIn('restaurant_id',$data)
+        // ->with(['order_items' => function($query) use($category_id) { $query->where('category_id', $category_id); }])
         ->where('type', Order::ORDER)
-        // ->where('status', [Order::READYFORPICKUP])
-        ->whereHas('order_items', function($query) use($category_id)
-        {
-            $query->where('category_id',$category_id)
-                ->where('status', OrderItem::COMPLETED);
-        })
+        ->where('status', [Order::READYFORPICKUP])
+        // ->whereHas('order_items', function($query) use($category_id)
+        // {
+        //     $query->where('category_id',$category_id)
+        //         ->where('status', OrderItem::COMPLETED);
+        // })
         ->whereNotIn('order_category_type', [0])
         ->orderByDesc('id')
         ->get();
@@ -1060,9 +1065,10 @@ class OrderRepository extends BaseRepository
     public function customerTable(array $data)
     {
         $getcusTbl = CustomerTable::where('user_id' , $data['user_id'])->where('restaurant_table_id',$data['restaurant_table_id'])->first();
-        // if($getcusTbl) {
-        //     $customerTbl = 0;
-        // } else {
+        // dd($getcusTbl);
+        if($getcusTbl) {
+            $customerTbl = 0;
+        } else {
 
             $customerTbl = CustomerTable::updateOrCreate([
                 'restaurant_table_id' => $data['restaurant_table_id'],
@@ -1071,7 +1077,7 @@ class OrderRepository extends BaseRepository
                 'waiter_id'     => $data['waiter_id']
             ]);
             // $customerTbl = CustomerTable::create($data);
-        // }
+        }
 
         Order::where('type',Order::ORDER)->where('status', Order::PENDNIG)->where('restaurant_table_id',$data['restaurant_table_id'])->where('user_id', $data['user_id'])->update(['waiter_id' => $data['waiter_id']]);
 
