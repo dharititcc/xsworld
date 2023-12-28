@@ -687,13 +687,13 @@ class OrderRepository extends BaseRepository
     public function callWaiterNotify()
     {
         $user           = auth()->user();
-        $devices        = $user->devices()->pluck('fcm_token')->toArray();
         $res_waiters    = RestaurantWaiter::where('restaurant_id',$user->restaurant_kitchen->restaurant_id)->get();
 
         foreach($res_waiters as $res_waiter)
         {
-            $title              = "Your order Ready";
-            $message            = "Your Order is Ready";
+            $devices            = $res_waiter->user->devices()->pluck('fcm_token')->toArray();
+            $title              = "Kitchen calling you";
+            $message            = "Kitchen calling you";
             $orderid            = $res_waiter->user_id;
             $send_notification  = sendNotification($title,$message,$devices,$orderid);
         }
@@ -867,13 +867,18 @@ class OrderRepository extends BaseRepository
         $order->loadMissing(['items']);
         // 
 
-        $title              = "Preparing Your order";
-        $message            = "Your Order is #".$order->id." placed";
+        //customer notify
+        $title              = "place new order";
+        $message            = "Your Order has been #".$order->id." placed";
         $orderid            = $order->id;
-        $send_notification  = sendNotification($title,$message,$devices,$orderid);
+        if(!empty($devices)) {
+            $send_notification  = sendNotification($title,$message,$devices,$orderid);
+        }
+        
 
-        $kitchentitle           = "Order is placed by Customer";
-        $kitchenmessage         = "Order is #".$order->id." placed by customer";
+        //kitchen notify
+        $kitchentitle           = "place new order";
+        $kitchenmessage         = "New Order has been #".$order->id." placed";
         // $kitchendevices         = $order->user->devices()->pluck('fcm_token')->toArray();
         $kitchen_notification   = sendNotification($kitchentitle,$kitchenmessage,$kitchen_token,$orderid);
 
@@ -1084,6 +1089,7 @@ class OrderRepository extends BaseRepository
         {
             // Order::where('id',$data['order_id'])->update(['status' => Order::COMPLETED]);
             $order = Order::findOrFail($data['order_id']);
+            // dd($order->type);
     
             if($order->id){
                 $points                     = $order->total * 3;
