@@ -18,12 +18,14 @@ use App\Models\UserPaymentMethod;
 use App\Repositories\BaseRepository;
 use App\Repositories\Traits\CreditPoint;
 use App\Repositories\Traits\OrderFlow;
+use Barryvdh\DomPDF;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use OpenApi\Annotations\Items;
 use Stripe\Source;
 use Stripe\Token;
@@ -1145,5 +1147,31 @@ class OrderRepository extends BaseRepository
             'friend_id' => $auth_user->id,
 
         ]);
+    }
+
+    /**
+     * Method printOrder
+     *
+     * @param array $data [explicite description]
+     *
+     * @return mixed
+     */
+    public function printOrder($data)
+    {
+        $order  = Order::where(['id' => $data])->first();
+
+        // Generate PDF
+        $pdf        = app('dompdf.wrapper');
+        $pdf->loadView('pdf.index',compact('order'));
+        $filename   = 'invoice_'.$order->id.'.pdf';
+        $content    = $pdf->output();
+        $file       = "storage/order_pdf";
+        if(!is_dir($file)) {
+            mkdir($file, 0755, true);
+        }
+        //Upload PDF to storage folder
+        file_put_contents('storage/order_pdf/'.$filename, $content);
+        $destinationPath = asset('storage/order_pdf/').'/'.$filename;
+        return $destinationPath;
     }
 }

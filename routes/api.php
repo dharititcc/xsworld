@@ -64,6 +64,7 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'v1', 'as' => 'api.v1.'], fun
         Route::post('/viewcart', 'OrderController@viewCart')->name('viewcart');
         Route::get('/current-order', 'OrderController@currentOrder')->name('order.current-order');
         Route::get('/show/{order}', 'OrderController@show')->name('order.show');
+        Route::get('/print-order/{order}', 'OrderController@printOrder')->name('order.print');
         // {api/v1/users/orderhistory}
         Route::post('/orderhistory', 'OrderController@orderHistory')->name('orderhistory');
         // {api/v1/users/cart}
@@ -82,7 +83,7 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'v1', 'as' => 'api.v1.'], fun
 
         // {api/v1/sendFriendRequest}
         Route::post('/sendFriendRequest', 'OrderController@sendFriendRequest')->name('sendFriendRequest');
-        
+
         Route::post('/friendRequestStatus', 'OrderController@friendRequestStatus')->name('friendRequestStatus');
 
         // {api/v1/orderstatusupdate}
