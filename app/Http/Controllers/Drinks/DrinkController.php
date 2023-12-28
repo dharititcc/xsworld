@@ -177,7 +177,7 @@ class DrinkController extends Controller
     private function checkUniqueDrink(Request  $request, Restaurant $restaurant)
     {
         $text = strtolower($request->name);
-        return RestaurantItem::whereRaw(DB::raw("LOWER(`name`) = '{$text}'"))->where('restaurant_id', $restaurant->id)->count();
+        return RestaurantItem::whereRaw(DB::raw("LOWER(`name`) = '{$text}'"))->where('restaurant_id', $restaurant->id)->where('category_id', $request->get('category_id'))->count();
     }
 
     /**
@@ -349,5 +349,28 @@ class DrinkController extends Controller
             'stored_name'   => $profileImage,
             'original_name' => $profileImage
         ]);
+    }
+
+    /**
+     * Method sampleFile
+     *
+     * @return void
+     */
+    public function sampleFile()
+    {
+        $destinationPath = public_path(DIRECTORY_SEPARATOR.'storage'.DIRECTORY_SEPARATOR.'restaurants/sample-import-data.xlsx');
+        response()->download($destinationPath);
+    }
+
+    /**
+     * Method uploadData
+     *
+     * @param Request $request [explicite description]
+     *
+     * @return mixed
+     */
+    public function uploadData(Request $request)
+    {
+        dd($request->file('upload_data'));
     }
 }

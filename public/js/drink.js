@@ -379,19 +379,20 @@
             var context = this;
             $('#uploadsubmitBtn').on('click',function(e) {
                 e.preventDefault();
-                var fd = new FormData();
+                // var fd = new FormData();
                 var files = $('#uploaddrinkpopup')[0].files;
-                console.log($('#uploaddrinkpopup')[0].files);return false;
+                // console.log($('#uploaddrinkpopup')[0].files);return false;
                 // var form    = context.selectors.uploaddrinkData.get(0);
                 // console.log(moduleConfig.uploadData);
                 // return false;
                 $.ajax({
                     url:moduleConfig.uploadData,
                     type:'POST',
+                    enctype: "multipart/form-data",
                     headers: {
                         'X-CSRF-TOKEN': jQuery('meta[name="csrf-token"]').attr('content'),
                     },
-                    data: new FormData(this),
+                    data: files,
                     success: function(res)
                     {
                         // XS.Common.handleSwalSuccessWithoutReload('Favorite status has been updated successfully.');
@@ -402,7 +403,7 @@
                     },
                     error: function(xhr)
                     {
-                        console.log(xhr);return false;
+                        console.log(xhr.responseJSON);return false;
                         if( xhr.status == 403 )
                         {
                             var {error} = xhr.responseJSON;
