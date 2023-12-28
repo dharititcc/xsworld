@@ -1166,7 +1166,7 @@ class OrderRepository extends BaseRepository
         $pdf->loadView('pdf.index',compact('order'));
         $filename   = 'invoice_'.$order->id.'.pdf';
         $content    = $pdf->output();
-        $file       = public_path('order_pdf');
+        $file       = public_path('order_pdf/');
         if (!file_exists($file)) {
             mkdir($file, 0777, true);
         }
