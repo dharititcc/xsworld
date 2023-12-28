@@ -3,9 +3,10 @@
 namespace App\Http\Resources;
 
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class BarOrderListingResource extends JsonResource
+class KitchenOrderListingResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -23,8 +24,8 @@ class BarOrderListingResource extends JsonResource
             'pickup_point_name'         => isset($this->restaurant_pickup_point->name) ? $this->restaurant_pickup_point->name : '',
             'pickup_point_user'         => $this->pickup_point_user->name ?? '',
             'pickup_point_user_image'   => isset($this->pickup_point->id) ? $this->pickup_point->image : '',
-            'status'                    => $this->order_split_drink->status_name,
-            'status_no'                 => $this->order_split_drink->status,
+            'status'                    => $this->order_split_food->status_name,
+            'status_no'                 => $this->order_split_food->status,
             'table_no'                  => 0,
             'apply_time'                => $this->apply_time ?? 0,
             'last_delayed_time'         => $this->last_delayed_time*60 ?? 0,
@@ -32,7 +33,7 @@ class BarOrderListingResource extends JsonResource
             'remaining_date'            => isset($this->remaining_date) ? $this->remaining_date : '',
             'created_date'              => Carbon::parse($this->created_at)->toDateTimeString(),
             'updated_date'              => Carbon::parse($this->updated_at)->toDateTimeString(),
-            'order_items'               => isset($this->order_split_drink->id) ? OrderItemResource::collection($this->order_split_drink->items) : [],
+            'order_items'               => isset($this->order_split_food->id) ? OrderItemResource::collection($this->order_split_food->items) : [],
         ];
     }
 }
