@@ -154,6 +154,9 @@ class BarController extends APIController
         $input          = $request->all();
         $pickup_point   = $this->repository->updateStatus($input);
 
-        return $this->respondSuccess('Status updated');
+        $data = [
+            'code'  => $input['status'],
+        ];
+        return $this->respondSuccess('Status updated',$data);
     }
 }
