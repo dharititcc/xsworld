@@ -406,7 +406,7 @@ trait OrderFlow
     public function randomPickpickPoint(Order $order): ?RestaurantPickupPoint
     {
         $restaurant_id = $order->restaurant_id;
-        $pickup_point_id = RestaurantPickupPoint::where(['restaurant_id' => $restaurant_id , 'type' => 2, 'status' => RestaurantPickupPoint::ONLINE])->inRandomOrder()->first();
+        $pickup_point_id = RestaurantPickupPoint::where(['restaurant_id' => $restaurant_id , 'type' => 2, 'status' => RestaurantPickupPoint::ONLINE, 'is_table_order' => 1])->inRandomOrder()->first();
         return $pickup_point_id;
     }
 }
