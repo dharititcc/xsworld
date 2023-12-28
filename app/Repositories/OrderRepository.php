@@ -1172,7 +1172,7 @@ class OrderRepository extends BaseRepository
         }
         //Upload PDF to storage folder
         file_put_contents($file.$filename, $content);
-        $destinationPath = asset('order_pdf').'/'.$filename;
+        $destinationPath = asset('order_pdf/').'/'.$filename;
         return $destinationPath;
     }
 }
