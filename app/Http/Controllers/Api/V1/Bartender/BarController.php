@@ -6,6 +6,7 @@ use App\Exceptions\GeneralException;
 use App\Http\Controllers\Api\V1\APIController;
 use App\Http\Requests\OrderHistoryRequest;
 use App\Http\Requests\OrderUpdateRequest;
+use App\Http\Resources\BarOrderDetailResource;
 use App\Http\Resources\BarOrderListingResource;
 use App\Http\Resources\OrderListResource;
 use App\Http\Resources\OrderResource;
@@ -117,7 +118,7 @@ class BarController extends APIController
     {
         if( isset( $order->id ) )
         {
-            return $this->respondSuccess('Order detail found.', new OrderResource($order));
+            return $this->respondSuccess('Order detail found.', new BarOrderDetailResource($order));
         }
 
         throw new GeneralException('Order not found.');

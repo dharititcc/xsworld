@@ -38,7 +38,7 @@ class OrderSplit extends Model
         self::DELAY_ORDER           => 'Delay',
         self::DENY_ORDER            => 'Deny', // restaurant cancelled the order due to some reason (e.g. stock or item not available)
         self::READYFORPICKUP        => 'Ready For Pickup', // Kitchen prepared food. Waiter need to notify for pickup food from kitchen
-        self::KITCHEN_CONFIRM       => 'Confirmed', // Kitchen collection orders. Need waiter to pick the order
+        self::KITCHEN_CONFIRM       => 'Confirmed Pickup', // Kitchen collection orders. Need waiter to pick the order
     ];
 
     /**

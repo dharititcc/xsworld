@@ -464,7 +464,7 @@ trait OrderFlow
         // load restaurant relationship
         $kitchen->loadMissing(['restaurant_kitchen']);
 
-        $query = $this->getKitchenOrdersQuery($kitchen, OrderSplit::PENDING);
+        $query = $this->getKitchenOrdersQuery($kitchen, OrderSplit::PENDING, 'desc');
         return $query->get();
     }
 
@@ -472,10 +472,12 @@ trait OrderFlow
      * Method getKitchenOrdersQuery
      *
      * @param User $kitchen [explicite description]
+     * @param int $status [explicite description]
+     * @param string $sort [explicite description]
      *
      * @return Builder
      */
-    public function getKitchenOrdersQuery(User $kitchen, int $status): Builder
+    public function getKitchenOrdersQuery(User $kitchen, int $status, string $sort = 'asc'): Builder
     {
         return $query = Order::query()
                         ->with(
@@ -498,7 +500,8 @@ trait OrderFlow
                         ->whereHas('order_split_food', function($query) use($status){
                             $query->where('status', $status);
                         })
-                        ->where('restaurant_id', $kitchen->restaurant_kitchen->restaurant_id);
+                        ->where('restaurant_id', $kitchen->restaurant_kitchen->restaurant_id)
+                        ->orderBy('id', $sort);
     }
 
     /**
@@ -513,7 +516,23 @@ trait OrderFlow
         // load restaurant relationship
         $kitchen->loadMissing(['restaurant_kitchen']);
 
-        $query = $this->getKitchenOrdersQuery($kitchen, OrderSplit::READYFORPICKUP);
+        $query = $this->getKitchenOrdersQuery($kitchen, OrderSplit::READYFORPICKUP, 'asc');
+        return $query->get();
+    }
+
+    /**
+     * Method getCompletedKitchenOrders
+     *
+     * @return Collection
+     */
+    public function getCompletedKitchenOrders(): Collection
+    {
+        $kitchen = auth()->user();
+
+        // load restaurant relationship
+        $kitchen->loadMissing(['restaurant_kitchen']);
+
+        $query = $this->getKitchenOrdersQuery($kitchen, OrderSplit::KITCHEN_CONFIRM, 'desc');
         return $query->get();
     }
 }
