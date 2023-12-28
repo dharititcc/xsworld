@@ -591,7 +591,7 @@ class OrderRepository extends BaseRepository
             // },])
             ->where('type',Order::ORDER)
             ->whereIn('status',[Order::PENDNIG,Order::ACCEPTED,Order::WAITER_PENDING,Order::CURRENTLY_BEING_PREPARED])
-            ->whereNotIn('order_category_type', [0])->orderByDesc('id')->get();
+            ->whereNotIn('order_category_type', [0])->orderByRaw("id ASC, updated_at ASC")->get();
         } else {
             $orderTbl = $orders->whereIn('status',[Order::COMPLETED,Order::FULL_REFUND, Order::PARTIAL_REFUND, Order::RESTAURANT_CANCELED, Order::CUSTOMER_CANCELED, Order::KITCHEN_CONFIRM])->where('type',Order::ORDER)->whereNotIn('order_category_type', [0])->orderByDesc('id')->get();
         }
@@ -623,7 +623,7 @@ class OrderRepository extends BaseRepository
         //         ->where('status', OrderItem::COMPLETED);
         // })
         ->whereNotIn('order_category_type', [0])
-        ->orderBy('id','asc')
+        ->orderByRaw("id ASC, updated_at ASC")
         ->get();
 
         return $orders;
