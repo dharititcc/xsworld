@@ -783,6 +783,20 @@ class OrderRepository extends BaseRepository
         throw new GeneralException('There is no order found.');
     }
 
+    /**
+     * Method randomPickpickPoint
+     *
+     * @param Order $order [explicite description]
+     *
+     * @return null|RestaurantPickupPoint
+     */
+    public function randomPickpickPoint(Order $order): ?RestaurantPickupPoint
+    {
+        $restaurant_id = $order->restaurant_id;
+        $pickup_point_id = RestaurantPickupPoint::where(['restaurant_id' => $restaurant_id , 'type' => 2, 'status' => RestaurantPickupPoint::ONLINE, 'is_table_order' => 1])->inRandomOrder()->first();
+        return $pickup_point_id;
+    }
+
 
     /**
      * Method placeOrderwaiter
@@ -805,6 +819,11 @@ class OrderRepository extends BaseRepository
         $kitchens          = $order->restaurant->kitchens;
         $kitchen_token     = [];
 
+        if($order->order_category_type == Order::DRINK || $order->order_category_type == Order::BOTH)
+        {
+            $pickup_point_id    = $this->randomPickpickPoint($order);
+        }
+
         foreach ($kitchens as $kitchen) {
             $token   = $kitchen->user->devices()->pluck('fcm_token');
             if(isset($token[0]))
@@ -823,8 +842,8 @@ class OrderRepository extends BaseRepository
             {
                 $updateArr = [
                     'type'                  => Order::ORDER,
-                    // 'pickup_point_id'       => ($pickup_point_id) ? $pickup_point_id->id : null,
-                    // 'pickup_point_user_id'  => ($pickup_point_id) ? $pickup_point_id->user_id : null,
+                    'pickup_point_id'       => ($pickup_point_id) ? $pickup_point_id->id : null,
+                    'pickup_point_user_id'  => ($pickup_point_id) ? $pickup_point_id->user_id : null,
                     'credit_amount'         => $credit_amount,
                     'restaurant_table_id'   => ($table_id) ? $table_id : null,
                     'status'                => Order::CURRENTLY_BEING_PREPARED,
@@ -856,8 +875,8 @@ class OrderRepository extends BaseRepository
                     'type'                  => Order::ORDER,
                     'card_id'               => $defaultCardId,
                     'charge_id'             => $payment_data->id,
-                    // 'pickup_point_id'       => ($pickup_point_id) ? $pickup_point_id->id : null,
-                    // 'pickup_point_user_id'  => ($pickup_point_id) ? $pickup_point_id->user_id : null,
+                    'pickup_point_id'       => ($pickup_point_id) ? $pickup_point_id->id : null,
+                    'pickup_point_user_id'  => ($pickup_point_id) ? $pickup_point_id->user_id : null,
                     'credit_amount'         => $credit_amount,
                     'restaurant_table_id'   => ($table_id) ? $table_id : null,
                     'status'                => Order::CURRENTLY_BEING_PREPARED,
