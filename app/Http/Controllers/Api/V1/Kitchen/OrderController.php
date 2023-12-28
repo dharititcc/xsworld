@@ -6,6 +6,7 @@ use App\Exceptions\GeneralException;
 use App\Http\Controllers\Api\V1\APIController;
 use App\Http\Controllers\Api\V1\Traits\OrderStatus;
 use App\Http\Resources\BarOrderListingResource;
+use App\Http\Resources\KitchenOrderListingResource;
 use App\Http\Resources\KitchenOrderResource;
 use App\Http\Resources\OrderListResource;
 use App\Http\Resources\OrderResource;
@@ -66,9 +67,9 @@ class OrderController extends APIController
         // if( $orderList->count() ||  $barOrderList->count())
         // {
             $data = [
-                'confirmOrder'       => $orderList->count() ? KitchenOrderResource::collection($orderList) : [],
-                'CompletedOrders'      => $barOrderList->count() ? BarOrderListingResource::collection($barOrderList) : [],
-                'restaurant_close_time'     => isset($close_time) ? $close_time  : "00:00:00",
+                'confirmOrder'          => $orderList->count() ? KitchenOrderResource::collection($orderList) : [],
+                'CompletedOrders'       => $barOrderList->count() ? KitchenOrderListingResource::collection($barOrderList) : [],
+                'restaurant_close_time' => isset($close_time) ? $close_time  : "00:00:00",
             ];
             return $this->respondSuccess('Order Fetched successfully.', $data);
         // }

@@ -63,7 +63,7 @@ class BarRepository extends BaseRepository
     {
         $orders       = $this->orderQuery()
         ->whereHas('order_split_drink', function($query){
-            $query->where('status', OrderSplit::PENDING);
+            $query->whereIn('status', [OrderSplit::PENDING, OrderSplit::DELAY_ORDER]);
         })
         ->where(['type'=> Order::ORDER])
         ->orderBy('id','desc')
@@ -110,7 +110,7 @@ class BarRepository extends BaseRepository
         $order       = $this->orderQuery()
         ->where('type', Order::ORDER)
         ->whereHas('order_split_drink', function($query){
-            $query->where('status', OrderSplit::COMPLETED);
+            $query->whereIn('status', [OrderSplit::CONFIRM_PICKUP, OrderSplit::DENY_ORDER, OrderSplit::RESTAURANT_TOXICATION]);
         })
         ->orderBy('id','desc');
 
