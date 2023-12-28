@@ -363,4 +363,15 @@ class OrderController extends APIController
         dd($input);
         $friendStatus   =   $this->repository->friendRequestStatus($input);
     }
+
+    public function printOrder(Request $request,Order $order)
+    {
+        $order      = $order->id;
+        $printOrder = $this->repository->printOrder($order);
+        $data = [
+            'url'   => $printOrder,
+        ];
+
+        return $this->respondSuccess('PDF generated', $data);
+    }
 }

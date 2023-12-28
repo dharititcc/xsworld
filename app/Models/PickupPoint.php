@@ -25,6 +25,7 @@ class PickupPoint extends Model
         'pickup_point_id',
         'user_id',
         'status',
+        'is_table_order',
         'type',
     ];
 
