@@ -69,6 +69,7 @@ class PickupZoneController extends Controller
             'name' => $request->name,
             'restaurant_id' => $restaurant->id,
             'type' => $request->types,
+            'is_table_order' => isset( $request->is_table_order ) ? 1 : 0
         ];
 
         $newPickup = RestaurantPickupPoint::create($pickupArr);
@@ -113,6 +114,7 @@ class PickupZoneController extends Controller
         if(isset($pickup->id)) {
             $dataArr = [
                 'name' => $request->name,
+                'is_table_order' => isset( $request->is_table_order ) ? 1 : 0
             ];
             $pickup->update($dataArr);
             $pickup->refresh();
