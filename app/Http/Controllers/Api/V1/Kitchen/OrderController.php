@@ -6,7 +6,9 @@ use App\Exceptions\GeneralException;
 use App\Http\Controllers\Api\V1\APIController;
 use App\Http\Controllers\Api\V1\Traits\OrderStatus;
 use App\Http\Resources\BarOrderListingResource;
+use App\Http\Resources\KitchenOrderDetailResource;
 use App\Http\Resources\KitchenOrderListingResource;
+use App\Http\Resources\KitchenOrderListResource;
 use App\Http\Resources\KitchenOrderResource;
 use App\Http\Resources\OrderListResource;
 use App\Http\Resources\OrderResource;
@@ -57,9 +59,6 @@ class OrderController extends APIController
             }
         }
 
-        $kitchen_orders = RestaurantKitchen::where('user_id',$auth_kitchen->id)->select('restaurant_id')->get()->toArray();
-        // $kitchen_pickup_points = KitchenPickPoint::where('user_id',$auth_kitchen->id)->select('pickup_point_id')->get()->toArray();
-
         // $orderList = $this->repository->GetKitchenOrders($kitchen_orders);
         $orderList    = $this->repository->getKitchenConfirmedOrders();
         // $barOrderList = $this->repository->getKitchenCollections($kitchen_orders);
@@ -97,12 +96,13 @@ class OrderController extends APIController
      */
     public function orderHistory()
     {
-        $auth_kitchen = auth('api')->user();
-        $kitchen_pickup_points = RestaurantKitchen::where('user_id',$auth_kitchen->id)->select('restaurant_id')->get()->toArray();
-        $orderList = $this->repository->GetKitchenOrders($kitchen_pickup_points,1);
+        // $auth_kitchen = auth('api')->user();
+        // $kitchen_pickup_points = RestaurantKitchen::where('user_id',$auth_kitchen->id)->select('restaurant_id')->get()->toArray();
+        // $orderList = $this->repository->GetKitchenOrders($kitchen_pickup_points,1);
+        $orderList = $this->repository->getKitchenOrderHistory();
         if( $orderList->count() )
         {
-            return $this->respondSuccess('Order History Fetched successfully.', OrderListResource::collection($orderList));
+            return $this->respondSuccess('Order History Fetched successfully.', KitchenOrderListResource::collection($orderList));
         }
 
         throw new GeneralException('There is no order found');
@@ -114,7 +114,7 @@ class OrderController extends APIController
         $orderShow = $this->repository->getOrderById($order);
         if($orderShow)
         {
-            return $this->respondSuccess('Order Details Fetched successfully.', new OrderResource($orderShow));
+            return $this->respondSuccess('Order Details Fetched successfully.', new KitchenOrderDetailResource($orderShow));
         }
         throw new GeneralException('There is no order found');
     }

@@ -472,10 +472,11 @@ trait OrderFlow
      * Method getKitchenOrdersQuery
      *
      * @param User $kitchen [explicite description]
+     * @param array|int $status [explicite description]
      *
      * @return Builder
      */
-    public function getKitchenOrdersQuery(User $kitchen, int $status): Builder
+    public function getKitchenOrdersQuery(User $kitchen, $status): Builder
     {
         return $query = Order::query()
                         ->with(
@@ -496,7 +497,14 @@ trait OrderFlow
                             ]
                         )
                         ->whereHas('order_split_food', function($query) use($status){
-                            $query->where('status', $status);
+                            if( is_array($status) )
+                            {
+                                $query->whereIn('status', $status);
+                            }
+                            else
+                            {
+                                $query->whereIn('status', [$status]);
+                            }
                         })
                         ->where('restaurant_id', $kitchen->restaurant_kitchen->restaurant_id);
     }
@@ -514,6 +522,22 @@ trait OrderFlow
         $kitchen->loadMissing(['restaurant_kitchen']);
 
         $query = $this->getKitchenOrdersQuery($kitchen, OrderSplit::READYFORPICKUP);
+        return $query->get();
+    }
+
+    /**
+     * Method getKitchenOrderCollections
+     *
+     * @return Collection
+     */
+    public function getKitchenOrderHistory(): Collection
+    {
+        $kitchen = auth()->user();
+
+        // load restaurant relationship
+        $kitchen->loadMissing(['restaurant_kitchen']);
+
+        $query = $this->getKitchenOrdersQuery($kitchen, OrderSplit::KITCHEN_CONFIRM);
         return $query->get();
     }
 }
