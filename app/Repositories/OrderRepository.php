@@ -29,6 +29,7 @@ use Illuminate\Support\Facades\Storage;
 use OpenApi\Annotations\Items;
 use Stripe\Source;
 use Stripe\Token;
+use Illuminate\Support\Facades\File;
 
 /**
  * Class OrderRepository.
@@ -1178,9 +1179,12 @@ class OrderRepository extends BaseRepository
         $filename   = 'invoice_'.$order->id.'.pdf';
         $content    = $pdf->output();
         $file       = public_path('order_pdf');
-        if(!is_dir($file)) {
-            mkdir($file, 0755, true);
-        }
+        // if(!is_dir($file)) {
+        //     mkdir($file, 0755, true);
+        // }
+        if(!File::isDirectory($file)){
+            File::makeDirectory($file, 0777, true, true);
+        } 
         //Upload PDF to storage folder
         file_put_contents('order_pdf/'.$filename, $content);
         $destinationPath = asset('order_pdf/').'/'.$filename;
