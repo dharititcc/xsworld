@@ -146,6 +146,8 @@ function formsubmit(form) {
     $('#pickup_submitBtn').attr('disabled',true);
     var route = '';
     var crudetype = $('#pickupModal').data('crudetype');
+    var isTableOrder = $('input[name="is_table_order"]').is(':checked');
+
     var data = new FormData(),
         name = $('#pickup_name').val();
         pickup_id = $('#pickup_id').val();
@@ -161,6 +163,11 @@ function formsubmit(form) {
     } else {
         route = routeUpdate.replace(':ID', pickup_id),
         data.append('_method','PUT');
+    }
+
+    if( isTableOrder )
+    {
+        data.append('is_table_order', 1);
     }
 
     jQuery(form).find('.error').remove();
@@ -236,6 +243,15 @@ function updatePickup(id) {
         type: 'GET',
         success: function(res) {
             $('#pickup_name').val(res.data.name);
+
+            if( res.data.is_table_order )
+            {
+                $('input[name="is_table_order"]').prop('checked', true);
+            }
+            else
+            {
+                $('input[name="is_table_order"]').prop('checked', false);
+            }
             var image = `<div class="pip">
             <img class="imageThumb" src="${ res.data.image!="" ?res.data.image :'#'}" title="" />
             <i class="icon-trash remove"></i>

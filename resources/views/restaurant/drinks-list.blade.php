@@ -154,6 +154,41 @@
           </form>
         </div>
     </div>
+    <div class="modal fade" id="wd931" tabindex="0" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-dialog-centered modal-xl">
+          <form name="uploaddrink" id="uploaddrinkpopup" method="post" >
+            @csrf
+            <div class="modal-content">
+                <div class="modal-header dri-heder">
+                    <div class="head-left">
+                        <button type="button" class="back" data-bs-dismiss="modal" aria-label="Close"><i
+                                class="icon-left"></i></button>
+                        <h2><span class="model_title"></span> Drink</h2>
+                    </div>
+                    <div class="head-right">
+                        <button class="bor-btn uploadsubmitBtn" id="uploadsubmitBtn" type="submit">Save</button>
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="extr-info">
+                                <div class="head">
+                                    <h2 class="yellow">Download sample file</h2> <span class="optional-info"></span>
+                                </div>
+                                <div class="form-group">
+                                    <a href={{ route('restaurants.SampleFile') }}>Sample file</a>
+                                    <input type="file" id="upload_data" name="upload_data" class="form-control" accept=".xlsx,.xls,.csv" placeholder="Upload drinks data">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+          </form>
+        </div>
+    </div>
     <!-- Global popup -->
     <div class="modal fade" id="addDrink" tabindex="0" data-crudetype="1" aria-labelledby="exampleModalLabel" aria-hidden="false">
         <div class="modal-dialog modal-dialog-centered">
@@ -191,6 +226,7 @@
         drinkUpdate: "{!! route('restaurants.drinks.update', ':ID') !!}",
         drinkGet: "{!! route('restaurants.drinks.show', ':ID') !!}",
         favoriteStatusUpdate: "{!! route('restaurants.favoriteStatusUpdate') !!}",
+        uploadData: "{!! route('restaurants.uploadData') !!}",
         currency: "{!! $restaurant->country->symbol !!}"
     };
 
