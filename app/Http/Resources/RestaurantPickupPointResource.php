@@ -18,6 +18,7 @@ class RestaurantPickupPointResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'image' => $this->image,
+            'is_table_order' => $this->is_table_order
         ];
     }
 }

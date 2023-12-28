@@ -22,9 +22,10 @@ class RestaurantPickupPoint extends Model
     protected $fillable = [
         'name',
         'restaurant_id',
-        'pickup_point_id',
         'user_id',
         'type',
+        'status',
+        'is_table_order'
     ];
 
     const OFFLINE      = 0;

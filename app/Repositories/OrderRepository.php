@@ -18,15 +18,18 @@ use App\Models\UserPaymentMethod;
 use App\Repositories\BaseRepository;
 use App\Repositories\Traits\CreditPoint;
 use App\Repositories\Traits\OrderFlow;
+use Barryvdh\DomPDF;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use OpenApi\Annotations\Items;
 use Stripe\Source;
 use Stripe\Token;
+use Illuminate\Support\Facades\File;
 
 /**
  * Class OrderRepository.
@@ -588,9 +591,9 @@ class OrderRepository extends BaseRepository
             // },])
             ->where('type',Order::ORDER)
             ->whereIn('status',[Order::PENDNIG,Order::ACCEPTED,Order::WAITER_PENDING,Order::CURRENTLY_BEING_PREPARED])
-            ->whereNotIn('order_category_type', [0])->get();
+            ->whereNotIn('order_category_type', [0])->orderByRaw("id ASC, updated_at ASC")->get();
         } else {
-            $orderTbl = $orders->whereIn('status',[Order::COMPLETED,Order::FULL_REFUND, Order::PARTIAL_REFUND, Order::RESTAURANT_CANCELED, Order::CUSTOMER_CANCELED, Order::KITCHEN_CONFIRM])->where('type',Order::ORDER)->whereNotIn('order_category_type', [0])->get();
+            $orderTbl = $orders->whereIn('status',[Order::COMPLETED,Order::FULL_REFUND, Order::PARTIAL_REFUND, Order::RESTAURANT_CANCELED, Order::CUSTOMER_CANCELED, Order::KITCHEN_CONFIRM])->where('type',Order::ORDER)->whereNotIn('order_category_type', [0])->orderByDesc('id')->get();
         }
         if($orderTbl)
         {
@@ -620,7 +623,7 @@ class OrderRepository extends BaseRepository
         //         ->where('status', OrderItem::COMPLETED);
         // })
         ->whereNotIn('order_category_type', [0])
-        ->orderByDesc('id')
+        ->orderByRaw("id ASC, updated_at ASC")
         ->get();
 
         return $orders;
@@ -687,13 +690,13 @@ class OrderRepository extends BaseRepository
     public function callWaiterNotify()
     {
         $user           = auth()->user();
-        $devices        = $user->devices()->pluck('fcm_token')->toArray();
         $res_waiters    = RestaurantWaiter::where('restaurant_id',$user->restaurant_kitchen->restaurant_id)->get();
 
         foreach($res_waiters as $res_waiter)
         {
-            $title              = "Your order Ready";
-            $message            = "Your Order is Ready";
+            $devices            = $res_waiter->user->devices()->pluck('fcm_token')->toArray();
+            $title              = "Kitchen calling you";
+            $message            = "Kitchen calling you";
             $orderid            = $res_waiter->user_id;
             $send_notification  = sendNotification($title,$message,$devices,$orderid);
         }
@@ -780,6 +783,20 @@ class OrderRepository extends BaseRepository
         throw new GeneralException('There is no order found.');
     }
 
+    /**
+     * Method randomPickpickPoint
+     *
+     * @param Order $order [explicite description]
+     *
+     * @return null|RestaurantPickupPoint
+     */
+    public function randomPickpickPoint(Order $order): ?RestaurantPickupPoint
+    {
+        $restaurant_id = $order->restaurant_id;
+        $pickup_point_id = RestaurantPickupPoint::where(['restaurant_id' => $restaurant_id , 'type' => 2, 'status' => RestaurantPickupPoint::ONLINE, 'is_table_order' => 1])->inRandomOrder()->first();
+        return $pickup_point_id;
+    }
+
 
     /**
      * Method placeOrderwaiter
@@ -802,6 +819,11 @@ class OrderRepository extends BaseRepository
         $kitchens          = $order->restaurant->kitchens;
         $kitchen_token     = [];
 
+        if($order->order_category_type == Order::DRINK || $order->order_category_type == Order::BOTH)
+        {
+            $pickup_point_id    = $this->randomPickpickPoint($order);
+        }
+
         foreach ($kitchens as $kitchen) {
             $token   = $kitchen->user->devices()->pluck('fcm_token');
             if(isset($token[0]))
@@ -813,18 +835,15 @@ class OrderRepository extends BaseRepository
         $updateArr         = [];
         $paymentArr        = [];
         $stripe_customer_id = $user->stripe_customer_id;
-        // dd($stripe_customer_id);
-        if(empty($stripe_customer_id)) {
-            throw new GeneralException('Please ask customer to Add Card details');
-        }
+
         if(isset($order->id))
         {
             if($order->total == $credit_amount)
             {
                 $updateArr = [
                     'type'                  => Order::ORDER,
-                    // 'pickup_point_id'       => ($pickup_point_id) ? $pickup_point_id->id : null,
-                    // 'pickup_point_user_id'  => ($pickup_point_id) ? $pickup_point_id->user_id : null,
+                    'pickup_point_id'       => ($pickup_point_id) ? $pickup_point_id->id : null,
+                    'pickup_point_user_id'  => ($pickup_point_id) ? $pickup_point_id->user_id : null,
                     'credit_amount'         => $credit_amount,
                     'restaurant_table_id'   => ($table_id) ? $table_id : null,
                     'status'                => Order::CURRENTLY_BEING_PREPARED,
@@ -835,6 +854,10 @@ class OrderRepository extends BaseRepository
             if( $order->total != $credit_amount )
             {
                 $stripe         = new Stripe();
+                $customer_cards = $stripe->fetchCards($stripe_customer_id)->toArray();
+                if(empty($customer_cards['data'])) {
+                    throw new GeneralException('Please ask customer to Add Card details');
+                }
                 $getCusCardId   = $stripe->fetchCustomer($stripe_customer_id);
                 $defaultCardId  = $getCusCardId->default_source;
 
@@ -852,8 +875,8 @@ class OrderRepository extends BaseRepository
                     'type'                  => Order::ORDER,
                     'card_id'               => $defaultCardId,
                     'charge_id'             => $payment_data->id,
-                    // 'pickup_point_id'       => ($pickup_point_id) ? $pickup_point_id->id : null,
-                    // 'pickup_point_user_id'  => ($pickup_point_id) ? $pickup_point_id->user_id : null,
+                    'pickup_point_id'       => ($pickup_point_id) ? $pickup_point_id->id : null,
+                    'pickup_point_user_id'  => ($pickup_point_id) ? $pickup_point_id->user_id : null,
                     'credit_amount'         => $credit_amount,
                     'restaurant_table_id'   => ($table_id) ? $table_id : null,
                     'status'                => Order::CURRENTLY_BEING_PREPARED,
@@ -867,13 +890,18 @@ class OrderRepository extends BaseRepository
         $order->loadMissing(['items']);
         // 
 
-        $title              = "Preparing Your order";
-        $message            = "Your Order is #".$order->id." placed";
+        //customer notify
+        $title              = "place new order";
+        $message            = "Your Order has been #".$order->id." placed";
         $orderid            = $order->id;
-        $send_notification  = sendNotification($title,$message,$devices,$orderid);
+        if(!empty($devices)) {
+            $send_notification  = sendNotification($title,$message,$devices,$orderid);
+        }
+        
 
-        $kitchentitle           = "Order is placed by Customer";
-        $kitchenmessage         = "Order is #".$order->id." placed by customer";
+        //kitchen notify
+        $kitchentitle           = "place new order";
+        $kitchenmessage         = "New Order has been #".$order->id." placed";
         // $kitchendevices         = $order->user->devices()->pluck('fcm_token')->toArray();
         $kitchen_notification   = sendNotification($kitchentitle,$kitchenmessage,$kitchen_token,$orderid);
 
@@ -1084,6 +1112,10 @@ class OrderRepository extends BaseRepository
         {
             // Order::where('id',$data['order_id'])->update(['status' => Order::COMPLETED]);
             $order = Order::findOrFail($data['order_id']);
+            if($order->type == Order::CART)
+            {
+                $order->delete();
+            }
     
             if($order->id){
                 $points                     = $order->total * 3;
@@ -1147,5 +1179,31 @@ class OrderRepository extends BaseRepository
             'friend_id' => $auth_user->id,
 
         ]);
+    }
+
+    /**
+     * Method printOrder
+     *
+     * @param array $data [explicite description]
+     *
+     * @return mixed
+     */
+    public function printOrder($data)
+    {
+        $order  = Order::where(['id' => $data])->first();
+
+        // Generate PDF
+        $pdf        = app('dompdf.wrapper');
+        $pdf->loadView('pdf.index',compact('order'));
+        $filename   = 'invoice_'.$order->id.'.pdf';
+        $content    = $pdf->output();
+        $file       = public_path('order_pdf/');
+        if (!file_exists($file)) {
+            mkdir($file, 0777, true);
+        }
+        //Upload PDF to storage folder
+        file_put_contents($file.$filename, $content);
+        $destinationPath = asset('order_pdf/').'/'.$filename;
+        return $destinationPath;
     }
 }

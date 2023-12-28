@@ -76,7 +76,7 @@ class Order extends Model
         self::CUSTOMER_CANCELED         => 'Cancelled',
         self::READYFORPICKUP            => 'ready for Collection',
         self::KITCHEN_CONFIRM           => 'Kitchen confirm order',
-        self::CURRENTLY_BEING_PREPARED  => 'is Being Prepared',
+        self::CURRENTLY_BEING_PREPARED  => 'Currently Being Prepared',
         self::WAITER_PENDING            => 'Order taking',
         self::DENY_ORDER                => 'Deny Order',
         // self::BAR_PENDING               => 'Bar pending',
