@@ -588,9 +588,9 @@ class OrderRepository extends BaseRepository
             // },])
             ->where('type',Order::ORDER)
             ->whereIn('status',[Order::PENDNIG,Order::ACCEPTED,Order::WAITER_PENDING,Order::CURRENTLY_BEING_PREPARED])
-            ->whereNotIn('order_category_type', [0])->get();
+            ->whereNotIn('order_category_type', [0])->orderByDesc('id')->get();
         } else {
-            $orderTbl = $orders->whereIn('status',[Order::COMPLETED,Order::FULL_REFUND, Order::PARTIAL_REFUND, Order::RESTAURANT_CANCELED, Order::CUSTOMER_CANCELED, Order::KITCHEN_CONFIRM])->where('type',Order::ORDER)->whereNotIn('order_category_type', [0])->get();
+            $orderTbl = $orders->whereIn('status',[Order::COMPLETED,Order::FULL_REFUND, Order::PARTIAL_REFUND, Order::RESTAURANT_CANCELED, Order::CUSTOMER_CANCELED, Order::KITCHEN_CONFIRM])->where('type',Order::ORDER)->whereNotIn('order_category_type', [0])->orderByDesc('id')->get();
         }
         if($orderTbl)
         {
@@ -620,7 +620,7 @@ class OrderRepository extends BaseRepository
         //         ->where('status', OrderItem::COMPLETED);
         // })
         ->whereNotIn('order_category_type', [0])
-        ->orderByDesc('id')
+        ->orderBy('id','asc')
         ->get();
 
         return $orders;
@@ -1089,7 +1089,10 @@ class OrderRepository extends BaseRepository
         {
             // Order::where('id',$data['order_id'])->update(['status' => Order::COMPLETED]);
             $order = Order::findOrFail($data['order_id']);
-            // dd($order->type);
+            if($order->type == Order::CART)
+            {
+                $order->delete();
+            }
     
             if($order->id){
                 $points                     = $order->total * 3;
