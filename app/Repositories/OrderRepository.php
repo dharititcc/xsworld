@@ -815,10 +815,7 @@ class OrderRepository extends BaseRepository
         $updateArr         = [];
         $paymentArr        = [];
         $stripe_customer_id = $user->stripe_customer_id;
-        // dd($stripe_customer_id);
-        if(empty($stripe_customer_id)) {
-            throw new GeneralException('Please ask customer to Add Card details');
-        }
+
         if(isset($order->id))
         {
             if($order->total == $credit_amount)
@@ -837,6 +834,10 @@ class OrderRepository extends BaseRepository
             if( $order->total != $credit_amount )
             {
                 $stripe         = new Stripe();
+                $customer_cards = $stripe->fetchCards($stripe_customer_id)->toArray();
+                if(empty($customer_cards['data'])) {
+                    throw new GeneralException('Please ask customer to Add Card details');
+                }
                 $getCusCardId   = $stripe->fetchCustomer($stripe_customer_id);
                 $defaultCardId  = $getCusCardId->default_source;
 
