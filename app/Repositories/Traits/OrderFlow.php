@@ -11,6 +11,7 @@ use App\Models\Restaurant;
 use App\Models\RestaurantItem;
 use App\Models\RestaurantPickupPoint;
 use App\Models\User;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 
 trait OrderFlow
@@ -57,7 +58,6 @@ trait OrderFlow
      */
     public function checkSameRestaurantOrder(User $user, Order $order, array $orderItems): Order
     {
-        $subOrderTotal      = 0;
         $isFoodAvailable    = 0;
         $parentCategory     = null;
         // check if order request is available
@@ -94,8 +94,6 @@ trait OrderFlow
                         'total'                 => $item['quantity'] * $item['price']
                     ];
 
-                    $subOrderTotal += $item['quantity'] * $item['price'];
-
                     if( isset( $item['variation'] ) && !empty( $item['variation'] ) )
                     {
                         $variationArr = [
@@ -109,8 +107,6 @@ trait OrderFlow
                             'type'                  => RestaurantItem::ITEM,
                             'total'                 => $item['variation']['price'] * $item['variation']['quantity']
                         ];
-
-                        $subOrderTotal += $item['variation']['price'] * $item['variation']['quantity'];
 
                         // add variation in the order items table
                         $newOrderItem = $this->createOrderItem($order, $variationArr);
@@ -135,8 +131,6 @@ trait OrderFlow
                             'total'             => $item['mixer']['quantity'] * $item['mixer']['price']
                         ];
 
-                        $subOrderTotal += $item['mixer']['quantity'] * $item['mixer']['price'];
-
                         // add mixer in the order items table
                         $mixerItem = $this->createOrderItem($order, $mixerArr);
                     }
@@ -159,8 +153,6 @@ trait OrderFlow
                                     'quantity'              => $addon['quantity'],
                                     'total'                 => $addon['quantity'] * $addon['price']
                                 ];
-
-                                $subOrderTotal += $addon['quantity'] * $addon['price'];
 
                                 // add addon in the order items table
                                 $addonItem = $this->createOrderItem($order, $addonData);
@@ -458,5 +450,70 @@ trait OrderFlow
         $restaurant_id = $order->restaurant_id;
         $pickup_point_id = RestaurantPickupPoint::where(['restaurant_id' => $restaurant_id , 'type' => 2, 'status' => RestaurantPickupPoint::ONLINE])->inRandomOrder()->first();
         return $pickup_point_id;
+    }
+
+    /**
+     * Method getKitchenConfirmedOrders
+     *
+     * @return Collection
+     */
+    public function getKitchenConfirmedOrders(): Collection
+    {
+        $kitchen = auth()->user();
+
+        // load restaurant relationship
+        $kitchen->loadMissing(['restaurant_kitchen']);
+
+        $query = $this->getKitchenOrdersQuery($kitchen, OrderSplit::PENDING);
+        return $query->get();
+    }
+
+    /**
+     * Method getKitchenOrdersQuery
+     *
+     * @param User $kitchen [explicite description]
+     *
+     * @return Builder
+     */
+    public function getKitchenOrdersQuery(User $kitchen, int $status): Builder
+    {
+        return $query = Order::query()
+                        ->with(
+                            [
+                                'restaurant',
+                                'restaurant_table',
+                                'restaurant.country',
+                                'restaurant.currency',
+                                'user',
+                                'user.attachment',
+                                'restaurant_pickup_point',
+                                'pickup_point_user',
+                                'pickup_point_user.attachment',
+                                'restaurant_pickup_point.attachment',
+                                'order_split_food',
+                                'order_split_food.items',
+                                'order_split_food.items.restaurant_item',
+                            ]
+                        )
+                        ->whereHas('order_split_food', function($query) use($status){
+                            $query->where('status', $status);
+                        })
+                        ->where('restaurant_id', $kitchen->restaurant_kitchen->restaurant_id);
+    }
+
+    /**
+     * Method getKitchenOrderCollections
+     *
+     * @return Collection
+     */
+    public function getKitchenOrderCollections(): Collection
+    {
+        $kitchen = auth()->user();
+
+        // load restaurant relationship
+        $kitchen->loadMissing(['restaurant_kitchen']);
+
+        $query = $this->getKitchenOrdersQuery($kitchen, OrderSplit::READYFORPICKUP);
+        return $query->get();
     }
 }

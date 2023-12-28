@@ -6,6 +6,7 @@ use App\Exceptions\GeneralException;
 use App\Http\Controllers\Api\V1\APIController;
 use App\Http\Controllers\Api\V1\Traits\OrderStatus;
 use App\Http\Resources\BarOrderListingResource;
+use App\Http\Resources\KitchenOrderResource;
 use App\Http\Resources\OrderListResource;
 use App\Http\Resources\OrderResource;
 use App\Models\KitchenPickPoint;
@@ -41,6 +42,7 @@ class OrderController extends APIController
     {
         $auth_kitchen = auth('api')->user();
 
+        // restaurant close time
         if($auth_kitchen->restaurant_kitchen->restaurant->restaurant_time) {
             foreach($auth_kitchen->restaurant_kitchen->restaurant->restaurant_time as $res_time)
             {
@@ -57,12 +59,14 @@ class OrderController extends APIController
         $kitchen_orders = RestaurantKitchen::where('user_id',$auth_kitchen->id)->select('restaurant_id')->get()->toArray();
         // $kitchen_pickup_points = KitchenPickPoint::where('user_id',$auth_kitchen->id)->select('pickup_point_id')->get()->toArray();
 
-        $orderList = $this->repository->GetKitchenOrders($kitchen_orders);
-        $barOrderList = $this->repository->getKitchenCollections($kitchen_orders);
+        // $orderList = $this->repository->GetKitchenOrders($kitchen_orders);
+        $orderList    = $this->repository->getKitchenConfirmedOrders();
+        // $barOrderList = $this->repository->getKitchenCollections($kitchen_orders);
+        $barOrderList = $this->repository->getKitchenOrderCollections();
         // if( $orderList->count() ||  $barOrderList->count())
         // {
             $data = [
-                'confirmOrder'       => $orderList->count() ? OrderResource::collection($orderList) : [],
+                'confirmOrder'       => $orderList->count() ? KitchenOrderResource::collection($orderList) : [],
                 'CompletedOrders'      => $barOrderList->count() ? BarOrderListingResource::collection($barOrderList) : [],
                 'restaurant_close_time'     => isset($close_time) ? $close_time  : "00:00:00",
             ];
