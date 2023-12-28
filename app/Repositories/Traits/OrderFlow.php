@@ -395,4 +395,18 @@ trait OrderFlow
 
         return $order;
     }
+
+    /**
+     * Method randomPickpickPoint
+     *
+     * @param Order $order [explicite description]
+     *
+     * @return null|RestaurantPickupPoint
+     */
+    public function randomPickpickPoint(Order $order): ?RestaurantPickupPoint
+    {
+        $restaurant_id = $order->restaurant_id;
+        $pickup_point_id = RestaurantPickupPoint::where(['restaurant_id' => $restaurant_id , 'type' => 2, 'status' => RestaurantPickupPoint::ONLINE])->inRandomOrder()->first();
+        return $pickup_point_id;
+    }
 }
