@@ -11,6 +11,10 @@ use App\Models\Restaurant;
 use App\Models\RestaurantVariation;
 use DataTables;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Input;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\DrinkImport;
+use Carbon\Carbon;
 
 class DrinkController extends Controller
 {
@@ -371,6 +375,30 @@ class DrinkController extends Controller
      */
     public function uploadData(Request $request)
     {
-        dd($request->file('upload_data'));
+        $file = $request->file('upload_data');
+        $restaurant = session('restaurant')->loadMissing(['main_categories', 'main_categories.children']);
+        if($file){
+            $data = Excel::toArray(new DrinkImport, $file);
+            foreach($data[0] as $key => $row)
+            {
+                $drinkArr = [
+                    "name"                  => $row[1],
+                    "category_id"           => $row[3],
+                    "description"           => $row[9],
+                    "price"                 => $row[4],
+                    "ingredients"           => $row[5],
+                    "country_of_origin"     => $row[6],
+                    "type_of_drink"         => $row[7],
+                    "year_of_production"    => $row[8],
+                    "is_available"          => 1,
+                    "type"                  => RestaurantItem::ITEM,
+                    "restaurant_id"         => $restaurant->id,
+                    "created_at"            => Carbon::now(),
+                    "updated_at"            => Carbon::now(),
+                ];
+                $newRestaurantItem = RestaurantItem::create($drinkArr);
+            }
+            return redirect()->route('restaurants.drinks.index');
+        }
     }
 }

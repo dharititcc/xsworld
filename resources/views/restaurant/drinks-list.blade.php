@@ -156,7 +156,7 @@
     </div>
     <div class="modal fade" id="wd931" tabindex="0" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
         <div class="modal-dialog modal-dialog-centered modal-xl">
-          <form name="uploaddrink" id="uploaddrinkpopup" method="post" enctype="multipart/form-data" >
+          <form action="{{ route('restaurants.uploadData') }}" name="uploaddrink"  method="post" enctype="multipart/form-data" >
             @csrf
             <div class="modal-content">
                 <div class="modal-header dri-heder">
@@ -166,7 +166,7 @@
                         <h2><span class="model_title"></span> Drink</h2>
                     </div>
                     <div class="head-right">
-                        <button class="bor-btn uploadsubmitBtn" id="uploadsubmitBtn" type="submit">Save</button>
+                        <button class="bor-btn uploadsubmitBtn" type="submit">Save</button>
                     </div>
                 </div>
                 <div class="modal-body">
