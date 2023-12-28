@@ -109,9 +109,10 @@ class BarRepository extends BaseRepository
 
         $order       = $this->orderQuery()
         ->where('type', Order::ORDER)
-        ->whereIn('status', [Order::RESTAURANT_TOXICATION, Order::CONFIRM_PICKUP, Order::DENY_ORDER])
+        ->whereHas('order_split_drink', function($query){
+            $query->where('status', OrderSplit::COMPLETED);
+        })
         ->orderBy('id','desc');
-        // ->get();
 
         $total = $order->count();
         $order->limit($limit)->offset(($page - 1) * $limit)->orderBy('id','desc');
