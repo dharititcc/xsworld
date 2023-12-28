@@ -13,11 +13,12 @@
     <div class="grid colmn-5">
 
         @foreach ($waiters as $waiter)
+        {{-- {{dump($waiter)}} --}}
         <div class="grey-brd-box waiters">
-            <div class="status-box "># {{ $waiter->id }} {{$waiter->first_name}}
+            <div class="status-box "># {{ $waiter->id }} {{$waiter->waiter->first_name}}
                 <div class="status"> Active</div>
             </div>
-            <div class="wait-footer">Currently Serving Table 03</div>
+            <div class="wait-footer">Currently Serving {{ $waiter->restaurant_table->name }}</div>
         </div>
         @endforeach
         {{-- <div class="grey-brd-box waiters">

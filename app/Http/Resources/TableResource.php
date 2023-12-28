@@ -19,7 +19,7 @@ class TableResource extends JsonResource
         $status  = "";
         if(isset($this->table_order->order_status)) {
             if($this->table_order->status == Order::CURRENTLY_BEING_PREPARED) {
-                $status     = "Order #".$this->table_order->id.  $this->table_order->order_status;
+                $status     = "Order #".$this->table_order->id . " " . $this->table_order->order_status;
             } else if($this->table_order->status == Order::KITCHEN_CONFIRM) {
                 $status     = "Currently being served";
             } else if($this->table_order->status == Order::READYFORPICKUP) {

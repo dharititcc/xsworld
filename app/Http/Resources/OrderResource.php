@@ -28,7 +28,7 @@ class OrderResource extends JsonResource
             'pickup_point_user_image'   => isset($this->restaurant_pickup_point->id) ? $this->restaurant_pickup_point->image : '',
             'amount'                    => $this->amount,
             'total'                     => number_format($this->total, 2),
-            'status'                    => $this->order_status,
+            'status'                    => strtoupper($this->order_status),
             'status_no'                 => (int) $this->status,
             'table_no'                  => $this->restaurant_table->id ?? 0,
             'table_name'                => $this->restaurant_table->code ?? '',

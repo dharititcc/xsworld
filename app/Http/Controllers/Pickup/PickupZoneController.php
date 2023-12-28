@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Pickup;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\RestaurantPickupPointResource;
+use App\Models\CustomerTable;
 use App\Models\RestaurantPickupPoint;
+use App\Models\RestaurantTable;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -20,14 +22,17 @@ class PickupZoneController extends Controller
     {
         $restaurant = session('restaurant');
         // dd($restaurant);
-        $food_pickup_points = RestaurantPickupPoint::with(['attachment'])->restaurantget($restaurant->id)->type(1)->get();
-        $drink_pickup_points = RestaurantPickupPoint::with(['attachment'])->restaurantget($restaurant->id)->type(2)->get();
-        $waiters = User::select('id','first_name','username','email')->where('user_type',User::WAITER)->get();
+        $food_pickup_points     = RestaurantPickupPoint::with(['attachment'])->restaurantget($restaurant->id)->type(1)->get();
+        $drink_pickup_points    = RestaurantPickupPoint::with(['attachment'])->restaurantget($restaurant->id)->type(2)->get();
+        $waiters                = User::select('id','first_name','username','email')->where('user_type',User::WAITER)->get();
+
+        $restaurant_table       = RestaurantTable::where('restaurant_id',$restaurant->id)->pluck('id')->toArray();
+        $active_waiter          = CustomerTable::with(['restaurant_table','waiter'])->whereIn('restaurant_table_id',$restaurant_table)->get();
 
         return view('pickup.index',[
             'food_pickup_points' => $food_pickup_points,
             'drink_pickup_points' => $drink_pickup_points,
-            'waiters'             => $waiters,
+            'waiters'             => $active_waiter,
         ]);
     }
 
@@ -65,7 +70,7 @@ class PickupZoneController extends Controller
             'restaurant_id' => $restaurant->id,
             'type' => $request->types,
         ];
-        
+
         $newPickup = RestaurantPickupPoint::create($pickupArr);
         $newPickup->attachment()->create([
             'stored_name' => $pickupimage,
