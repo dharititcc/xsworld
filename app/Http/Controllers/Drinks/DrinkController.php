@@ -11,6 +11,11 @@ use App\Models\Restaurant;
 use App\Models\RestaurantVariation;
 use DataTables;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Input;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\DrinkImport;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Validator;
 
 class DrinkController extends Controller
 {
@@ -358,8 +363,8 @@ class DrinkController extends Controller
      */
     public function sampleFile()
     {
-        $destinationPath = public_path(DIRECTORY_SEPARATOR.'storage'.DIRECTORY_SEPARATOR.'restaurants/sample-import-data.xlsx');
-        response()->download($destinationPath);
+        $destinationPath = public_path(DIRECTORY_SEPARATOR.'storage'.DIRECTORY_SEPARATOR.'items/XSWorld_sample_data.xlsx');
+        return response()->download($destinationPath);
     }
 
     /**
@@ -369,8 +374,62 @@ class DrinkController extends Controller
      *
      * @return mixed
      */
-    public function uploadData(Request $request)
+    public function uploadDrinkData(Request $request)
     {
-        dd($request->file('upload_data'));
+        $file = $request->file('upload_data');
+
+        $validator = Validator::make(
+            [
+                'file'      => $file,
+                'extension' => strtolower($file->getClientOriginalExtension()),
+            ],
+            [
+                'file'       => 'required',
+                'extension'  => 'required|in:xlsx,xls',
+            ]
+        );
+        if ($validator->fails()) {
+            return back()->withErrors($validator->errors());
+        }
+
+        $restaurant = session('restaurant')->loadMissing(['main_categories', 'main_categories.children']);
+        if($file){
+            $data = Excel::toArray(new DrinkImport, $file);
+
+            foreach($data[0] as $row)
+            {
+                $drinkArr = [
+                    "name"                  => $row[1],
+                    "category_id"           => $row[3],
+                    "description"           => $row[9],
+                    "price"                 => $row[4],
+                    "country_of_origin"     => $row[6],
+                    "ingredients"           => $row[5],
+                    "type_of_drink"         => $row[8],
+                    "year_of_production"    => $row[7],
+                    "is_featured"           => $row[10],
+                    "is_available"          => $row[11],
+                    "is_variable"           => $row[12],
+                    "type"                  => RestaurantItem::ITEM,
+                    "restaurant_id"         => $restaurant->id,
+                    "created_at"            => Carbon::now(),
+                    "updated_at"            => Carbon::now(),
+                ];
+                $newRestaurantItem = RestaurantItem::create($drinkArr);
+
+                if($drinkArr['is_variable'] == 1)
+                {
+                    foreach($data[1] as $variation_row)
+                    {
+                        RestaurantVariation::create([
+                            'name'                  => $variation_row[1],
+                            'price'                 => $variation_row[2],
+                            'restaurant_item_id'    => $newRestaurantItem->id ,
+                        ]);
+                    }
+                }
+            }
+            return redirect()->route('restaurants.drinks.index')->with('message', 'Record added successfully!');;
+        }
     }
 }

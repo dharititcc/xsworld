@@ -30,6 +30,18 @@
             <button class="bor-btn" id="disable">Disable Drink</button>
             <button class="bor-btn ms-3" id="enable">Enable Drink</button>
         </div>
+        @if (session('message'))
+            <div class="alert ">{{ session('message') }}</div>
+        @endif
+        @if ($errors->any())
+            <div class="alert alert-danger">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
         <div class="data-table drinks scroll-y h-600 table-responsive">
             <table width="100%" class="drink_datatable">
                 <thead>
@@ -156,7 +168,7 @@
     </div>
     <div class="modal fade" id="wd931" tabindex="0" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
         <div class="modal-dialog modal-dialog-centered modal-xl">
-          <form name="uploaddrink" id="uploaddrinkpopup" method="post" enctype="multipart/form-data" >
+          <form action="{{ route('restaurants.uploadDrinkData') }}" name="uploaddrink"  method="post" enctype="multipart/form-data" >
             @csrf
             <div class="modal-content">
                 <div class="modal-header dri-heder">
@@ -166,7 +178,7 @@
                         <h2><span class="model_title"></span> Drink</h2>
                     </div>
                     <div class="head-right">
-                        <button class="bor-btn uploadsubmitBtn" id="uploadsubmitBtn" type="submit">Save</button>
+                        <button class="bor-btn uploadsubmitBtn" type="submit">Save</button>
                     </div>
                 </div>
                 <div class="modal-body">
@@ -226,7 +238,7 @@
         drinkUpdate: "{!! route('restaurants.drinks.update', ':ID') !!}",
         drinkGet: "{!! route('restaurants.drinks.show', ':ID') !!}",
         favoriteStatusUpdate: "{!! route('restaurants.favoriteStatusUpdate') !!}",
-        uploadData: "{!! route('restaurants.uploadData') !!}",
+        uploadData: "{!! route('restaurants.uploadDrinkData') !!}",
         currency: "{!! $restaurant->country->symbol !!}"
     };
 
