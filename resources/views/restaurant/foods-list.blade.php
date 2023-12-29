@@ -173,7 +173,7 @@
                     <div class="col-md-12">
                         <div class="extr-info">
                             <div class="head">
-                                <h2 class="yellow">Download sample file</h2> <span class="optional-info"></span>
+                                <h2 class="yellow">Download sample file</h2> Please import only 500 product items at a time<span class="optional-info"></span>
                             </div>
                             <div class="form-group">
                                 <a href={{ route('restaurants.SampleFile') }}>Sample file</a>

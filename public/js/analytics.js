@@ -102,7 +102,7 @@
                     XS.Common.hideLoader(jQuery('#mygraph'));
                 },
             });
-        }
+        },
 
         /**
          * Get Chart
