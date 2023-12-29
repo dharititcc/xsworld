@@ -829,7 +829,7 @@ class OrderRepository extends BaseRepository
             $token   = $kitchen->user->devices()->pluck('fcm_token');
             if(isset($token[0]))
             {
-                $kitchen_token[]    = $token[0];
+                $kitchen_token[]    = $token; // remove  $token[0]
             }
         }
 
@@ -905,6 +905,7 @@ class OrderRepository extends BaseRepository
         $kitchenmessage         = "New Order has been #".$order->id." placed";
         // $kitchendevices         = $order->user->devices()->pluck('fcm_token')->toArray();
         $kitchen_notification   = sendNotification($kitchentitle,$kitchenmessage,$kitchen_token,$orderid);
+        // dd($kitchen_notification);
 
         return $order;
     }
@@ -998,7 +999,7 @@ class OrderRepository extends BaseRepository
     public function reOrder(array $data): Order
     {
         $user                   = auth()->user();
-        $orderAgain             = $user->orders()->where('restaurant_id', $data['restaurant_id'])->where('type',Order::ORDER)->whereNotIn('status',[Order::CUSTOMER_CANCELED,Order::RESTAURANT_CANCELED,Order::RESTAURANT_TOXICATION])->orderByDesc('id')->first();
+        $orderAgain             = $user->orders()->where('restaurant_id', $data['restaurant_id'])->where('type',Order::ORDER)->whereNotIn('status',[Order::CUSTOMER_CANCELED,Order::RESTAURANT_CANCELED,Order::RESTAURANT_TOXICATION,Order::DENY_ORDER,Order::CURRENTLY_BEING_PREPARED,Order::READYFORPICKUP,Order::COMPLETED])->orderByDesc('id')->first();
 
         $resName = Restaurant::select('name')->where('id',$data['restaurant_id'])->first();
         if( !isset($orderAgain->id) )
@@ -1029,8 +1030,8 @@ class OrderRepository extends BaseRepository
         $newOrder->last_delayed_time    = null;
         $newOrder->remaining_date       = null;
         $newOrder->accepted_date        = null;
-        $newOrder->pickup_point_id      = null;
-        $newOrder->pickup_point_user_id = null;
+        // $newOrder->pickup_point_id      = null;
+        // $newOrder->pickup_point_user_id = null;
         $newOrder->waiter_id            = null;
         $newOrder->served_date          = null;
         $newOrder->completion_date      = null;
