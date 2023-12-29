@@ -819,6 +819,7 @@ class OrderRepository extends BaseRepository
         $kitchens          = $order->restaurant->kitchens;
         $kitchen_token     = [];
 
+        $pickup_point_id = '';
         if($order->order_category_type == Order::DRINK || $order->order_category_type == Order::BOTH)
         {
             $pickup_point_id    = $this->randomPickpickPoint($order);
