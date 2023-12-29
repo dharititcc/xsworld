@@ -829,7 +829,7 @@ class OrderRepository extends BaseRepository
             $token   = $kitchen->user->devices()->pluck('fcm_token');
             if(isset($token[0]))
             {
-                $kitchen_token[]    = $token[0];
+                $kitchen_token[]    = $token; // remove  $token[0]
             }
         }
 
@@ -905,6 +905,7 @@ class OrderRepository extends BaseRepository
         $kitchenmessage         = "New Order has been #".$order->id." placed";
         // $kitchendevices         = $order->user->devices()->pluck('fcm_token')->toArray();
         $kitchen_notification   = sendNotification($kitchentitle,$kitchenmessage,$kitchen_token,$orderid);
+        // dd($kitchen_notification);
 
         return $order;
     }
