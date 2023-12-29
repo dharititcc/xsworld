@@ -408,7 +408,7 @@ trait OrderFlow
             {
                 foreach( $waiters as $waiter )
                 {
-                    $waiterDevices[] = $waiter->user->devices->pluck('fcm_token');
+                    $waiterDevices = array_merge($waiterDevices, $waiter->user->devices->pluck('fcm_token')->toArray());
                 }
             }
 
