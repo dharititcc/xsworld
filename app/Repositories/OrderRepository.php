@@ -826,10 +826,14 @@ class OrderRepository extends BaseRepository
         }
 
         foreach ($kitchens as $kitchen) {
-            $token   = $kitchen->user->devices()->pluck('fcm_token');
-            if(isset($token[0]))
+            $tokens   = $kitchen->user->devices()->pluck('fcm_token')->toArray();
+
+            if( !empty( $tokens ) )
             {
-                $kitchen_token[]    = $token; // remove  $token[0]
+                foreach( $tokens as $token )
+                {
+                    $kitchen_token[]    = $token; // remove  $token[0]
+                }
             }
         }
 
