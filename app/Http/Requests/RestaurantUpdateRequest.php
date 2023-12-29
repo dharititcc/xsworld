@@ -22,7 +22,7 @@ class RestaurantUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name'          => 'required|alpha|max:20',
+            'name'          => 'required|string|max:20',
             'email'         => 'required|unique:users,email,'.$this->id,
             'phone'         => 'required|digits:10|unique:users,phone,'.$this->id,
             'street1'       => 'required',
