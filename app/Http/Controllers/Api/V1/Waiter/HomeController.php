@@ -40,12 +40,16 @@ class HomeController extends APIController
 
     public function activeTable()
     {
-        $auth_waiter = auth('api')->user();
-        
+        $auth_waiter = auth()->user();
+
+        // load missing restaurant waiter and restaurant
+        $auth_waiter->loadMissing(['restaurant_waiter', 'restaurant_waiter.restaurant']);
+
         $orderTbl = CustomerTable::select(['customer_tables.*'])
         ->leftJoin('orders', 'customer_tables.order_id','=','orders.id')
         ->with(['table_order'])
-        ->where('customer_tables.waiter_id',$auth_waiter->id)
+        ->where('orders.restaurant_id', $auth_waiter->restaurant_waiter->restaurant_id)
+        ->whereIn('orders.status', [Order::READYFORPICKUP, Order::KITCHEN_CONFIRM, Order::CURRENTLY_BEING_PREPARED, Order::WAITER_PENDING, Order::PENDNIG])
         ->get();
         // echo common()->formatSql($orderTbl);die;
         // $orderTbl = Order::with(['user','restaurant','restaurant_table'])->where('waiter_id',$auth_waiter->id)->where('type',Order::CART)->get();
