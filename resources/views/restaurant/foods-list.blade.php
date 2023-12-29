@@ -28,6 +28,18 @@
         <button class="bor-btn" id="disable">Disable Item</button>
         <button class="bor-btn ms-3" id="enable">Enable Item</button>
     </div>
+    @if (session('message'))
+        <div class="alert green">{{ session('message') }}</div>
+    @endif
+    @if ($errors->any())
+        <div class="alert alert-danger">
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
     <div class="data-table drinks scroll-y h-600 table-responsive">
         <table width="100%" class="drink_datatable">
             <thead>
@@ -80,7 +92,7 @@
                         </div>
                         <div class="col-md-8">
                             <div class="form-group mb-4">
-                                <input type="text" name="name" id="name" class="form-control vari3" placeholder="Product Name">
+                                <input type="text" name="name" id="name" class="form-control vari3 duplicate_product" placeholder="Product Name">
                                 <input id="product_type" type="hidden" class="product_type" name="is_variable" />
                                 <input id="is_featured" type="hidden" class="is_featured" name="is_featured" />
                             </div>
@@ -139,6 +151,41 @@
 
             </div>
         </form>
+    </div>
+</div>
+<div class="modal fade" id="wd931" tabindex="0" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+      <form action="{{ route('restaurants.uploadFoodData') }}" name="uploaddrink"  method="post" enctype="multipart/form-data" >
+        @csrf
+        <div class="modal-content">
+            <div class="modal-header dri-heder">
+                <div class="head-left">
+                    <button type="button" class="back" data-bs-dismiss="modal" aria-label="Close"><i
+                            class="icon-left"></i></button>
+                    <h2><span class="model_title"></span> Food</h2>
+                </div>
+                <div class="head-right">
+                    <button class="bor-btn uploadsubmitBtn" type="submit">Save</button>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="extr-info">
+                            <div class="head">
+                                <h2 class="yellow">Download sample file</h2> <span class="optional-info"></span>
+                            </div>
+                            <div class="form-group">
+                                <a href={{ route('restaurants.SampleFile') }}>Sample file</a>
+                                <input type="file" id="upload_data" name="upload_data" class="form-control" accept=".xlsx,.xls," placeholder="Upload drinks data">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+      </form>
     </div>
 </div>
 <!-- Global popup -->
