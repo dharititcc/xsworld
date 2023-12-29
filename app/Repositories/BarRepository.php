@@ -261,46 +261,96 @@ class BarRepository extends BaseRepository
 
             if($status == OrderSplit::RESTAURANT_TOXICATION)
             {
-                // RESTAURANT_TOXICATION and process for refund
-                $updateArr['status']            = $status;
-                if(isset($order->charge_id))
-                {
-                    $this->refundCharge($order);
-                }
-                $order->update($updateArr);
-                $userCreditAmountBalance = $user->credit_amount;
-                $refundCreditAmount = $order->credit_amount;
-                $totalCreditAmount = $userCreditAmountBalance + $refundCreditAmount;
-                // update user's credit amount
-                $this->updateUserPoints($user, ['credit_amount' => $totalCreditAmount]);
-                $title                      = $order->restaurant->name. " is processing your order";
-                $message                    = "Your Order #".$order_id." is intoxicated by ".$order->restaurant->name;
-                $send_notification          = sendNotification($title,$message,$user_tokens,$order_id);
+                $this->updateStatusBarInToxication($order, $status, $user_tokens);
             }
 
             if($status == OrderSplit::DENY_ORDER)
             {
-                // DENY_ORDER and process for refund
-                $updateArr['status']            = $status;
-
-                if(isset($order->charge_id) && $order->amount > 0)
-                {
-                    $this->refundCharge($order);
-                }
-
-                $order->update($updateArr);
-                $userCreditAmountBalance = $user->credit_amount;
-                $refundCreditAmount = $order->credit_amount;
-                $totalCreditAmount = $userCreditAmountBalance + $refundCreditAmount;
-                // update user's credit amount
-                $this->updateUserPoints($user, ['credit_amount' => $totalCreditAmount]);
-                $title                      = $order->restaurant->name. " is processing your order";
-                $message                    = "Your Order #".$order_id." is denied by ".$order->restaurant->name;
-                $send_notification          = sendNotification($title,$message,$user_tokens,$order_id);
+                $this->updateStatusDeny($order, $status, $user_tokens);
             }
         }
 
         return $order;
+    }
+
+    /**
+     * Method updateStatusDeny
+     *
+     * @param Order $order [explicite description]
+     * @param int $status [explicite description]
+     * @param array $user_tokens [explicite description]
+     *
+     * @return void
+     */
+    public function updateStatusDeny(Order $order, int $status, array $user_tokens)
+    {
+        // DENY_ORDER and process for refund
+        $updateArr['status']            = $status;
+
+        if(isset($order->charge_id) && $order->amount > 0)
+        {
+            $this->refundCharge($order);
+        }
+
+        $order->update($updateArr);
+
+        // update order split status for drink to completed
+        if( $order->order_split_drink->update(['status' => $status]) ) // order split table status to intoxication
+        {
+            if( isset( $order->restaurant_table_id ) && !$order->order_split_food )
+            {
+                // update waiter status to Ready for collection
+                $updateArr['waiter_status'] = OrderSplit::DENY_ORDER;
+            }
+        }
+
+        $userCreditAmountBalance = $order->user->credit_amount;
+        $refundCreditAmount = $order->credit_amount;
+        $totalCreditAmount = $userCreditAmountBalance + $refundCreditAmount;
+        // update user's credit amount
+        $this->updateUserPoints($order->user, ['credit_amount' => $totalCreditAmount]);
+        $title                      = $order->restaurant->name. " is processing your order";
+        $message                    = "Your Order #".$order->id." is denied by ".$order->restaurant->name;
+        $send_notification          = sendNotification($title,$message,$user_tokens,$order->id);
+    }
+
+    /**
+     * Method updateStatusBarInToxication
+     *
+     * @param Order $order [explicite description]
+     * @param int $status [explicite description]
+     * @param array $user_tokens [explicite description]
+     *
+     * @return void
+     */
+    public function updateStatusBarInToxication(Order $order, int $status, array $user_tokens)
+    {
+        // RESTAURANT_TOXICATION and process for refund
+        $updateArr['status']            = $status;
+        if(isset($order->charge_id))
+        {
+            $this->refundCharge($order);
+        }
+
+        // update order split status for drink to intoxication
+        if( $order->order_split_drink->update(['status' => $status]) ) // order split table status to completed
+        {
+            if( isset( $order->restaurant_table_id ) && !$order->order_split_food )
+            {
+                // update waiter status to Ready for collection
+                $updateArr['waiter_status'] = OrderSplit::RESTAURANT_TOXICATION;
+            }
+        }
+
+        $order->update($updateArr);
+        $userCreditAmountBalance = $order->user->credit_amount;
+        $refundCreditAmount = $order->credit_amount;
+        $totalCreditAmount = $userCreditAmountBalance + $refundCreditAmount;
+        // update user's credit amount
+        $this->updateUserPoints($order->user, ['credit_amount' => $totalCreditAmount]);
+        $title                      = $order->restaurant->name. " is processing your order";
+        $message                    = "Your Order #".$order->id." is intoxicated by ".$order->restaurant->name;
+        $send_notification          = sendNotification($title,$message,$user_tokens,$order->id);
     }
 
     /**
