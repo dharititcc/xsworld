@@ -101,6 +101,7 @@ class Order extends Model
         'waiter_id',
         'type',
         'status',
+        'waiter_status',
         'order_category_type',
         'card_id',
         'charge_id',

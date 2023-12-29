@@ -225,29 +225,13 @@ class BarRepository extends BaseRepository
             if( $apply_time )
             {
                 // update status to accepted or delay order
-                $this->updateAcceptedDelayStatus($status, $apply_time, $order, $user_tokens);
+                $this->updateBarAcceptedDelayStatus($status, $apply_time, $order, $user_tokens);
             }
 
-            if($status == Order::COMPLETED)
+            // update status to completed
+            if( $status == OrderSplit::COMPLETED )
             {
-                if( $order->charge_id )
-                {
-                    $stripe                         = new Stripe();
-                    $payment_data                   = $stripe->captureCharge($order->charge_id);
-                    $updateArr['transaction_id']    = $payment_data->balance_transaction;
-                }
-                $updateArr['status']            = $status;
-                $updateArr['completion_date']   = Carbon::now()->format('Y-m-d H:i:s');
-                $updateArr['remaining_date']    = Carbon::now();
-                $this->orderItemStatusUpdated($order_id, OrderItem::COMPLETED);
-                // $order = $this->allOrderCompletedlogic($order,$updateArr,$user);
-
-                // update order data
-                $order->update($updateArr);
-
-                $title                      = $order->restaurant->name. " is processing your order";
-                $message                    = "Your Order #".$order_id." is completed by ".$order->restaurant->name;
-                $send_notification          = sendNotification($title,$message,$user_tokens,$order_id);
+                $this->updateBarCompletedStatus($order, OrderSplit::COMPLETED, $user_tokens);
             }
 
             if($status == Order::RESTAURANT_CANCELED)
@@ -270,19 +254,12 @@ class BarRepository extends BaseRepository
                 $send_notification          = sendNotification($title,$message,$user_tokens,$order_id);
             }
 
-            if($status == Order::CONFIRM_PICKUP)
+            if($status == OrderSplit::CONFIRM_PICKUP)
             {
-                $updateArr['status']            = $status;
-                $updateArr['served_date']       = Carbon::now();
-                $this->orderItemStatusUpdated($order_id,OrderItem::CONFIRM_PICKUP);
-                $order = $this->allOrderCompletedlogic($order,$updateArr,$user);
-                $order->update($updateArr);
-                $title                      = $order->restaurant->name. " is processing your order";
-                $message                    = "Your Order #".$order_id." is pick up from the ".$order->restaurant->name;
-                $send_notification          = sendNotification($title,$message,$user_tokens,$order_id);
+                $this->updateBarConfirmPickup($order, $status, $user_tokens);
             }
 
-            if($status == Order::RESTAURANT_TOXICATION)
+            if($status == OrderSplit::RESTAURANT_TOXICATION)
             {
                 // RESTAURANT_TOXICATION and process for refund
                 $updateArr['status']            = $status;
@@ -301,7 +278,7 @@ class BarRepository extends BaseRepository
                 $send_notification          = sendNotification($title,$message,$user_tokens,$order_id);
             }
 
-            if($status == Order::DENY_ORDER)
+            if($status == OrderSplit::DENY_ORDER)
             {
                 // DENY_ORDER and process for refund
                 $updateArr['status']            = $status;
@@ -321,21 +298,101 @@ class BarRepository extends BaseRepository
                 $message                    = "Your Order #".$order_id." is denied by ".$order->restaurant->name;
                 $send_notification          = sendNotification($title,$message,$user_tokens,$order_id);
             }
-
-            // if($order->order_category_type == 2) {
-
-            // } else {
-            //     $order->update($updateArr);
-            //     $order->refresh();
-            //     $order->loadMissing(['items']);
-            // }
         }
 
         return $order;
     }
 
     /**
-     * Method updateAcceptedDelayStatus
+     * Method updateBarConfirmPickup
+     *
+     * @param Order $order [explicite description]
+     * @param int $status [explicite description]
+     * @param array $user_tokens [explicite description]
+     *
+     * @return void
+     */
+    public function updateBarConfirmPickup(Order $order, int $status, array $user_tokens)
+    {
+        $updateArr = [
+            'status'        => $status,
+            'served_date'   => Carbon::now()
+        ];
+
+        // update order split status for drink to completed
+        if( $order->order_split_drink->update(['status' => $status]) ) // order split table status to completed
+        {
+            if( isset( $order->restaurant_table_id ) && !$order->order_split_food )
+            {
+                // update waiter status to Ready for collection
+                $updateArr['waiter_status'] = OrderSplit::READY_FOR_COLLECTION;
+            }
+        }
+
+        $order->update($updateArr);
+
+        $points         = $order->total * 3;
+        $totalPoints    = $order->user->points + round($points);
+
+        $this->insertCreditPoints($order->user, [
+            'model_name'    => '\App\Models\Order',
+            'model_id'      => $order->id,
+            'points'        => $points,
+            'type'          => 1
+        ]);
+
+        // update user's points
+        $this->updateUserPoints($order->user, ['points' => $totalPoints]);
+
+        $title                      = $order->restaurant->name. " is processing your order";
+        $message                    = "Your Order #".$order->id." is pick up from the ".$order->restaurant->name;
+        $send_notification          = sendNotification($title, $message, $user_tokens, $order->id);
+    }
+
+    /**
+     * Method updateBarCompletedStatus
+     *
+     * @param Order $order [explicite description]
+     * @param int $status [explicite description]
+     * @param array $user_tokens [explicite description]
+     *
+     * @return void
+     */
+    public function updateBarCompletedStatus(Order $order, int $status, array $user_tokens)
+    {
+        $updateArr = [
+            'status'            => $status,
+            'completion_date'   => Carbon::now()->format('Y-m-d H:i:s'),
+            'remaining_date'    => Carbon::now()
+        ];
+
+        if( $order->charge_id )
+        {
+            $stripe                         = new Stripe();
+            $payment_data                   = $stripe->captureCharge($order->charge_id);
+            $updateArr['transaction_id']    = $payment_data->balance_transaction;
+        }
+
+        // update order split status for drink to completed
+        if( $order->order_split_drink->update(['status' => $status]) ) // order split table status to completed
+        {
+            if( isset( $order->restaurant_table_id ) && !$order->order_split_food )
+            {
+                // update waiter status to Ready for collection
+                $updateArr['waiter_status'] = OrderSplit::READY_FOR_COLLECTION;
+            }
+        }
+
+        // update order data
+        $order->update($updateArr);
+
+        $title                      = $order->restaurant->name. " is processing your order";
+        $message                    = "Your Order #".$order->id." is completed by ".$order->restaurant->name;
+        $send_notification          = sendNotification($title, $message, $user_tokens, $order->id);
+    }
+
+    /**
+     * Method updateBarAcceptedDelayStatus
      *
      * @param int $status [explicite description]
      * @param int $apply_time [explicite description]
@@ -345,37 +402,49 @@ class BarRepository extends BaseRepository
      *
      * @return void
      */
-    public function updateAcceptedDelayStatus(int $status, int $apply_time, Order $order, array $user_tokens)
+    public function updateBarAcceptedDelayStatus(int $status, int $apply_time, Order $order, array $user_tokens)
     {
-        if($status == Order::DELAY_ORDER || $status == Order::ACCEPTED)
+        if($status == OrderSplit::DELAY_ORDER || $status == OrderSplit::ACCEPTED)
         {
             if( isset($apply_time) && $apply_time > 0 )
             {
                 $currentTime        = Carbon::now();
                 $currentTimeClone   = $currentTime->clone();
 
-                if( $status == Order::ACCEPTED )
+                if( $status == OrderSplit::ACCEPTED )
                 {
-                    $orderArr = [
-                        'apply_time'        => $apply_time,
-                        'accepted_date'     => $currentTime,
-                        'remaining_date'    => $currentTimeClone->addMinutes($apply_time),
-                        'last_delayed_time' => $apply_time,
-                        'status'            => Order::ACCEPTED
+                    // update order split status to Accepted
+                    $orderSplitArr = [
+                        'status' => OrderSplit::ACCEPTED
                     ];
 
-                    // update order
-                    $order->update($orderArr);
+                    if( $order->order_split_drink->update($orderSplitArr) )
+                    {
+                        $orderArr = [
+                            'apply_time'        => $apply_time,
+                            'accepted_date'     => $currentTime,
+                            'remaining_date'    => $currentTimeClone->addMinutes($apply_time),
+                            'last_delayed_time' => $apply_time,
+                            'status'            => Order::ACCEPTED
+                        ];
 
-                    // send notification for accepted
-                    $this->orderItemStatusUpdated($order->id, Order::ACCEPTED);
+                        if( isset( $order->restaurant_table_id ) )
+                        {
+                            // update waiter status to currently being prepared
+                            $orderArr['waiter_status'] = OrderSplit::CURRENTLY_BEING_PREPARED;
+                        }
 
-                    $title                      = $order->restaurant->name. " is processing your order";
-                    $message                    = $order->restaurant->name. " has accepted your order #".$order->id;
-                    $send_notification          = sendNotification($title,$message,$user_tokens,$order->id);
+                        // update order
+                        $order->update($orderArr);
+
+                        // send notification for accepted
+                        $title                      = $order->restaurant->name. " is processing your order";
+                        $message                    = $order->restaurant->name. " has accepted your order #".$order->id;
+                        $send_notification          = sendNotification($title, $message, $user_tokens, $order->id);
+                    }
                 }
 
-                if( $status == Order::DELAY_ORDER )
+                if( $status == OrderSplit::DELAY_ORDER )
                 {
                     // check current time is past
                     $remainingTime  = Carbon::parse($order->remaining_date);
@@ -390,14 +459,27 @@ class BarRepository extends BaseRepository
                     else
                     {
                         $remainingTimeDb = $remTime->addMinutes($apply_time);
-                        // dd($remainingTimeDb);
                     }
-                    // dd($remainingTimeDb);
+
+                    // update order split status to ACCEPTED
+                    $orderSplitArr = [
+                        'status' => OrderSplit::ACCEPTED
+                    ];
+
+                    if( $order->order_split_drink->update($orderSplitArr) )
+                    {
+                        if( isset( $order->restaurant_table_id ) && !$order->order_split_food )
+                        {
+                            // update waiter status to currently being prepared
+                            $orderArr['waiter_status'] = OrderSplit::CURRENTLY_BEING_PREPARED;
+                        }
+                    }
+
                     $orderArr = [
                         'apply_time'        => $apply_time + $order->apply_time,
                         'last_delayed_time' => $order->apply_time,
                         'remaining_date'    => $remainingTimeDb,
-                        'status'            => Order::DELAY_ORDER
+                        'status'            => OrderSplit::DELAY_ORDER
                     ];
 
                     // // update order
@@ -406,7 +488,7 @@ class BarRepository extends BaseRepository
                     // send notification for delay order
                     $title                      = $order->restaurant->name. " is processing your order";
                     $message                    = "Your Order #".$order->id." is delayed by ".$order->restaurant->name;
-                    $send_notification          = sendNotification($title,$message,$user_tokens,$order->id);
+                    $send_notification          = sendNotification($title, $message, $user_tokens, $order->id);
                 }
             }
             else

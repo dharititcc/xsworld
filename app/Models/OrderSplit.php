@@ -29,6 +29,13 @@ class OrderSplit extends Model
     const KITCHEN_CONFIRM       = 12;
     /** KITCHEN STATUS END */
 
+    /** WAITER STATUS START */
+    const CURRENTLY_BEING_PREPARED  = 16;
+    const CURRENTLY_BEING_SERVED    = 12;
+    const AWAITING_SERVICE          = 19;
+    const READY_FOR_COLLECTION      = 11;
+    /** WAITER STATUS END */
+
     const STATUS = [
         self::PENDING               => 'Pending',       // display in bar, kitchen, waiter
         self::ACCEPTED              => 'Accepted',
