@@ -794,6 +794,11 @@ class OrderRepository extends BaseRepository
     {
         $restaurant_id = $order->restaurant_id;
         $pickup_point_id = RestaurantPickupPoint::where(['restaurant_id' => $restaurant_id , 'type' => 2, 'status' => RestaurantPickupPoint::ONLINE, 'is_table_order' => 1])->inRandomOrder()->first();
+        // handle if pickup point exist or bartender associated
+        if( !isset( $pickup_point_id->id ) && !isset( $pickup_point_id->user_id ) )
+        {
+            throw new GeneralException('There is no pickup point or bartender assiociated.');
+        }
         return $pickup_point_id;
     }
 
@@ -837,13 +842,14 @@ class OrderRepository extends BaseRepository
             }
         }
 
+        $userCreditAmountBalance = $user->credit_amount;
         $updateArr         = [];
         $paymentArr        = [];
         $stripe_customer_id = $user->stripe_customer_id;
 
         if(isset($order->id))
         {
-            if($order->total == $credit_amount)
+            if($order->total <= $credit_amount)
             {
                 $updateArr = [
                     'type'                  => Order::ORDER,
@@ -853,6 +859,9 @@ class OrderRepository extends BaseRepository
                     'restaurant_table_id'   => ($table_id) ? $table_id : null,
                     'status'                => Order::CURRENTLY_BEING_PREPARED,
                 ];
+                $remaingAmount = $userCreditAmountBalance - $credit_amount;
+                // update user's credit amount
+                $this->updateUserPoints($user, ['credit_amount' => $remaingAmount]);
             }
 
 
@@ -867,7 +876,7 @@ class OrderRepository extends BaseRepository
                 $defaultCardId  = $getCusCardId->default_source;
 
                 $paymentArr = [
-                    'amount'        => $amount * 100,
+                    'amount'        => number_format($amount, 2) * 100,
                     'currency'      => $order->restaurant->currency->code,
                     'customer'      => $user->stripe_customer_id,
                     // 'capture'       => false,
@@ -884,8 +893,13 @@ class OrderRepository extends BaseRepository
                     'pickup_point_user_id'  => ($pickup_point_id) ? $pickup_point_id->user_id : null,
                     'credit_amount'         => $credit_amount,
                     'restaurant_table_id'   => ($table_id) ? $table_id : null,
+                    'amount'                => $amount,
                     'status'                => Order::CURRENTLY_BEING_PREPARED,
                 ];
+                $remaingAmount = $userCreditAmountBalance - $credit_amount;
+
+                // update user's credit amount
+                $this->updateUserPoints($user, ['credit_amount' => $remaingAmount]);
             }
 
             $order->update($updateArr);
