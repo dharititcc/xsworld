@@ -315,11 +315,12 @@ trait OrderFlow
         $order              = Order::with(['restaurant'])->findOrFail($data['order_id']);
         $user               = $order->user_id ? User::findOrFail($order->user_id) : auth()->user();
         $devices            = $user->devices()->pluck('fcm_token')->toArray();
+        $pickup_point_id    = '';
 
-        if($order->order_category_type == 2) {
+        if($order->order_category_type == Order::BOTH) {
             $pickup_point_id    = $this->randomPickpickPoint($order);
         } else {
-            $pickup_point_id    = $data['pickup_point_id'] ? RestaurantPickupPoint::findOrFail($data['pickup_point_id']) : null;
+            $pickup_point_id    = isset($data['pickup_point_id']) ? RestaurantPickupPoint::findOrFail($data['pickup_point_id']) : null;
         }
 
         $userCreditAmountBalance = $user->credit_amount;
@@ -400,6 +401,22 @@ trait OrderFlow
                 'restaurant',
                 'restaurant.waiters'
             ]);
+
+            $getcusTbl = CustomerTable::where('user_id' , $user->id)->where('restaurant_table_id',$table_id)->where('order_id',$data['order_id'])->first();
+            if($getcusTbl) {
+                throw new GeneralException('Already table allocated');
+                $customerTbl = 0;
+            } else {
+                $customerTbl = CustomerTable::updateOrCreate([
+                    'restaurant_table_id' => $table_id,
+                    'user_id'       => $user->id,
+                    'order_id'      => $data['order_id'],
+                ],
+                // [
+                //     'waiter_id'     => $data['waiter_id']
+                // ]
+                );
+            }
 
             $waiterDevices = [];
             $waiters = $order->restaurant->waiters()->with(['user', 'user.devices'])->get();
