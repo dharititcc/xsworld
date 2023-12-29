@@ -22,15 +22,15 @@ class RestaurantRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name'          => 'required|string|max:20',
-            'email'         => 'required|unique:users,email,'.$this->id,
-            'phone'         => 'required|digits:10|unique:users,phone,'.$this->id,
+            'name'          => 'required|alpha|max:20',
+            'email'         => 'required|unique:users,email',
+            'phone'         => 'required|digits:10|unique:users,phone',
             'street1'       => 'required',
-            'first_name'    => 'required',
-            'city'          => 'required',
+            'first_name'    => 'required|alpha',
+            'city'          => 'required|alpha',
             'password'      => 'required',
-            'image'         => 'required|image|mimes:png,jpg,jpeg'
-            
+            'image'         => 'required|image|mimes:png,jpg,jpeg',
+            'state'         => 'required|alpha',
         ];
     }
 }
