@@ -393,6 +393,33 @@ trait OrderFlow
             $bar_notification   = sendNotification($bartitle,$barmessage,$bardevices,$orderid);
         }
 
+        // send notification to waiter if table order
+        if( isset( $table_id ) )
+        {
+            $order->loadMissing([
+                'restaurant',
+                'restaurant.waiters'
+            ]);
+
+            $waiterDevices = [];
+            $waiters = $order->restaurant->waiters()->with(['user', 'user.devices'])->get();
+
+            if( $waiters->count() )
+            {
+                foreach( $waiters as $waiter )
+                {
+                    $waiterDevices[] = $waiter->user->devices->pluck('fcm_token');
+                }
+            }
+
+            if( !empty( $waiterDevices ) )
+            {
+                $waiterTitle    = 'New order placed by customer';
+                $waiterMessage  = "Order is #{$order->id} placed by customer";
+                sendNotification($waiterTitle, $waiterMessage, $waiterDevices, $orderid);
+            }
+        }
+
         return $order;
     }
 
