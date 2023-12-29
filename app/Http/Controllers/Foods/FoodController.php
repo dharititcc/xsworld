@@ -2,11 +2,18 @@
 
 namespace App\Http\Controllers\Foods;
 
+use App\Exceptions\GeneralException;
 use App\Http\Controllers\Controller;
+use App\Imports\FoodImport;
+use App\Models\Restaurant;
 use Illuminate\Http\Request;
 use App\Models\RestaurantItem;
 use App\Models\RestaurantVariation;
+use Carbon\Carbon;
 use DataTables;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
+use Maatwebsite\Excel\Facades\Excel;
 
 class FoodController extends Controller
 {
@@ -128,6 +135,14 @@ class FoodController extends Controller
                 "type"                  => RestaurantItem::ITEM,
                 "restaurant_id"         => $restaurant->id
             ];
+
+             // check if product exist
+
+            if( $this->checkUniqueFood($request, $restaurant) )
+            {
+                throw new GeneralException('The Product is already exist.');
+            }
+
             $newRestaurantItem = RestaurantItem::create($drinkArr);
 
             $variationArr = [];
@@ -159,6 +174,20 @@ class FoodController extends Controller
             }
         }
         return $newRestaurantItem->refresh();
+    }
+
+    /**
+     * Method checkUniqueDrink
+     *
+     * @param Request $request [explicite description]
+     * @param Restaurant $restaurant [explicite description]
+     *
+     * @return int
+     */
+    private function checkUniqueFood(Request  $request, Restaurant $restaurant)
+    {
+        $text = strtolower($request->name);
+        return RestaurantItem::whereRaw(DB::raw("LOWER(`name`) = '{$text}'"))->where('restaurant_id', $restaurant->id)->where('category_id', $request->get('category_id'))->count();
     }
 
     /**
@@ -316,5 +345,70 @@ class FoodController extends Controller
             'stored_name'   => $profileImage,
             'original_name' => $profileImage
         ]);
+    }
+
+    /**
+     * Method uploadData
+     *
+     * @param Request $request [explicite description]
+     *
+     * @return mixed
+     */
+    public function uploadFoodData(Request $request)
+    {
+        $file = $request->file('upload_data');
+
+        $validator = Validator::make(
+            [
+                'file'      => $file,
+                'extension' => strtolower($file->getClientOriginalExtension()),
+            ],
+            [
+                'file'       => 'required',
+                'extension'  => 'required|in:xlsx,xls',
+            ]
+        );
+        if ($validator->fails()) {
+            return back()->withErrors($validator->errors());
+        }
+        $restaurant = session('restaurant')->loadMissing(['main_categories', 'main_categories.children']);
+        if($file){
+            $data = Excel::toArray(new FoodImport, $file);
+
+            foreach($data[0] as $row)
+            {
+                $drinkArr = [
+                    "name"                  => $row[1],
+                    "category_id"           => $row[3],
+                    "description"           => $row[9],
+                    "price"                 => $row[4],
+                    "country_of_origin"     => $row[6],
+                    "ingredients"           => $row[5],
+                    "type_of_drink"         => $row[8],
+                    "year_of_production"    => $row[7],
+                    "is_featured"           => $row[10],
+                    "is_available"          => $row[11],
+                    "is_variable"           => $row[12],
+                    "type"                  => RestaurantItem::ITEM,
+                    "restaurant_id"         => $restaurant->id,
+                    "created_at"            => Carbon::now(),
+                    "updated_at"            => Carbon::now(),
+                ];
+                $newRestaurantItem = RestaurantItem::create($drinkArr);
+
+                if($drinkArr['is_variable'] == 1)
+                {
+                    foreach($data[1] as $variation_row)
+                    {
+                        RestaurantVariation::create([
+                            'name'                  => $variation_row[1],
+                            'price'                 => $variation_row[2],
+                            'restaurant_item_id'    => $newRestaurantItem->id ,
+                        ]);
+                    }
+                }
+            }
+            return redirect()->route('restaurants.foods.index');
+        }
     }
 }

@@ -502,7 +502,7 @@
             //     if(drinkId == undefined)
             //     {
                     context.selectors.drinkModalTitle.html('Import');
-            //         context.addDrinkFormValidation();
+                    context.uploadDrinkFormValidation();
             //         context.selectors.drinkForm.attr('action', moduleConfig.drinkStore);
 
             //     } else {
@@ -547,6 +547,41 @@
                 $this.find('.pip').remove();
                 $this.find('.cstm-catgory').find('input[name="category_id[]"]').prop('checked', false);
                 context.selectors.drinkForm.find('.variation_hidden').remove();
+            });
+        },
+
+        uploadDrinkFormValidation: function()
+        {
+            var context = this;
+            context.selectors.drinkForm.validate({
+                ignore: [],
+                rules: {
+                    upload_data: {
+                        required: true,
+                    },
+                    file: {
+                        required: false,
+                        extension: "xls|xlsx"
+                    },
+                },
+                messages: {
+                    image: {
+                        required: "Please upload excel files", //accept: 'Not an image!'
+                    }
+                },
+                errorPlacement: function (error, element) {
+                    console.log(error);
+                    if (element.attr("type") == "checkbox") {
+                        error.insertAfter($(element).closest('div'));
+                    } else if( element.attr("type") == 'file' ) {
+                        error.insertAfter($(element).closest('div'));
+                    }else{
+                        error.insertAfter($(element));
+                    }
+                },
+                submitHandler: function() {
+                    context.submitDrinkForm(context.selectors.drinkForm.get(0));
+                }
             });
         },
 

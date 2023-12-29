@@ -110,6 +110,7 @@
 
         selectors: {
             foodModal:          jQuery('#wd930'),
+            uploadfoodModal:    jQuery('#wd931'),
             foodTable:          jQuery('.drink_datatable'),
             // activeCategory:     jQuery('.category.active'),
             search:             jQuery("#search"),
@@ -140,6 +141,7 @@
             XS.Common.isFavorite();
 
             context.openFoodModal();
+            context.openUploadFoodModal();
             context.closeFoodModal();
             XS.Common.fileReaderBind();
             XS.Common.allCheckBox();
@@ -430,6 +432,37 @@
             });
         },
 
+        openUploadFoodModal: function()
+        {
+            var context = this;
+
+            $('.showin-mob, .drink_datatable').on('click', '.upload_food_modal', function(e)
+            {
+            //     e.preventDefault();
+
+            //     var $this       = $(this),
+            //         drinkId     = $this.data('id'),
+            //         productType = $this.data('product_type');
+            //         $('#product_type').val(0);
+            //         $('#is_featured').val(0);
+
+            //     if(drinkId == undefined)
+            //     {
+                    context.selectors.foodModalTitle.html('Import');
+            //         context.addDrinkFormValidation();
+            //         context.selectors.drinkForm.attr('action', moduleConfig.drinkStore);
+
+            //     } else {
+            //         context.selectors.drinkModalTitle.html('Manually Edit ');
+            //         context.editDrinkFormValidation();
+            //         context.selectors.drinkForm.attr('action', moduleConfig.drinkUpdate.replace(':ID', drinkId));
+            //         context.getDrinkData(drinkId);
+            //         context.selectors.drinkForm.append(`<input type="hidden" name="_method" value="PUT" />`);
+            //     }
+                context.selectors.uploadfoodModal.modal('show');
+            });
+        },
+
         closeFoodModal: function()
         {
             var context = this;
@@ -595,6 +628,15 @@
                 success: function(response) {
                     document.getElementById("drinkpopup").reset();
                     XS.Common.handleSwalSuccess('Food form has been submitted successfully.');
+                },
+                error: function(xhr)
+                {
+                    if( xhr.status == 403 )
+                    {
+                        var {error} = xhr.responseJSON;
+                        context.selectors.foodForm.find('.duplicate_product').after(`<span class="error">${error.message}</span>`);
+                        // $this.closest('#add_form_category').find('.cat_name').after(`<span class="error">${error.message}</span>`);
+                    }
                 },
                 complete: function()
                 {

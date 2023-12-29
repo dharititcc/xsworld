@@ -3,6 +3,7 @@
 use App\Http\Controllers\AccountManager\Bar\BarPickZoneController;
 use App\Http\Controllers\Admin\Restaurant\RestaurantController;
 use App\Http\Controllers\Drinks\DrinkController;
+use App\Http\Controllers\Foods\FoodController;
 use App\Http\Controllers\LeaveImpersonateController;
 use App\Http\Controllers\Table\RestaurantTableController;
 use Illuminate\Support\Facades\Artisan;
@@ -75,11 +76,12 @@ Route::group(['prefix' => 'restaurants', 'as' => 'restaurants.', 'middleware' =>
         Route::resource('drinks', 'DrinkController');
         Route::post('favorite-status-update',[DrinkController::class,'favoriteStatusUpdate'])->name('favoriteStatusUpdate');
         Route::get('sample-file',[DrinkController::class,'SampleFile'])->name('SampleFile');
-        Route::post('upload-data',[DrinkController::class,'uploadData'])->name('uploadData');
+        Route::post('upload-drink-data',[DrinkController::class,'uploadDrinkData'])->name('uploadDrinkData');
     });
     Route::group(['namespace' => 'Foods'], function()
     {
         Route::resource('foods', 'FoodController');
+        Route::post('upload-food-data',[FoodController::class,'uploadFoodData'])->name('uploadFoodData');
     });
     Route::group(['namespace' => 'Orders'], function()
     {
