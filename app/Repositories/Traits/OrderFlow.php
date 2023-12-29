@@ -350,12 +350,12 @@ trait OrderFlow
         $order              = Order::with(['restaurant'])->findOrFail($data['order_id']);
         $user               = $order->user_id ? User::findOrFail($order->user_id) : auth()->user();
         $devices            = $user->devices()->pluck('fcm_token')->toArray();
+        $pickup_point_id    = '';
 
-        // If order contains food and drink both
-        if($order->order_category_type == 2) {
+        if($order->order_category_type == Order::BOTH) {
             $pickup_point_id    = $this->randomPickpickPoint($order);
         } else {
-            $pickup_point_id    = $data['pickup_point_id'] ? RestaurantPickupPoint::findOrFail($data['pickup_point_id']) : null;
+            $pickup_point_id    = isset($data['pickup_point_id']) ? RestaurantPickupPoint::findOrFail($data['pickup_point_id']) : null;
         }
 
         // handle if pickup point exist or bartender associated
@@ -433,6 +433,57 @@ trait OrderFlow
         $bardevices         = $pickup_point_id ? $order->pickup_point_user->devices()->pluck('fcm_token')->toArray() : [];
         if(!empty( $bardevices )) {
             $bar_notification   = sendNotification($bartitle,$barmessage,$bardevices,$orderid);
+        }
+
+        // send notification to waiter if table order
+        if( isset( $table_id ) )
+        {
+            $order->loadMissing([
+                'restaurant',
+                'restaurant.waiters'
+            ]);
+
+            $getcusTbl = CustomerTable::where('user_id' , $user->id)->where('restaurant_table_id',$table_id)->where('order_id',$data['order_id'])->first();
+            if($getcusTbl) {
+                throw new GeneralException('Already table allocated');
+                $customerTbl = 0;
+            } else {
+                $customerTbl = CustomerTable::updateOrCreate([
+                    'restaurant_table_id' => $table_id,
+                    'user_id'       => $user->id,
+                    'order_id'      => $data['order_id'],
+                ],
+                // [
+                //     'waiter_id'     => $data['waiter_id']
+                // ]
+                );
+            }
+
+            $waiterDevices = [];
+            $waiters = $order->restaurant->waiters()->with(['user', 'user.devices'])->get();
+
+            if( $waiters->count() )
+            {
+                foreach( $waiters as $waiter )
+                {
+                    $WaiterDevicesTokensArr = $waiter->user->devices->pluck('fcm_token')->toArray();
+                    // $waiterDevices = array_merge($waiterDevices, );
+                    if( !empty( $WaiterDevicesTokensArr ) )
+                    {
+                        foreach( $WaiterDevicesTokensArr as $token )
+                        {
+                            $waiterDevices[] = $token;
+                        }
+                    }
+                }
+            }
+
+            if( !empty( $waiterDevices ) )
+            {
+                $waiterTitle    = 'New order placed by customer';
+                $waiterMessage  = "Order is #{$order->id} placed by customer";
+                sendNotification($waiterTitle, $waiterMessage, $waiterDevices, $orderid);
+            }
         }
 
         return $order;
