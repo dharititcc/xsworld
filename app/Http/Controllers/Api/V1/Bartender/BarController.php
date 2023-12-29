@@ -8,6 +8,7 @@ use App\Http\Requests\OrderHistoryRequest;
 use App\Http\Requests\OrderUpdateRequest;
 use App\Http\Resources\BarOrderDetailResource;
 use App\Http\Resources\BarOrderListingResource;
+use App\Http\Resources\BarOrderListResource;
 use App\Http\Resources\OrderListResource;
 use App\Http\Resources\OrderResource;
 use App\Http\Resources\UserResource;
@@ -98,7 +99,7 @@ class BarController extends APIController
         {
             $historyArray = [
                 'total_orders'  => $completedOrder['total_orders'],
-                'orders'        => OrderListResource::collection($completedOrder['orders'])
+                'orders'        => BarOrderListResource::collection($completedOrder['orders'])
             ];
 
             return $this->respondSuccess('Orders Found.', $historyArray);

@@ -498,7 +498,14 @@ trait OrderFlow
                             ]
                         )
                         ->whereHas('order_split_food', function($query) use($status){
-                            $query->where('status', $status);
+                            if( is_array($status) )
+                            {
+                                $query->whereIn('status', $status);
+                            }
+                            else
+                            {
+                                $query->whereIn('status', [$status]);
+                            }
                         })
                         ->where('restaurant_id', $kitchen->restaurant_kitchen->restaurant_id)
                         ->orderBy('id', $sort);
