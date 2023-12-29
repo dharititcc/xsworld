@@ -42,10 +42,11 @@ class RestaurantController extends Controller
         // dd($request->all());
         $currency_id = Currency::select('id')->where('id',$request->country_id)->first();
 
-        $address = addressLatLong($request->street1 . $request->street2 . $request->city . $request->state);
+        $address = addressLatLong($request->street1 . $request->city . $request->state);
 
         $addressInfo    = [
             'name'          => $request->name,
+            'phone'         => $request->phone,
             'street1'       => $request->street1,
             'street2'       => $request->street2,
             'currency_id'   => $currency_id->id,
@@ -151,7 +152,7 @@ class RestaurantController extends Controller
     {
         
         $currency_id = Currency::select('id')->where('id', $request->country_id)->first();
-        $address = addressLatLong($request->street1 . $request->street2 . $request->city . $request->state);
+        $address = addressLatLong($request->street1 .  $request->city . $request->state);
 
         $addressInfo    = [
             'name'          => $request->name,
@@ -160,6 +161,7 @@ class RestaurantController extends Controller
             'currency_id'   => $currency_id->id,
             'country_id'    => (int)$request->country_id,
             'state'         => $request->state,
+            'phone'         => $request->phone,
             'city'          => $request->city,
             'latitude'      => $address['latitude'],
             'longitude'     => $address['longitude'],

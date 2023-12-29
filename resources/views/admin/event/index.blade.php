@@ -45,6 +45,7 @@
 
     $(document).ready(function() {
         XS_Admin.Event.makeDatatable();
+        XS_Admin.Event.searchFilter();
         XS_Admin.Restaurant.init();
     });
 </script>

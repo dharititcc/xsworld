@@ -367,6 +367,7 @@ class RestaurantRepository extends BaseRepository
     {
         $active = isset($input['active']) ? $input['active'] : 0;
         $type   = isset($data['type']) ? $data['type'] : Restaurant::RESTAURANT;
+        $search = $data['search_main'];
 
         $query = $this->query()
             ->select([
@@ -387,6 +388,10 @@ class RestaurantRepository extends BaseRepository
         if( $type )
         {
             $query->where('type', $type);
+        }
+        if($search)
+        {
+            $query =  $query->where('restaurants.name', 'LIKE', '%'.$search.'%');
         }
 
         return $query;
