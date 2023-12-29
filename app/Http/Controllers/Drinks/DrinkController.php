@@ -363,7 +363,7 @@ class DrinkController extends Controller
      */
     public function sampleFile()
     {
-        $destinationPath = public_path(DIRECTORY_SEPARATOR.'storage'.DIRECTORY_SEPARATOR.'items/XSWorld_sample_data.xlsx');
+        $destinationPath = public_path('/XSWorld_sample_data.xlsx');
         return response()->download($destinationPath);
     }
 
