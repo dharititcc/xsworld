@@ -56,9 +56,7 @@ class OrderController extends APIController
             }
         }
 
-        // $orderList = $this->repository->GetKitchenOrders($kitchen_orders);
         $orderList    = $this->repository->getKitchenConfirmedOrders();
-        // $barOrderList = $this->repository->getKitchenCollections($kitchen_orders);
         $barOrderList = $this->repository->getKitchenOrderCollections();
         // if( $orderList->count() ||  $barOrderList->count())
         // {
@@ -83,7 +81,7 @@ class OrderController extends APIController
     public function updateOrderStauts(Request $request)
     {
         $orderChange = $this->statusChange($request);
-        return $this->respondSuccess('Order Status Changed successfully.', new OrderResource($orderChange));
+        return $this->respondSuccess('Order Status Changed successfully.', new KitchenOrderResource($orderChange));
     }
 
     /**
@@ -93,9 +91,6 @@ class OrderController extends APIController
      */
     public function orderHistory()
     {
-        // $auth_kitchen = auth('api')->user();
-        // $kitchen_pickup_points = RestaurantKitchen::where('user_id',$auth_kitchen->id)->select('restaurant_id')->get()->toArray();
-        // $orderList = $this->repository->GetKitchenOrders($kitchen_pickup_points, 1);
         $orderList = $this->repository->getCompletedKitchenOrders();
         if( $orderList->count() )
         {

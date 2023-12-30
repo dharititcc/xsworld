@@ -29,23 +29,16 @@ class OrderSplit extends Model
     const KITCHEN_CONFIRM       = 12;
     /** KITCHEN STATUS END */
 
-    /** WAITER STATUS START */
-    const CURRENTLY_BEING_PREPARED  = 16;
-    const CURRENTLY_BEING_SERVED    = 12;
-    const AWAITING_SERVICE          = 19;
-    const READY_FOR_COLLECTION      = 11;
-    /** WAITER STATUS END */
-
     const STATUS = [
-        self::PENDING               => 'Pending',       // display in bar, kitchen, waiter
-        self::ACCEPTED              => 'Accepted',
-        self::COMPLETED             => 'Completed', // Bar ready
-        self::CONFIRM_PICKUP        => 'Confirm Pickup', // customer or waiter collected
-        self::RESTAURANT_TOXICATION => 'Cancelled due to intoxication', // restaurant cancelled order
-        self::DELAY_ORDER           => 'Delay',
-        self::DENY_ORDER            => 'Deny', // restaurant cancelled the order due to some reason (e.g. stock or item not available)
-        self::READYFORPICKUP        => 'Ready For Pickup', // Kitchen prepared food. Waiter need to notify for pickup food from kitchen
-        self::KITCHEN_CONFIRM       => 'Confirmed Pickup', // Kitchen collection orders. Need waiter to pick the order
+        self::PENDING                   => 'Pending',       // display in bar, kitchen, waiter
+        self::ACCEPTED                  => 'Accepted',
+        self::COMPLETED                 => 'Completed', // Bar ready
+        self::CONFIRM_PICKUP            => 'Confirm Pickup', // customer or waiter collected
+        self::RESTAURANT_TOXICATION     => 'Cancelled due to intoxication', // restaurant cancelled order
+        self::DELAY_ORDER               => 'Delay',
+        self::DENY_ORDER                => 'Deny', // restaurant cancelled the order due to some reason (e.g. stock or item not available)
+        self::READYFORPICKUP            => 'Ready For Pickup', // Kitchen prepared food. Waiter need to notify for pickup food from kitchen
+        self::KITCHEN_CONFIRM           => 'Confirmed Pickup', // Kitchen collection orders. Need waiter to pick the order
     ];
 
     /**

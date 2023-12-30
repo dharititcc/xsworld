@@ -42,7 +42,6 @@ class Order extends Model
     // Kitchen status
     const READYFORPICKUP                = 11;
     const KITCHEN_CONFIRM               = 12;
-    const CURRENTLY_BEING_PREPARED      = 16;
 
     //waiter status
     const WAITER_PENDING                = 15;
@@ -56,6 +55,13 @@ class Order extends Model
     const RESTAURANT_CANCELED           = 4;
 
     const DENY_ORDER                    = 13;
+
+    /** WAITER STATUS START */
+    const CURRENTLY_BEING_PREPARED  = 16;
+    const CURRENTLY_BEING_SERVED    = 17;
+    const AWAITING_SERVICE          = 19;
+    const READY_FOR_COLLECTION      = 11;
+    /** WAITER STATUS END */
 
     /** ORDER CATEGORY TYPES */
     const DRINK= 0;
@@ -76,14 +82,16 @@ class Order extends Model
         self::CUSTOMER_CANCELED         => 'Cancelled',
         self::READYFORPICKUP            => 'ready for Collection',
         self::KITCHEN_CONFIRM           => 'Kitchen confirm order',
-        self::CURRENTLY_BEING_PREPARED  => 'Currently Being Prepared',
         self::WAITER_PENDING            => 'Order taking',
         self::DENY_ORDER                => 'Deny Order',
         // self::BAR_PENDING               => 'Bar pending',
         // self::BAR_CONFIRM               => 'Bar accepted/Confirm order',
         // self::BAR_READY                 => 'Bar ready',
         // self::BAR_COMPLETED             => 'Bar completed',
-
+        self::CURRENTLY_BEING_PREPARED  => 'Currently Being Prepared',
+        self::CURRENTLY_BEING_SERVED    => 'Currently Being Served',
+        self::AWAITING_SERVICE          => 'Awaiting Service',
+        self::READY_FOR_COLLECTION      => 'Ready for collection',
     ];
 
     /**
@@ -142,6 +150,16 @@ class Order extends Model
     public function getOrderStatusAttribute(): string
     {
         return self::ORDER_STATUS[$this->status];
+    }
+
+    /**
+     * Method getWaiterStatusAttribute
+     *
+     * @return string
+    */
+    public function getWaiterStatusAttribute(): string
+    {
+        return self::ORDER_STATUS[$this->waiter_status];
     }
 
     /**

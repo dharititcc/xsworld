@@ -2,120 +2,127 @@
 
 use App\Exceptions\GeneralException;
 use App\Models\Order;
-use App\Models\OrderItem;
-use App\Models\User;
+use App\Models\OrderSplit;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 trait OrderStatus
 {
-    public function statusChange(Request $request)
+    /**
+     * Method statusChange
+     *
+     * @param Request $request [explicite description]
+     *
+     * @return Order
+     */
+    public function statusChange(Request $request): Order
     {
-        $order_id = $request->order_id;
-        $status = $request->status;
-        $auth_user = auth()->user();
-        foreach($auth_user->restaurant_kitchen->restaurant->main_categories as $category)
+        $order      = isset($request->order_id) ? Order::with(['order_split_drink', 'order_split_food'])->find($request->order_id) : null;
+        $status     = $request->status;
+        $title      = "Kitchen confirm order";
+
+        if($status == OrderSplit::READYFORPICKUP)
         {
-            if($category->name == "Food") {
-                $category_id = $category->id;
+            if( $order->order_split_food->update(['status' => $status]) )
+            {
+                if( isset( $order->restaurant_table_id ) )
+                {
+                    // update waiter status to Ready for collection
+                    $order->update(['waiter_status' => Order::READY_FOR_COLLECTION]);
+                }
+            }
+
+
+            $title  = "Ready for pickup";
+        }
+        else
+        {
+            if( $order->order_split_food->update(['status' => OrderSplit::KITCHEN_CONFIRM]) )
+            {
+                if( isset( $order->restaurant_table_id ) )
+                {
+                    // update waiter status to Ready for collection
+                    $order->update(['waiter_status' => Order::CURRENTLY_BEING_SERVED]);
+                }
             }
         }
 
-        $order = Order::find($order_id);
-        // if($order->order_category_type == 2) {
-            // if($status == Order::READYFORPICKUP)
-            // {
-            //     OrderItem::where('order_id',$order_id)->where('category_id',$category_id)->update(['status'=> OrderItem::ACCEPTED]);
-            // } else {
-            //     OrderItem::where('order_id',$order_id)->where('category_id',$category_id)->update(['status' => OrderItem::COMPLETED]);
-            //     $totalItemCount = OrderItem::where('order_id',$order_id)->whereNotNull('category_id')->count();
-            //         // dd($orderItemCount);
-            //     $totalCompletedItem = OrderItem::where('order_id',$order_id)->where('status', OrderItem::COMPLETED)->count();
-            //     if($totalItemCount === $totalCompletedItem) {
-            //         foreach($order->order_items as $orderitem)
-            //         {
-            //             if($orderitem->status == OrderItem::COMPLETED ) {
-            //                 $order->update(['status'=>$status]);
-            //                 $order->refresh();
-            //                 $order->loadMissing(['items']);
-            //             }
-            //         }
-            //     }
-            // }
+        // send notification to waiters
+        $this->notifyWaiters($order, $title);
 
-        // } else {
-        //     Order::where('id',$order_id)->update(['status'=>$status]);
-        // }
-        $order->update(['status'=>$status]);
-        $order_data = Order::find($order_id);
-        // with(['order_items' => function($query) use($category_id){
-        //     $query->where('category_id',$category_id);
-        // },])
-        // ->find($order_id);
+        // send notification to customer
+        $this->notifyCustomer($order, $title);
 
-        // dd($order_data);
-
-        
-        if($status == Order::READYFORPICKUP)
-        {
-            $title              = "Ready for pickup";
-            $send_notification  =  $this->statusNotification($order_data,$title);
-            
-        } else {
-            $title              = "Kitchen confirm order";
-            $send_notification  = $this->statusNotification($order_data,$title);
-        }
-
-        // if($order_data->restaurant_table_id) {
-        //     $devices            = $order_data->restaurant_waiter->devices->count() ? $order_data->restaurant_waiter->devices()->pluck('fcm_token')->toArray() : [];
-        //     $title              = "Your order is Ready for pickup";
-        //     $message            = "Your Order is #".$order_data->id." Ready for pickup";
-        //     $orderid            = $order_data->id;
-        //     if(!empty($devices)) {
-        //         $send_notification  = sendNotification($title,$message,$devices,$orderid);
-        //     }
-        // }
-
-        return $order_data;
+        return $order;
     }
 
-    // public function foodCategory(User $user)
-    // {
-    //     foreach($user->restaurant_kitchen->restaurant->main_categories as $category)
-    //     {
-    //         if($category->name == "Food") {
-    //             $category_id = $category->id;
-    //         }
-    //     }
-    // }
-
-    public function statusNotification(Order $order_data,$title)
+    /**
+     * Method notifyWaiters
+     *
+     * @param \App\Models\Order $order [explicite description]
+     * @param string $title [explicite description]
+     *
+     * @return bool
+     * @throws \App\Exceptions\GeneralException
+     */
+    public function notifyWaiters(Order $order, string $title): bool
     {
-        // Waiter Notify
-        foreach($order_data->restaurant->waiters as $waiter)
+        // send notification to waiter if table order
+        if( isset( $order->restaurant_table_id ) )
         {
-            // dd($waiter->user->devices()->pluck('fcm_token')->toArray());
-            if($order_data->restaurant_table_id) {
-                $waiter_devices            = $waiter->user->devices->count() ? $waiter->user->devices()->pluck('fcm_token')->toArray() : [];
-                // $title              = $title;
-                $message            = "Your Order is #".$order_data->id." Ready for pickup";
-                $orderid            = $order_data->id;
-                if(!empty($waiter_devices)) {
-                    return sendNotification($title,$message,$waiter_devices,$orderid);
+            $order->loadMissing([
+                'restaurant',
+                'restaurant.waiters'
+            ]);
+
+            $waiterDevices  = [];
+            $waiters        = $order->restaurant->waiters()->with(['user', 'user.devices'])->get();
+
+            if( $waiters->count() )
+            {
+                foreach( $waiters as $waiter )
+                {
+                    $WaiterDevicesTokensArr = $waiter->user->devices->pluck('fcm_token')->toArray();
+                    // $waiterDevices = array_merge($waiterDevices, );
+                    if( !empty( $WaiterDevicesTokensArr ) )
+                    {
+                        foreach( $WaiterDevicesTokensArr as $token )
+                        {
+                            $waiterDevices[] = $token;
+                        }
+                    }
                 }
-            } else {
-                throw new GeneralException('Device Token not Found.');
+            }
+
+            if( !empty( $waiterDevices ) )
+            {
+                $message    = "Your Order is #".$order->id." Ready for pickup";
+                $orderid    = $order->id;
+                return sendNotification($title, $message, $waiterDevices, $orderid);
             }
         }
+    }
 
+    /**
+     * Method notifyCustomer
+     *
+     * @param \App\Models\Order $order [explicite description]
+     * @param string $title [explicite description]
+     *
+     * @return bool
+     * @throws \App\Exceptions\GeneralException
+     */
+    public function notifyCustomer(Order $order, string $title) : bool
+    {
         // Customer Notify
-        $customer_devices   = $order_data->user->devices->count() ? $order_data->user->devices()->pluck('fcm_token')->toArray() : [];
-        // $title              = $title;
-        $message            = "Your Order is #".$order_data->id." Ready for pickup";
-        $orderid            = $order_data->id;
-        if(!empty($customer_devices)) {
+        $customer_devices   = $order->user->devices->count() ? $order->user->devices()->pluck('fcm_token')->toArray() : [];
+        $message            = "Your Order is #".$order->id." Ready for pickup";
+        $orderid            = $order->id;
+        if(!empty($customer_devices))
+        {
             return sendNotification($title,$message,$customer_devices,$orderid);
-        } else {
+        }
+        else
+        {
             throw new GeneralException('Device Token not Found.');
         }
     }

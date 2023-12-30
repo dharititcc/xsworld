@@ -375,7 +375,7 @@ class BarRepository extends BaseRepository
             if( isset( $order->restaurant_table_id ) && !$order->order_split_food )
             {
                 // update waiter status to Ready for collection
-                $updateArr['waiter_status'] = OrderSplit::READY_FOR_COLLECTION;
+                $updateArr['waiter_status'] = Order::CURRENTLY_BEING_SERVED;
             }
         }
 
@@ -429,7 +429,7 @@ class BarRepository extends BaseRepository
             if( isset( $order->restaurant_table_id ) && !$order->order_split_food )
             {
                 // update waiter status to Ready for collection
-                $updateArr['waiter_status'] = OrderSplit::READY_FOR_COLLECTION;
+                $updateArr['waiter_status'] = Order::READY_FOR_COLLECTION;
             }
         }
 
@@ -481,7 +481,7 @@ class BarRepository extends BaseRepository
                         if( isset( $order->restaurant_table_id ) )
                         {
                             // update waiter status to currently being prepared
-                            $orderArr['waiter_status'] = OrderSplit::CURRENTLY_BEING_PREPARED;
+                            $orderArr['waiter_status'] = Order::CURRENTLY_BEING_PREPARED;
                         }
 
                         // update order
@@ -521,7 +521,7 @@ class BarRepository extends BaseRepository
                         if( isset( $order->restaurant_table_id ) && !$order->order_split_food )
                         {
                             // update waiter status to currently being prepared
-                            $orderArr['waiter_status'] = OrderSplit::CURRENTLY_BEING_PREPARED;
+                            $orderArr['waiter_status'] = Order::CURRENTLY_BEING_PREPARED;
                         }
                     }
 

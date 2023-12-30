@@ -573,63 +573,6 @@ class OrderRepository extends BaseRepository
     }
 
     /**
-     * Method GetKitchenOrders
-     *
-     * @param array $data [explicite description]
-     * @param $is_history=0 $is_history [explicite description]
-     *
-     * @return void
-     */
-    function GetKitchenOrders(array $data,$is_history=0)
-    {
-        $category_id = $this->categoryGet();
-        $orders = Order::whereIn('restaurant_id',$data);
-        if($is_history === 0) {
-            $orderTbl = $orders
-            // ->with(['order_items' => function($query) use($category_id){
-            //     $query->where('category_id',$category_id);
-            // },])
-            ->where('type',Order::ORDER)
-            ->whereIn('status',[Order::PENDNIG,Order::ACCEPTED,Order::WAITER_PENDING,Order::CURRENTLY_BEING_PREPARED])
-            ->whereNotIn('order_category_type', [0])->orderByRaw("id ASC, updated_at ASC")->get();
-        } else {
-            $orderTbl = $orders->whereIn('status',[Order::COMPLETED,Order::FULL_REFUND, Order::PARTIAL_REFUND, Order::RESTAURANT_CANCELED, Order::CUSTOMER_CANCELED, Order::KITCHEN_CONFIRM])->where('type',Order::ORDER)->whereNotIn('order_category_type', [0])->orderByDesc('id')->get();
-        }
-        if($orderTbl)
-        {
-            return (object)$orderTbl;
-        } else {
-            throw new GeneralException('Order is not found.');
-        }
-    }
-
-    /**
-     * Method getKitchenCollections
-     *
-     * @param array $data [explicite description]
-     *
-     * @return Collection
-     */
-    public function getKitchenCollections(array $data) : Collection
-    {
-        $category_id = $this->categoryGet();
-        $orders = Order::whereIn('restaurant_id',$data)
-        // ->with(['order_items' => function($query) use($category_id) { $query->where('category_id', $category_id); }])
-        ->where('type', Order::ORDER)
-        ->where('status', [Order::READYFORPICKUP])
-        // ->whereHas('order_items', function($query) use($category_id)
-        // {
-        //     $query->where('category_id',$category_id)
-        //         ->where('status', OrderItem::COMPLETED);
-        // })
-        ->whereNotIn('order_category_type', [0])
-        ->orderByRaw("id ASC, updated_at ASC")
-        ->get();
-
-        return $orders;
-    }
-
-    /**
      * Method updateStatus
      *
      * @param array $data [explicite description]
