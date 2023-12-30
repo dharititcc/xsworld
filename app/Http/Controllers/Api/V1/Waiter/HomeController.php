@@ -20,6 +20,7 @@ use App\Repositories\OrderRepository;
 use App\Repositories\RestaurantRepository;
 use App\Repositories\WaiterRepositiory;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class HomeController extends APIController
 {
@@ -45,35 +46,54 @@ class HomeController extends APIController
         // load missing restaurant waiter and restaurant
         $auth_waiter->loadMissing(['restaurant_waiter', 'restaurant_waiter.restaurant']);
 
-        // $orderTbl = CustomerTable::select(['customer_tables.*'])
-        // ->leftJoin('orders', 'customer_tables.order_id','=','orders.id')
-        // ->with(['table_order'])
-        // ->where('orders.restaurant_id', $auth_waiter->restaurant_waiter->restaurant_id)
-        // ->whereIn('orders.status', [Order::READYFORPICKUP, Order::KITCHEN_CONFIRM, Order::CURRENTLY_BEING_PREPARED, Order::WAITER_PENDING, Order::PENDNIG])
-        // ->get();
+        // only booked table with no orders available
+        $bookedTableModel = CustomerTable::select([
+            'customer_tables.id',
+            'customer_tables.user_id',
+            'customer_tables.restaurant_table_id',
+            'customer_tables.order_id',
+            'restaurant_tables.restaurant_id',
+            DB::raw("0 as waiter_status")
+        ])
+        ->with([
+            'user',
+            'table_order',
+            'table_order.restaurant',
+            'table_order.order',
+            'table_order.order.order_items',
+        ])
+        ->leftJoin('restaurant_tables', 'restaurant_tables.id', '=', 'customer_tables.restaurant_table_id')
+        ->where('restaurant_tables.restaurant_id', $auth_waiter->restaurant_waiter->restaurant->id)
+        ->get();
 
-        
-        // Get all data if order is avl then get order data
-        $orderTbl = CustomerTable::select(['customer_tables.*'])
-                    ->leftJoin('orders', 'customer_tables.order_id', '=', 'orders.id')
-                    ->with(['table_order'])
-                    ->where(function ($query) use ($auth_waiter) {
-                        $query->whereHas('table_order', function ($subQuery) use ($auth_waiter) {
-                            $subQuery->where('orders.restaurant_id', $auth_waiter->restaurant_waiter->restaurant_id)
-                                    ->whereIn('orders.status', [
-                                        Order::READYFORPICKUP,
-                                        Order::KITCHEN_CONFIRM,
-                                        Order::CURRENTLY_BEING_PREPARED,
-                                        Order::WAITER_PENDING,
-                                        Order::PENDNIG
-                                    ]);
-                        });
-                    })
-                    ->orWhereNull('customer_tables.order_id')
-                    ->get();
+        // customer booked table and has order
+        $bookedOrderTable = Order::select([
+            'orders.id',
+            'orders.user_id',
+            'orders.restaurant_table_id',
+            'orders.id AS order_id',
+            'orders.restaurant_id',
+            'orders.waiter_status'
+        ])
+        ->with([
+            'restaurant_table',
+            'order_items',
+            'order_items.restaurant_item',
+            'order_items.restaurant_item.restaurant',
+            'order_items.restaurant_item.restaurant.currency',
+            'order_items.restaurant_item.restaurant.country',
+            'order_items.variation',
+            'order_items.mixer',
+            'order_items.mixer.restaurant_item',
+            'order_items.addons',
+            'order_items.addons.restaurant_item',
+        ])
+        ->where('restaurant_id', $auth_waiter->restaurant_waiter->restaurant->id)
+        ->whereIn('waiter_status', [Order::CURRENTLY_BEING_PREPARED, Order::CURRENTLY_BEING_SERVED, Order::AWAITING_SERVICE, Order::READY_FOR_COLLECTION])
+        ->get();
 
-        // echo common()->formatSql($orderTbl);die;
-        // $orderTbl = Order::with(['user','restaurant','restaurant_table'])->where('waiter_id',$auth_waiter->id)->where('type',Order::CART)->get();
+        $orderTbl = $bookedOrderTable->merge($bookedTableModel);
+
         $kitchen_status = Order::where('type',Order::ORDER)->where('waiter_id',$auth_waiter->id)->whereIn('status',[Order::READYFORPICKUP,Order::WAITER_PENDING, Order::CURRENTLY_BEING_PREPARED])->get();  //Order::KITCHEN_CONFIRM, remove
         $data = [
             'active_tables'             => $orderTbl->count() ? TableResource::collection($orderTbl) : [],

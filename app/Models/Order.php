@@ -157,7 +157,7 @@ class Order extends Model
      *
      * @return string
     */
-    public function getWaiterStatusAttribute(): string
+    public function getWaiterStatusNameAttribute(): string
     {
         return self::ORDER_STATUS[$this->waiter_status];
     }
