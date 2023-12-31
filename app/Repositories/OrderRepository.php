@@ -689,16 +689,30 @@ class OrderRepository extends BaseRepository
             'waiter_order'
         ]);
 
-        $query = $user
-        ->waiter_order()
-        ->where('type', Order::ORDER)
+        // $query = $user
+        // ->waiter_order()
+        // ->where('type', Order::ORDER)
+        // ->where('waiter_status', Order::COMPLETED)
+        // ->where('status', Order::CONFIRM_PICKUP)
+        // ->with([
+        //     'user',
+        //     'reviews',
+        //     'order_items',
+        //     'order_mixer',
+        //     'restaurant'
+        // ]);
+
+        $query = Order::query()
         ->with([
+            'restaurant',
             'user',
             'reviews',
             'order_items',
             'order_mixer',
-            'restaurant'
-        ]);
+        ])
+        ->where('type', Order::ORDER)
+        ->where('waiter_status', Order::COMPLETED)
+        ->where('status', Order::CONFIRM_PICKUP);
 
         if( $text )
         {
@@ -800,7 +814,8 @@ class OrderRepository extends BaseRepository
                     'pickup_point_user_id'  => ($pickup_point_id) ? $pickup_point_id->user_id : null,
                     'credit_amount'         => $credit_amount,
                     'restaurant_table_id'   => ($table_id) ? $table_id : null,
-                    'status'                => Order::CURRENTLY_BEING_PREPARED,
+                    'waiter_status'         => Order::CURRENTLY_BEING_PREPARED,
+                    'status'                => Order::PENDNIG,
                 ];
                 $remaingAmount = $userCreditAmountBalance - $credit_amount;
                 // update user's credit amount
@@ -1081,6 +1096,8 @@ class OrderRepository extends BaseRepository
             }
     
             if($order->id){
+                // update order to completed
+                $order->update(['waiter_status' => Order::COMPLETED, 'status' => Order::CONFIRM_PICKUP]);
                 $points                     = $order->total * 3;
                 $update['points']           = $order->user->points + round($points);
                 $order->user->update($update);
