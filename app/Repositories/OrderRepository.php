@@ -689,19 +689,6 @@ class OrderRepository extends BaseRepository
             'waiter_order'
         ]);
 
-        // $query = $user
-        // ->waiter_order()
-        // ->where('type', Order::ORDER)
-        // ->where('waiter_status', Order::COMPLETED)
-        // ->where('status', Order::CONFIRM_PICKUP)
-        // ->with([
-        //     'user',
-        //     'reviews',
-        //     'order_items',
-        //     'order_mixer',
-        //     'restaurant'
-        // ]);
-
         $query = Order::query()
         ->with([
             'restaurant',
@@ -712,6 +699,7 @@ class OrderRepository extends BaseRepository
         ])
         ->where('type', Order::ORDER)
         ->where('waiter_status', Order::COMPLETED)
+        ->whereNotNull('restaurant_table_id')
         ->where('status', Order::CONFIRM_PICKUP);
 
         if( $text )
