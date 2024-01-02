@@ -149,7 +149,7 @@ class WaiterController extends Controller
             'restaurant_id' => $restaurant->id,
             'user_id'       => $waiter->id,
         ]);
-        ($dataArr) ?? $waiter->update($dataArr);
+        isset($dataArr) ? $waiter->update($dataArr) : [];
         $waiter->refresh();
         return redirect()->back();
     }
