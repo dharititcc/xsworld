@@ -728,25 +728,6 @@ class OrderRepository extends BaseRepository
         throw new GeneralException('There is no order found.');
     }
 
-    /**
-     * Method randomPickpickPoint
-     *
-     * @param Order $order [explicite description]
-     *
-     * @return null|RestaurantPickupPoint
-     */
-    public function randomPickpickPoint(Order $order): ?RestaurantPickupPoint
-    {
-        $restaurant_id = $order->restaurant_id;
-        $pickup_point_id = RestaurantPickupPoint::where(['restaurant_id' => $restaurant_id , 'type' => 2, 'status' => RestaurantPickupPoint::ONLINE, 'is_table_order' => 1])->inRandomOrder()->first();
-        // handle if pickup point exist or bartender associated
-        if( !isset( $pickup_point_id->id ) && !isset( $pickup_point_id->user_id ) )
-        {
-            throw new GeneralException('There is no pickup point or bartender assiociated.');
-        }
-        return $pickup_point_id;
-    }
-
 
     /**
      * Method placeOrderwaiter
