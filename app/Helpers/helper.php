@@ -449,15 +449,20 @@ if(!function_exists('addressLatLong')) {
         
         // Decode JSON data returned by API 
         $apiResponse = json_decode($geocodeFromAddr);
-        // Retrieve latitude and longitude from API data 
-        $latitude  = $apiResponse->results[0]->geometry->location->lat;  
-        $longitude = $apiResponse->results[0]->geometry->location->lng;
-
-        $latlong = [
-            'latitude'  => $latitude,
-            'longitude' => $longitude,
-        ];
-
-        return $latlong;
+        if(empty($apiResponse->results))
+        {
+            throw new GeneralException('Please Enter Proper Address');
+        } else {
+            // Retrieve latitude and longitude from API data 
+            $latitude  = $apiResponse->results[0]->geometry->location->lat;  
+            $longitude = $apiResponse->results[0]->geometry->location->lng;
+    
+            $latlong = [
+                'latitude'  => $latitude,
+                'longitude' => $longitude,
+            ];
+    
+            return $latlong;
+        }
     }
 }
