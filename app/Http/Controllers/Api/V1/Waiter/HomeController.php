@@ -62,8 +62,7 @@ class HomeController extends APIController
             'user',
             'table_order',
             'table_order.restaurant',
-            'table_order.order',
-            'table_order.order.order_items',
+            'table_order.order_items',
         ])
         ->leftJoin('restaurant_tables', 'restaurant_tables.id', '=', 'customer_tables.restaurant_table_id')
         ->where('restaurant_tables.restaurant_id', $auth_waiter->restaurant_waiter->restaurant->id)
