@@ -5,10 +5,11 @@ namespace App\Http\Controllers\Api\V1\Kitchen;
 use App\Exceptions\GeneralException;
 use App\Http\Controllers\Api\V1\APIController;
 use App\Http\Controllers\Api\V1\Traits\OrderStatus;
-use App\Http\Resources\BarOrderListingResource;
+use App\Http\Resources\KitchenOrderListingResource;
+use App\Http\Resources\KitchenOrderListResource;
+use App\Http\Resources\KitchenOrderResource;
 use App\Http\Resources\OrderListResource;
 use App\Http\Resources\OrderResource;
-use App\Models\KitchenPickPoint;
 use App\Models\RestaurantKitchen;
 use App\Repositories\OrderRepository;
 use Illuminate\Http\Request;
@@ -41,6 +42,7 @@ class OrderController extends APIController
     {
         $auth_kitchen = auth('api')->user();
 
+        // restaurant close time
         if($auth_kitchen->restaurant_kitchen->restaurant->restaurant_time) {
             foreach($auth_kitchen->restaurant_kitchen->restaurant->restaurant_time as $res_time)
             {
@@ -54,16 +56,13 @@ class OrderController extends APIController
             }
         }
 
-        $kitchen_orders = RestaurantKitchen::where('user_id',$auth_kitchen->id)->select('restaurant_id')->get()->toArray();
-        // $kitchen_pickup_points = KitchenPickPoint::where('user_id',$auth_kitchen->id)->select('pickup_point_id')->get()->toArray();
-
-        $orderList = $this->repository->GetKitchenOrders($kitchen_orders);
-        $barOrderList = $this->repository->getKitchenCollections($kitchen_orders);
+        $orderList    = $this->repository->getKitchenConfirmedOrders();
+        $barOrderList = $this->repository->getKitchenOrderCollections();
         // if( $orderList->count() ||  $barOrderList->count())
         // {
             $data = [
-                'confirmOrder'       => $orderList->count() ? OrderResource::collection($orderList) : [],
-                'CompletedOrders'      => $barOrderList->count() ? BarOrderListingResource::collection($barOrderList) : [],
+                'confirmOrder'       => $orderList->count() ? KitchenOrderResource::collection($orderList) : [],
+                'CompletedOrders'      => $barOrderList->count() ? KitchenOrderListingResource::collection($barOrderList) : [],
                 'restaurant_close_time'     => isset($close_time) ? $close_time  : "00:00:00",
             ];
             return $this->respondSuccess('Order Fetched successfully.', $data);
@@ -82,7 +81,7 @@ class OrderController extends APIController
     public function updateOrderStauts(Request $request)
     {
         $orderChange = $this->statusChange($request);
-        return $this->respondSuccess('Order Status Changed successfully.', new OrderResource($orderChange));
+        return $this->respondSuccess('Order Status Changed successfully.', new KitchenOrderResource($orderChange));
     }
 
     /**
@@ -92,12 +91,10 @@ class OrderController extends APIController
      */
     public function orderHistory()
     {
-        $auth_kitchen = auth('api')->user();
-        $kitchen_pickup_points = RestaurantKitchen::where('user_id',$auth_kitchen->id)->select('restaurant_id')->get()->toArray();
-        $orderList = $this->repository->GetKitchenOrders($kitchen_pickup_points,1);
+        $orderList = $this->repository->getCompletedKitchenOrders();
         if( $orderList->count() )
         {
-            return $this->respondSuccess('Order History Fetched successfully.', OrderListResource::collection($orderList));
+            return $this->respondSuccess('Order History Fetched successfully.', KitchenOrderListResource::collection($orderList));
         }
 
         throw new GeneralException('There is no order found');
@@ -109,7 +106,7 @@ class OrderController extends APIController
         $orderShow = $this->repository->getOrderById($order);
         if($orderShow)
         {
-            return $this->respondSuccess('Order Details Fetched successfully.', new OrderResource($orderShow));
+            return $this->respondSuccess('Order Details Fetched successfully.', new KitchenOrderResource($orderShow));
         }
         throw new GeneralException('There is no order found');
     }
