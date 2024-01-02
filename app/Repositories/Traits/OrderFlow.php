@@ -80,7 +80,7 @@ trait OrderFlow
                         $checkExistOrderSplit = $this->createOrderSplit([
                             'order_id'      => $order->id,
                             'is_food'       => $isFoodAvailable,
-                            'status'        => OrderSplit::CURRENTLY_BEING_PREPARED
+                            'status'        => OrderSplit::PENDING
                         ]);
                     }
 
