@@ -8,12 +8,14 @@ use App\Http\Requests\AddtocartRequest;
 use App\Http\Requests\OrderHistoryRequest;
 use App\Http\Requests\PlaceOrderRequest;
 use App\Http\Resources\CategorySubCategoryResource;
+use App\Http\Resources\KitchenStatusResource;
 use App\Http\Resources\OrderResource;
 use App\Http\Resources\RestaurantItemsResource;
 use App\Http\Resources\TableResource;
 use App\Http\Resources\WaiterOrderListResource;
 use App\Models\CustomerTable;
 use App\Models\Order;
+use App\Models\OrderSplit;
 use App\Repositories\OrderRepository;
 use App\Repositories\RestaurantRepository;
 use App\Repositories\WaiterRepositiory;
@@ -64,6 +66,7 @@ class HomeController extends APIController
             'table_order.restaurant',
             'table_order.order_items',
         ])
+        ->whereNull('order_id')
         ->leftJoin('restaurant_tables', 'restaurant_tables.id', '=', 'customer_tables.restaurant_table_id')
         ->where('restaurant_tables.restaurant_id', $auth_waiter->restaurant_waiter->restaurant->id)
         ->get();
@@ -98,10 +101,30 @@ class HomeController extends APIController
 
         $orderTbl = $bookedOrderTable->merge($bookedTableModel);
 
-        $kitchen_status = Order::where('type',Order::ORDER)->where('waiter_id',$auth_waiter->id)->whereIn('status',[Order::READYFORPICKUP,Order::WAITER_PENDING, Order::CURRENTLY_BEING_PREPARED])->get();  //Order::KITCHEN_CONFIRM, remove
+        // $kitchen_status = Order::where('type',Order::ORDER)->where('waiter_id', $auth_waiter->id)->whereIn('status',[Order::READYFORPICKUP,Order::WAITER_PENDING, Order::CURRENTLY_BEING_PREPARED])->get();  //Order::KITCHEN_CONFIRM, remove
+        $kitchen_status = Order::where('type',Order::ORDER)
+        ->with([
+            'restaurant',
+            'restaurant.currency',
+            'restaurant.country',
+            'user',
+            'restaurant_pickup_point',
+            'pickup_point_user',
+            'order_split_food',
+            'restaurant_table',
+            'order_items'
+        ])
+        // ->where('waiter_id', $auth_waiter->id)
+        ->where('type', Order::ORDER)
+        ->whereNotNull('restaurant_table_id')
+        ->whereHas('order_split_food', function($query){
+            $query->orWhere('status', OrderSplit::READYFORPICKUP);
+            $query->orWhere('status', OrderSplit::CURRENTLY_BEING_PREPARED);
+        })->get();
+
         $data = [
             'active_tables'             => $orderTbl->count() ? TableResource::collection($orderTbl) : [],
-            'kitchen_status'            => $kitchen_status->count() ? OrderResource::collection($kitchen_status) : [],
+            'kitchen_status'            => $kitchen_status->count() ? KitchenStatusResource::collection($kitchen_status) : [],
         ];
         return $this->respondSuccess('Waiter Order Fetched successfully.', $data);
     }

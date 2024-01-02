@@ -79,7 +79,8 @@ trait OrderFlow
                         // create order split row
                         $checkExistOrderSplit = $this->createOrderSplit([
                             'order_id'      => $order->id,
-                            'is_food'       => $isFoodAvailable
+                            'is_food'       => $isFoodAvailable,
+                            'status'        => OrderSplit::CURRENTLY_BEING_PREPARED
                         ]);
                     }
 
