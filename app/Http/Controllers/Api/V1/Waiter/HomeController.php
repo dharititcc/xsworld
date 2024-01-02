@@ -114,7 +114,9 @@ class HomeController extends APIController
             'restaurant_table',
             'order_items'
         ])
-        ->where('waiter_id', $auth_waiter->id)
+        // ->where('waiter_id', $auth_waiter->id)
+        ->where('type', Order::ORDER)
+        ->whereNotNull('restaurant_table_id')
         ->whereHas('order_split_food', function($query){
             $query->orWhere('status', OrderSplit::READYFORPICKUP);
             $query->orWhere('status', OrderSplit::CURRENTLY_BEING_PREPARED);
