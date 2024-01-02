@@ -27,7 +27,7 @@ trait OrderStatus
                 if( isset( $order->restaurant_table_id ) )
                 {
                     // update waiter status to Ready for collection
-                    $order->update(['waiter_status' => Order::CURRENTLY_BEING_PREPARED]);
+                    $order->update(['waiter_status' => Order::READY_FOR_COLLECTION]);
                 }
             }
 

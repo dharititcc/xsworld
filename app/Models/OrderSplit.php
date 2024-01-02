@@ -25,8 +25,9 @@ class OrderSplit extends Model
     /** BAR STATUS END */
 
     /** KITCHEN STATUS START */
-    const READYFORPICKUP        = 11;
-    const KITCHEN_CONFIRM       = 12;
+    const CURRENTLY_BEING_PREPARED  = 16;
+    const READYFORPICKUP            = 11;
+    const KITCHEN_CONFIRM           = 12;
     /** KITCHEN STATUS END */
 
     const STATUS = [
@@ -39,6 +40,7 @@ class OrderSplit extends Model
         self::DENY_ORDER                => 'Deny', // restaurant cancelled the order due to some reason (e.g. stock or item not available)
         self::READYFORPICKUP            => 'Ready For Pickup', // Kitchen prepared food. Waiter need to notify for pickup food from kitchen
         self::KITCHEN_CONFIRM           => 'Confirmed Pickup', // Kitchen collection orders. Need waiter to pick the order
+        self::CURRENTLY_BEING_PREPARED  => 'Currently Being Prepared', // waiter placed order of food by defualt
     ];
 
     /**
