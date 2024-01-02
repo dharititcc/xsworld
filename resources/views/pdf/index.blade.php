@@ -27,14 +27,14 @@
         <tbody>
             @foreach ($order->items as $items)
                 <tr>
-                    <td>{{ $items->restaurant_item->name}}</td>
-                    <td>{{ $items->quantity}}</td>
-                    <td>{{ $items->price}}</td>
-                    <td>{{ $items->total}}</td>
+                    <td>{{ $items->restaurant_item->name }}</td>
+                    <td>{{ $items->quantity }}</td>
+                    <td>{{ $order->restaurant->country->symbol.$items->price }}</td>
+                    <td>{{ $order->restaurant->country->symbol.$items->total }}</td>
                 </tr>
             @endforeach
         </tbody>
     </table>
-    <label style="text-align: left"> Grand Total</label> : {{ $order->total }}
+    <label style="text-align: left"> Grand Total</label> : {{ $order->restaurant->country->symbol.$order->total }}
 </body>
 </html>

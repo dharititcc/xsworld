@@ -429,7 +429,7 @@ class DrinkController extends Controller
                     }
                 }
             }
-            return redirect()->route('restaurants.drinks.index')->with('message', 'Record added successfully!');;
+            return redirect()->route('restaurants.drinks.index')->with('message', 'Drinks imported successfully!');
         }
     }
 }

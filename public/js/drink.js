@@ -149,7 +149,7 @@
             context.addVariation();
             context.removeVariation();
             context.favoriteStatusUpdate();
-            context.uploadData();
+            // context.uploadData();
             context.filterCategoryChange();
             XS.Common.enableSweetAlert(context.table);
             XS.Common.disableSweetAlert(context.table);
@@ -374,46 +374,46 @@
             });
         },
 
-        uploadData: function()
-        {
-            var context = this;
-            $('#uploadsubmitBtn').on('click',function(e) {
-                e.preventDefault();
-                // var fd = new FormData();
-                var files = $('#uploaddrinkpopup')[0].files;
-                // console.log($('#uploaddrinkpopup')[0].files);return false;
-                // var form    = context.selectors.uploaddrinkData.get(0);
-                // console.log(moduleConfig.uploadData);
-                // return false;
-                $.ajax({
-                    url:moduleConfig.uploadData,
-                    type:'POST',
-                    enctype: "multipart/form-data",
-                    headers: {
-                        'X-CSRF-TOKEN': jQuery('meta[name="csrf-token"]').attr('content'),
-                    },
-                    data: files,
-                    success: function(res)
-                    {
-                        // XS.Common.handleSwalSuccessWithoutReload('Favorite status has been updated successfully.');
-                        // setTimeout(function()
-                        // {
-                        //     context.table.ajax.reload();
-                        // }, 500);
-                    },
-                    error: function(xhr)
-                    {
-                        console.log(xhr.responseJSON);return false;
-                        if( xhr.status == 403 )
-                        {
-                            var {error} = xhr.responseJSON;
-                            context.selectors.drinkForm.find('.duplicate_product').after(`<span class="error">${error.message}</span>`);
-                            // $this.closest('#add_form_category').find('.cat_name').after(`<span class="error">${error.message}</span>`);
-                        }
-                    },
-                });
-            });
-        },
+        // uploadData: function()
+        // {
+        //     var context = this;
+        //     $('#uploadsubmitBtn').on('click',function(e) {
+        //         e.preventDefault();
+        //         // var fd = new FormData();
+        //         var files = $('#uploaddrinkpopup')[0].files;
+        //         // console.log($('#uploaddrinkpopup')[0].files);return false;
+        //         // var form    = context.selectors.uploaddrinkData.get(0);
+        //         // console.log(moduleConfig.uploadData);
+        //         // return false;
+        //         $.ajax({
+        //             url:moduleConfig.uploadData,
+        //             type:'POST',
+        //             enctype: "multipart/form-data",
+        //             headers: {
+        //                 'X-CSRF-TOKEN': jQuery('meta[name="csrf-token"]').attr('content'),
+        //             },
+        //             data: files,
+        //             success: function(res)
+        //             {
+        //                 // XS.Common.handleSwalSuccessWithoutReload('Favorite status has been updated successfully.');
+        //                 // setTimeout(function()
+        //                 // {
+        //                 //     context.table.ajax.reload();
+        //                 // }, 500);
+        //             },
+        //             error: function(xhr)
+        //             {
+        //                 console.log(xhr.responseJSON);return false;
+        //                 if( xhr.status == 403 )
+        //                 {
+        //                     var {error} = xhr.responseJSON;
+        //                     context.selectors.drinkForm.find('.duplicate_product').after(`<span class="error">${error.message}</span>`);
+        //                     // $this.closest('#add_form_category').find('.cat_name').after(`<span class="error">${error.message}</span>`);
+        //                 }
+        //             },
+        //         });
+        //     });
+        // },
 
         productTypeFilter: function()
         {
@@ -491,7 +491,7 @@
 
             $('.showin-mob, .drink_datatable').on('click', '.upload_drink_modal', function(e)
             {
-            //     e.preventDefault();
+                e.preventDefault();
 
             //     var $this       = $(this),
             //         drinkId     = $this.data('id'),

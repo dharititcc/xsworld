@@ -408,7 +408,7 @@ class FoodController extends Controller
                     }
                 }
             }
-            return redirect()->route('restaurants.foods.index');
+            return redirect()->route('restaurants.foods.index')->with('message', 'Foods imported successfully!');;
         }
     }
 }
