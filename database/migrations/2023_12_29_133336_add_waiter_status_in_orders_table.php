@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('orders', function (Blueprint $table) {
-            $table->tinyInteger('order_category_type')->default(0)->comment('0=Drink, 1=Food, 2=Food & Drink')->after('status');
+            $table->unsignedTinyInteger('waiter_status')->after('status')->nullable()->comment('11=Ready For Collection, 12=Currently Being Served, 16=Currently Being Prepared, 19=Awaiting Service');
         });
     }
 
@@ -22,7 +22,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('orders', function (Blueprint $table) {
-            $table->dropColumn('order_category_type');
+            $table->dropColumn('waiter_status');
         });
     }
 };

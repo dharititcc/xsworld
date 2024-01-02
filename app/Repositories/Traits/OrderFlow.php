@@ -6,10 +6,12 @@ use App\Models\Category;
 use App\Models\CustomerTable;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\OrderSplit;
 use App\Models\Restaurant;
 use App\Models\RestaurantItem;
 use App\Models\RestaurantPickupPoint;
 use App\Models\User;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 
 trait OrderFlow
@@ -54,8 +56,10 @@ trait OrderFlow
      *
      * @return Order
      */
-    private function checkSameRestaurantOrder(User $user, Order $order, array $orderItems): Order
+    public function checkSameRestaurantOrder(User $user, Order $order, array $orderItems): Order
     {
+        $isFoodAvailable    = 0;
+        $parentCategory     = null;
         // check if order request is available
         if( isset( $order->id ) && !empty($orderItems) )
         {
@@ -63,11 +67,27 @@ trait OrderFlow
             {
                 foreach( $orderItems as $item )
                 {
-                    $item['category_id'] = Category::select('parent_id')->where('id',$item['category_id'])->first();
+                    $category           = Category::with(['children_parent'])->find($item['category_id']);
+                    $parentCategory     = $category->parent_id;
+                    $isFoodAvailable    = $category->children_parent->name == 'Food' ? 1 : 0;
+
+                    // order split create
+                    $checkExistOrderSplit = $order->order_splits()->where('is_food', $isFoodAvailable)->first();
+
+                    if( !isset($checkExistOrderSplit->id) )
+                    {
+                        // create order split row
+                        $checkExistOrderSplit = $this->createOrderSplit([
+                            'order_id'      => $order->id,
+                            'is_food'       => $isFoodAvailable
+                        ]);
+                    }
+
                     // make proper item array for the table
                     $itemArr = [
                         'restaurant_item_id'    => $item['item_id'],
-                        'category_id'           => $item['category_id']->parent_id,
+                        'category_id'           => $parentCategory,
+                        'order_split_id'        => $checkExistOrderSplit->id,
                         'price'                 => $item['price'],
                         'quantity'              => $item['quantity'],
                         'type'                  => RestaurantItem::ITEM,
@@ -78,7 +98,8 @@ trait OrderFlow
                     {
                         $variationArr = [
                             'restaurant_item_id'    => $item['item_id'],
-                            'category_id'           => $item['category_id']->parent_id,
+                            'category_id'           => $parentCategory,
+                            'order_split_id'        => $checkExistOrderSplit->id,
                             'parent_item_id'        => null,
                             'variation_id'          => $item['variation']['id'],
                             'quantity'              => $item['variation']['quantity'],
@@ -102,6 +123,7 @@ trait OrderFlow
                     {
                         $mixerArr = [
                             'restaurant_item_id'=> $item['mixer']['id'],
+                            'order_split_id'    => $checkExistOrderSplit->id,
                             'parent_item_id'    => $newOrderItem->id,
                             'price'             => $item['mixer']['price'],
                             'type'              => RestaurantItem::MIXER,
@@ -123,6 +145,7 @@ trait OrderFlow
                             foreach( $addons as $addon )
                             {
                                 $addonData = [
+                                    'order_split_id'        => $checkExistOrderSplit->id,
                                     'restaurant_item_id'    => $addon['id'],
                                     'parent_item_id'        => $newOrderItem->id,
                                     'price'                 => $addon['price'],
@@ -158,6 +181,18 @@ trait OrderFlow
         }
 
         throw new GeneralException('Order could not be updated.');
+    }
+
+    /**
+     * Method createOrderSplit
+     *
+     * @param array $data [explicite description]
+     *
+     * @return OrderSplit
+     */
+    public function createOrderSplit(array $data): OrderSplit
+    {
+        return OrderSplit::create($data);
     }
 
     /**
@@ -246,7 +281,7 @@ trait OrderFlow
      *
      * @return OrderItem
      */
-    private function createOrderItem(Order $order, array $data): OrderItem
+    public function createOrderItem(Order $order, array $data): OrderItem
     {
         return $order->items()->create($data);
     }
@@ -323,6 +358,12 @@ trait OrderFlow
             $pickup_point_id    = isset($data['pickup_point_id']) ? RestaurantPickupPoint::findOrFail($data['pickup_point_id']) : null;
         }
 
+        // handle if pickup point exist or bartender associated
+        // if( !isset( $pickup_point_id->id ) && !isset( $pickup_point_id->user_id ) )
+        // {
+        //     throw new GeneralException('There is no pickup point or bartender assiociated.');
+        // }
+
         $userCreditAmountBalance = $user->credit_amount;
         $updateArr         = [];
         $paymentArr        = [];
@@ -390,7 +431,7 @@ trait OrderFlow
         $bartitle           = "Order is placed by Customer";
         $barmessage         = "Order is #".$order->id." placed by customer";
         $bardevices         = $pickup_point_id ? $order->pickup_point_user->devices()->pluck('fcm_token')->toArray() : [];
-        if($pickup_point_id && !empty( $bardevices )) {
+        if(!empty( $bardevices )) {
             $bar_notification   = sendNotification($bartitle,$barmessage,$bardevices,$orderid);
         }
 
@@ -460,5 +501,96 @@ trait OrderFlow
         $restaurant_id = $order->restaurant_id;
         $pickup_point_id = RestaurantPickupPoint::where(['restaurant_id' => $restaurant_id , 'type' => 2, 'status' => RestaurantPickupPoint::ONLINE, 'is_table_order' => 1])->inRandomOrder()->first();
         return $pickup_point_id;
+    }
+
+    /**
+     * Method getKitchenConfirmedOrders
+     *
+     * @return Collection
+     */
+    public function getKitchenConfirmedOrders(): Collection
+    {
+        $kitchen = auth()->user();
+
+        // load restaurant relationship
+        $kitchen->loadMissing(['restaurant_kitchen']);
+
+        $query = $this->getKitchenOrdersQuery($kitchen, OrderSplit::PENDING, 'desc');
+        return $query->get();
+    }
+
+    /**
+     * Method getKitchenOrdersQuery
+     *
+     * @param User $kitchen [explicite description]
+     * @param int $status [explicite description]
+     * @param string $sort [explicite description]
+     *
+     * @return Builder
+     */
+    public function getKitchenOrdersQuery(User $kitchen, int $status, string $sort = 'asc'): Builder
+    {
+        return $query = Order::query()
+                        ->with(
+                            [
+                                'restaurant',
+                                'restaurant_table',
+                                'restaurant.country',
+                                'restaurant.currency',
+                                'user',
+                                'user.attachment',
+                                'restaurant_pickup_point',
+                                'pickup_point_user',
+                                'pickup_point_user.attachment',
+                                'restaurant_pickup_point.attachment',
+                                'order_split_food',
+                                'order_split_food.items',
+                                'order_split_food.items.restaurant_item',
+                            ]
+                        )
+                        ->whereHas('order_split_food', function($query) use($status){
+                            if( is_array($status) )
+                            {
+                                $query->whereIn('status', $status);
+                            }
+                            else
+                            {
+                                $query->whereIn('status', [$status]);
+                            }
+                        })
+                        ->where('restaurant_id', $kitchen->restaurant_kitchen->restaurant_id)
+                        ->orderBy('id', $sort);
+    }
+
+    /**
+     * Method getKitchenOrderCollections
+     *
+     * @return Collection
+     */
+    public function getKitchenOrderCollections(): Collection
+    {
+        $kitchen = auth()->user();
+
+        // load restaurant relationship
+        $kitchen->loadMissing(['restaurant_kitchen']);
+
+        $query = $this->getKitchenOrdersQuery($kitchen, OrderSplit::READYFORPICKUP, 'asc');
+        return $query->get();
+    }
+
+    /**
+     * Method getCompletedKitchenOrders
+     *
+     * @return Collection
+     */
+    public function getCompletedKitchenOrders(): Collection
+    {
+        $kitchen = auth()->user();
+
+        // load restaurant relationship
+        $kitchen->loadMissing(['restaurant_kitchen']);
+
+        $query = $this->getKitchenOrdersQuery($kitchen, OrderSplit::KITCHEN_CONFIRM, 'desc');
+        return $query->get();
     }
 }

@@ -7,19 +7,18 @@ use App\Http\Controllers\Api\V1\APIController;
 use App\Http\Requests\AddtocartRequest;
 use App\Http\Requests\OrderHistoryRequest;
 use App\Http\Requests\PlaceOrderRequest;
-use App\Http\Requests\RestaurantItemSearchRequest;
-use App\Http\Resources\CategoryResource;
 use App\Http\Resources\CategorySubCategoryResource;
-use App\Http\Resources\OrderListResource;
 use App\Http\Resources\OrderResource;
 use App\Http\Resources\RestaurantItemsResource;
 use App\Http\Resources\TableResource;
+use App\Http\Resources\WaiterOrderListResource;
 use App\Models\CustomerTable;
 use App\Models\Order;
 use App\Repositories\OrderRepository;
 use App\Repositories\RestaurantRepository;
 use App\Repositories\WaiterRepositiory;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class HomeController extends APIController
 {
@@ -38,6 +37,11 @@ class HomeController extends APIController
         $this->orderRepository      = $orderRepository;
     }
 
+    /**
+     * Method activeTable
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function activeTable()
     {
         $auth_waiter = auth()->user();
@@ -45,14 +49,56 @@ class HomeController extends APIController
         // load missing restaurant waiter and restaurant
         $auth_waiter->loadMissing(['restaurant_waiter', 'restaurant_waiter.restaurant']);
 
-        $orderTbl = CustomerTable::select(['customer_tables.*'])
-        ->leftJoin('orders', 'customer_tables.order_id','=','orders.id')
-        ->with(['table_order'])
-        ->where('orders.restaurant_id', $auth_waiter->restaurant_waiter->restaurant_id)
-        ->whereIn('orders.status', [Order::READYFORPICKUP, Order::KITCHEN_CONFIRM, Order::CURRENTLY_BEING_PREPARED, Order::WAITER_PENDING, Order::PENDNIG])
+        // only booked table with no orders available
+        $bookedTableModel = CustomerTable::select([
+            'customer_tables.id',
+            'customer_tables.user_id',
+            'customer_tables.restaurant_table_id',
+            'customer_tables.order_id',
+            'restaurant_tables.restaurant_id',
+            DB::raw("0 as waiter_status")
+        ])
+        ->with([
+            'user',
+            'table_order',
+            'table_order.restaurant',
+            'table_order.order',
+            'table_order.order.order_items',
+        ])
+        ->leftJoin('restaurant_tables', 'restaurant_tables.id', '=', 'customer_tables.restaurant_table_id')
+        ->where('restaurant_tables.restaurant_id', $auth_waiter->restaurant_waiter->restaurant->id)
         ->get();
-        // echo common()->formatSql($orderTbl);die;
-        // $orderTbl = Order::with(['user','restaurant','restaurant_table'])->where('waiter_id',$auth_waiter->id)->where('type',Order::CART)->get();
+
+        // customer booked table and has order
+        $bookedOrderTable = Order::select([
+            'orders.id',
+            'orders.user_id',
+            'orders.restaurant_table_id',
+            'orders.id AS order_id',
+            'orders.restaurant_id',
+            'orders.waiter_status'
+        ])
+        ->with([
+            'restaurant_table',
+            'order_items',
+            'order_items.restaurant_item',
+            'order_items.restaurant_item.restaurant',
+            'order_items.restaurant_item.restaurant.currency',
+            'order_items.restaurant_item.restaurant.country',
+            'order_items.variation',
+            'order_items.mixer',
+            'order_items.mixer.restaurant_item',
+            'order_items.addons',
+            'order_items.addons.restaurant_item',
+        ])
+        ->where('restaurant_id', $auth_waiter->restaurant_waiter->restaurant->id)
+        ->where('type', Order::ORDER)
+        ->whereNotNull('restaurant_table_id')
+        ->whereIn('waiter_status', [Order::CURRENTLY_BEING_PREPARED, Order::CURRENTLY_BEING_SERVED, Order::AWAITING_SERVICE, Order::READY_FOR_COLLECTION])
+        ->get();
+
+        $orderTbl = $bookedOrderTable->merge($bookedTableModel);
+
         $kitchen_status = Order::where('type',Order::ORDER)->where('waiter_id',$auth_waiter->id)->whereIn('status',[Order::READYFORPICKUP,Order::WAITER_PENDING, Order::CURRENTLY_BEING_PREPARED])->get();  //Order::KITCHEN_CONFIRM, remove
         $data = [
             'active_tables'             => $orderTbl->count() ? TableResource::collection($orderTbl) : [],
@@ -61,6 +107,13 @@ class HomeController extends APIController
         return $this->respondSuccess('Waiter Order Fetched successfully.', $data);
     }
 
+    /**
+     * Method gostatus
+     *
+     * @param Request $request [explicite description]
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function gostatus(Request $request)
     {
         $input          = $request->all();
@@ -69,7 +122,13 @@ class HomeController extends APIController
         return $this->respondSuccess('Status updated');
     }
 
-
+    /**
+     * Method itemSearchByName
+     *
+     * @param Request $request [explicite description]
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function itemSearchByName(Request $request)
     {
         // dd($request->all());
@@ -81,7 +140,13 @@ class HomeController extends APIController
         return $this->respondWithError('Items not found.');
     }
 
-
+    /**
+     * Method categoryList
+     *
+     * @param Request $request [explicite description]
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function categoryList(Request $request)
     {
         $user = auth()->user();
@@ -98,7 +163,13 @@ class HomeController extends APIController
         return $this->respondWithError('Category not found.');
     }
 
-
+    /**
+     * Method getFeaturedItemsByCatID
+     *
+     * @param Request $request [explicite description]
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function getFeaturedItemsByCatID(Request $request)
     {
         $user = auth()->user();
@@ -110,14 +181,19 @@ class HomeController extends APIController
         $featured_items = $this->restaurantRepository->getFeaturedItems($data);
         if($featured_items->count())
         {
-           
-                $items = $featured_items->count() ? RestaurantItemsResource::collection($featured_items) : [];
-            
+            $items = $featured_items->count() ? RestaurantItemsResource::collection($featured_items) : [];
             return $this->respondSuccess('Featured Items Found', $items);
         }
         return $this->respondWithError('Featured Items not found.');
     }
 
+    /**
+     * Method restaurantItemListByCategory
+     *
+     * @param Request $request [explicite description]
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function restaurantItemListByCategory(Request $request)
     {
         $user = auth()->user();
@@ -137,6 +213,13 @@ class HomeController extends APIController
         return $this->respondWithError('Items not found.');
     }
 
+    /**
+     * Method addToCart
+     *
+     * @param AddtocartRequest $request [explicite description]
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function addToCart(AddtocartRequest $request)
     {
         $requestData = $request->all();
@@ -145,6 +228,13 @@ class HomeController extends APIController
         return $this->respondSuccess('Order created successfully.',$order->id);
     }
 
+    /**
+     * Method viewCart
+     *
+     * @param Request $request [explicite description]
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function viewCart(Request $request)
     {
         $cart_data = $this->orderRepository->getCartdataWaiter($request->all());
@@ -156,6 +246,13 @@ class HomeController extends APIController
         return $this->respondWithError('Your cart is empty.');
     }
 
+    /**
+     * Method orderHistory
+     *
+     * @param OrderHistoryRequest $request [explicite description]
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function orderHistory(OrderHistoryRequest $request)
     {
         $order_data = $this->orderRepository->getwaiterOrderdata($request->validated());
@@ -163,19 +260,33 @@ class HomeController extends APIController
         {
             $data = [
                 'total_order' => $order_data['total_orders'],
-                'orders'      => $order_data['total_orders'] ? OrderListResource::collection($order_data['orders']) : ''
+                'orders'      => $order_data['total_orders'] ? WaiterOrderListResource::collection($order_data['orders']) : ''
             ];
             return $this->respondSuccess('Order data found', $data);
         }
         return $this->respondWithError('Your order not found.');
     }
 
+    /**
+     * Method placeOrder
+     *
+     * @param PlaceOrderRequest $request [explicite description]
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function placeOrder(PlaceOrderRequest $request)
     {
         $place_order = $this->orderRepository->placeOrderwaiter($request->validated());
         return $this->respondSuccess('Order payment successfully.', new OrderResource($place_order));
     }
 
+    /**
+     * Method waiterupdateCart
+     *
+     * @param Request $request [explicite description]
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function waiterupdateCart(Request $request)
     {
         $input = $request->all();
@@ -186,24 +297,50 @@ class HomeController extends APIController
         return $this->respondSuccess('Order updated successfully',new OrderResource($order));
     }
 
+    /**
+     * Method waiterPayment
+     *
+     * @param Request $request [explicite description]
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function waiterPayment(Request $request)
     {
         $takePayment = $this->orderRepository->takePayment($request->all());
         return $this->respondSuccess('Payment successfully', new OrderResource(($takePayment)));
     }
 
+    /**
+     * Method addCard
+     *
+     * @param Request $request [explicite description]
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function addCard(Request $request)
     {
         $cardDetails = $this->orderRepository->addNewCard($request->all());
         return $this->respondSuccess('New Card Added successfully,',$cardDetails);
     }
 
+    /**
+     * Method tableList
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function tableList()
     {
         $orderTable = $this->orderRepository->tableOrderLists();
-        return $this->respondSuccess('Table List successfully', OrderListResource::collection(($orderTable)));
+        return $this->respondSuccess('Table List successfully', WaiterOrderListResource::collection(($orderTable)));
     }
 
+    /**
+     * Method addCusToTbl
+     *
+     * @param Request $request [explicite description]
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function addCusToTbl(Request $request)
     {
         $CusToTbl = $this->orderRepository->customerTable($request->all());
@@ -211,13 +348,15 @@ class HomeController extends APIController
             throw new GeneralException('Table Not Addedd');
         }
         return $this->respondSuccess("Table Allocated Successfully", $CusToTbl);
-        // if($CusToTbl != 0) {
-        // } else {
-        //     return $this->respondWithError("Table Already Allocated");
-            
-        // }
     }
 
+    /**
+     * Method endWaiterSession
+     *
+     * @param Request $request [explicite description]
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function endWaiterSession(Request $request)
     {
         $CusToTblDel = $this->orderRepository->customerTableDel($request->all());
@@ -226,7 +365,4 @@ class HomeController extends APIController
         }
         return $this->respondSuccess("Table Data Remove Successfully");
     }
-
-
-
 }

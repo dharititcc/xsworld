@@ -573,63 +573,6 @@ class OrderRepository extends BaseRepository
     }
 
     /**
-     * Method GetKitchenOrders
-     *
-     * @param array $data [explicite description]
-     * @param $is_history=0 $is_history [explicite description]
-     *
-     * @return void
-     */
-    function GetKitchenOrders(array $data,$is_history=0)
-    {
-        $category_id = $this->categoryGet();
-        $orders = Order::whereIn('restaurant_id',$data);
-        if($is_history === 0) {
-            $orderTbl = $orders
-            // ->with(['order_items' => function($query) use($category_id){
-            //     $query->where('category_id',$category_id);
-            // },])
-            ->where('type',Order::ORDER)
-            ->whereIn('status',[Order::PENDNIG,Order::ACCEPTED,Order::WAITER_PENDING,Order::CURRENTLY_BEING_PREPARED])
-            ->whereNotIn('order_category_type', [0])->orderByRaw("id ASC, updated_at ASC")->get();
-        } else {
-            $orderTbl = $orders->whereIn('status',[Order::COMPLETED,Order::FULL_REFUND, Order::PARTIAL_REFUND, Order::RESTAURANT_CANCELED, Order::CUSTOMER_CANCELED, Order::KITCHEN_CONFIRM])->where('type',Order::ORDER)->whereNotIn('order_category_type', [0])->orderByDesc('id')->get();
-        }
-        if($orderTbl)
-        {
-            return (object)$orderTbl;
-        } else {
-            throw new GeneralException('Order is not found.');
-        }
-    }
-
-    /**
-     * Method getKitchenCollections
-     *
-     * @param array $data [explicite description]
-     *
-     * @return Collection
-     */
-    public function getKitchenCollections(array $data) : Collection
-    {
-        $category_id = $this->categoryGet();
-        $orders = Order::whereIn('restaurant_id',$data)
-        // ->with(['order_items' => function($query) use($category_id) { $query->where('category_id', $category_id); }])
-        ->where('type', Order::ORDER)
-        ->where('status', [Order::READYFORPICKUP])
-        // ->whereHas('order_items', function($query) use($category_id)
-        // {
-        //     $query->where('category_id',$category_id)
-        //         ->where('status', OrderItem::COMPLETED);
-        // })
-        ->whereNotIn('order_category_type', [0])
-        ->orderByRaw("id ASC, updated_at ASC")
-        ->get();
-
-        return $orders;
-    }
-
-    /**
      * Method updateStatus
      *
      * @param array $data [explicite description]
@@ -746,16 +689,18 @@ class OrderRepository extends BaseRepository
             'waiter_order'
         ]);
 
-        $query = $user
-        ->waiter_order()
-        ->where('type', Order::ORDER)
+        $query = Order::query()
         ->with([
+            'restaurant',
             'user',
             'reviews',
             'order_items',
             'order_mixer',
-            'restaurant'
-        ]);
+        ])
+        ->where('type', Order::ORDER)
+        ->where('waiter_status', Order::COMPLETED)
+        ->whereNotNull('restaurant_table_id')
+        ->where('status', Order::CONFIRM_PICKUP);
 
         if( $text )
         {
@@ -794,6 +739,11 @@ class OrderRepository extends BaseRepository
     {
         $restaurant_id = $order->restaurant_id;
         $pickup_point_id = RestaurantPickupPoint::where(['restaurant_id' => $restaurant_id , 'type' => 2, 'status' => RestaurantPickupPoint::ONLINE, 'is_table_order' => 1])->inRandomOrder()->first();
+        // handle if pickup point exist or bartender associated
+        if( !isset( $pickup_point_id->id ) && !isset( $pickup_point_id->user_id ) )
+        {
+            throw new GeneralException('There is no pickup point or bartender assiociated.');
+        }
         return $pickup_point_id;
     }
 
@@ -837,13 +787,14 @@ class OrderRepository extends BaseRepository
             }
         }
 
+        $userCreditAmountBalance = $user->credit_amount;
         $updateArr         = [];
         $paymentArr        = [];
         $stripe_customer_id = $user->stripe_customer_id;
 
         if(isset($order->id))
         {
-            if($order->total == $credit_amount)
+            if($order->total <= $credit_amount)
             {
                 $updateArr = [
                     'type'                  => Order::ORDER,
@@ -851,8 +802,12 @@ class OrderRepository extends BaseRepository
                     'pickup_point_user_id'  => ($pickup_point_id) ? $pickup_point_id->user_id : null,
                     'credit_amount'         => $credit_amount,
                     'restaurant_table_id'   => ($table_id) ? $table_id : null,
-                    'status'                => Order::CURRENTLY_BEING_PREPARED,
+                    'waiter_status'         => Order::CURRENTLY_BEING_PREPARED,
+                    'status'                => Order::PENDNIG,
                 ];
+                $remaingAmount = $userCreditAmountBalance - $credit_amount;
+                // update user's credit amount
+                $this->updateUserPoints($user, ['credit_amount' => $remaingAmount]);
             }
 
 
@@ -867,7 +822,7 @@ class OrderRepository extends BaseRepository
                 $defaultCardId  = $getCusCardId->default_source;
 
                 $paymentArr = [
-                    'amount'        => $amount * 100,
+                    'amount'        => number_format($amount, 2) * 100,
                     'currency'      => $order->restaurant->currency->code,
                     'customer'      => $user->stripe_customer_id,
                     // 'capture'       => false,
@@ -884,8 +839,13 @@ class OrderRepository extends BaseRepository
                     'pickup_point_user_id'  => ($pickup_point_id) ? $pickup_point_id->user_id : null,
                     'credit_amount'         => $credit_amount,
                     'restaurant_table_id'   => ($table_id) ? $table_id : null,
+                    'amount'                => $amount,
                     'status'                => Order::CURRENTLY_BEING_PREPARED,
                 ];
+                $remaingAmount = $userCreditAmountBalance - $credit_amount;
+
+                // update user's credit amount
+                $this->updateUserPoints($user, ['credit_amount' => $remaingAmount]);
             }
 
             $order->update($updateArr);
@@ -1124,6 +1084,8 @@ class OrderRepository extends BaseRepository
             }
     
             if($order->id){
+                // update order to completed
+                $order->update(['waiter_status' => Order::COMPLETED, 'status' => Order::CONFIRM_PICKUP]);
                 $points                     = $order->total * 3;
                 $update['points']           = $order->user->points + round($points);
                 $order->user->update($update);
