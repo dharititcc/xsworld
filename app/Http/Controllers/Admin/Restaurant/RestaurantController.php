@@ -182,9 +182,14 @@ class RestaurantController extends Controller
             'first_name'    => $request->first_name,
             'last_name'     => $request->last_name,
             'email'         => $request->email,
-            'password'      => Hash::make($request->password),
+            // 'password'      => isset($request->password) ? Hash::make($request->password) : ,
             'phone'         => $request->phone,
         ];
+        if(isset($request->password)) {
+            $ownerInfo      = [
+                'password'      => Hash::make($request->password),
+            ];
+        }
         $user->update($ownerInfo);
 
         return $restaurant->refresh();
