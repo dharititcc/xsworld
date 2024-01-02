@@ -30,7 +30,7 @@ class RestaurantRequest extends FormRequest
             'city'          => 'required|string',
             'password'      => 'required',
             'image'         => 'required|image|mimes:png,jpg,jpeg',
-            'state'         => 'required|alpha',
+            'state'         => 'required|string',
         ];
     }
 }
