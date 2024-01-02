@@ -360,12 +360,6 @@ trait OrderFlow
             $pickup_point_id    = isset($data['pickup_point_id']) ? RestaurantPickupPoint::findOrFail($data['pickup_point_id']) : null;
         }
 
-        // handle if pickup point exist or bartender associated
-        // if( !isset( $pickup_point_id->id ) && !isset( $pickup_point_id->user_id ) )
-        // {
-        //     throw new GeneralException('There is no pickup point or bartender assiociated.');
-        // }
-
         $userCreditAmountBalance = $user->credit_amount;
         $updateArr         = [];
         $paymentArr        = [];
