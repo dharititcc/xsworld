@@ -26,10 +26,10 @@ class RestaurantUpdateRequest extends FormRequest
             'email'         => 'required|unique:users,email,'.$this->id,
             'phone'         => 'required|digits:10|unique:users,phone,'.$this->id,
             'street1'       => 'required',
-            'first_name'    => 'required|alpha',
-            'city'          => 'required|alpha',
+            'first_name'    => 'required',
+            'city'          => 'required|string',
             'image'         => 'required',
-            'state'         => 'required|alpha',
+            'state'         => 'required|string',
         ];
     }
 }
