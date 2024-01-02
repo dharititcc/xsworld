@@ -16,19 +16,6 @@ class TableResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        // $status  = "";
-        // if(isset($this->table_order->order_status)) {
-        //     if($this->table_order->status == Order::CURRENTLY_BEING_PREPARED) {
-        //         $status     = "Order #".$this->table_order->id . " " . $this->table_order->order_status;
-        //     } else if($this->table_order->status == Order::KITCHEN_CONFIRM) {
-        //         $status     = "Currently being served";
-        //     } else if($this->table_order->status == Order::READYFORPICKUP) {
-        //         $status     = $this->table_order->order_status;
-        //     } else {
-        //         $status     = $this->table_order->order_status;
-        //     }
-        // }
-        // dd($this->waiter_status_name);
         return [
             'order_id'                  => isset($this->order_id) ? $this->order_id : 0,
             'status'                    => isset($this->waiter_status_name) ? $this->waiter_status_name : $this->order_status,
@@ -41,7 +28,7 @@ class TableResource extends JsonResource
             'user_image'                => $this->user->image,
             'user_id'                   => $this->user->id,
             'restaurant_id'             => isset($this->restaurant->id) ? $this->restaurant->id : 0,
-            'total_items'               => isset($this->order_items) ? $this->order_items->count() : 0,
+            'total_items'               => isset($this->table_order->order_items) ? $this->table_order->order_items->count() : 0,
             'order_items'               => isset($this->order_items) ? OrderItemResource::collection($this->order_items) : []
         ];
     }
