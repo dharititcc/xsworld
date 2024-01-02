@@ -27,7 +27,10 @@ class PickupZoneController extends Controller
         $waiters                = User::select('id','first_name','username','email')->where('user_type',User::WAITER)->get();
 
         $restaurant_table       = RestaurantTable::where('restaurant_id',$restaurant->id)->pluck('id')->toArray();
-        $active_waiter          = CustomerTable::with(['restaurant_table','waiter'])->whereIn('restaurant_table_id',$restaurant_table)->get();
+        $active_waiter          = CustomerTable::with(['restaurant_table','waiter'])
+                                    ->whereNotNull('waiter_id')
+                                    ->whereIn('restaurant_table_id',$restaurant_table)
+                                    ->get();
 
         return view('pickup.index',[
             'food_pickup_points' => $food_pickup_points,
