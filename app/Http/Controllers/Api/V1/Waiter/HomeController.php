@@ -94,9 +94,8 @@ class HomeController extends APIController
             'order_items.addons.restaurant_item',
         ])
         ->where('restaurant_id', $auth_waiter->restaurant_waiter->restaurant->id)
-        ->where('type', Order::ORDER)
         ->whereNotNull('restaurant_table_id')
-        ->whereIn('waiter_status', [Order::CURRENTLY_BEING_PREPARED, Order::CURRENTLY_BEING_SERVED, Order::AWAITING_SERVICE, Order::READY_FOR_COLLECTION])
+        ->whereIn('waiter_status', [Order::WAITER_PENDING, Order::CURRENTLY_BEING_PREPARED, Order::CURRENTLY_BEING_SERVED, Order::CURRENTLY_BEING_PREPARED, Order::READY_FOR_COLLECTION])
         ->get();
 
         $orderTbl = $bookedOrderTable->merge($bookedTableModel);
