@@ -23,6 +23,7 @@ class OrderItem extends Model
      */
     protected $fillable = [
         'order_id',
+        'order_split_id',
         'restaurant_item_id',
         'variation_id',
         'parent_item_id',
@@ -178,5 +179,15 @@ class OrderItem extends Model
     public function scopeItemType(Builder $query, $value): Builder
     {
         return $query->where('type', $value);
+    }
+
+    /**
+     * Get the order_split that owns the OrderItem
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function order_split(): BelongsTo
+    {
+        return $this->belongsTo(OrderSplit::class, 'order_split_id', 'id');
     }
 }
