@@ -216,7 +216,7 @@ trait OrderFlow
         $order['status']                = Order::PENDNIG;
 
         if($order['restaurant_table_id']) {
-            $order['waiter_status'] = Order::CURRENTLY_BEING_PREPARED;
+            $order['waiter_status'] = Order::WAITER_PENDING;
         }
 
         $newOrder = Order::create($order);
