@@ -7,9 +7,9 @@
                 <a href="javascript:void(0);" id="drink_modal" class="drink_modal bor-btn ms-3 m-icon">
                     @include('layouts.restaurant.add-icon')
                     <span>Add a Drink</span></a>
-                <a href="#" class=" upload_drink_modal bor-btn ms-3 m-icon">
+                <a href="#" class="upload_drink_modal bor-btn ms-3 m-icon">
                     @include('layouts.restaurant.upload-icon')
-                    <input id="upload" type="file" name="upload_drink" hidden />
+                    {{-- <input type="file" name="upload_drink" hidden /> --}}
                     <span>Import Drinks from Source</span></a>
             </div>
         </div>
