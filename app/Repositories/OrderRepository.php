@@ -515,6 +515,36 @@ class OrderRepository extends BaseRepository
                 }
                 $updateArr['cancel_date']   = Carbon::now();
                 $updateArr['status']        = $status;
+
+                if( isset( $order->restaurant_table_id ) )
+                {
+                    // send notification to kitchen
+                    $kitchenDevices = [];
+                    $kitchens = $order->restaurant->kitchens()->with(['user', 'user.devices'])->get();
+
+                    if( $kitchens->count() )
+                    {
+                        foreach( $kitchens as $kitchen )
+                        {
+                            $kitchenDevicesTokensArr = $kitchen->user->devices->pluck('fcm_token')->toArray();
+                            // $waiterDevices = array_merge($waiterDevices, );
+                            if( !empty( $kitchenDevicesTokensArr ) )
+                            {
+                                foreach( $kitchenDevicesTokensArr as $token )
+                                {
+                                    $kitchenDevices[] = $token;
+                                }
+                            }
+                        }
+                    }
+
+                    if( !empty( $kitchenDevices ) )
+                    {
+                        $kitchenTitle    = 'Order canceled';
+                        $kitchenMessage  = "Order #".$order->id." is canceled by customer";
+                        sendNotification($kitchenTitle, $kitchenMessage, $kitchenDevices, $order->id);
+                    }
+                }
             }
 
             $order->update($updateArr);
@@ -528,11 +558,6 @@ class OrderRepository extends BaseRepository
             if(!empty( $bardevices )) {
                 $bar_notification   = sendNotification($bartitle,$barmessage,$bardevices,$order->id);
             }
-
-            // $title      = "Order is cancelled";
-            // $message    = "Your Order is #".$order->id." cancelled";
-
-            // $send_notification = sendNotification($title,$message,$devices,$order_id);
         }
 
         $order->refresh();
