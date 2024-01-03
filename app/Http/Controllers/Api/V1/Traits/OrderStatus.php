@@ -28,6 +28,8 @@ trait OrderStatus
                 {
                     // update waiter status to Ready for collection
                     $order->update(['waiter_status' => Order::READY_FOR_COLLECTION, 'status' => Order::COMPLETED]);
+
+                    // capture charge if order is from customer
                 }
             }
 
