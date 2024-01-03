@@ -27,6 +27,7 @@ class KitchenOrderListingResource extends JsonResource
             'status'                    => $this->order_split_food->status_name,
             'status_no'                 => $this->order_split_food->status,
             'table_no'                  => $this->restaurant_table->id ?? 0,
+            'table_name'                => $this->restaurant_table->name ?? '',
             'apply_time'                => $this->apply_time ?? 0,
             'last_delayed_time'         => $this->last_delayed_time*60 ?? 0,
             'remaining_time'            => $this->remainingtime,

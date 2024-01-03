@@ -442,6 +442,7 @@ trait OrderFlow
                 );
             }
 
+            // send notification to waiters of the restaurant
             $waiterDevices = [];
             $waiters = $order->restaurant->waiters()->with(['user', 'user.devices'])->get();
 
@@ -466,6 +467,33 @@ trait OrderFlow
                 $waiterTitle    = 'New order placed by customer';
                 $waiterMessage  = "Order is #{$order->id} placed by customer";
                 sendNotification($waiterTitle, $waiterMessage, $waiterDevices, $order->id);
+            }
+
+            // send notification to kitchens of the restaurant
+            $kitchenDevices = [];
+            $kitchens = $order->restaurant->kitchens()->with(['user', 'user.devices'])->get();
+
+            if( $kitchens->count() )
+            {
+                foreach( $kitchens as $kitchen )
+                {
+                    $kitchenDevicesTokensArr = $kitchen->user->devices->pluck('fcm_token')->toArray();
+                    // $waiterDevices = array_merge($waiterDevices, );
+                    if( !empty( $kitchenDevicesTokensArr ) )
+                    {
+                        foreach( $kitchenDevicesTokensArr as $token )
+                        {
+                            $kitchenDevices[] = $token;
+                        }
+                    }
+                }
+            }
+
+            if( !empty( $kitchenDevices ) )
+            {
+                $kitchenTitle    = 'New order placed by customer';
+                $kitchenMessage  = "Order is #{$order->id} placed by customer";
+                sendNotification($kitchenTitle, $kitchenMessage, $kitchenDevices, $order->id);
             }
         }
 
@@ -495,7 +523,7 @@ trait OrderFlow
     public function randomPickpickPoint(Order $order): ?RestaurantPickupPoint
     {
         $restaurant_id = $order->restaurant_id;
-        $pickup_point_id = RestaurantPickupPoint::where(['restaurant_id' => $restaurant_id , 'status' => RestaurantPickupPoint::ONLINE, 'is_table_order' => 1])->inRandomOrder()->first();
+        $pickup_point_id = RestaurantPickupPoint::where(['restaurant_id' => $restaurant_id, 'status' => RestaurantPickupPoint::ONLINE, 'is_table_order' => 1])->inRandomOrder()->first();
         return $pickup_point_id;
     }
 
