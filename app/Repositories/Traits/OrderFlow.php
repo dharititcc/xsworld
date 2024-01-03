@@ -511,7 +511,7 @@ trait OrderFlow
         // load restaurant relationship
         $kitchen->loadMissing(['restaurant_kitchen']);
 
-        $query = $this->getKitchenOrdersQuery($kitchen, OrderSplit::PENDING, 'desc')->where('status', Order::PENDNIG);
+        $query = $this->getKitchenOrdersQuery($kitchen, OrderSplit::PENDING, 'desc')->where('status', Order::PENDNIG)->where('type', Order::ORDER);
         return $query->get();
     }
 
