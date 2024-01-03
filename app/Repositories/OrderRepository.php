@@ -1171,13 +1171,14 @@ class OrderRepository extends BaseRepository
         $pdf->loadView('pdf.index',compact('order'));
         $filename   = 'invoice_'.$order->id.'.pdf';
         $content    = $pdf->output();
-        $file       = public_path('order_pdf/');
-        if (!file_exists($file)) {
-            mkdir($file, 0777, true);
-        }
+        $file       = storage_path("app/public/order_pdf");
+        !is_dir($file) &&
+        mkdir($file, 0777, true);
+        $filePath = 'public/order_pdf/' . $filename;
+
         //Upload PDF to storage folder
-        file_put_contents($file.$filename, $content);
-        $destinationPath = asset('order_pdf/').'/'.$filename;
+        Storage::put($filePath, $content);
+        $destinationPath = asset('storage/order_pdf/').'/'.$filename;
         return $destinationPath;
     }
 }
