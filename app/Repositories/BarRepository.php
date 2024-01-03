@@ -85,7 +85,7 @@ class BarRepository extends BaseRepository
         ->whereHas('order_split_drink', function($query){
             $query->where('status', OrderSplit::ACCEPTED);
         })
-        ->whereIn('status', [Order::ACCEPTED])
+        ->whereIn('status', [Order::ACCEPTED, Order::COMPLETED])
         ->orderBy('orders.remaining_date','asc')
         ->orderByDesc('orders.id')
         ->get();
