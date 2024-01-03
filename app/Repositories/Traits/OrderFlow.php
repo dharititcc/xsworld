@@ -465,7 +465,7 @@ trait OrderFlow
             {
                 $waiterTitle    = 'New order placed by customer';
                 $waiterMessage  = "Order is #{$order->id} placed by customer";
-                sendNotification($waiterTitle, $waiterMessage, $waiterDevices, $orderid);
+                sendNotification($waiterTitle, $waiterMessage, $waiterDevices, $order->id);
             }
         }
 
@@ -554,6 +554,7 @@ trait OrderFlow
                                 $query->whereIn('status', [$status]);
                             }
                         })
+                        ->where('status', Order::PENDNIG)
                         ->where('restaurant_id', $kitchen->restaurant_kitchen->restaurant_id)
                         ->orderBy('id', $sort);
     }
