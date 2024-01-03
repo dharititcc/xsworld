@@ -67,8 +67,8 @@
                             <h3>{{ $res_table->name }} - {{$res_table->code}}</h3>
                         </div>
                         <div class="cnt">
-                            <?php //dd(asset("images/".$res_table->qr_image)); ?>
-                            <div class="qr-code"><img src="{{asset("images/".$res_table->qr_image)}}"/> </div>
+                            <?php //dd(asset("storage/images/".$res_table->qr_image)); ?>
+                            <div class="qr-code"><img src="{{asset("storage/images/".$res_table->qr_image)}}"/> </div>
                             <a href="javascript:void(0);" class="export-info" data-id="{{$res_table->id}}" data-bs-toggle="modal"
                                 data-bs-target="#export_qr_code">Export QR<br>Code</a>
 
