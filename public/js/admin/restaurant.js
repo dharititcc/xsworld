@@ -474,7 +474,7 @@
                             const {error}   = jqXHR.responseJSON;
                             const {message} = error;
 
-                            XS.Common.handleSwalError('Please Enter Proper Address', true);
+                            XS.Common.handleSwalError(message, true);
                         }
 
                     },

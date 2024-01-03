@@ -456,10 +456,12 @@ if(!function_exists('addressLatLong')) {
             // Retrieve latitude and longitude from API data 
             $latitude  = $apiResponse->results[0]->geometry->location->lat;  
             $longitude = $apiResponse->results[0]->geometry->location->lng;
+            $country   = $apiResponse->results[0]->address_components[4]->long_name;
     
             $latlong = [
                 'latitude'  => $latitude,
                 'longitude' => $longitude,
+                'country'   => $country
             ];
     
             return $latlong;
