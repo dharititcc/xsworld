@@ -149,7 +149,7 @@
             context.addVariation();
             context.removeVariation();
             context.favoriteStatusUpdate();
-            context.uploadData();
+            // context.uploadData();
             context.filterCategoryChange();
             XS.Common.enableSweetAlert(context.table);
             XS.Common.disableSweetAlert(context.table);
@@ -374,46 +374,46 @@
             });
         },
 
-        uploadData: function()
-        {
-            var context = this;
-            $('#uploadsubmitBtn').on('click',function(e) {
-                e.preventDefault();
-                // var fd = new FormData();
-                var files = $('#uploaddrinkpopup')[0].files;
-                // console.log($('#uploaddrinkpopup')[0].files);return false;
-                // var form    = context.selectors.uploaddrinkData.get(0);
-                // console.log(moduleConfig.uploadData);
-                // return false;
-                $.ajax({
-                    url:moduleConfig.uploadData,
-                    type:'POST',
-                    enctype: "multipart/form-data",
-                    headers: {
-                        'X-CSRF-TOKEN': jQuery('meta[name="csrf-token"]').attr('content'),
-                    },
-                    data: files,
-                    success: function(res)
-                    {
-                        // XS.Common.handleSwalSuccessWithoutReload('Favorite status has been updated successfully.');
-                        // setTimeout(function()
-                        // {
-                        //     context.table.ajax.reload();
-                        // }, 500);
-                    },
-                    error: function(xhr)
-                    {
-                        console.log(xhr.responseJSON);return false;
-                        if( xhr.status == 403 )
-                        {
-                            var {error} = xhr.responseJSON;
-                            context.selectors.drinkForm.find('.duplicate_product').after(`<span class="error">${error.message}</span>`);
-                            // $this.closest('#add_form_category').find('.cat_name').after(`<span class="error">${error.message}</span>`);
-                        }
-                    },
-                });
-            });
-        },
+        // uploadData: function()
+        // {
+        //     var context = this;
+        //     $('#uploadsubmitBtn').on('click',function(e) {
+        //         e.preventDefault();
+        //         // var fd = new FormData();
+        //         var files = $('#uploaddrinkpopup')[0].files;
+        //         // console.log($('#uploaddrinkpopup')[0].files);return false;
+        //         // var form    = context.selectors.uploaddrinkData.get(0);
+        //         // console.log(moduleConfig.uploadData);
+        //         // return false;
+        //         $.ajax({
+        //             url:moduleConfig.uploadData,
+        //             type:'POST',
+        //             enctype: "multipart/form-data",
+        //             headers: {
+        //                 'X-CSRF-TOKEN': jQuery('meta[name="csrf-token"]').attr('content'),
+        //             },
+        //             data: files,
+        //             success: function(res)
+        //             {
+        //                 // XS.Common.handleSwalSuccessWithoutReload('Favorite status has been updated successfully.');
+        //                 // setTimeout(function()
+        //                 // {
+        //                 //     context.table.ajax.reload();
+        //                 // }, 500);
+        //             },
+        //             error: function(xhr)
+        //             {
+        //                 console.log(xhr.responseJSON);return false;
+        //                 if( xhr.status == 403 )
+        //                 {
+        //                     var {error} = xhr.responseJSON;
+        //                     context.selectors.drinkForm.find('.duplicate_product').after(`<span class="error">${error.message}</span>`);
+        //                     // $this.closest('#add_form_category').find('.cat_name').after(`<span class="error">${error.message}</span>`);
+        //                 }
+        //             },
+        //         });
+        //     });
+        // },
 
         productTypeFilter: function()
         {
@@ -491,7 +491,7 @@
 
             $('.showin-mob, .drink_datatable').on('click', '.upload_drink_modal', function(e)
             {
-            //     e.preventDefault();
+                e.preventDefault();
 
             //     var $this       = $(this),
             //         drinkId     = $this.data('id'),
@@ -502,7 +502,7 @@
             //     if(drinkId == undefined)
             //     {
                     context.selectors.drinkModalTitle.html('Import');
-            //         context.addDrinkFormValidation();
+                    context.uploadDrinkFormValidation();
             //         context.selectors.drinkForm.attr('action', moduleConfig.drinkStore);
 
             //     } else {
@@ -547,6 +547,41 @@
                 $this.find('.pip').remove();
                 $this.find('.cstm-catgory').find('input[name="category_id[]"]').prop('checked', false);
                 context.selectors.drinkForm.find('.variation_hidden').remove();
+            });
+        },
+
+        uploadDrinkFormValidation: function()
+        {
+            var context = this;
+            context.selectors.drinkForm.validate({
+                ignore: [],
+                rules: {
+                    upload_data: {
+                        required: true,
+                    },
+                    file: {
+                        required: false,
+                        extension: "xls|xlsx"
+                    },
+                },
+                messages: {
+                    image: {
+                        required: "Please upload excel files", //accept: 'Not an image!'
+                    }
+                },
+                errorPlacement: function (error, element) {
+                    console.log(error);
+                    if (element.attr("type") == "checkbox") {
+                        error.insertAfter($(element).closest('div'));
+                    } else if( element.attr("type") == 'file' ) {
+                        error.insertAfter($(element).closest('div'));
+                    }else{
+                        error.insertAfter($(element));
+                    }
+                },
+                submitHandler: function() {
+                    context.submitDrinkForm(context.selectors.drinkForm.get(0));
+                }
             });
         },
 

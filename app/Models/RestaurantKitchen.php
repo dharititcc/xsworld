@@ -10,7 +10,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class RestaurantKitchen extends Model
 {
     use HasFactory, SoftDeletes;
-    protected $guarded = [];
+
+    /** @var string $table */
+    protected $table    = 'restaurant_kitchens';
+    protected $guarded  = [];
 
 
     public function ScopeRestaurantget($query,$arg)

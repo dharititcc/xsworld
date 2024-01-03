@@ -129,8 +129,12 @@ class User extends Authenticatable
         return $this->hasOne(RestaurantKitchen::class,'user_id','id');
     }
 
-
-    public function restaurant_waiter()
+    /**
+     * Method restaurant_waiter
+     *
+     * @return HasOne
+     */
+    public function restaurant_waiter(): HasOne
     {
         return $this->hasOne(RestaurantWaiter::class,'user_id','id')->withTrashed();
     }
@@ -197,7 +201,7 @@ class User extends Authenticatable
      */
     public function getQrImageAttribute(): string
     {
-        return isset($this->cus_qr_code_img) ? asset('customer_qr/'.$this->cus_qr_code_img) : '';
+        return isset($this->cus_qr_code_img) ? asset('storage/customer_qr/'.$this->cus_qr_code_img) : '';
     }
 
     /**

@@ -515,6 +515,36 @@ class OrderRepository extends BaseRepository
                 }
                 $updateArr['cancel_date']   = Carbon::now();
                 $updateArr['status']        = $status;
+
+                if( isset( $order->restaurant_table_id ) )
+                {
+                    // send notification to kitchen
+                    $kitchenDevices = [];
+                    $kitchens = $order->restaurant->kitchens()->with(['user', 'user.devices'])->get();
+
+                    if( $kitchens->count() )
+                    {
+                        foreach( $kitchens as $kitchen )
+                        {
+                            $kitchenDevicesTokensArr = $kitchen->user->devices->pluck('fcm_token')->toArray();
+                            // $waiterDevices = array_merge($waiterDevices, );
+                            if( !empty( $kitchenDevicesTokensArr ) )
+                            {
+                                foreach( $kitchenDevicesTokensArr as $token )
+                                {
+                                    $kitchenDevices[] = $token;
+                                }
+                            }
+                        }
+                    }
+
+                    if( !empty( $kitchenDevices ) )
+                    {
+                        $kitchenTitle    = 'Order canceled';
+                        $kitchenMessage  = "Order #".$order->id." is canceled by customer";
+                        sendNotification($kitchenTitle, $kitchenMessage, $kitchenDevices, $order->id);
+                    }
+                }
             }
 
             $order->update($updateArr);
@@ -528,11 +558,6 @@ class OrderRepository extends BaseRepository
             if(!empty( $bardevices )) {
                 $bar_notification   = sendNotification($bartitle,$barmessage,$bardevices,$order->id);
             }
-
-            // $title      = "Order is cancelled";
-            // $message    = "Your Order is #".$order->id." cancelled";
-
-            // $send_notification = sendNotification($title,$message,$devices,$order_id);
         }
 
         $order->refresh();
@@ -570,63 +595,6 @@ class OrderRepository extends BaseRepository
         }
 
         throw new GeneralException('Order is not found.');
-    }
-
-    /**
-     * Method GetKitchenOrders
-     *
-     * @param array $data [explicite description]
-     * @param $is_history=0 $is_history [explicite description]
-     *
-     * @return void
-     */
-    function GetKitchenOrders(array $data,$is_history=0)
-    {
-        $category_id = $this->categoryGet();
-        $orders = Order::whereIn('restaurant_id',$data);
-        if($is_history === 0) {
-            $orderTbl = $orders
-            // ->with(['order_items' => function($query) use($category_id){
-            //     $query->where('category_id',$category_id);
-            // },])
-            ->where('type',Order::ORDER)
-            ->whereIn('status',[Order::PENDNIG,Order::ACCEPTED,Order::WAITER_PENDING,Order::CURRENTLY_BEING_PREPARED])
-            ->whereNotIn('order_category_type', [0])->orderByRaw("id ASC, updated_at ASC")->get();
-        } else {
-            $orderTbl = $orders->whereIn('status',[Order::COMPLETED,Order::FULL_REFUND, Order::PARTIAL_REFUND, Order::RESTAURANT_CANCELED, Order::CUSTOMER_CANCELED, Order::KITCHEN_CONFIRM])->where('type',Order::ORDER)->whereNotIn('order_category_type', [0])->orderByDesc('id')->get();
-        }
-        if($orderTbl)
-        {
-            return (object)$orderTbl;
-        } else {
-            throw new GeneralException('Order is not found.');
-        }
-    }
-
-    /**
-     * Method getKitchenCollections
-     *
-     * @param array $data [explicite description]
-     *
-     * @return Collection
-     */
-    public function getKitchenCollections(array $data) : Collection
-    {
-        $category_id = $this->categoryGet();
-        $orders = Order::whereIn('restaurant_id',$data)
-        // ->with(['order_items' => function($query) use($category_id) { $query->where('category_id', $category_id); }])
-        ->where('type', Order::ORDER)
-        ->where('status', [Order::READYFORPICKUP])
-        // ->whereHas('order_items', function($query) use($category_id)
-        // {
-        //     $query->where('category_id',$category_id)
-        //         ->where('status', OrderItem::COMPLETED);
-        // })
-        ->whereNotIn('order_category_type', [0])
-        ->orderByRaw("id ASC, updated_at ASC")
-        ->get();
-
-        return $orders;
     }
 
     /**
@@ -746,16 +714,18 @@ class OrderRepository extends BaseRepository
             'waiter_order'
         ]);
 
-        $query = $user
-        ->waiter_order()
-        ->where('type', Order::ORDER)
+        $query = Order::query()
         ->with([
+            'restaurant',
             'user',
             'reviews',
             'order_items',
             'order_mixer',
-            'restaurant'
-        ]);
+        ])
+        ->where('type', Order::ORDER)
+        ->where('waiter_status', Order::COMPLETED)
+        ->whereNotNull('restaurant_table_id')
+        ->where('status', Order::CONFIRM_PICKUP);
 
         if( $text )
         {
@@ -783,20 +753,6 @@ class OrderRepository extends BaseRepository
         throw new GeneralException('There is no order found.');
     }
 
-    /**
-     * Method randomPickpickPoint
-     *
-     * @param Order $order [explicite description]
-     *
-     * @return null|RestaurantPickupPoint
-     */
-    public function randomPickpickPoint(Order $order): ?RestaurantPickupPoint
-    {
-        $restaurant_id = $order->restaurant_id;
-        $pickup_point_id = RestaurantPickupPoint::where(['restaurant_id' => $restaurant_id , 'type' => 2, 'status' => RestaurantPickupPoint::ONLINE, 'is_table_order' => 1])->inRandomOrder()->first();
-        return $pickup_point_id;
-    }
-
 
     /**
      * Method placeOrderwaiter
@@ -819,26 +775,32 @@ class OrderRepository extends BaseRepository
         $kitchens          = $order->restaurant->kitchens;
         $kitchen_token     = [];
 
+        $pickup_point_id = '';
         if($order->order_category_type == Order::DRINK || $order->order_category_type == Order::BOTH)
         {
             $pickup_point_id    = $this->randomPickpickPoint($order);
         }
 
         foreach ($kitchens as $kitchen) {
-            $token   = $kitchen->user->devices()->pluck('fcm_token');
-            if(isset($token[0]))
+            $tokens   = $kitchen->user->devices()->pluck('fcm_token')->toArray();
+
+            if( !empty( $tokens ) )
             {
-                $kitchen_token[]    = $token[0];
+                foreach( $tokens as $token )
+                {
+                    $kitchen_token[]    = $token; // remove  $token[0]
+                }
             }
         }
 
+        $userCreditAmountBalance = $user->credit_amount;
         $updateArr         = [];
         $paymentArr        = [];
         $stripe_customer_id = $user->stripe_customer_id;
 
         if(isset($order->id))
         {
-            if($order->total == $credit_amount)
+            if($order->total <= $credit_amount)
             {
                 $updateArr = [
                     'type'                  => Order::ORDER,
@@ -846,8 +808,12 @@ class OrderRepository extends BaseRepository
                     'pickup_point_user_id'  => ($pickup_point_id) ? $pickup_point_id->user_id : null,
                     'credit_amount'         => $credit_amount,
                     'restaurant_table_id'   => ($table_id) ? $table_id : null,
-                    'status'                => Order::CURRENTLY_BEING_PREPARED,
+                    'waiter_status'         => Order::CURRENTLY_BEING_PREPARED,
+                    'status'                => Order::PENDNIG,
                 ];
+                $remaingAmount = $userCreditAmountBalance - $credit_amount;
+                // update user's credit amount
+                $this->updateUserPoints($user, ['credit_amount' => $remaingAmount]);
             }
 
 
@@ -862,7 +828,7 @@ class OrderRepository extends BaseRepository
                 $defaultCardId  = $getCusCardId->default_source;
 
                 $paymentArr = [
-                    'amount'        => $amount * 100,
+                    'amount'        => number_format($amount, 2) * 100,
                     'currency'      => $order->restaurant->currency->code,
                     'customer'      => $user->stripe_customer_id,
                     // 'capture'       => false,
@@ -879,8 +845,13 @@ class OrderRepository extends BaseRepository
                     'pickup_point_user_id'  => ($pickup_point_id) ? $pickup_point_id->user_id : null,
                     'credit_amount'         => $credit_amount,
                     'restaurant_table_id'   => ($table_id) ? $table_id : null,
+                    'amount'                => $amount,
                     'status'                => Order::CURRENTLY_BEING_PREPARED,
                 ];
+                $remaingAmount = $userCreditAmountBalance - $credit_amount;
+
+                // update user's credit amount
+                $this->updateUserPoints($user, ['credit_amount' => $remaingAmount]);
             }
 
             $order->update($updateArr);
@@ -904,6 +875,7 @@ class OrderRepository extends BaseRepository
         $kitchenmessage         = "New Order has been #".$order->id." placed";
         // $kitchendevices         = $order->user->devices()->pluck('fcm_token')->toArray();
         $kitchen_notification   = sendNotification($kitchentitle,$kitchenmessage,$kitchen_token,$orderid);
+        // dd($kitchen_notification);
 
         return $order;
     }
@@ -997,7 +969,7 @@ class OrderRepository extends BaseRepository
     public function reOrder(array $data): Order
     {
         $user                   = auth()->user();
-        $orderAgain             = $user->orders()->where('restaurant_id', $data['restaurant_id'])->where('type',Order::ORDER)->whereNotIn('status',[Order::CUSTOMER_CANCELED,Order::RESTAURANT_CANCELED,Order::RESTAURANT_TOXICATION])->orderByDesc('id')->first();
+        $orderAgain             = $user->orders()->where('restaurant_id', $data['restaurant_id'])->where('type',Order::ORDER)->whereNotIn('status',[Order::CUSTOMER_CANCELED,Order::RESTAURANT_CANCELED,Order::RESTAURANT_TOXICATION,Order::DENY_ORDER,Order::CURRENTLY_BEING_PREPARED,Order::READYFORPICKUP,Order::COMPLETED])->orderByDesc('id')->first();
 
         $resName = Restaurant::select('name')->where('id',$data['restaurant_id'])->first();
         if( !isset($orderAgain->id) )
@@ -1028,8 +1000,8 @@ class OrderRepository extends BaseRepository
         $newOrder->last_delayed_time    = null;
         $newOrder->remaining_date       = null;
         $newOrder->accepted_date        = null;
-        $newOrder->pickup_point_id      = null;
-        $newOrder->pickup_point_user_id = null;
+        // $newOrder->pickup_point_id      = null;
+        // $newOrder->pickup_point_user_id = null;
         $newOrder->waiter_id            = null;
         $newOrder->served_date          = null;
         $newOrder->completion_date      = null;
@@ -1118,6 +1090,8 @@ class OrderRepository extends BaseRepository
             }
     
             if($order->id){
+                // update order to completed
+                $order->update(['waiter_status' => Order::COMPLETED, 'status' => Order::CONFIRM_PICKUP]);
                 $points                     = $order->total * 3;
                 $update['points']           = $order->user->points + round($points);
                 $order->user->update($update);

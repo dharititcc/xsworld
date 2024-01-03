@@ -27,8 +27,9 @@ class RestaurantUpdateRequest extends FormRequest
             'phone'         => 'required|digits:10|unique:users,phone,'.$this->id,
             'street1'       => 'required',
             'first_name'    => 'required',
-            'city'          => 'required',
-            'image'         => 'required'
+            'city'          => 'required|string',
+            'image'         => 'required',
+            'state'         => 'required|string',
         ];
     }
 }

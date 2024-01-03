@@ -33,7 +33,7 @@ class RestaurantTableController extends Controller
     public function export_pdf(Request $request)
     {
         $table  = RestaurantTable::findOrFail($request->id);
-        $qrImage= asset("images/".$table->qr_image);
+        $qrImage= asset("storage/images/".$table->qr_image);
 
         return response()->json([
             'success'   => true,
@@ -59,10 +59,14 @@ class RestaurantTableController extends Controller
         ]);
         $qr_url = URL::current();
 
+        $path = storage_path("app/public/images");
+        !is_dir($path) &&
+            mkdir($path, 0777, true);
+            
         $qr_code_image = QrCode::size(500)
             ->format('png')
             ->backgroundColor(255,255,255)
-            ->generate($qr_url . '?restaurant_id='.$restaurant->id . '&table_no='.$table->code.'&table_id='.$table->id, public_path("images/qrcode_$table->id.png"));
+            ->generate($qr_url . '?restaurant_id='.$restaurant->id . '&table_no='.$table->code.'&table_id='.$table->id, public_path("storage/images/qrcode_$table->id.png"));
 
         $imageName = "qrcode_$table->id.png";
         RestaurantTable::where('id',$table->id)->update(['qr_image' => $imageName, 'qr_url' => $qr_url]);
