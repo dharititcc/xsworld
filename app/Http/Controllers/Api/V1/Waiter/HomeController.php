@@ -78,6 +78,7 @@ class HomeController extends APIController
             'orders.restaurant_table_id',
             'orders.id AS order_id',
             'orders.restaurant_id',
+            'orders.type',
             'orders.waiter_status'
         ])
         ->with([
