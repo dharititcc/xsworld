@@ -80,6 +80,17 @@
                                             </div>
                                         </div>
 
+                                        <div class="form-group full-w-form">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <input type="text" name="latitude" id="latitude" class="form-control " placeholder="latitude">
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <input type="text" name="longitude" id="longitude" class="form-control " placeholder="longitude">
+                                                </div>
+                                            </div>
+                                        </div>
+
                                         <textarea id="description" name="description" placeholder="Description" class="prd-desc h-96"></textarea>
                                     </div>
                                 </div>

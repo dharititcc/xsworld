@@ -535,6 +535,8 @@
                     $("#phone").val(res.data.phone);
                     $('select option[value="'+res.data.country_id+'"]').attr("selected",true);
                     $("#id").val(res.data.id);
+                    $("#latitude").val(res.data.latitude);
+                    $("#longitude").val(res.data.longitude);
                     $("#type").val(res.data.type);
                     $("#start_date").val(res.data.start_date);
                     $("#end_date").val(res.data.end_date);
