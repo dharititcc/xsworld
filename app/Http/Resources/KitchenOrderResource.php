@@ -31,7 +31,7 @@ class KitchenOrderResource extends JsonResource
             'status'                    => $this->order_split_food->status_name,
             'status_no'                 => (int) $this->order_split_food->status,
             'table_no'                  => $this->restaurant_table->id ?? 0,
-            'table_name'                => $this->restaurant_table->name ?? '',
+            'table_name'                => $this->restaurant_table->code ?? '',
             'isFoodAvl'                 => $this->order_category_type,
             'user_payment_method'       => '',
             'credit_amount'             => $this->credit_amount,
