@@ -19,6 +19,7 @@ trait OrderStatus
         $order      = isset($request->order_id) ? Order::with(['order_split_drink', 'order_split_food'])->find($request->order_id) : null;
         $status     = $request->status;
         $title      = "Kitchen confirm order";
+        $message    = "Your Order is #".$order->id." Ready for pickup";
 
         if($status == OrderSplit::READYFORPICKUP)
         {
@@ -46,10 +47,12 @@ trait OrderStatus
                     $order->update(['waiter_status' => Order::CURRENTLY_BEING_SERVED, 'status' => Order::CONFIRM_PICKUP]);
                 }
             }
+
+            $message    = "Your Order is #".$order->id." ready for collection";
         }
 
         // send notification to waiters
-        $this->notifyWaiters($order, $title);
+        $this->notifyWaiters($order, $title, $message);
 
         // send notification to customer
         $this->notifyCustomer($order, $title);
@@ -66,7 +69,7 @@ trait OrderStatus
      * @return bool
      * @throws \App\Exceptions\GeneralException
      */
-    public function notifyWaiters(Order $order, string $title): bool
+    public function notifyWaiters(Order $order, string $title, string $message): bool
     {
         // send notification to waiter if table order
         if( isset( $order->restaurant_table_id ) )
@@ -97,7 +100,7 @@ trait OrderStatus
 
             if( !empty( $waiterDevices ) )
             {
-                $message    = "Your Order is #".$order->id." Ready for pickup";
+                // $message    = "Your Order is #".$order->id." Ready for pickup";
                 $orderid    = $order->id;
                 return sendNotification($title, $message, $waiterDevices, $orderid);
             }
