@@ -65,6 +65,7 @@ trait OrderStatus
      *
      * @param \App\Models\Order $order [explicite description]
      * @param string $title [explicite description]
+     * @param string $message [explicite description]
      *
      * @return bool
      * @throws \App\Exceptions\GeneralException
@@ -87,7 +88,7 @@ trait OrderStatus
                 foreach( $waiters as $waiter )
                 {
                     $WaiterDevicesTokensArr = $waiter->user->devices->pluck('fcm_token')->toArray();
-                    // $waiterDevices = array_merge($waiterDevices, );
+
                     if( !empty( $WaiterDevicesTokensArr ) )
                     {
                         foreach( $WaiterDevicesTokensArr as $token )
@@ -100,7 +101,6 @@ trait OrderStatus
 
             if( !empty( $waiterDevices ) )
             {
-                // $message    = "Your Order is #".$order->id." Ready for pickup";
                 $orderid    = $order->id;
                 return sendNotification($title, $message, $waiterDevices, $orderid);
             }
