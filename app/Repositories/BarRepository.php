@@ -66,6 +66,7 @@ class BarRepository extends BaseRepository
             $query->whereIn('status', [OrderSplit::PENDING, OrderSplit::DELAY_ORDER]);
         })
         ->where(['type'=> Order::ORDER])
+        ->whereIn('status', [Order::PENDNIG])
         ->orderBy('id','desc')
         ->get();
 
@@ -84,6 +85,7 @@ class BarRepository extends BaseRepository
         ->whereHas('order_split_drink', function($query){
             $query->where('status', OrderSplit::ACCEPTED);
         })
+        ->whereIn('status', [Order::ACCEPTED])
         ->orderBy('orders.remaining_date','asc')
         ->orderByDesc('orders.id')
         ->get();
@@ -454,6 +456,11 @@ class BarRepository extends BaseRepository
      */
     public function updateBarAcceptedDelayStatus(int $status, int $apply_time, Order $order, array $user_tokens)
     {
+        if( $order->status === Order::CUSTOMER_CANCELED )
+        {
+            throw new GeneralException('Order is already cancelled by customer.');
+        }
+
         if($status == OrderSplit::DELAY_ORDER || $status == OrderSplit::ACCEPTED)
         {
             if( isset($apply_time) && $apply_time > 0 )
