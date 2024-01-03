@@ -201,7 +201,7 @@ class User extends Authenticatable
      */
     public function getQrImageAttribute(): string
     {
-        return isset($this->cus_qr_code_img) ? asset('customer_qr/'.$this->cus_qr_code_img) : '';
+        return isset($this->cus_qr_code_img) ? asset('storage/customer_qr/'.$this->cus_qr_code_img) : '';
     }
 
     /**
