@@ -206,7 +206,7 @@ class UserRepository extends BaseRepository
                 $qr_code_image = QrCode::size(500)
                     ->format('png')
                     ->backgroundColor(139,149,255,0)
-                    ->generate($qr_url . '?user_id = '.$user->id, public_path("customer_qr/qrcode_$user->id.png"));
+                    ->generate($qr_url . '?user_id='.$user->id, public_path("customer_qr/qrcode_$user->id.png"));
 
 
                 $imageName = "qrcode_$user->id.png";
@@ -308,7 +308,7 @@ class UserRepository extends BaseRepository
                 $qr_code_image = QrCode::size(500)
                     ->format('png')
                     ->backgroundColor(139,149,255,0)
-                    ->generate($qr_url . '?user_id = '.$user->id, public_path("customer_qr/qrcode_$user->id.png"));
+                    ->generate($qr_url . '?user_id='.$user->id, public_path("customer_qr/qrcode_$user->id.png"));
 
 
                 $imageName = "qrcode_$user->id.png";
