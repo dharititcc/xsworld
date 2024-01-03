@@ -200,6 +200,10 @@ class UserRepository extends BaseRepository
             }
             if( $data['user_type'] == User::CUSTOMER )
             {
+                //Create Folder & give permission
+                $path = storage_path("app/public/customer_qr");
+                !is_dir($path) &&
+                    mkdir($path, 0777, true);
                 // verification email send and send verification code
                 event(new RegisterEvent($user));
                 $qr_url = URL::current();
@@ -304,6 +308,10 @@ class UserRepository extends BaseRepository
             }
             if( $data['user_type'] == User::CUSTOMER )
             {
+                //Create Folder & give permission
+                $path = storage_path("app/public/customer_qr");
+                !is_dir($path) &&
+                    mkdir($path, 0777, true);
                 $qr_url = URL::current();
                 $qr_code_image = QrCode::size(500)
                     ->format('png')

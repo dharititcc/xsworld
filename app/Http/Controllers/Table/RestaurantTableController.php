@@ -59,9 +59,9 @@ class RestaurantTableController extends Controller
         ]);
         $qr_url = URL::current();
 
-        // $path = storage_path("images/qrcode_$table->id.png");
-        // !is_dir($path) &&
-        //     mkdir($path, 0777, true);
+        $path = storage_path("app/public/images");
+        !is_dir($path) &&
+            mkdir($path, 0777, true);
             
         $qr_code_image = QrCode::size(500)
             ->format('png')
