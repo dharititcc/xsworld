@@ -27,7 +27,9 @@ trait OrderStatus
                 if( isset( $order->restaurant_table_id ) )
                 {
                     // update waiter status to Ready for collection
-                    $order->update(['waiter_status' => Order::READY_FOR_COLLECTION]);
+                    $order->update(['waiter_status' => Order::READY_FOR_COLLECTION, 'status' => Order::COMPLETED]);
+
+                    // capture charge if order is from customer
                 }
             }
 
@@ -41,7 +43,7 @@ trait OrderStatus
                 if( isset( $order->restaurant_table_id ) )
                 {
                     // update waiter status to Ready for collection
-                    $order->update(['waiter_status' => Order::CURRENTLY_BEING_SERVED]);
+                    $order->update(['waiter_status' => Order::CURRENTLY_BEING_SERVED, 'status' => Order::CONFIRM_PICKUP]);
                 }
             }
         }
