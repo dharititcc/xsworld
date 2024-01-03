@@ -418,19 +418,6 @@ trait OrderFlow
         $order->refresh();
         $order->loadMissing(['items']);
 
-        $text               = $order->restaurant->name. ' is processing your order';
-        $title              = $text;
-        $message            = "Your Order is #".$order->id." placed";
-        $orderid            = $order->id;
-        $send_notification  = sendNotification($title,$message,$devices,$orderid);
-
-        $bartitle           = "Order is placed by Customer";
-        $barmessage         = "Order is #".$order->id." placed by customer";
-        $bardevices         = $pickup_point_id ? $order->pickup_point_user->devices()->pluck('fcm_token')->toArray() : [];
-        if(!empty( $bardevices )) {
-            $bar_notification   = sendNotification($bartitle,$barmessage,$bardevices,$orderid);
-        }
-
         // send notification to waiter if table order
         if( isset( $table_id ) )
         {
@@ -480,6 +467,19 @@ trait OrderFlow
                 $waiterMessage  = "Order is #{$order->id} placed by customer";
                 sendNotification($waiterTitle, $waiterMessage, $waiterDevices, $orderid);
             }
+        }
+
+        $text               = $order->restaurant->name. ' is processing your order';
+        $title              = $text;
+        $message            = "Your Order is #".$order->id." placed";
+        $orderid            = $order->id;
+        $send_notification  = sendNotification($title,$message,$devices,$orderid);
+
+        $bartitle           = "Order is placed by Customer";
+        $barmessage         = "Order is #".$order->id." placed by customer";
+        $bardevices         = $pickup_point_id ? $order->pickup_point_user->devices()->pluck('fcm_token')->toArray() : [];
+        if(!empty( $bardevices )) {
+            $bar_notification   = sendNotification($bartitle,$barmessage,$bardevices,$orderid);
         }
 
         return $order;
