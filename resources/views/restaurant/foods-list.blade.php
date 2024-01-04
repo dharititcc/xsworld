@@ -177,7 +177,7 @@
                             </div>
                             <div class="form-group">
                                 <a href={{ route('restaurants.SampleFile') }}>Sample file</a>
-                                <input type="file" id="upload_data" name="upload_data" class="form-control" accept=".xlsx,.xls," placeholder="Upload drinks data">
+                                <input type="file" id="upload_data" name="upload_data" class="form-control" accept=".xlsx,.xls," placeholder="Upload drinks data" required>
                             </div>
                         </div>
                     </div>
