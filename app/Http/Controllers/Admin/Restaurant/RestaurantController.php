@@ -41,17 +41,28 @@ class RestaurantController extends Controller
      */
     public function store(RestaurantRequest $request)
     {
-        $currency_id = Currency::select('id')->where('id',$request->country_id)->first();
+        $currency_id    = Currency::select('id')->where('id',$request->country_id)->first();
+        $country_name   = Country::select('name')->where('id',$request->country_id)->first();
         $address = [];
         if(!isset($request->latitude) && !isset($request->longitude))
         {
             $address = addressLatLong($request->street1 . $request->city . $request->state);
-            $country_name = Country::select('name')->where('id',$request->country_id)->first();
+            
             if($country_name->name != $address['country'])
             {
                 throw new GeneralException('Please Select Proper Country');
             }
-        }
+        } 
+        // else {
+        //     $latitude           = $request->latitude;
+        //     $longitude          = $request->longitude;
+        //     $formatted_latlng   = trim($latitude).','.trim($longitude);
+        //     $address = addressLatLong(null, 1,$formatted_latlng);
+        // }
+        // if($country_name->name != $address['country'])
+        // {
+        //     throw new GeneralException('Please Select Proper Country');
+        // }
 
         $addressInfo    = [
             'name'          => $request->name,

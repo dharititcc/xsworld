@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\DB;
 use Lab404\Impersonate\Models\Impersonate;
 use Laravel\Sanctum\HasApiTokens;
 
@@ -284,6 +285,84 @@ class User extends Authenticatable
         }
 
         return $name;
+    }
+
+
+    public function getMembershipAttribute()
+    {
+        //$user replace by $this
+
+        // quarter logic goes here
+        $previousQuarter    = get_previous_quarter();
+        $currentQuarter     = get_current_quarter();
+        // get previous quarter points
+        $previousQuarterOrders = $this->credit_points()->where(function ($query) use ($previousQuarter) {
+            $query->whereRaw(DB::raw("DATE(created_at) BETWEEN '{$previousQuarter['start_date']}' AND '{$previousQuarter['end_date']}'"));
+        })
+        ->get();
+        // echo common()->formatSql($previousQuarterOrders);die;
+        // get current quarter points
+        $currentQuarterOrders = $this->credit_points()->where(function ($query) use ($currentQuarter) {
+            $query->whereRaw(DB::raw("DATE(created_at) BETWEEN '{$currentQuarter['start_date']}' AND '{$currentQuarter['end_date']}'"));
+        })
+        ->get();
+        // echo common()->formatSql($currentQuarterOrders);die;
+        $previousQuarterPoints  = $previousQuarterOrders->sum('points');
+        $currentQuarterPoints   = $currentQuarterOrders->sum('points');
+
+        if($currentQuarterPoints == 0)
+        {
+            $currentQuarterPoints = $this->points;
+        }
+
+        $points = [
+            'current_points' => round($currentQuarterPoints),
+            'previous_points'=> round($previousQuarterPoints)
+        ];
+
+        if ($points['current_points'] > $points['previous_points']) {
+            // current quarter membership
+            $membership = $this->MembershipType($points['current_points']);
+            
+        } else {
+            // previous quarter membership
+            $membership = $this->MembershipType($points['previous_points']);
+        }
+        return $membership;
+    }
+
+
+    public function MembershipType(float $points): array
+    {
+        $membership         = config('xs.bronze_membership');
+        $membership_level   = config('xs.bronze_level');
+                        //      >0                                   <=100
+        if ($points > config('xs.bronze')[0] && $points <= config('xs.bronze')[1]) {
+            $membership         = config('xs.bronze_membership');
+            $membership_level   = config('xs.bronze_level');
+            //                  >100                                 <=200
+        } else if ($points > config('xs.bronze')[1] && $points <= config('xs.silver')[1]) {
+            $membership         = config('xs.silver_membership');
+            $membership_level   = config('xs.silver_level');
+            //                  >200                                 <=300
+        } else if ($points > config('xs.silver')[1] && $points <= config('xs.gold')[1]) {
+            $membership         = config('xs.gold_membership');
+            $membership_level   = config('xs.gold_level');
+            //                  >300
+        } else if ($points > config('xs.gold')[1]) {
+            $membership         = config('xs.platinum_membership');
+            $membership_level   = config('xs.platinum_level');
+        } else {
+            $membership         = config('xs.bronze_membership');
+            $membership_level   = config('xs.bronze_level');
+        }
+
+        return $membership = [
+            'membership'        => $membership,
+            'membership_level'  => $membership_level,
+        ];
+
+        // return $membership;
     }
 
     /**
