@@ -1121,7 +1121,8 @@ class OrderRepository extends BaseRepository
                     // {
                     //     return $query->where('updated_at', '<', $lastHour);
                     // })
-                    ->distinct('orders.user_id')
+                    ->groupBy('orders.user_id')
+                    // ->distinct('orders.user_id')
                     ->get();
         return $venueList;
         // dd($venueList);
