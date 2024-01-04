@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers\Admin\Restaurant;
 
+use App\Exceptions\GeneralException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\RestaurantRequest;
 use App\Http\Requests\RestaurantUpdateRequest;
+use App\Models\Country;
 use App\Models\Currency;
 use App\Models\Restaurant;
 use App\Models\User;
@@ -44,6 +46,11 @@ class RestaurantController extends Controller
         if(!isset($request->latitude) && !isset($request->longitude))
         {
             $address = addressLatLong($request->street1 . $request->city . $request->state);
+            $country_name = Country::select('name')->where('id',$request->country_id)->first();
+            if($country_name->name != $address['country'])
+            {
+                throw new GeneralException('Please Select Proper Country');
+            }
         }
 
         $addressInfo    = [
@@ -160,6 +167,11 @@ class RestaurantController extends Controller
         if(!isset($request->latitude) && !isset($request->longitude))
         {
             $address = addressLatLong($request->street1 .  $request->city . $request->state);
+            $country_name = Country::select('name')->where('id',$request->country_id)->first();
+            if($country_name->name != $address['country'])
+            {
+                throw new GeneralException('Please Select Proper Country');
+            }
         }
 
         $addressInfo    = [
