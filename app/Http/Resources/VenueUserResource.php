@@ -2,6 +2,8 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Order;
+use App\Repositories\OrderRepository;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -22,7 +24,7 @@ class VenueUserResource extends JsonResource
             'email'                 => $this->user->email,
             'username'              => $this->user->username,
             'profile_img'           => $this->user->image,
-            'member_id'             => $this->user->id,
+            'membership'             => $this->user->membership['membership'],
             'credit_amount'         => (float) $this->credit_amount ?? 0,
             'points'                => $this->points ?? 0,
             // 'restaurant'            => $this->restaurant,

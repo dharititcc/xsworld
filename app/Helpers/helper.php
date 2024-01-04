@@ -439,32 +439,59 @@ if (! function_exists('referralCode')) {
 }
 
 if(!function_exists('addressLatLong')) {
-    function addressLatLong($address) {
+    function addressLatLong($address,$isLatLong = 0,$formatted_latlng=0) {
         $GOOGLE_API_KEY = env('GOOGLE_API_KEY');
-        // Formatted address 
-        $formatted_address = str_replace(' ', '+', $address); 
+        $key = 0;
+
+        if($isLatLong === 1) {
+            // Get geo data from Google Maps API by lat lng 
+            $geocodeFromAddr = file_get_contents("https://maps.googleapis.com/maps/api/geocode/json?latlng={$formatted_latlng}&key={$GOOGLE_API_KEY}");
+            $key = 7;
+            // Decode JSON data returned by API 
+            $apiResponse = json_decode($geocodeFromAddr);
+            if(empty($apiResponse->results))
+            {
+                throw new GeneralException('Please Enter Proper Address');
+            } else {
+                // Retrieve latitude and longitude from API data 
+                $latitude  = $apiResponse->results[0]->geometry->location->lat;
+                $longitude = $apiResponse->results[0]->geometry->location->lng;
+                $country   = $apiResponse->results[0]->address_components[$key]->long_name;
         
-        // Get geo data from Google Maps API by address 
-        $geocodeFromAddr = file_get_contents("https://maps.googleapis.com/maps/api/geocode/json?address={$formatted_address}&key={$GOOGLE_API_KEY}"); 
+                $latlong = [
+                    'latitude'  => $latitude,
+                    'longitude' => $longitude,
+                    'country'   => $country
+                ];
         
-        // Decode JSON data returned by API 
-        $apiResponse = json_decode($geocodeFromAddr);
-        if(empty($apiResponse->results))
-        {
-            throw new GeneralException('Please Enter Proper Address');
+                return $latlong;
+            }
         } else {
-            // Retrieve latitude and longitude from API data 
-            $latitude  = $apiResponse->results[0]->geometry->location->lat;  
-            $longitude = $apiResponse->results[0]->geometry->location->lng;
-            $country   = $apiResponse->results[0]->address_components[4]->long_name;
-    
-            $latlong = [
-                'latitude'  => $latitude,
-                'longitude' => $longitude,
-                'country'   => $country
-            ];
-    
-            return $latlong;
+            // Formatted address 
+            $formatted_address = str_replace(' ', '+', $address);
+            // Get geo data from Google Maps API by address 
+            $geocodeFromAddr = file_get_contents("https://maps.googleapis.com/maps/api/geocode/json?address={$formatted_address}&key={$GOOGLE_API_KEY}"); 
+            $key = 4;
+            
+            // Decode JSON data returned by API 
+            $apiResponse = json_decode($geocodeFromAddr);
+            if(empty($apiResponse->results))
+            {
+                throw new GeneralException('Please Enter Proper Address');
+            } else {
+                // Retrieve latitude and longitude from API data 
+                $latitude  = $apiResponse->results[0]->geometry->location->lat;  
+                $longitude = $apiResponse->results[0]->geometry->location->lng;
+                $country   = $apiResponse->results[0]->address_components[$key]->long_name;
+        
+                $latlong = [
+                    'latitude'  => $latitude,
+                    'longitude' => $longitude,
+                    'country'   => $country
+                ];
+        
+                return $latlong;
+            }
         }
     }
 }
