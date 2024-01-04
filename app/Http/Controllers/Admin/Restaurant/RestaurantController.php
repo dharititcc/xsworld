@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers\Admin\Restaurant;
 
+use App\Exceptions\GeneralException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\RestaurantRequest;
 use App\Http\Requests\RestaurantUpdateRequest;
+use App\Models\Country;
 use App\Models\Currency;
 use App\Models\Restaurant;
 use App\Models\User;
@@ -39,10 +41,28 @@ class RestaurantController extends Controller
      */
     public function store(RestaurantRequest $request)
     {
-        // dd($request->all());
-        $currency_id = Currency::select('id')->where('id',$request->country_id)->first();
-
-        $address = addressLatLong($request->street1 . $request->city . $request->state);
+        $currency_id    = Currency::select('id')->where('id',$request->country_id)->first();
+        $country_name   = Country::select('name')->where('id',$request->country_id)->first();
+        $address = [];
+        if(!isset($request->latitude) && !isset($request->longitude))
+        {
+            $address = addressLatLong($request->street1 . $request->city . $request->state);
+            
+            if($country_name->name != $address['country'])
+            {
+                throw new GeneralException('Please Select Proper Country');
+            }
+        } 
+        // else {
+        //     $latitude           = $request->latitude;
+        //     $longitude          = $request->longitude;
+        //     $formatted_latlng   = trim($latitude).','.trim($longitude);
+        //     $address = addressLatLong(null, 1,$formatted_latlng);
+        // }
+        // if($country_name->name != $address['country'])
+        // {
+        //     throw new GeneralException('Please Select Proper Country');
+        // }
 
         $addressInfo    = [
             'name'          => $request->name,
@@ -54,8 +74,8 @@ class RestaurantController extends Controller
             'state'         => $request->state,
             'city'          => $request->city,
             'postcode'      => $request->postcode,
-            'latitude'      => $address['latitude'],
-            'longitude'     => $address['longitude'],
+            'latitude'      => isset($request->latitude) ? $request->latitude : $address['latitude'],
+            'longitude'     => isset($request->longitude) ? $request->longitude : $address['longitude'],
             'type'          => $request->type,
             'start_date'    => isset($request->start_date) ? $request->start_date : null,
             'end_date'      => isset($request->end_date) ? $request->end_date : null,
@@ -119,6 +139,8 @@ class RestaurantController extends Controller
             'state'             => $restaurant['state'],
             'type'              => $restaurant['type'],
             'country_id'        => $restaurant['country_id'],
+            'latitude'          => $restaurant['latitude'],
+            'longitude'         => $restaurant['longitude'],
             'image'             => $restaurant['attachment'] ? asset('storage/restaurants/'.$restaurant['attachment']['stored_name']) : '',
             'postcode'          => $restaurant['postcode'],
             'start_date'        => isset($restaurant['start_date']) ? $restaurant['start_date'] : '',
@@ -152,7 +174,16 @@ class RestaurantController extends Controller
     {
         
         $currency_id = Currency::select('id')->where('id', $request->country_id)->first();
-        $address = addressLatLong($request->street1 .  $request->city . $request->state);
+        $address = [];
+        if(!isset($request->latitude) && !isset($request->longitude))
+        {
+            $address = addressLatLong($request->street1 .  $request->city . $request->state);
+            $country_name = Country::select('name')->where('id',$request->country_id)->first();
+            if($country_name->name != $address['country'])
+            {
+                throw new GeneralException('Please Select Proper Country');
+            }
+        }
 
         $addressInfo    = [
             'name'          => $request->name,
@@ -163,8 +194,8 @@ class RestaurantController extends Controller
             'state'         => $request->state,
             'phone'         => $request->phone,
             'city'          => $request->city,
-            'latitude'      => $address['latitude'],
-            'longitude'     => $address['longitude'],
+            'latitude'      => isset($request->latitude) ? $request->latitude : $address['latitude'],
+            'longitude'     => isset($request->longitude) ? $request->longitude : $address['longitude'],
             'postcode'      => $request->postcode,
             'start_date'    => isset($request->start_date) ? $request->start_date : '',
             'end_date'      => isset($request->end_date) ? $request->end_date : '',

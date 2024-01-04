@@ -81,7 +81,7 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'v1', 'as' => 'api.v1.'], fun
         // {api/v1/placeorder}
         Route::post('/placeorder', 'OrderController@placeOrder')->name('placeorder');
         // {api/v1/venueList}
-        Route::post('/venueList', 'OrderController@venueList')->name('venueList');
+        Route::post('/UserList', 'OrderController@venueList')->name('venueList');
 
         // {api/v1/sendFriendRequest}
         Route::post('/sendFriendRequest', 'OrderController@sendFriendRequest')->name('sendFriendRequest');
