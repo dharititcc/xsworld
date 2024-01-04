@@ -345,7 +345,7 @@ class OrderController extends APIController
         $venueList  = $this->repository->venueUserList($input);
         if($venueList)
         {
-            return $this->respondSuccess('Order', VenueUserResource::collection($venueList));
+            return $this->respondSuccess('Venue User List', VenueUserResource::collection($venueList));
         }
     }
 
