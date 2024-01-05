@@ -354,6 +354,13 @@ trait OrderFlow
         $devices            = $user->devices()->pluck('fcm_token')->toArray();
         $pickup_point_id    = '';
 
+        $getcusTbl = CustomerTable::where('user_id' , $user->id)->where('restaurant_table_id', $table_id)->first();
+
+        if( isset( $getcusTbl->id ) )
+        {
+            throw new GeneralException('Already table allocated to this Customer');
+        }
+
         if($order->order_category_type == Order::BOTH) {
             $pickup_point_id    = $this->randomPickpickPoint($order);
         } else {

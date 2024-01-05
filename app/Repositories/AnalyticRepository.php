@@ -60,7 +60,7 @@ class AnalyticRepository extends BaseRepository
         ->item()
         ->where(function($query)
         {
-            $query->whereRaw("DATE(`order_items`.`created_at`) BETWEEN '2023-11-28' AND '2023-12-13'");
+            $query->whereRaw("DATE(`order_items`.`created_at`) BETWEEN '2023-12-25' AND '2024-01-05'");
         })
         ->groupBy(['order_items.restaurant_item_id', 'order_items.variation_id'])
         // echo common()->formatSql($items);die;
@@ -77,7 +77,7 @@ class AnalyticRepository extends BaseRepository
     public function getChart(Restaurant $restaurant): array
     {
         $restaurant->loadMissing(['sub_categories']);
-        $dates      = get_dates_period('2023-12-08', '2023-12-15');
+        $dates      = get_dates_period('2023-12-25', '2024-01-05');
         $newDates   = array_map(function($date)
         {
             return $date->format('Y-m-d');
