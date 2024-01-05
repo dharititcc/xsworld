@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CustomerTable;
 use App\Models\Day;
 use App\Models\Order;
 use App\Models\RestaurantTable;
@@ -56,12 +57,12 @@ class HomeController extends Controller
                 return redirect()->route('home');
             }
 
-            $res_tables = RestaurantTable::where('restaurant_id',$restaurant->id)->get();
-            $active_tbl = RestaurantTable::where(['restaurant_id' => $restaurant->id, 'status' =>RestaurantTable::ACTIVE])->count();
+            $key_insights   = $this->repository->getKeyInsights($restaurant->id);
+
             $days = Day::all();
             $restaurant->loadMissing(['restaurant_time']);
             $res_times = $restaurant->restaurant_time;
-            return view('restaurant.dashboard',compact('res_tables','active_tbl','days','res_times'));
+            return view('restaurant.dashboard',compact('key_insights','days','res_times'));
         }
 
         // 404
@@ -88,15 +89,12 @@ class HomeController extends Controller
             ->make(true);
         }
 
-        // Total table and active tables
-        $res_tables = RestaurantTable::where('restaurant_id',$restaurant->id)->get();
-        $active_tbl = RestaurantTable::where(['restaurant_id' => $restaurant->id, 'status' =>RestaurantTable::ACTIVE])->count();
+        $key_insights   = $this->repository->getKeyInsights($restaurant->id);
 
         return view('analytics.index', [
             'categories'    => $categories,
             'restaurant'    => $restaurant,
-            'res_tables'    => $res_tables,
-            'active_tbl'    => $active_tbl
+            'key_insights'  => $key_insights
         ]);
     }
 
