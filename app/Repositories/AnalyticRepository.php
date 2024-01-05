@@ -1,9 +1,11 @@
 <?php namespace App\Repositories;
 
+use App\Models\CustomerTable;
 use App\Models\Item;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Restaurant;
+use App\Models\RestaurantTable;
 use App\Repositories\BaseRepository;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
@@ -135,5 +137,22 @@ class AnalyticRepository extends BaseRepository
             $newData[$kCat]['data']     = $total;
         }
         return ['data' => $newData, 'dates' => $newDates];
+    }
+
+    public function getKeyInsights($id)
+    {
+        $total_tbl           = RestaurantTable::where('restaurant_id',$id)->get();
+        $active_tbl          = RestaurantTable::where(['restaurant_id' => $id, 'status' =>RestaurantTable::ACTIVE])->count();
+        $restaurant_table    = RestaurantTable::where('restaurant_id',$id)->pluck('id')->toArray();
+        $occupied_tbl        = CustomerTable::whereIn('restaurant_table_id',$restaurant_table)
+                                        ->groupBy('waiter_id') ->select('id', DB::raw('count(*) as count'))
+                                        ->get();
+        $keyInsights = [
+            'total_tables'  => $total_tbl->count(),
+            'active_tbl'    => $active_tbl,
+            'occupied_tbl'  => $occupied_tbl->count()
+        ];
+
+        return $keyInsights;
     }
 }
