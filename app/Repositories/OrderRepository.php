@@ -1152,8 +1152,8 @@ class OrderRepository extends BaseRepository
         $FriendRequest = FriendRequest::create([
             'user_id'   => $data['user_id'],
             'friend_id' => $auth_user->id,
-
         ]);
+        return $FriendRequest;
     }
 
     /**
