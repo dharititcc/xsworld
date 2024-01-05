@@ -364,6 +364,13 @@ class OrderController extends APIController
         return $this->respondSuccess('Friend Request Accepted Successfully', $friendStatus);
     }
 
+
+    public function pendingFriendRequest(Request $request)
+    {
+        $friends    = $this->repository->pendingFriendReq($request->all());
+        return $this->respondSuccess('New Friend Request Successfully', $friends);
+    }
+
     public function printOrder(Request $request,Order $order)
     {
         // $order      = $order->id;
