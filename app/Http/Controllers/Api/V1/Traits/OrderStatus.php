@@ -3,6 +3,7 @@
 use App\Exceptions\GeneralException;
 use App\Models\Order;
 use App\Models\OrderSplit;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 trait OrderStatus
@@ -25,6 +26,9 @@ trait OrderStatus
         {
             if( $order->order_split_food->update(['status' => $status]) )
             {
+                $order->update([
+                    'completion_date'   => Carbon::now()
+                ]);
                 if( isset( $order->restaurant_table_id ) )
                 {
                     // update waiter status to Ready for collection
@@ -41,6 +45,9 @@ trait OrderStatus
         {
             if( $order->order_split_food->update(['status' => OrderSplit::KITCHEN_CONFIRM]) )
             {
+                $order->update([
+                    'served_date'   => Carbon::now()
+                ]);
                 if( isset( $order->restaurant_table_id ) )
                 {
                     // update waiter status to Ready for collection
