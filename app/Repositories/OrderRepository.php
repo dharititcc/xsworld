@@ -780,11 +780,14 @@ class OrderRepository extends BaseRepository
             'restaurant.kitchens'
         ]);
 
-        $openKitchens = $order->restautant->kitchens()->where('status', 1)->count();
-
-        if( $openKitchens === 0 )
+        if( isset($order->order_split_food->id) )
         {
-            throw new GeneralException('You cannot able to place order as kitchen is closed.');
+            $openKitchens = $order->restautant->kitchens()->where('status', 1)->count();
+
+            if( $openKitchens === 0 )
+            {
+                throw new GeneralException('You cannot able to place order as kitchen is closed.');
+            }
         }
 
         $pickup_point_id = '';
