@@ -364,11 +364,14 @@ trait OrderFlow
             'restaurant.kitchens'
         ]);
 
-        $openKitchens = $order->restautant->kitchens()->where('status', 1)->count();
-
-        if( $openKitchens === 0 )
+        if( $order->order_split_food )
         {
-            throw new GeneralException('You cannot able to place order as kitchen is closed.');
+            $openKitchens = $order->restautant->kitchens()->where('status', 1)->get();
+
+            if( $openKitchens->count() === 0 )
+            {
+                throw new GeneralException('You cannot able to place order as kitchen is closed.');
+            }
         }
 
         if( isset( $getcusTbl->id ) )
@@ -492,33 +495,6 @@ trait OrderFlow
                 $waiterTitle    = 'New order placed by customer';
                 $waiterMessage  = "Order is #{$order->id} placed by customer";
                 sendNotification($waiterTitle, $waiterMessage, $waiterDevices, $order->id);
-            }
-
-            // send notification to kitchens of the restaurant
-            $kitchenDevices = [];
-            $kitchens = $order->restaurant->kitchens()->with(['user', 'user.devices'])->get();
-
-            if( $kitchens->count() )
-            {
-                foreach( $kitchens as $kitchen )
-                {
-                    $kitchenDevicesTokensArr = $kitchen->user->devices->pluck('fcm_token')->toArray();
-                    // $waiterDevices = array_merge($waiterDevices, );
-                    if( !empty( $kitchenDevicesTokensArr ) )
-                    {
-                        foreach( $kitchenDevicesTokensArr as $token )
-                        {
-                            $kitchenDevices[] = $token;
-                        }
-                    }
-                }
-            }
-
-            if( !empty( $kitchenDevices ) )
-            {
-                $kitchenTitle    = 'New order placed by customer';
-                $kitchenMessage  = "Order is #{$order->id} placed by customer";
-                sendNotification($kitchenTitle, $kitchenMessage, $kitchenDevices, $order->id);
             }
         }
 
