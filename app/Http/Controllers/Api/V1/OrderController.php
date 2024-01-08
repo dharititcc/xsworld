@@ -386,4 +386,11 @@ class OrderController extends APIController
             'restaurant'    => $restaurant
         ]);
     }
+
+    public function giftCredits(Request $request)
+    {
+        $input  = $request->all();
+        $giftCredits    = $this->repository->giftCreditSend($input);
+        return $this->respondSuccess("Gift Credit Send successfully");
+    }
 }
