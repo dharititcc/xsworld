@@ -1187,11 +1187,12 @@ class OrderRepository extends BaseRepository
      */
     public function printOrder($data)
     {
-        $order  = Order::where(['id' => $data])->first();
+        $order          = Order::where(['id' => $data])->first();
+        $restaurant     = $order->restaurant->owners()->first();
 
         // Generate PDF
         $pdf        = app('dompdf.wrapper');
-        $pdf->loadView('pdf.index',compact('order'));
+        $pdf->loadView('pdf.index',compact('order','restaurant'));
         $filename   = 'invoice_'.$order->id.'.pdf';
         $content    = $pdf->output();
         $file       = storage_path("app/public/order_pdf");

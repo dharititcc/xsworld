@@ -208,7 +208,7 @@
                 </p>
             </div>
         </div><!--End InvoiceBot-->
-        <button id="printPageButton" onclick="window.print()">Print</button>
+        {{-- <button id="printPageButton" onclick="window.print()">Print</button> --}}
     </div><!--End Invoice-->
 </body>
 </html>
