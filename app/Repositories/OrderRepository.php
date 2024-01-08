@@ -773,6 +773,24 @@ class OrderRepository extends BaseRepository
         $kitchens          = $order->restaurant->kitchens;
         $kitchen_token     = [];
 
+        // load missing order items
+        $order->loadMissing([
+            'order_split_food',
+            'order_split_drink',
+            'restaurant',
+            'restaurant.kitchens'
+        ]);
+
+        if( isset($order->order_split_food->id) )
+        {
+            $openKitchens = $order->restaurant->kitchens()->where('status', 1)->get();
+
+            if( $openKitchens->count() === 0 )
+            {
+                throw new GeneralException('You cannot able to place order as kitchen is closed.');
+            }
+        }
+
         $pickup_point_id = '';
         if($order->order_category_type == Order::DRINK || $order->order_category_type == Order::BOTH)
         {

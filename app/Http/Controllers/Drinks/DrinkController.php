@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Input;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\DrinkImport;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
 class DrinkController extends Controller
@@ -398,18 +399,23 @@ class DrinkController extends Controller
 
             foreach($data[0] as $row)
             {
+                $category = Category::where([
+                    'name' => $row[2],
+                    'restaurant_id' => $restaurant->id
+                    ])->first();
+
                 $drinkArr = [
                     "name"                  => $row[1],
-                    "category_id"           => $row[3],
-                    "description"           => $row[9],
-                    "price"                 => $row[4],
-                    "country_of_origin"     => $row[6],
-                    "ingredients"           => $row[5],
-                    "type_of_drink"         => $row[8],
-                    "year_of_production"    => $row[7],
+                    "category_id"           => $category->id,
+                    "description"           => $row[8],
+                    "price"                 => $row[3],
+                    "country_of_origin"     => $row[5],
+                    "ingredients"           => $row[4],
+                    "type_of_drink"         => $row[7],
+                    "year_of_production"    => $row[6],
+                    "is_available"          => $row[9],
                     "is_featured"           => $row[10],
-                    "is_available"          => $row[11],
-                    "is_variable"           => $row[12],
+                    "is_variable"           => $row[11],
                     "type"                  => RestaurantItem::ITEM,
                     "restaurant_id"         => $restaurant->id,
                     "created_at"            => Carbon::now(),
