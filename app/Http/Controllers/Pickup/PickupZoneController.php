@@ -21,7 +21,7 @@ class PickupZoneController extends Controller
     public function index()
     {
         $restaurant = session('restaurant');
-        // dd($restaurant);
+
         $food_pickup_points     = RestaurantPickupPoint::with(['attachment'])->restaurantget($restaurant->id)->type(1)->get();
         $drink_pickup_points    = RestaurantPickupPoint::with(['attachment'])->restaurantget($restaurant->id)->type(2)->get();
         $waiters                = User::select('id','first_name','username','email')->where('user_type',User::WAITER)->get();
@@ -30,6 +30,7 @@ class PickupZoneController extends Controller
         $active_waiter          = CustomerTable::with(['restaurant_table','waiter'])
                                     ->whereNotNull('waiter_id')
                                     ->whereIn('restaurant_table_id',$restaurant_table)
+                                    ->groupBy('waiter_id')
                                     ->get();
 
         return view('pickup.index',[

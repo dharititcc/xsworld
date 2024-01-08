@@ -27,6 +27,7 @@ class OrderListResource extends JsonResource
             'total'                     => number_format($this->total, 2),
             'status'                    => $this->order_status,
             'status_no'                 => (int) $this->status,
+            'isFoodAvl'                 => $this->order_category_type,
             'apply_time'                => $this->apply_time ?? 0,
             'created_date'              => Carbon::parse($this->created_at)->toDateTimeString(),
             'progress'                  => $this->progress ?? 0,

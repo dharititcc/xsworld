@@ -35,6 +35,8 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'v1', 'as' => 'api.v1.'], fun
         Route::post('resend-link', 'AuthController@resendLink')->name('auth.resendLink');
         // {api/v1/users/password/reset}
         Route::patch('password/reset', 'AuthController@resetPassword')->name('user.resetPassword');
+
+        Route::get('/print-order/{order}', 'OrderController@printOrder')->name('order.print');
     });
 
     Route::group(['prefix' => 'auth', 'middleware' => 'auth:api'], function ()
@@ -79,12 +81,15 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'v1', 'as' => 'api.v1.'], fun
         // {api/v1/placeorder}
         Route::post('/placeorder', 'OrderController@placeOrder')->name('placeorder');
         // {api/v1/venueList}
-        Route::post('/venueList', 'OrderController@venueList')->name('venueList');
+        Route::post('/user-list', 'OrderController@venueList')->name('venueList');
 
-        // {api/v1/sendFriendRequest}
-        Route::post('/sendFriendRequest', 'OrderController@sendFriendRequest')->name('sendFriendRequest');
+        // {api/v1/send-friend-request}
+        Route::post('/send-friend-request', 'OrderController@sendFriendRequest')->name('sendFriendRequest');
 
-        Route::post('/friendRequestStatus', 'OrderController@friendRequestStatus')->name('friendRequestStatus');
+        Route::post('/friend-request-status', 'OrderController@friendRequestStatus')->name('friendRequestStatus');
+        Route::post('/my-friend-request', 'OrderController@pendingFriendRequest')->name('pendingFriendRequest');
+
+        Route::post('/gift-credit-send', 'OrderController@giftCredits')->name('giftCredits');
 
         // {api/v1/orderstatusupdate}
         Route::post('/orderstatusupdate', 'OrderController@orderStatusUpdate')->name('orderStatusUpdate');

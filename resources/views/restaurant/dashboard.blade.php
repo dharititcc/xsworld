@@ -43,11 +43,7 @@
                             <div class="padbox">
                                 <table width="100%" class="opening-time">
                                     <tbody>
-                                    <tr><th>Total Tables</th><td> {{$res_tables->count()}}</td></tr>
-                                    <tr><th>Active Tables</th><td> {{$active_tbl}}</td></tr>
-                                    <tr><th>Occupied Tables</th><td>2 </td></tr>
-                                    <tr><th>Reserved Tables</th><td> 0</td></tr>
-                                    <tr><th>Staffed Tables</th><td> 2</td></tr>
+                                        @include('restaurant.key_insights')
                                 </tbody></table>
                             </div>
                         </div>

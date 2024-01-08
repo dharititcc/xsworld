@@ -763,10 +763,8 @@ class OrderRepository extends BaseRepository
      */
     function placeOrderwaiter(array $data): Order
     {
-        // $card_id            = $data['card_id'] ?? null;
         $credit_amount      = $data['credit_amount'] ? $data['credit_amount'] : null;
         $amount             = $data['amount'] ? $data['amount'] : null;
-        // $pickup_point_id    = $data['pickup_point_id'] ? RestaurantPickupPoint::findOrFail($data['pickup_point_id']) : null;
         $table_id           = $data['table_id'] ? $data['table_id'] : null;
         $order              = Order::findOrFail($data['order_id']);
         $user               = $order->user_id ? User::findOrFail($order->user_id) : auth()->user();
@@ -846,7 +844,6 @@ class OrderRepository extends BaseRepository
                     'credit_amount'         => $credit_amount,
                     'restaurant_table_id'   => ($table_id) ? $table_id : null,
                     'amount'                => $amount,
-                    'status'                => Order::CURRENTLY_BEING_PREPARED,
                 ];
                 $remaingAmount = $userCreditAmountBalance - $credit_amount;
 
@@ -859,7 +856,7 @@ class OrderRepository extends BaseRepository
 
         $order->refresh();
         $order->loadMissing(['items']);
-        // 
+        //
 
         //customer notify
         $title              = "place new order";
@@ -868,14 +865,11 @@ class OrderRepository extends BaseRepository
         if(!empty($devices)) {
             $send_notification  = sendNotification($title,$message,$devices,$orderid);
         }
-        
 
         //kitchen notify
         $kitchentitle           = "place new order";
         $kitchenmessage         = "New Order has been #".$order->id." placed";
-        // $kitchendevices         = $order->user->devices()->pluck('fcm_token')->toArray();
         $kitchen_notification   = sendNotification($kitchentitle,$kitchenmessage,$kitchen_token,$orderid);
-        // dd($kitchen_notification);
 
         return $order;
     }
@@ -1059,7 +1053,7 @@ class OrderRepository extends BaseRepository
 
     public function customerTable(array $data)
     {
-        $getcusTbl = CustomerTable::where('user_id' , $data['user_id'])->where('restaurant_table_id',$data['restaurant_table_id'])->first();
+        $getcusTbl = CustomerTable::where('user_id' , $data['user_id'])->where('restaurant_table_id', $data['restaurant_table_id'])->first();
         if($getcusTbl) {
             throw new GeneralException('Already table allocated to this Customer');
             $customerTbl = 0;
@@ -1070,7 +1064,6 @@ class OrderRepository extends BaseRepository
             ],[
                 'waiter_id'     => $data['waiter_id']
             ]);
-            // $customerTbl = CustomerTable::create($data);
         }
 
         Order::where('type',Order::ORDER)->where('status', Order::PENDNIG)->where('restaurant_table_id',$data['restaurant_table_id'])->where('user_id', $data['user_id'])->update(['waiter_id' => $data['waiter_id']]);
@@ -1082,13 +1075,12 @@ class OrderRepository extends BaseRepository
     {
         if($data['order_id'])
         {
-            // Order::where('id',$data['order_id'])->update(['status' => Order::COMPLETED]);
             $order = Order::findOrFail($data['order_id']);
             if($order->type == Order::CART)
             {
                 $order->delete();
             }
-    
+
             if($order->id){
                 // update order to completed
                 $order->update(['waiter_status' => Order::COMPLETED, 'status' => Order::CONFIRM_PICKUP]);
@@ -1121,7 +1113,8 @@ class OrderRepository extends BaseRepository
                     // {
                     //     return $query->where('updated_at', '<', $lastHour);
                     // })
-                    ->distinct('orders.user_id')
+                    ->groupBy('orders.user_id')
+                    // ->distinct('orders.user_id')
                     ->get();
         return $venueList;
         // dd($venueList);
@@ -1131,16 +1124,19 @@ class OrderRepository extends BaseRepository
     public function sendFriendReq(array $data)
     {
         $auth_user = auth()->user();
-        $FriendRequest = FriendRequest::create([
-            'user_id'   => $auth_user->id,
-            'friend_id' => $data['user_id'],
-        ]);
+        $friend = User::find($data['user_id']);
+        $auth_user->friends()->attach($friend->id);
+        // $FriendRequest = FriendRequest::create([
+        //     'user_id'   => $auth_user->id,
+        //     'friend_id' => $data['user_id'],
+        // ]);
 
-        $FriendRequest = FriendRequest::create([
-            'user_id'   => $data['user_id'],
-            'friend_id' => $auth_user->id,
-        ]);
-        return $FriendRequest;
+        // $FriendRequest = FriendRequest::create([
+        //     'user_id'   => $data['user_id'],
+        //     'friend_id' => $auth_user->id,
+        // ]);
+        $friends = $auth_user->friends;
+        return $friends;
     }
 
     public function friendRequestStatus(array $data)
@@ -1148,11 +1144,38 @@ class OrderRepository extends BaseRepository
         $auth_user = auth()->user();
         // FriendRequest::where('user_id', $data['user_id'])->where('friend_id', $data['user_id'])
         //SELECT * FROM `friend_requests` where ( user_id = 3 OR friend_id = 3) AND ( user_id = 18 OR friend_id = 18 );
-        $FriendRequest = FriendRequest::create([
-            'user_id'   => $data['user_id'],
-            'friend_id' => $auth_user->id,
+        // $FriendRequest = FriendRequest::create([
+        //     'user_id'   => $data['user_id'],
+        //     'friend_id' => $auth_user->id,
+        // ]);
+        $FriendRequest = FriendRequest::where('user_id', $data['user_id'])->where('friend_id', $auth_user->id,)->update(['status' => 1]);
+        return $FriendRequest;
+    }
 
-        ]);
+    public function pendingFriendReq(array $data)
+    {
+        $auth_user = auth()->user();
+        if($data['request'] === 1) {
+            //my-new req show approve btn req get
+            $FriendRequest =  FriendRequest::where('friend_id',$auth_user->id)->where('status' , 0);
+        } else {
+            //my-new req show sent btn  req sent
+           $FriendRequest =  FriendRequest::where('user_id',$auth_user->id)->where('status' , 0);
+        }
+        $FriendRequest = $FriendRequest->get();
+        // FriendRequest::where('user_id', $data['user_id'])->where('friend_id', $data['user_id'])
+        //SELECT * FROM `friend_requests` where ( user_id = 3 OR friend_id = 3) AND ( user_id = 18 OR friend_id = 18 );
+        // $FriendRequest = FriendRequest::create([
+        //     'user_id'   => $data['user_id'],
+        //     'friend_id' => $auth_user->id,
+        // ]);
+        return $FriendRequest;
+    }
+
+    public function giftCreditSend(array $data)
+    {
+        $auth_user = auth()->user();
+        dd($auth_user );
     }
 
     /**
@@ -1164,20 +1187,22 @@ class OrderRepository extends BaseRepository
      */
     public function printOrder($data)
     {
-        $order  = Order::where(['id' => $data])->first();
+        $order          = Order::where(['id' => $data])->first();
+        $restaurant     = $order->restaurant->owners()->first();
 
         // Generate PDF
         $pdf        = app('dompdf.wrapper');
-        $pdf->loadView('pdf.index',compact('order'));
+        $pdf->loadView('pdf.index',compact('order','restaurant'));
         $filename   = 'invoice_'.$order->id.'.pdf';
         $content    = $pdf->output();
-        $file       = public_path('order_pdf/');
-        if (!file_exists($file)) {
-            mkdir($file, 0777, true);
-        }
+        $file       = storage_path("app/public/order_pdf");
+        !is_dir($file) &&
+        mkdir($file, 0777, true);
+        $filePath = 'public/order_pdf/' . $filename;
+
         //Upload PDF to storage folder
-        file_put_contents($file.$filename, $content);
-        $destinationPath = asset('order_pdf/').'/'.$filename;
+        Storage::put($filePath, $content);
+        $destinationPath = asset('storage/order_pdf/').'/'.$filename;
         return $destinationPath;
     }
 }

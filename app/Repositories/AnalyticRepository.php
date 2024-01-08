@@ -1,9 +1,11 @@
 <?php namespace App\Repositories;
 
+use App\Models\CustomerTable;
 use App\Models\Item;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Restaurant;
+use App\Models\RestaurantTable;
 use App\Repositories\BaseRepository;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
@@ -60,7 +62,7 @@ class AnalyticRepository extends BaseRepository
         ->item()
         ->where(function($query)
         {
-            $query->whereRaw("DATE(`order_items`.`created_at`) BETWEEN '2023-11-28' AND '2023-12-13'");
+            $query->whereRaw("DATE(`order_items`.`created_at`) BETWEEN '2023-12-25' AND '2024-01-05'");
         })
         ->groupBy(['order_items.restaurant_item_id', 'order_items.variation_id'])
         // echo common()->formatSql($items);die;
@@ -77,7 +79,7 @@ class AnalyticRepository extends BaseRepository
     public function getChart(Restaurant $restaurant): array
     {
         $restaurant->loadMissing(['sub_categories']);
-        $dates      = get_dates_period('2023-12-08', '2023-12-15');
+        $dates      = get_dates_period('2023-12-25', '2024-01-05');
         $newDates   = array_map(function($date)
         {
             return $date->format('Y-m-d');
@@ -135,5 +137,22 @@ class AnalyticRepository extends BaseRepository
             $newData[$kCat]['data']     = $total;
         }
         return ['data' => $newData, 'dates' => $newDates];
+    }
+
+    public function getKeyInsights($id)
+    {
+        $total_tbl           = RestaurantTable::where('restaurant_id',$id)->get();
+        $active_tbl          = RestaurantTable::where(['restaurant_id' => $id, 'status' =>RestaurantTable::ACTIVE])->count();
+        $restaurant_table    = RestaurantTable::where('restaurant_id',$id)->pluck('id')->toArray();
+        $occupied_tbl        = CustomerTable::whereIn('restaurant_table_id',$restaurant_table)
+                                        ->groupBy('waiter_id') ->select('id', DB::raw('count(*) as count'))
+                                        ->get();
+        $keyInsights = [
+            'total_tables'  => $total_tbl->count(),
+            'active_tbl'    => $active_tbl,
+            'occupied_tbl'  => $occupied_tbl->count()
+        ];
+
+        return $keyInsights;
     }
 }

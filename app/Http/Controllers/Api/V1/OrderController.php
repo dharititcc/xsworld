@@ -345,7 +345,7 @@ class OrderController extends APIController
         $venueList  = $this->repository->venueUserList($input);
         if($venueList)
         {
-            return $this->respondSuccess('Order', VenueUserResource::collection($venueList));
+            return $this->respondSuccess('Venue User List', VenueUserResource::collection($venueList));
         }
     }
 
@@ -360,8 +360,15 @@ class OrderController extends APIController
     public function friendRequestStatus(Request $request)
     {
         $input  = $request->all();
-        dd($input);
         $friendStatus   =   $this->repository->friendRequestStatus($input);
+        return $this->respondSuccess('Friend Request Accepted Successfully', $friendStatus);
+    }
+
+
+    public function pendingFriendRequest(Request $request)
+    {
+        $friends    = $this->repository->pendingFriendReq($request->all());
+        return $this->respondSuccess('New Friend Request Successfully', $friends);
     }
 
     public function printOrder(Request $request,Order $order)
@@ -371,7 +378,19 @@ class OrderController extends APIController
         $data = [
             'url'   => $printOrder,
         ];
-
         return $this->respondSuccess('PDF generated', $data);
+
+        // $restaurant  = $order->restaurant->owners()->first();
+        // return view('pdf.index', [
+        //     'order'         => $order,
+        //     'restaurant'    => $restaurant
+        // ]);
+    }
+
+    public function giftCredits(Request $request)
+    {
+        $input  = $request->all();
+        $giftCredits    = $this->repository->giftCreditSend($input);
+        return $this->respondSuccess("Gift Credit Send successfully");
     }
 }

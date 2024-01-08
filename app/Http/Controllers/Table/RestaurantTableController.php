@@ -3,13 +3,30 @@
 namespace App\Http\Controllers\Table;
 
 use App\Http\Controllers\Controller;
+use App\Models\CustomerTable;
 use App\Models\RestaurantTable;
+use App\Repositories\AnalyticRepository;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\URL;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class RestaurantTableController extends Controller
 {
+    /** @var \App\Repositories\AnalyticRepository $repository */
+    protected $repository;
+
+    /**
+     * Method __construct
+     *
+     * @param \App\Repositories\AnalyticRepository $repository [explicite description]
+     *
+     * @return void
+     */
+    public function __construct(AnalyticRepository $repository)
+    {
+        $this->repository = $repository;
+    }
     /**
      * Method index
      *
@@ -18,9 +35,15 @@ class RestaurantTableController extends Controller
     public function index()
     {
         $restaurant = session('restaurant');
+
+        $key_insights   = $this->repository->getKeyInsights($restaurant->id);
+
         $res_tables = RestaurantTable::where('restaurant_id',$restaurant->id)->get();
-        $active_tbl = RestaurantTable::where(['restaurant_id' => $restaurant->id, 'status' =>RestaurantTable::ACTIVE])->count();
-        return view('table.index',compact('res_tables','active_tbl'));
+
+        return view('table.index', [
+            'key_insights'  => $key_insights,
+            'res_tables'    => $res_tables
+        ]);
     }
 
     /**
