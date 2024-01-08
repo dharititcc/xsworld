@@ -364,7 +364,7 @@ trait OrderFlow
             'restaurant.kitchens'
         ]);
 
-        if( $order->order_split_food )
+        if( isset($order->order_split_food->id) )
         {
             $openKitchens = $order->restautant->kitchens()->where('status', 1)->get();
 
