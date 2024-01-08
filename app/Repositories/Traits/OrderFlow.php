@@ -13,6 +13,7 @@ use App\Models\RestaurantPickupPoint;
 use App\Models\User;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Storage;
 
 trait OrderFlow
 {
@@ -425,6 +426,9 @@ trait OrderFlow
         $order->refresh();
         $order->loadMissing(['items']);
 
+        // Generate PDF
+        $this->generatePDF($order);
+
         // send notification to waiter if table order
         if( isset( $table_id ) )
         {
@@ -623,5 +627,31 @@ trait OrderFlow
 
         $query = $this->getKitchenOrdersQuery($kitchen, OrderSplit::KITCHEN_CONFIRM, 'desc');
         return $query->get();
+    }
+
+    /**
+     * Method generatePDF
+     *
+     * @param Order $order [explicite description]
+     *
+     * @return mixed
+     */
+    public function generatePDF(Order $order)
+    {
+        $restaurant  = $order->restaurant->owners()->first();
+        $pdf        = app('dompdf.wrapper');
+        $pdf->loadView('pdf.index',compact('order','restaurant'));
+        $filename   = 'invoice_'.$order->id.'.pdf';
+        $content    = $pdf->output();
+        $file       = storage_path("app/public/order_pdf");
+        !is_dir($file) &&
+        mkdir($file, 0777, true);
+        $filePath = 'public/order_pdf/' . $filename;
+
+        //Upload PDF to storage folder
+        Storage::put($filePath, $content);
+        $destinationPath = asset('storage/order_pdf/').'/'.$filename;
+
+        return true;
     }
 }
