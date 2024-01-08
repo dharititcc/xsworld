@@ -357,6 +357,20 @@ trait OrderFlow
 
         $getcusTbl = CustomerTable::where('user_id' , $user->id)->where('restaurant_table_id', $table_id)->first();
 
+        // load missing order items
+        $order->loadMissing([
+            'order_splits',
+            'restaurant',
+            'restaurant.kitchens'
+        ]);
+
+        $openKitchens = $order->restautant->kitchens()->where('status', 1)->count();
+
+        if( $openKitchens === 0 )
+        {
+            throw new GeneralException('You cannot able to place order as kitchen is closed.');
+        }
+
         if( isset( $getcusTbl->id ) )
         {
             throw new GeneralException('Already table allocated to this Customer');
