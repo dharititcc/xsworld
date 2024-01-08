@@ -350,29 +350,27 @@ trait OrderFlow
         $credit_amount      = $data['credit_amount'] ? $data['credit_amount'] : null;
         $amount             = $data['amount'] ? $data['amount'] : null;
         $table_id           = $data['table_id'] ? $data['table_id'] : null;
-        $order              = Order::with(['restaurant'])->findOrFail($data['order_id']);
+        $order              = Order::with([
+            'restaurant',
+            'restaurant.kitchens',
+            'order_split_food',
+            'order_split_drink'
+        ])->findOrFail($data['order_id']);
         $user               = $order->user_id ? User::findOrFail($order->user_id) : auth()->user();
         $devices            = $user->devices()->pluck('fcm_token')->toArray();
         $pickup_point_id    = '';
 
         $getcusTbl = CustomerTable::where('user_id' , $user->id)->where('restaurant_table_id', $table_id)->first();
 
-        // load missing order items
-        $order->loadMissing([
-            'order_splits',
-            'restaurant',
-            'restaurant.kitchens'
-        ]);
+        // if( isset($order->order_split_food->id) )
+        // {
+        //     $openKitchens = $order->restautant->kitchens()->where('status', 1)->get();
 
-        if( isset($order->order_split_food->id) )
-        {
-            $openKitchens = $order->restautant->kitchens()->where('status', 1)->get();
-
-            if( $openKitchens->count() === 0 )
-            {
-                throw new GeneralException('You cannot able to place order as kitchen is closed.');
-            }
-        }
+        //     if( $openKitchens->count() === 0 )
+        //     {
+        //         throw new GeneralException('You cannot able to place order as kitchen is closed.');
+        //     }
+        // }
 
         if( isset( $getcusTbl->id ) )
         {
@@ -498,17 +496,52 @@ trait OrderFlow
             }
         }
 
+        // send notification to kitchens of the restaurant if order is food
+        if( isset($order->order_split_food->id) )
+        {
+            $kitchenDevices = [];
+            $kitchens = $order->restaurant->kitchens()->with(['user', 'user.devices'])->get();
+
+            if( $kitchens->count() )
+            {
+                foreach( $kitchens as $kitchen )
+                {
+                    $kitchenDevicesTokensArr = $kitchen->user->devices->pluck('fcm_token')->toArray();
+                    // $waiterDevices = array_merge($waiterDevices, );
+                    if( !empty( $kitchenDevicesTokensArr ) )
+                    {
+                        foreach( $kitchenDevicesTokensArr as $token )
+                        {
+                            $kitchenDevices[] = $token;
+                        }
+                    }
+                }
+            }
+
+            if( !empty( $kitchenDevices ) )
+            {
+                $kitchenTitle    = 'New order placed by customer';
+                $kitchenMessage  = "Order is #{$order->id} placed by customer";
+                sendNotification($kitchenTitle, $kitchenMessage, $kitchenDevices, $order->id);
+            }
+        }
+
+        // customer notification
         $text               = $order->restaurant->name. ' is processing your order';
         $title              = $text;
         $message            = "Your Order is #".$order->id." placed";
         $orderid            = $order->id;
         $send_notification  = sendNotification($title,$message,$devices,$orderid);
 
-        $bartitle           = "Order is placed by Customer";
-        $barmessage         = "Order is #".$order->id." placed by customer";
-        $bardevices         = $pickup_point_id ? $order->pickup_point_user->devices()->pluck('fcm_token')->toArray() : [];
-        if(!empty( $bardevices )) {
-            $bar_notification   = sendNotification($bartitle,$barmessage,$bardevices,$orderid);
+        // send notification to bar of the restaurant if order is drink
+        if( isset($order->order_split_drink->id) )
+        {
+            $bartitle           = "Order is placed by Customer";
+            $barmessage         = "Order is #".$order->id." placed by customer";
+            $bardevices         = $pickup_point_id ? $order->pickup_point_user->devices()->pluck('fcm_token')->toArray() : [];
+            if(!empty( $bardevices )) {
+                $bar_notification   = sendNotification($bartitle,$barmessage,$bardevices,$orderid);
+            }
         }
 
         return $order;
