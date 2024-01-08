@@ -51,6 +51,7 @@ class OrderResource extends JsonResource
             'charge_id'                 => $this->charge_id ?? '',
             'total_items'               => $this->order_items->sum('quantity'),
             'rated'                     => $this->reviews->count(),
+            'pdf_url'                   => $this->pdf_url,
             'order_items'               => isset($this->order_items) ? OrderItemResource::collection($this->order_items) : [],
             'pickup_points'             => PickUpPointResource::collection($this->restaurant->restaurant_pickup_points),
             // 'card_details'              => isset($this->carddetails) ? $this->carddetails : new stdClass
