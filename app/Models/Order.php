@@ -457,4 +457,15 @@ class Order extends Model
     {
         return $this->hasOne(OrderSplit::class, 'order_id', 'id')->where('is_food', 1);
     }
+
+    /**
+     * Method getPdfUrlAttribute
+     *
+     * @return string
+     */
+    public function getPdfUrlAttribute(): string
+    {
+        return isset($this->id) ? asset('storage/order_pdf/invoice_'.$this->id.'.pdf') : '';
+    }
+
 }

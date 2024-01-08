@@ -856,7 +856,9 @@ class OrderRepository extends BaseRepository
 
         $order->refresh();
         $order->loadMissing(['items']);
-        //
+
+        // Generate PDF
+        $this->generatePDF($order);
 
         //customer notify
         $title              = "place new order";
