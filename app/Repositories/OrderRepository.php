@@ -1172,6 +1172,12 @@ class OrderRepository extends BaseRepository
         return $FriendRequest;
     }
 
+    public function giftCreditSend(array $data)
+    {
+        $auth_user = auth()->user();
+        dd($auth_user );
+    }
+
     /**
      * Method printOrder
      *
