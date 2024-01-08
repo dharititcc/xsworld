@@ -781,15 +781,15 @@ class OrderRepository extends BaseRepository
             'restaurant.kitchens'
         ]);
 
-        // if( isset($order->order_split_food->id) )
-        // {
-        //     $openKitchens = $order->restautant->kitchens()->where('status', 1)->count();
+        if( isset($order->order_split_food->id) )
+        {
+            $openKitchens = $order->restaurant->kitchens()->where('status', 1)->get();
 
-        //     if( $openKitchens === 0 )
-        //     {
-        //         throw new GeneralException('You cannot able to place order as kitchen is closed.');
-        //     }
-        // }
+            if( $openKitchens->count() === 0 )
+            {
+                throw new GeneralException('You cannot able to place order as kitchen is closed.');
+            }
+        }
 
         $pickup_point_id = '';
         if($order->order_category_type == Order::DRINK || $order->order_category_type == Order::BOTH)

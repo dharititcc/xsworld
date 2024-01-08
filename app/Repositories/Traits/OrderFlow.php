@@ -362,15 +362,14 @@ trait OrderFlow
 
         $getcusTbl = CustomerTable::where('user_id' , $user->id)->where('restaurant_table_id', $table_id)->first();
 
-        // if( isset($order->order_split_food->id) )
-        // {
-        //     $openKitchens = $order->restautant->kitchens()->where('status', 1)->get();
-
-        //     if( $openKitchens->count() === 0 )
-        //     {
-        //         throw new GeneralException('You cannot able to place order as kitchen is closed.');
-        //     }
-        // }
+        if( isset($order->order_split_food->id) )
+        {
+            $openKitchens = $order->restaurant->kitchens()->where('status', 1)->get();
+            if( $openKitchens->count() === 0 )
+            {
+                throw new GeneralException('You cannot able to place order as kitchen is closed.');
+            }
+        }
 
         if( isset( $getcusTbl->id ) )
         {
