@@ -1175,7 +1175,28 @@ class OrderRepository extends BaseRepository
     public function giftCreditSend(array $data)
     {
         $auth_user = auth()->user();
-        dd($auth_user );
+        $receiverUser = User::find($data['user_id']);
+        $receiverCreditAmount   = $receiverUser->credit_amount;
+        $authUserCreditAmount   = $auth_user->credit_amount;
+        $amount                 = $data['amount'];
+        $paymentArr = [
+            'amount'        => number_format($amount, 2) * 100,
+            'currency'      => $auth_user->orders->restaurant->currency->code,
+            'customer'      => $auth_user->stripe_customer_id,
+            'capture'       => false,
+            'source'        => $data['card_id'],
+            'description'   => $auth_user->id
+        ];
+        $stripe         = new Stripe();
+        $payment_data   = $stripe->createCharge($paymentArr);
+        
+        $addAmountToReceiver    = number_format($receiverCreditAmount + $amount, 2);
+        // $deductAmountToAuthUser = number_format($authUserCreditAmount - $amount, 2);
+        $receiverUser->credit_amount = $addAmountToReceiver;
+        $receiverUser->save();
+        // $auth_user->credit_amount    = $deductAmountToAuthUser;
+        // $auth_user->save();
+        return $auth_user;
     }
 
     /**

@@ -262,6 +262,7 @@
                 $("#categorypopup").validate({
                 rules: {
                     name: {
+                        required: true,
                         maxlength: 20
                     },
                     image: {
@@ -291,6 +292,7 @@
             $("#categorypopup").validate({
                 rules: {
                     name: {
+                        required: true,
                         maxlength: 20
                     },
                     message: {
