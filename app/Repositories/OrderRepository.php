@@ -1117,9 +1117,9 @@ class OrderRepository extends BaseRepository
                         "
                             (
                                 CASE
-                                    WHEN COALESCE(previous_qua, 0) > COALESCE(curr_qua, 0) THEN COALESCE(previous_qua, 0)
+                                    WHEN COALESCE(previous_qua, 0) > COALESCE(curr_qua, 0) THEN CAST(COALESCE(previous_qua, 0) AS DECIMAL(20,2))
                                     ELSE
-                                    COALESCE(curr_qua, 0)
+                                    CAST(COALESCE(curr_qua, 0) AS DECIMAL(20,2))
                                 END
                             ) AS current_membership_points
                         ")
@@ -1131,7 +1131,6 @@ class OrderRepository extends BaseRepository
                         'orders.restaurant'
                     ])
                     ->leftJoin('orders', 'orders.user_id', '=', 'users.id')
-                    // ->leftJoin('credit_points_histories', 'credit_points_histories.user_id', '=', 'users.id')
                     ->leftJoin(DB::raw(
                     "
                         (
@@ -1165,7 +1164,7 @@ class OrderRepository extends BaseRepository
                     ->where('type', Order::ORDER)
                     ->groupBy('orders.user_id')
                     ->get();
-
+                    // echo common()->formatSql($venueList);die;
         if( $membershipLevel > 0 )
         {
             switch($membershipLevel)
