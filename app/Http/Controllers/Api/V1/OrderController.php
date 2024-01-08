@@ -373,17 +373,17 @@ class OrderController extends APIController
 
     public function printOrder(Request $request,Order $order)
     {
-        // $order      = $order->id;
-        // $printOrder = $this->repository->printOrder($order);
-        // $data = [
-        //     'url'   => $printOrder,
-        // ];
-        // return $this->respondSuccess('PDF generated', $data);
+        $order      = $order->id;
+        $printOrder = $this->repository->printOrder($order);
+        $data = [
+            'url'   => $printOrder,
+        ];
+        return $this->respondSuccess('PDF generated', $data);
 
-        $restaurant  = $order->restaurant->owners()->first();
-        return view('pdf.index', [
-            'order'         => $order,
-            'restaurant'    => $restaurant
-        ]);
+        // $restaurant  = $order->restaurant->owners()->first();
+        // return view('pdf.index', [
+        //     'order'         => $order,
+        //     'restaurant'    => $restaurant
+        // ]);
     }
 }
