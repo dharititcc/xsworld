@@ -1102,24 +1102,99 @@ class OrderRepository extends BaseRepository
 
     public function venueUserList(array $data)
     {
-        $now        = Carbon::now(); //$now->format('Y-m-d H:i:s')
-        $lastHour   = Carbon::now()->subHour(1);
-        // dd($now);
-        // dd($lastHour);
-        // dd($data['restaurant_id']);
-        $venueList  = Order::where('restaurant_id',$data['restaurant_id'])
+        $now            = Carbon::now();
+        $lastHour       = Carbon::now()->subHour(1);
+        $membershipLevel= isset( $data['membership_level'] ) ? $data['membership_level'] : 0;
+
+        // quarter logic goes here
+        $previousQuarter    = get_previous_quarter();
+        $currentQuarter     = get_current_quarter();
+
+        $venueList  = User::query()
+                    ->select([
+                        '*',
+                        DB::raw("COALESCE(previous_qua, 0) AS previous_points"),
+                        DB::raw("COALESCE(curr_qua, 0) AS current_points"),
+                        DB::raw(
+                        "
+                            (
+                                CASE
+                                    WHEN COALESCE(previous_qua, 0) > COALESCE(curr_qua, 0) THEN COALESCE(previous_qua, 0)
+                                    ELSE
+                                    COALESCE(curr_qua, 0)
+                                END
+                            ) AS current_membership_points
+                        ")
+                    ])
+                    ->with([
+                        'attachment',
+                        'orders',
+                        'credit_points',
+                        'orders.restaurant'
+                    ])
+                    ->leftJoin('orders', 'orders.user_id', '=', 'users.id')
+                    // ->leftJoin('credit_points_histories', 'credit_points_histories.user_id', '=', 'users.id')
+                    ->leftJoin(DB::raw(
+                    "
+                        (
+                            SELECT
+                                SUM(points) AS previous_qua,
+                                user_id
+                            FROM credit_points_histories
+                            WHERE DATE(created_at) BETWEEN '{$previousQuarter['start_date']}' AND '{$previousQuarter['end_date']}'
+                        ) AS `previous_quarter`
+                    "
+                    ), function($join)
+                    {
+                        $join->on('users.id', '=', 'previous_quarter.user_id');
+                    })
+                    ->leftJoin(DB::raw(
+                    "
+                        (
+                            SELECT
+                                SUM(points) AS curr_qua,
+                                user_id
+                            FROM credit_points_histories
+                            WHERE DATE(created_at) BETWEEN '{$currentQuarter['start_date']}' AND '{$currentQuarter['end_date']}'
+                        ) AS `current_quarter`
+                    "
+                    ), function($join)
+                    {
+                        $join->on('users.id', '=', 'current_quarter.user_id');
+                    })
+                    ->where('restaurant_id', $data['restaurant_id'])
                     ->whereNotIn('status', [Order::CUSTOMER_CANCELED])
-                    ->where('type',Order::ORDER)
-                    // ->where('updated_at',)
-                    // ->where('updated_at', function($query) use($lastHour)
-                    // {
-                    //     return $query->where('updated_at', '<', $lastHour);
-                    // })
+                    ->where('type', Order::ORDER)
                     ->groupBy('orders.user_id')
-                    // ->distinct('orders.user_id')
                     ->get();
-        return $venueList;
-        // dd($venueList);
+
+        if( $membershipLevel > 0 )
+        {
+            switch($membershipLevel)
+            {
+                case config('xs.bronze_level'):// 0-100
+                    $filtered = $venueList->whereBetween('current_membership_points', [0,100]);
+                    break;
+                case config('xs.silver_level')://101-200
+                    $filtered = $venueList->whereBetween('current_membership_points', [101,200]);
+                    break;
+                case config('xs.gold_level')://201-300
+                    $filtered = $venueList->whereBetween('current_membership_points', [201,300]);
+                    break;
+                case config('xs.platinum_level')://>300
+                    $filtered = $venueList->where('current_membership_points', '>', 300);
+                    break;
+                default:
+                    $filtered = $venueList;
+                    break;
+            }
+        }
+        else
+        {
+            $filtered = $venueList;
+        }
+
+        return $filtered;
     }
 
 
