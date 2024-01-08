@@ -471,7 +471,7 @@ textarea.prd-desc.h-96{ height:96px;}
 .prd-variation .add-remove .bor-btn{ padding: 0.1em 0.8em;}
 .prd-variation .add-remove .bor-btn.minus {margin-left: 10px;}
 
-.item-box{ height: 100px; padding: 5px; font-size: 18px; text-align: center; display: flex; align-items: center; line-height: 1.2em; color: #fff; justify-content: center; position: relative;}
+.item-box{ min-height: 100px; padding: 5px; font-size: 18px; text-align: center; display: flex; align-items: center; line-height: 1.2em; color: #fff; justify-content: center; position: relative;}
 .item-box span{ font-size: 14px; display: block;}
 .item-box button{position: absolute; color: #ffffffd3; z-index: 1; background: transparent; border: none; right: 0; font-size: 1em; opacity: 0; padding:.1em;
   transition: .2s; top: 0;}
