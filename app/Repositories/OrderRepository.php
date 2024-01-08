@@ -1124,16 +1124,19 @@ class OrderRepository extends BaseRepository
     public function sendFriendReq(array $data)
     {
         $auth_user = auth()->user();
-        $FriendRequest = FriendRequest::create([
-            'user_id'   => $auth_user->id,
-            'friend_id' => $data['user_id'],
-        ]);
+        $friend = User::find($data['user_id']);
+        $auth_user->friends()->attach($friend->id);
+        // $FriendRequest = FriendRequest::create([
+        //     'user_id'   => $auth_user->id,
+        //     'friend_id' => $data['user_id'],
+        // ]);
 
-        $FriendRequest = FriendRequest::create([
-            'user_id'   => $data['user_id'],
-            'friend_id' => $auth_user->id,
-        ]);
-        return $FriendRequest;
+        // $FriendRequest = FriendRequest::create([
+        //     'user_id'   => $data['user_id'],
+        //     'friend_id' => $auth_user->id,
+        // ]);
+        $friends = $auth_user->friends;
+        return $friends;
     }
 
     public function friendRequestStatus(array $data)
@@ -1141,11 +1144,32 @@ class OrderRepository extends BaseRepository
         $auth_user = auth()->user();
         // FriendRequest::where('user_id', $data['user_id'])->where('friend_id', $data['user_id'])
         //SELECT * FROM `friend_requests` where ( user_id = 3 OR friend_id = 3) AND ( user_id = 18 OR friend_id = 18 );
-        $FriendRequest = FriendRequest::create([
-            'user_id'   => $data['user_id'],
-            'friend_id' => $auth_user->id,
+        // $FriendRequest = FriendRequest::create([
+        //     'user_id'   => $data['user_id'],
+        //     'friend_id' => $auth_user->id,
+        // ]);
+        $FriendRequest = FriendRequest::where('user_id', $data['user_id'])->where('friend_id', $auth_user->id,)->update(['status' => 1]);
+        return $FriendRequest;
+    }
 
-        ]);
+    public function pendingFriendReq(array $data)
+    {
+        $auth_user = auth()->user();
+        if($data['request'] === 1) {
+            //my-new req show approve btn req get
+            $FriendRequest =  FriendRequest::where('friend_id',$auth_user->id)->where('status' , 0);
+        } else {
+            //my-new req show sent btn  req sent
+           $FriendRequest =  FriendRequest::where('user_id',$auth_user->id)->where('status' , 0);
+        }
+        $FriendRequest = $FriendRequest->get();
+        // FriendRequest::where('user_id', $data['user_id'])->where('friend_id', $data['user_id'])
+        //SELECT * FROM `friend_requests` where ( user_id = 3 OR friend_id = 3) AND ( user_id = 18 OR friend_id = 18 );
+        // $FriendRequest = FriendRequest::create([
+        //     'user_id'   => $data['user_id'],
+        //     'friend_id' => $auth_user->id,
+        // ]);
+        return $FriendRequest;
     }
 
     /**
