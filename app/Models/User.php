@@ -409,4 +409,14 @@ class User extends Authenticatable
     {
         return $this->hasMany(CreditPointsHistory::class, 'user_id', 'id');
     }
+
+    /**
+     * Get all of the credit_points for the User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function friends(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class,'friendships','user_id','friend_id')->withTimestamps();
+    }
 }
