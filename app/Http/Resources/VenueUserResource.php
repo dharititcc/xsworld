@@ -18,14 +18,14 @@ class VenueUserResource extends JsonResource
     {
         // dd((double) round($this->restaurant->avg_review_rating,1));
         return [
-            'id'                    => $this->user->id,
-            'first_name'            => $this->user->first_name,
-            'last_name'             => $this->user->last_name,
-            'email'                 => $this->user->email,
-            'username'              => $this->user->username,
-            'profile_img'           => $this->user->image,
-            'membership'            => $this->user->membership['membership'],
-            'membership_level'      => $this->user->membership['membership_level'],
+            'id'                    => $this->id,
+            'first_name'            => $this->first_name,
+            'last_name'             => $this->last_name,
+            'email'                 => $this->email,
+            'username'              => $this->username,
+            'profile_img'           => $this->image,
+            'membership'            => $this->membership['membership'],
+            'membership_level'      => $this->membership['membership_level'],
             'credit_amount'         => (float) $this->credit_amount ?? 0,
             'points'                => $this->points ?? 0,
             // 'restaurant'            => $this->restaurant,
