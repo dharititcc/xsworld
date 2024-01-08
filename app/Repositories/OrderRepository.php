@@ -763,10 +763,8 @@ class OrderRepository extends BaseRepository
      */
     function placeOrderwaiter(array $data): Order
     {
-        // $card_id            = $data['card_id'] ?? null;
         $credit_amount      = $data['credit_amount'] ? $data['credit_amount'] : null;
         $amount             = $data['amount'] ? $data['amount'] : null;
-        // $pickup_point_id    = $data['pickup_point_id'] ? RestaurantPickupPoint::findOrFail($data['pickup_point_id']) : null;
         $table_id           = $data['table_id'] ? $data['table_id'] : null;
         $order              = Order::findOrFail($data['order_id']);
         $user               = $order->user_id ? User::findOrFail($order->user_id) : auth()->user();
@@ -846,7 +844,6 @@ class OrderRepository extends BaseRepository
                     'credit_amount'         => $credit_amount,
                     'restaurant_table_id'   => ($table_id) ? $table_id : null,
                     'amount'                => $amount,
-                    'status'                => Order::CURRENTLY_BEING_PREPARED,
                 ];
                 $remaingAmount = $userCreditAmountBalance - $credit_amount;
 
@@ -859,7 +856,7 @@ class OrderRepository extends BaseRepository
 
         $order->refresh();
         $order->loadMissing(['items']);
-        // 
+        //
 
         //customer notify
         $title              = "place new order";
@@ -868,14 +865,11 @@ class OrderRepository extends BaseRepository
         if(!empty($devices)) {
             $send_notification  = sendNotification($title,$message,$devices,$orderid);
         }
-        
 
         //kitchen notify
         $kitchentitle           = "place new order";
         $kitchenmessage         = "New Order has been #".$order->id." placed";
-        // $kitchendevices         = $order->user->devices()->pluck('fcm_token')->toArray();
         $kitchen_notification   = sendNotification($kitchentitle,$kitchenmessage,$kitchen_token,$orderid);
-        // dd($kitchen_notification);
 
         return $order;
     }
@@ -1059,7 +1053,7 @@ class OrderRepository extends BaseRepository
 
     public function customerTable(array $data)
     {
-        $getcusTbl = CustomerTable::where('user_id' , $data['user_id'])->where('restaurant_table_id',$data['restaurant_table_id'])->first();
+        $getcusTbl = CustomerTable::where('user_id' , $data['user_id'])->where('restaurant_table_id', $data['restaurant_table_id'])->first();
         if($getcusTbl) {
             throw new GeneralException('Already table allocated to this Customer');
             $customerTbl = 0;
@@ -1070,7 +1064,6 @@ class OrderRepository extends BaseRepository
             ],[
                 'waiter_id'     => $data['waiter_id']
             ]);
-            // $customerTbl = CustomerTable::create($data);
         }
 
         Order::where('type',Order::ORDER)->where('status', Order::PENDNIG)->where('restaurant_table_id',$data['restaurant_table_id'])->where('user_id', $data['user_id'])->update(['waiter_id' => $data['waiter_id']]);
@@ -1082,13 +1075,12 @@ class OrderRepository extends BaseRepository
     {
         if($data['order_id'])
         {
-            // Order::where('id',$data['order_id'])->update(['status' => Order::COMPLETED]);
             $order = Order::findOrFail($data['order_id']);
             if($order->type == Order::CART)
             {
                 $order->delete();
             }
-    
+
             if($order->id){
                 // update order to completed
                 $order->update(['waiter_status' => Order::COMPLETED, 'status' => Order::CONFIRM_PICKUP]);
