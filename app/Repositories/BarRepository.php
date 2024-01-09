@@ -413,7 +413,7 @@ class BarRepository extends BaseRepository
     public function updateBarCompletedStatus(Order $order, int $status, array $user_tokens)
     {
         $updateArr = [
-            // 'status'            => $status,
+            'status'            => $status,
             'completion_date'   => Carbon::now()->format('Y-m-d H:i:s'),
             'remaining_date'    => Carbon::now()
         ];
@@ -432,7 +432,6 @@ class BarRepository extends BaseRepository
             {
                 // update waiter status to Ready for collection
                 $updateArr['waiter_status'] = Order::READY_FOR_COLLECTION;
-                $updateArr['status']        = Order::COMPLETED;
             }
         }
 
