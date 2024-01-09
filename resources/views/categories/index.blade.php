@@ -109,7 +109,7 @@
                     <h2><span class="model_title">Add </span> Category</h2>
                 </div>
                 <div class="modal-body">
-                    <form name="addcategory" id="add_form_category" method="post" action="javascript:void(0)">
+                    <form name="addcategory" id="add_form_category" method="post" action="javascript:void(0)" enctype="multipart/form-data">
                         @csrf
                         <div style="min-height: 300px;">
                             <div class="form-group mb-4">
@@ -121,6 +121,11 @@
                                     <option value="">Food </option>
                                     <option value="">Drinks </option>
                                 </select>
+                            </div>
+                            <div class="form-group mb-4 featured-img grey-brd-box">
+                                <input id="upload" type="file" class="files" name="photo" accept="image/*" hidden />
+                                <label for="upload" class="lbl-upload"><span class="img-text"> Category Image</span> <i
+                                        class="icon-plus add-edit"></i></label>
                             </div>
                         </div>
                         <button class="bor-btn w-100 font-26" id="submitCatBtn" type="submit">Save</button>
@@ -221,11 +226,13 @@
                 $('#submitBtn').html('Please Wait...');
                 $("#submitBtn").attr("disabled", true);
 
-                var data = new FormData(),
-                    cat_name = $( ".cat_name option:selected" ).text();
+                var data    = new FormData(),
+                cat_name    = $( ".cat_name option:selected" ).text();
+                cat_photo   = $('#upload')[0];
+                photo   = cat_photo.files[0];
 
-                    console.log(cat_name);
                 data.append('name', cat_name);
+                data.append('photo', photo);
 
                 $.ajax({
                     url: moduleConfig.categoryName,
