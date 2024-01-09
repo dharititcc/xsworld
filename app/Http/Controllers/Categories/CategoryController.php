@@ -21,10 +21,12 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        $restaurant = session('restaurant');
-        $category = Category::whereNull('parent_id')->where('restaurant_id',$restaurant->id)->get();
+        $restaurant     = session('restaurant');
+        $category       = Category::whereNull('parent_id')->where('restaurant_id', $restaurant->id)->get();
+        $subcategories  = Category::whereNotNull('parent_id')->where('restaurant_id', $restaurant->id)->get();
         return view('categories.index',[
-            'categories' => $category
+            'categories' => $category,
+            'sub_categories' => $subcategories
         ]);
     }
 

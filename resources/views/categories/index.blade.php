@@ -122,13 +122,13 @@
                                     <option value="">Drinks </option>
                                 </select>
                             </div>
-                            <div class="form-group mb-4 featured-img grey-brd-box">
-                                <input id="upload" type="file" class="files" name="photo" accept="image/*" hidden />
-                                <label for="upload" class="lbl-upload"><span class="img-text"> Category Image</span> <i
-                                        class="icon-plus add-edit"></i></label>
+                            <div class="grey-brd-box custom-upload image_box">
+                                <input id="upload" type="file" class="parent_category" name="image" accept="image/*" hidden />
+                                <label for="upload"><span> Add Category Feature Image (This can be changed).</span> <i
+                                        class="icon-plus"></i></label>
                             </div>
                         </div>
-                        <button class="bor-btn w-100 font-26" id="submitCatBtn" type="submit">Save</button>
+                        <button class="bor-btn w-100 font-26 mt-4" id="submitCatBtn" type="submit">Save</button>
                     </form>
                 </div>
             </div>
