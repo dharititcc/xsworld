@@ -98,6 +98,10 @@ class CategoryController extends Controller
             'restaurant_id' => $restaurant->id,
             'name'          => $request->get('name'),
         ]);
+        if ($request->hasFile('photo'))
+        {
+            $this->upload($request->file('photo'), $newCategory);
+        }
         return $newCategory->refresh();
     }
 
