@@ -113,7 +113,7 @@ class AddonsController extends Controller
             'name'          =>  $addon->name,
             'price'         =>  $addon->price,
             'categories'    =>  $addon_categories,
-            'image'         =>  $addon->attachment ?? asset('storage/addons/'.$addon->attachment->stored_name),
+            // 'image'         =>  $addon->attachment ?? asset('storage/addons/'.$addon->attachment->stored_name),
             'restaurant_id' =>  $addon->restaurant_id,
         ];
         return response()->json([
