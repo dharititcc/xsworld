@@ -456,7 +456,24 @@ if(!function_exists('addressLatLong')) {
                 // Retrieve latitude and longitude from API data 
                 $latitude  = $apiResponse->results[0]->geometry->location->lat;
                 $longitude = $apiResponse->results[0]->geometry->location->lng;
-                $country   = $apiResponse->results[0]->address_components[$key]->long_name;
+                // $country   = $apiResponse->results[0]->address_components[$key]->long_name;
+
+                foreach($apiResponse->results[0]->address_components as $countryName)
+                {
+                    // dd($apiResponse->results[0]->address_components);
+                    if(strlen($countryName->short_name) == 2)
+                    {
+                        foreach($countryName->types as $type)
+                        {
+                            if($type == "country")
+                            {
+                                $country   = $countryName->long_name;
+                                break;
+                            }
+                        }
+                        
+                    }
+                }
         
                 $latlong = [
                     'latitude'  => $latitude,
@@ -471,7 +488,6 @@ if(!function_exists('addressLatLong')) {
             $formatted_address = str_replace(' ', '+', $address);
             // Get geo data from Google Maps API by address 
             $geocodeFromAddr = file_get_contents("https://maps.googleapis.com/maps/api/geocode/json?address={$formatted_address}&key={$GOOGLE_API_KEY}"); 
-            $key = 4;
             
             // Decode JSON data returned by API 
             $apiResponse = json_decode($geocodeFromAddr);
@@ -482,8 +498,23 @@ if(!function_exists('addressLatLong')) {
                 // Retrieve latitude and longitude from API data 
                 $latitude  = $apiResponse->results[0]->geometry->location->lat;  
                 $longitude = $apiResponse->results[0]->geometry->location->lng;
-                $country   = $apiResponse->results[0]->address_components[$key]->long_name;
-        
+                foreach($apiResponse->results[0]->address_components as $countryName)
+                {
+                    // dd($apiResponse->results[0]->address_components);
+                    if(strlen($countryName->short_name) == 2)
+                    {
+                        foreach($countryName->types as $type)
+                        {
+                            if($type == "country")
+                            {
+                                $country   = $countryName->long_name;
+                                break;
+                            }
+                        }
+                        
+                    }
+                }
+                
                 $latlong = [
                     'latitude'  => $latitude,
                     'longitude' => $longitude,
