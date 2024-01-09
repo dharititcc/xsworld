@@ -223,7 +223,7 @@ trait OrderFlow
         $newOrder->refresh();
 
         if($order['restaurant_table_id']) {
-            CustomerTable::where('user_id' , $user->id)->where('restaurant_table_id',$order['restaurant_table_id'])->update(['order_id' => $newOrder->id]);
+            CustomerTable::where('user_id' , $user->id)->where('restaurant_table_id',$order['restaurant_table_id'])->whereNull('order_id')->update(['order_id' => $newOrder->id]);
         }
 
         return $this->checkSameRestaurantOrder($user, $newOrder, $orderItems);
@@ -580,12 +580,12 @@ trait OrderFlow
      * Method getKitchenOrdersQuery
      *
      * @param User $kitchen [explicite description]
-     * @param int $status [explicite description]
+     * @param mixed $status [explicite description]
      * @param string $sort [explicite description]
      *
      * @return Builder
      */
-    public function getKitchenOrdersQuery(User $kitchen, int $status, string $sort = 'asc'): Builder
+    public function getKitchenOrdersQuery(User $kitchen, $status, string $sort = 'asc'): Builder
     {
         return $query = Order::query()
                         ->with(
@@ -642,12 +642,13 @@ trait OrderFlow
      */
     public function getCompletedKitchenOrders(): Collection
     {
+
         $kitchen = auth()->user();
 
         // load restaurant relationship
         $kitchen->loadMissing(['restaurant_kitchen']);
 
-        $query = $this->getKitchenOrdersQuery($kitchen, OrderSplit::KITCHEN_CONFIRM, 'desc');
+        $query = $this->getKitchenOrdersQuery($kitchen, [OrderSplit::KITCHEN_CONFIRM, OrderSplit::KITCHEN_CANCELED], 'desc');
         return $query->get();
     }
 

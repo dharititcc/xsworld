@@ -42,6 +42,7 @@ class Order extends Model
     // Kitchen status
     const READYFORPICKUP                = 11;
     const KITCHEN_CONFIRM               = 12;
+    const KITCHEN_CANCELED              = 18;
 
     //waiter status
     const WAITER_PENDING                = 15;
@@ -92,6 +93,7 @@ class Order extends Model
         self::CURRENTLY_BEING_SERVED    => 'Currently Being Served',
         self::AWAITING_SERVICE          => 'Awaiting Service',
         self::READY_FOR_COLLECTION      => 'Ready for collection',
+        self::KITCHEN_CANCELED          => 'Kitchen Canceled',
     ];
 
     /**
