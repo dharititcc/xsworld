@@ -468,7 +468,7 @@ class OrderRepository extends BaseRepository
     {
         $user       = auth()->user();
         $order_id   = $data['order_id'] ? $data['order_id'] : null;
-        $order      = Order::where(['id' => $order_id, 'user_id' => $user->id])->first();
+        $order      = Order::findOrFail($data['order_id']);
 
         if(isset($order->id))
         {
