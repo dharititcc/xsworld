@@ -472,6 +472,13 @@ class OrderRepository extends BaseRepository
 
         if(isset($order->id))
         {
+            // check if order has customer table
+            if( isset( $order->customer_table->id ) )
+            {
+                // update customer table to awaiting service
+                $order->customer_table()->update(['order_id' => null]);
+            }
+
             // delete order items
             $order->items()->delete();
 
