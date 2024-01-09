@@ -216,7 +216,7 @@ trait OrderFlow
         $order['waiter_id']             = access()->isWaiter() ? auth()->user()->id : null;
         $order['restaurant_table_id']   = isset($data['restaurant_table_id']) ? $data['restaurant_table_id'] : null;
         $order['status']                = Order::PENDNIG;
-        $order['waiter_status']         = Order::PENDNIG;
+        $order['waiter_status']         = Order::CURRENTLY_BEING_PREPARED;
 
         $newOrder = Order::create($order);
 
