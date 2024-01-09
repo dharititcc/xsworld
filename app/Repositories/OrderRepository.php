@@ -1166,12 +1166,8 @@ class OrderRepository extends BaseRepository
                                 user_id
                             FROM credit_points_histories
                             WHERE DATE(created_at) BETWEEN '{$previousQuarter['start_date']}' AND '{$previousQuarter['end_date']}'
-<<<<<<< HEAD
-                            GROUP BY user_id) AS `previous_quarter`
-=======
                             GROUP BY user_id
                         ) AS `previous_quarter`
->>>>>>> origin/milan
                     "
                     ), function($join)
                     {
@@ -1185,12 +1181,8 @@ class OrderRepository extends BaseRepository
                                 user_id
                             FROM credit_points_histories
                             WHERE DATE(created_at) BETWEEN '{$currentQuarter['start_date']}' AND '{$currentQuarter['end_date']}'
-<<<<<<< HEAD
-                            GROUP BY user_id) AS `current_quarter`
-=======
                             GROUP BY user_id
                         ) AS `current_quarter`
->>>>>>> origin/milan
                     "
                     ), function($join)
                     {
@@ -1201,13 +1193,8 @@ class OrderRepository extends BaseRepository
                     ->where('type', Order::ORDER)
                     ->groupBy('orders.user_id')
                     ->get();
-<<<<<<< HEAD
-
-        if( $membershipLevel > 0 )
-=======
                     // echo common()->formatSql($venueList);die;
         if( $membershipLevel != "" )
->>>>>>> origin/milan
         {
             $membershipArr = explode(',', $membershipLevel);
 
