@@ -40,6 +40,7 @@ class OrderResource extends JsonResource
             'last_delayed_time'         => $this->last_delayed_time*60 ?? 0,
             'created_date'              => Carbon::parse($this->created_at)->toDateTimeString(),
             'updated_date'              => Carbon::parse($this->updated_at)->toDateTimeString(),
+            'place_at'                  => isset($this->place_at) ? $this->place_at : '',
             'remaining_time'            => $this->remainingtime,
             'remaining_date'            => isset($this->remaining_date) ? $this->remaining_date : '',
             // 'progress'                  => $this->progress ?? 0,

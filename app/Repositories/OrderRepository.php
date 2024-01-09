@@ -826,6 +826,7 @@ class OrderRepository extends BaseRepository
                     'restaurant_table_id'   => ($table_id) ? $table_id : null,
                     'waiter_status'         => Order::CURRENTLY_BEING_PREPARED,
                     'status'                => Order::PENDNIG,
+                    'place_at'              => Carbon::now()->format('Y-m-d H:i:s'),
                 ];
                 $remaingAmount = $userCreditAmountBalance - $credit_amount;
                 // update user's credit amount
@@ -862,6 +863,7 @@ class OrderRepository extends BaseRepository
                     'credit_amount'         => $credit_amount,
                     'restaurant_table_id'   => ($table_id) ? $table_id : null,
                     'amount'                => $amount,
+                    'place_at'              => Carbon::now()->format('Y-m-d H:i:s'),
                 ];
                 $remaingAmount = $userCreditAmountBalance - $credit_amount;
 
