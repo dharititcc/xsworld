@@ -413,7 +413,7 @@ class BarRepository extends BaseRepository
     public function updateBarCompletedStatus(Order $order, int $status, array $user_tokens)
     {
         $updateArr = [
-            'status'            => $status,
+            'status'            => Order::COMPLETED,
             'completion_date'   => Carbon::now()->format('Y-m-d H:i:s'),
             'remaining_date'    => Carbon::now()
         ];
@@ -426,7 +426,7 @@ class BarRepository extends BaseRepository
         }
 
         // update order split status for drink to completed
-        if( $order->order_split_drink->update(['status' => $status]) ) // order split table status to completed
+        if( $order->order_split_drink->update(['status' => Order::COMPLETED]) ) // order split table status to completed
         {
             if( isset( $order->restaurant_table_id ) && !$order->order_split_food )
             {
@@ -507,7 +507,6 @@ class BarRepository extends BaseRepository
                     $remainingTime  = Carbon::parse($order->remaining_date);
                     $remTime        = $remainingTime->clone();
 
-                    // dd($remainingTime <= $currentTimeClone);
                     if( $remainingTime <= $currentTimeClone )
                     {
                         // if true then calculate apply time from current time
