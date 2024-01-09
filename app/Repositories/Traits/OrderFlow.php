@@ -216,10 +216,7 @@ trait OrderFlow
         $order['waiter_id']             = access()->isWaiter() ? auth()->user()->id : null;
         $order['restaurant_table_id']   = isset($data['restaurant_table_id']) ? $data['restaurant_table_id'] : null;
         $order['status']                = Order::PENDNIG;
-
-        if($order['restaurant_table_id']) {
-            $order['waiter_status'] = Order::WAITER_PENDING;
-        }
+        $order['waiter_status']         = Order::PENDNIG;
 
         $newOrder = Order::create($order);
 
