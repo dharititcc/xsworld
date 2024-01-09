@@ -367,7 +367,8 @@ class BarRepository extends BaseRepository
     public function updateBarConfirmPickup(Order $order, int $status, array $user_tokens)
     {
         $updateArr = [
-            'served_date'   => Carbon::now()
+            'served_date'   => Carbon::now(),
+            'status'        => Order::CONFIRM_PICKUP
         ];
 
         // update order split status for drink to completed
@@ -377,7 +378,6 @@ class BarRepository extends BaseRepository
             {
                 // update waiter status to Ready for collection
                 $updateArr['waiter_status'] = Order::CURRENTLY_BEING_SERVED;
-                $updateArr['status']        = Order::CONFIRM_PICKUP;
             }
         }
 
