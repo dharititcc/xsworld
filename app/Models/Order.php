@@ -174,6 +174,16 @@ class Order extends Model
     }
 
     /**
+     * Get the customer_table associated with the Order
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function customer_table(): HasOne
+    {
+        return $this->hasOne(CustomerTable::class, 'order_id', 'id');
+    }
+
+    /**
      * Get the restaurant_waiter that owns the Order
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
