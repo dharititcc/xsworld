@@ -125,6 +125,7 @@ class Order extends Model
         'cancel_date',
         'served_date',
         'completion_date',
+        'place_at',
         'total',
         'cancel_reason',
         'refunded_id'
@@ -170,6 +171,16 @@ class Order extends Model
     public function restaurant_table(): BelongsTo
     {
         return $this->belongsTo(RestaurantTable::class, 'restaurant_table_id', 'id')->withTrashed();
+    }
+
+    /**
+     * Get the customer_table associated with the Order
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function customer_table(): HasOne
+    {
+        return $this->hasOne(CustomerTable::class, 'order_id', 'id');
     }
 
     /**
@@ -457,4 +468,15 @@ class Order extends Model
     {
         return $this->hasOne(OrderSplit::class, 'order_id', 'id')->where('is_food', 1);
     }
+
+    /**
+     * Method getPdfUrlAttribute
+     *
+     * @return string
+     */
+    public function getPdfUrlAttribute(): string
+    {
+        return isset($this->id) ? asset('storage/order_pdf/invoice_'.$this->id.'.pdf') : '';
+    }
+
 }

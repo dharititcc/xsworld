@@ -11,8 +11,10 @@ use App\Models\Restaurant;
 use App\Models\RestaurantItem;
 use App\Models\RestaurantPickupPoint;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Storage;
 
 trait OrderFlow
 {
@@ -214,10 +216,7 @@ trait OrderFlow
         $order['waiter_id']             = access()->isWaiter() ? auth()->user()->id : null;
         $order['restaurant_table_id']   = isset($data['restaurant_table_id']) ? $data['restaurant_table_id'] : null;
         $order['status']                = Order::PENDNIG;
-
-        if($order['restaurant_table_id']) {
-            $order['waiter_status'] = Order::WAITER_PENDING;
-        }
+        $order['waiter_status']         = Order::CURRENTLY_BEING_PREPARED;
 
         $newOrder = Order::create($order);
 
@@ -349,12 +348,26 @@ trait OrderFlow
         $credit_amount      = $data['credit_amount'] ? $data['credit_amount'] : null;
         $amount             = $data['amount'] ? $data['amount'] : null;
         $table_id           = $data['table_id'] ? $data['table_id'] : null;
-        $order              = Order::with(['restaurant'])->findOrFail($data['order_id']);
+        $order              = Order::with([
+            'restaurant',
+            'restaurant.kitchens',
+            'order_split_food',
+            'order_split_drink'
+        ])->findOrFail($data['order_id']);
         $user               = $order->user_id ? User::findOrFail($order->user_id) : auth()->user();
         $devices            = $user->devices()->pluck('fcm_token')->toArray();
         $pickup_point_id    = '';
 
-        $getcusTbl = CustomerTable::where('user_id' , $user->id)->where('restaurant_table_id', $table_id)->first();
+        $getcusTbl = CustomerTable::where('user_id' , $user->id)->where('restaurant_table_id', $table_id)->where('order_id', $order->id)->first();
+
+        if( isset($order->order_split_food->id) )
+        {
+            $openKitchens = $order->restaurant->kitchens()->where('status', 1)->get();
+            if( $openKitchens->count() === 0 )
+            {
+                throw new GeneralException('You cannot able to place order as kitchen is closed.');
+            }
+        }
 
         if( isset( $getcusTbl->id ) )
         {
@@ -381,6 +394,7 @@ trait OrderFlow
                     'pickup_point_user_id'  => ($pickup_point_id) ? $pickup_point_id->user_id : null,
                     'credit_amount'         => $credit_amount,
                     'restaurant_table_id'   => ($table_id) ? $table_id : null,
+                    'place_at'              => Carbon::now()->format('Y-m-d H:i:s'),
                 ];
                 $remaingAmount = $userCreditAmountBalance - $credit_amount;
 
@@ -412,6 +426,7 @@ trait OrderFlow
                     'credit_amount'         => $credit_amount,
                     'restaurant_table_id'   => ($table_id) ? $table_id : null,
                     'amount'                => $amount,
+                    'place_at'              => Carbon::now()->format('Y-m-d H:i:s'),
                 ];
                 $remaingAmount = $userCreditAmountBalance - $credit_amount;
 
@@ -424,6 +439,9 @@ trait OrderFlow
 
         $order->refresh();
         $order->loadMissing(['items']);
+
+        // Generate PDF
+        $this->generatePDF($order);
 
         // send notification to waiter if table order
         if( isset( $table_id ) )
@@ -475,8 +493,11 @@ trait OrderFlow
                 $waiterMessage  = "Order is #{$order->id} placed by customer";
                 sendNotification($waiterTitle, $waiterMessage, $waiterDevices, $order->id);
             }
+        }
 
-            // send notification to kitchens of the restaurant
+        // send notification to kitchens of the restaurant if order is food
+        if( isset($order->order_split_food->id) )
+        {
             $kitchenDevices = [];
             $kitchens = $order->restaurant->kitchens()->with(['user', 'user.devices'])->get();
 
@@ -504,17 +525,22 @@ trait OrderFlow
             }
         }
 
+        // customer notification
         $text               = $order->restaurant->name. ' is processing your order';
         $title              = $text;
         $message            = "Your Order is #".$order->id." placed";
         $orderid            = $order->id;
         $send_notification  = sendNotification($title,$message,$devices,$orderid);
 
-        $bartitle           = "Order is placed by Customer";
-        $barmessage         = "Order is #".$order->id." placed by customer";
-        $bardevices         = $pickup_point_id ? $order->pickup_point_user->devices()->pluck('fcm_token')->toArray() : [];
-        if(!empty( $bardevices )) {
-            $bar_notification   = sendNotification($bartitle,$barmessage,$bardevices,$orderid);
+        // send notification to bar of the restaurant if order is drink
+        if( isset($order->order_split_drink->id) )
+        {
+            $bartitle           = "Order is placed by Customer";
+            $barmessage         = "Order is #".$order->id." placed by customer";
+            $bardevices         = $pickup_point_id ? $order->pickup_point_user->devices()->pluck('fcm_token')->toArray() : [];
+            if(!empty( $bardevices )) {
+                $bar_notification   = sendNotification($bartitle,$barmessage,$bardevices,$orderid);
+            }
         }
 
         return $order;
@@ -623,5 +649,31 @@ trait OrderFlow
 
         $query = $this->getKitchenOrdersQuery($kitchen, OrderSplit::KITCHEN_CONFIRM, 'desc');
         return $query->get();
+    }
+
+    /**
+     * Method generatePDF
+     *
+     * @param Order $order [explicite description]
+     *
+     * @return mixed
+     */
+    public function generatePDF(Order $order)
+    {
+        $restaurant  = $order->restaurant->owners()->first();
+        $pdf        = app('dompdf.wrapper');
+        $pdf->loadView('pdf.index',compact('order','restaurant'));
+        $filename   = 'invoice_'.$order->id.'.pdf';
+        $content    = $pdf->output();
+        $file       = storage_path("app/public/order_pdf");
+        !is_dir($file) &&
+        mkdir($file, 0777, true);
+        $filePath = 'public/order_pdf/' . $filename;
+
+        //Upload PDF to storage folder
+        Storage::put($filePath, $content);
+        $destinationPath = asset('storage/order_pdf/').'/'.$filename;
+
+        return true;
     }
 }

@@ -343,10 +343,12 @@ class OrderController extends APIController
     {
         $input  =   $request->all();
         $venueList  = $this->repository->venueUserList($input);
-        if($venueList)
+        if($venueList->count())
         {
             return $this->respondSuccess('Venue User List', VenueUserResource::collection($venueList));
         }
+
+        throw new GeneralException('No user found in this restaurant.');
     }
 
 
@@ -391,6 +393,6 @@ class OrderController extends APIController
     {
         $input  = $request->all();
         $giftCredits    = $this->repository->giftCreditSend($input);
-        return $this->respondSuccess("Gift Credit Send successfully");
+        return $this->respondSuccess("Gift Credit Send successfully",$giftCredits);
     }
 }

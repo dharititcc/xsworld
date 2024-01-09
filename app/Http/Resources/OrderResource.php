@@ -40,6 +40,7 @@ class OrderResource extends JsonResource
             'last_delayed_time'         => $this->last_delayed_time*60 ?? 0,
             'created_date'              => Carbon::parse($this->created_at)->toDateTimeString(),
             'updated_date'              => Carbon::parse($this->updated_at)->toDateTimeString(),
+            'place_at'                  => isset($this->place_at) ? $this->place_at : '',
             'remaining_time'            => $this->remainingtime,
             'remaining_date'            => isset($this->remaining_date) ? $this->remaining_date : '',
             // 'progress'                  => $this->progress ?? 0,
@@ -51,6 +52,7 @@ class OrderResource extends JsonResource
             'charge_id'                 => $this->charge_id ?? '',
             'total_items'               => $this->order_items->sum('quantity'),
             'rated'                     => $this->reviews->count(),
+            'pdf_url'                   => $this->pdf_url,
             'order_items'               => isset($this->order_items) ? OrderItemResource::collection($this->order_items) : [],
             'pickup_points'             => PickUpPointResource::collection($this->restaurant->restaurant_pickup_points),
             // 'card_details'              => isset($this->carddetails) ? $this->carddetails : new stdClass

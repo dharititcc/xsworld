@@ -468,10 +468,17 @@ class OrderRepository extends BaseRepository
     {
         $user       = auth()->user();
         $order_id   = $data['order_id'] ? $data['order_id'] : null;
-        $order      = Order::where(['id' => $order_id, 'user_id' => $user->id])->first();
+        $order      = Order::findOrFail($data['order_id']);
 
         if(isset($order->id))
         {
+            // check if order has customer table
+            if( isset( $order->customer_table->id ) )
+            {
+                // update customer table to awaiting service
+                $order->customer_table()->update(['order_id' => null]);
+            }
+
             // delete order items
             $order->items()->delete();
 
@@ -773,6 +780,24 @@ class OrderRepository extends BaseRepository
         $kitchens          = $order->restaurant->kitchens;
         $kitchen_token     = [];
 
+        // load missing order items
+        $order->loadMissing([
+            'order_split_food',
+            'order_split_drink',
+            'restaurant',
+            'restaurant.kitchens'
+        ]);
+
+        if( isset($order->order_split_food->id) )
+        {
+            $openKitchens = $order->restaurant->kitchens()->where('status', 1)->get();
+
+            if( $openKitchens->count() === 0 )
+            {
+                throw new GeneralException('You cannot able to place order as kitchen is closed.');
+            }
+        }
+
         $pickup_point_id = '';
         if($order->order_category_type == Order::DRINK || $order->order_category_type == Order::BOTH)
         {
@@ -808,6 +833,7 @@ class OrderRepository extends BaseRepository
                     'restaurant_table_id'   => ($table_id) ? $table_id : null,
                     'waiter_status'         => Order::CURRENTLY_BEING_PREPARED,
                     'status'                => Order::PENDNIG,
+                    'place_at'              => Carbon::now()->format('Y-m-d H:i:s'),
                 ];
                 $remaingAmount = $userCreditAmountBalance - $credit_amount;
                 // update user's credit amount
@@ -844,6 +870,7 @@ class OrderRepository extends BaseRepository
                     'credit_amount'         => $credit_amount,
                     'restaurant_table_id'   => ($table_id) ? $table_id : null,
                     'amount'                => $amount,
+                    'place_at'              => Carbon::now()->format('Y-m-d H:i:s'),
                 ];
                 $remaingAmount = $userCreditAmountBalance - $credit_amount;
 
@@ -856,7 +883,9 @@ class OrderRepository extends BaseRepository
 
         $order->refresh();
         $order->loadMissing(['items']);
-        //
+
+        // Generate PDF
+        $this->generatePDF($order);
 
         //customer notify
         $title              = "place new order";
@@ -963,7 +992,7 @@ class OrderRepository extends BaseRepository
     public function reOrder(array $data): Order
     {
         $user                   = auth()->user();
-        $orderAgain             = $user->orders()->where('restaurant_id', $data['restaurant_id'])->where('type',Order::ORDER)->whereNotIn('status',[Order::CUSTOMER_CANCELED,Order::RESTAURANT_CANCELED,Order::RESTAURANT_TOXICATION,Order::DENY_ORDER,Order::CURRENTLY_BEING_PREPARED,Order::READYFORPICKUP,Order::COMPLETED])->orderByDesc('id')->first();
+        $orderAgain             = $user->orders()->where('restaurant_id', $data['restaurant_id'])->where('type', Order::ORDER)->whereNotIn('status',[Order::CUSTOMER_CANCELED,Order::RESTAURANT_CANCELED,Order::RESTAURANT_TOXICATION,Order::DENY_ORDER,Order::CURRENTLY_BEING_PREPARED,Order::READYFORPICKUP,Order::COMPLETED])->orderByDesc('id')->first();
 
         $resName = Restaurant::select('name')->where('id',$data['restaurant_id'])->first();
         if( !isset($orderAgain->id) )
@@ -1098,26 +1127,109 @@ class OrderRepository extends BaseRepository
         return $customerTblDel;
     }
 
+    /**
+     * Method venueUserList
+     *
+     * @param array $data [explicite description]
+     *
+     * @return mixed
+     */
     public function venueUserList(array $data)
     {
-        $now        = Carbon::now(); //$now->format('Y-m-d H:i:s')
-        $lastHour   = Carbon::now()->subHour(1);
-        // dd($now);
-        // dd($lastHour);
-        // dd($data['restaurant_id']);
-        $venueList  = Order::where('restaurant_id',$data['restaurant_id'])
+        $now            = Carbon::now();
+        $lastHour       = Carbon::now()->subHour(1);
+        $membershipLevel= isset( $data['membership_level'] ) ? $data['membership_level'] : "";
+
+        // quarter logic goes here
+        $previousQuarter    = get_previous_quarter();
+        $currentQuarter     = get_current_quarter();
+
+        $venueList  = User::query()
+                    ->select([
+                        '*',
+                        DB::raw("COALESCE(previous_qua, 0) AS previous_points"),
+                        DB::raw("COALESCE(curr_qua, 0) AS current_points"),
+                        DB::raw(
+                        "
+                            (
+                                CASE
+                                    WHEN COALESCE(previous_qua, 0) > COALESCE(curr_qua, 0) THEN CAST(COALESCE(previous_qua, 0) AS DECIMAL(20,2))
+                                    ELSE
+                                    CAST(COALESCE(curr_qua, 0) AS DECIMAL(20,2))
+                                END
+                            ) AS current_membership_points
+                        ")
+                    ])
+                    ->with([
+                        'attachment',
+                        'orders',
+                        'credit_points',
+                        'orders.restaurant'
+                    ])
+                    ->leftJoin('orders', 'orders.user_id', '=', 'users.id')
+                    ->leftJoin(DB::raw(
+                    "
+                        (
+                            SELECT
+                                SUM(points) AS previous_qua,
+                                user_id
+                            FROM credit_points_histories
+                            WHERE DATE(created_at) BETWEEN '{$previousQuarter['start_date']}' AND '{$previousQuarter['end_date']}'
+                            GROUP BY user_id
+                        ) AS `previous_quarter`
+                    "
+                    ), function($join)
+                    {
+                        $join->on('users.id', '=', 'previous_quarter.user_id');
+                    })
+                    ->leftJoin(DB::raw(
+                    "
+                        (
+                            SELECT
+                                SUM(points) AS curr_qua,
+                                user_id
+                            FROM credit_points_histories
+                            WHERE DATE(created_at) BETWEEN '{$currentQuarter['start_date']}' AND '{$currentQuarter['end_date']}'
+                            GROUP BY user_id
+                        ) AS `current_quarter`
+                    "
+                    ), function($join)
+                    {
+                        $join->on('users.id', '=', 'current_quarter.user_id');
+                    })
+                    ->where('restaurant_id', $data['restaurant_id'])
                     ->whereNotIn('status', [Order::CUSTOMER_CANCELED])
-                    ->where('type',Order::ORDER)
-                    // ->where('updated_at',)
-                    // ->where('updated_at', function($query) use($lastHour)
-                    // {
-                    //     return $query->where('updated_at', '<', $lastHour);
-                    // })
+                    ->where('type', Order::ORDER)
                     ->groupBy('orders.user_id')
-                    // ->distinct('orders.user_id')
                     ->get();
-        return $venueList;
-        // dd($venueList);
+                    // echo common()->formatSql($venueList);die;
+        if( $membershipLevel != "" )
+        {
+            $membershipArr = explode(',', $membershipLevel);
+
+            if( in_array(config('xs.bronze_level'), $membershipArr) )
+            {
+                $filtered = $venueList->whereBetween('current_membership_points', [0,100]);
+            }
+            if( in_array(config('xs.silver_level'), $membershipArr) )
+            {
+                $filtered = $venueList->whereBetween('current_membership_points', [101,200]);
+            }
+            if( in_array(config('xs.gold_level'), $membershipArr) )
+            {
+                $filtered = $venueList->whereBetween('current_membership_points', [201,300]);
+            }
+            if( in_array(config('xs.platinum_level'), $membershipArr) )
+            {
+                $filtered = $venueList->where('current_membership_points', '>', 300);
+            }
+        }
+        else
+        {
+            $filtered = $venueList;
+        }
+
+        return $filtered;
     }
 
 
@@ -1175,7 +1287,28 @@ class OrderRepository extends BaseRepository
     public function giftCreditSend(array $data)
     {
         $auth_user = auth()->user();
-        dd($auth_user );
+        $receiverUser = User::find($data['user_id']);
+        $receiverCreditAmount   = $receiverUser->credit_amount;
+        $authUserCreditAmount   = $auth_user->credit_amount;
+        $amount                 = $data['amount'];
+        $paymentArr = [
+            'amount'        => number_format($amount, 2) * 100,
+            'currency'      => $auth_user->orders->restaurant->currency->code,
+            'customer'      => $auth_user->stripe_customer_id,
+            'capture'       => false,
+            'source'        => $data['card_id'],
+            'description'   => $auth_user->id
+        ];
+        $stripe         = new Stripe();
+        $payment_data   = $stripe->createCharge($paymentArr);
+        
+        $addAmountToReceiver    = number_format($receiverCreditAmount + $amount, 2);
+        // $deductAmountToAuthUser = number_format($authUserCreditAmount - $amount, 2);
+        $receiverUser->credit_amount = $addAmountToReceiver;
+        $receiverUser->save();
+        // $auth_user->credit_amount    = $deductAmountToAuthUser;
+        // $auth_user->save();
+        return $auth_user;
     }
 
     /**
