@@ -79,7 +79,7 @@ class CategoryController extends Controller
      */
     private function checkUniqueCategory(Request  $request, Restaurant $restaurant)
     {
-        $text = strtolower($request->name);
+        $text = htmlentities(strtolower($request->name));
         return Category::whereRaw(DB::raw("LOWER(`name`) = '{$text}'"))->where('restaurant_id', $restaurant->id)->count();
     }
 

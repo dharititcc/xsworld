@@ -187,7 +187,7 @@ class FoodController extends Controller
      */
     private function checkUniqueFood(Request  $request, Restaurant $restaurant)
     {
-        $text = strtolower($request->name);
+        $text = htmlentities(strtolower($request->name));
         return RestaurantItem::whereRaw(DB::raw("LOWER(`name`) = '{$text}'"))->where('restaurant_id', $restaurant->id)->where('category_id', $request->get('category_id'))->count();
     }
 
