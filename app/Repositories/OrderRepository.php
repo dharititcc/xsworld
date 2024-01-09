@@ -468,10 +468,17 @@ class OrderRepository extends BaseRepository
     {
         $user       = auth()->user();
         $order_id   = $data['order_id'] ? $data['order_id'] : null;
-        $order      = Order::where(['id' => $order_id, 'user_id' => $user->id])->first();
+        $order      = Order::findOrFail($data['order_id']);
 
         if(isset($order->id))
         {
+            // check if order has customer table
+            if( isset( $order->customer_table->id ) )
+            {
+                // update customer table to awaiting service
+                $order->customer_table()->update(['order_id' => null]);
+            }
+
             // delete order items
             $order->items()->delete();
 
@@ -985,7 +992,7 @@ class OrderRepository extends BaseRepository
     public function reOrder(array $data): Order
     {
         $user                   = auth()->user();
-        $orderAgain             = $user->orders()->where('restaurant_id', $data['restaurant_id'])->where('type',Order::ORDER)->whereNotIn('status',[Order::CUSTOMER_CANCELED,Order::RESTAURANT_CANCELED,Order::RESTAURANT_TOXICATION,Order::DENY_ORDER,Order::CURRENTLY_BEING_PREPARED,Order::READYFORPICKUP,Order::COMPLETED])->orderByDesc('id')->first();
+        $orderAgain             = $user->orders()->where('restaurant_id', $data['restaurant_id'])->where('type', Order::ORDER)->whereNotIn('status',[Order::CUSTOMER_CANCELED,Order::RESTAURANT_CANCELED,Order::RESTAURANT_TOXICATION,Order::DENY_ORDER,Order::CURRENTLY_BEING_PREPARED,Order::READYFORPICKUP,Order::COMPLETED])->orderByDesc('id')->first();
 
         $resName = Restaurant::select('name')->where('id',$data['restaurant_id'])->first();
         if( !isset($orderAgain->id) )
