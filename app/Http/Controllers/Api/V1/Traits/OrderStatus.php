@@ -27,7 +27,7 @@ trait OrderStatus
 
         if($status == OrderSplit::READYFORPICKUP)
         {
-            if( $order->order_split_food->update(['status' => $status]) )
+            if( $order->order_split_food->update(['status' => OrderSplit::READYFORPICKUP]) )
             {
                 $order->update([
                     'completion_date'   => Carbon::now()
@@ -69,7 +69,7 @@ trait OrderStatus
             $title      = "Restaurant Kitchen Canceled";
             $message    = "Your Order is #".$order->id." kitchen canceled";
         }
-        else
+        else if( $status == OrderSplit::KITCHEN_CONFIRM )
         {
             if( $order->order_split_food->update(['status' => OrderSplit::KITCHEN_CONFIRM]) )
             {
@@ -84,6 +84,10 @@ trait OrderStatus
             }
 
             $message    = "Your Order is #".$order->id." ready for collection";
+        }
+        else
+        {
+            
         }
 
         // send notification to waiters
