@@ -125,6 +125,7 @@ class Order extends Model
         'cancel_date',
         'served_date',
         'completion_date',
+        'place_at',
         'total',
         'cancel_reason',
         'refunded_id'

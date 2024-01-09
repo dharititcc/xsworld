@@ -11,6 +11,7 @@ use App\Models\Restaurant;
 use App\Models\RestaurantItem;
 use App\Models\RestaurantPickupPoint;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Storage;
@@ -360,7 +361,7 @@ trait OrderFlow
         $devices            = $user->devices()->pluck('fcm_token')->toArray();
         $pickup_point_id    = '';
 
-        $getcusTbl = CustomerTable::where('user_id' , $user->id)->where('restaurant_table_id', $table_id)->first();
+        $getcusTbl = CustomerTable::where('user_id' , $user->id)->where('restaurant_table_id', $table_id)->where('order_id', $order->id)->first();
 
         if( isset($order->order_split_food->id) )
         {
@@ -396,6 +397,7 @@ trait OrderFlow
                     'pickup_point_user_id'  => ($pickup_point_id) ? $pickup_point_id->user_id : null,
                     'credit_amount'         => $credit_amount,
                     'restaurant_table_id'   => ($table_id) ? $table_id : null,
+                    'place_at'              => Carbon::now()->format('Y-m-d H:i:s'),
                 ];
                 $remaingAmount = $userCreditAmountBalance - $credit_amount;
 
@@ -427,6 +429,7 @@ trait OrderFlow
                     'credit_amount'         => $credit_amount,
                     'restaurant_table_id'   => ($table_id) ? $table_id : null,
                     'amount'                => $amount,
+                    'place_at'              => Carbon::now()->format('Y-m-d H:i:s'),
                 ];
                 $remaingAmount = $userCreditAmountBalance - $credit_amount;
 
