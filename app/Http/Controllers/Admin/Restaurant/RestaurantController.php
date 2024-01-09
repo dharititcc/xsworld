@@ -47,12 +47,11 @@ class RestaurantController extends Controller
         if(!isset($request->latitude) && !isset($request->longitude))
         {
             $address = addressLatLong($request->street1 . $request->city . $request->state);
-            
             if($country_name->name != $address['country'])
             {
                 throw new GeneralException('Please Select Proper Country');
             }
-        } 
+        }
         // else {
         //     $latitude           = $request->latitude;
         //     $longitude          = $request->longitude;
