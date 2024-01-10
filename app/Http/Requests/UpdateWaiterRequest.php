@@ -27,7 +27,19 @@ class UpdateWaiterRequest extends FormRequest
         return [
             'first_name'    => 'required',
             'password'      => 'min:8',
-            'waiter_id'     => 'required|unique:users,username,'
+            'waiter_id'     => 'required|regex:/^\S*$/u|unique:users,username,'
+        ];
+    }
+
+     /**
+     * Get custom messages for validator errors.
+     *
+     * @return array
+     */
+    public function messages()
+    {
+        return [
+            'waiter_id.regex' => 'The :attribute must not include empty spaces.',
         ];
     }
 }
