@@ -120,7 +120,10 @@ class HomeController extends APIController
         ->whereHas('order_split_food', function($query){
             $query->where('status', OrderSplit::READYFORPICKUP);
             $query->orWhere('status', OrderSplit::CURRENTLY_BEING_PREPARED);
-        })->get();
+            $query->orWhere('status', OrderSplit::PENDING);
+        })
+        ->whereIn('waiter_status', [Order::CURRENTLY_BEING_PREPARED, Order::CURRENTLY_BEING_SERVED, Order::READY_FOR_COLLECTION])
+        ->get();
 
         $data = [
             'active_tables'             => $orderTbl->count() ? TableResource::collection($orderTbl) : [],
