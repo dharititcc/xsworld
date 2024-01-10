@@ -1110,7 +1110,8 @@ class OrderRepository extends BaseRepository
                 $order->delete();
             }
 
-            if($order->id){
+            if($order->id)
+            {
                 // update order to completed
                 $order->update(['waiter_status' => Order::COMPLETED, 'status' => Order::CONFIRM_PICKUP]);
                 $points                     = $order->total * 3;
