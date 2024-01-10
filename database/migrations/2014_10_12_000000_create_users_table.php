@@ -39,7 +39,7 @@ class CreateUsersTable extends Migration
             $table->string('fcm_token')->nullable();
             $table->string('username')->nullable();
             $table->string('verification_code', 100)->nullable();
-            $table->integer('is_mobile_verify')->default(1)->comment('0=not verified, 1=verified');
+            $table->integer('is_mobile_verify')->default(0)->comment('0=not verified, 1=verified');
             $table->rememberToken();
             $table->timestamps();
 
