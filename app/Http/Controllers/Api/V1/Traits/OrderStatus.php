@@ -52,7 +52,7 @@ trait OrderStatus
                 if( $order->order_split_food->update(['status' => OrderSplit::KITCHEN_CANCELED]) )
                 {
                     // update waiter status to Ready for collection
-                    $order->update(['status' => Order::CUSTOMER_CANCELED]);
+                    $order->update(['status' => Order::CUSTOMER_CANCELED, 'waiter_status' => Order::CUSTOMER_CANCELED]);
                 }
                 if(isset($order->charge_id) && $order->amount > 0)
                 {
