@@ -190,6 +190,8 @@
                     if(type == 2) {
                         $(".img-text").html('Event Image');
                         $('.start_end_date').removeAttr("style");
+                        $('#start_date').attr("placeholder", "Please Select Start Date");
+                        $('#end_date').attr("placeholder", "Please Select End Date");
                         $('#name').attr("placeholder", "Event Name");
                     } else {
                         $(".img-text").html('Restaurant Image');

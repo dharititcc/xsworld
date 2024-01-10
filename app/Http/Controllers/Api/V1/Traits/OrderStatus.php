@@ -3,11 +3,14 @@
 use App\Exceptions\GeneralException;
 use App\Models\Order;
 use App\Models\OrderSplit;
+use App\Billing\Stripe;
+use App\Repositories\Traits\CreditPoint;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 trait OrderStatus
 {
+    use CreditPoint;
     /**
      * Method statusChange
      *
@@ -24,7 +27,7 @@ trait OrderStatus
 
         if($status == OrderSplit::READYFORPICKUP)
         {
-            if( $order->order_split_food->update(['status' => $status]) )
+            if( $order->order_split_food->update(['status' => OrderSplit::READYFORPICKUP]) )
             {
                 $order->update([
                     'completion_date'   => Carbon::now()
@@ -40,8 +43,33 @@ trait OrderStatus
 
 
             $title  = "Ready for pickup";
+
+        } elseif ($status == OrderSplit::KITCHEN_CANCELED) {
+
+            if( isset( $order->restaurant_table_id ) )
+            {
+                # update status in ordersplit tbl
+                if( $order->order_split_food->update(['status' => OrderSplit::KITCHEN_CANCELED]) )
+                {
+                    // update waiter status to Ready for collection
+                    $order->update(['status' => Order::CUSTOMER_CANCELED]);
+                }
+                if(isset($order->charge_id) && $order->amount > 0)
+                {
+                    $this->refundCharge($order);
+                }
+
+                // update order split status for drink to completed
+                $userCreditAmountBalance = $order->user->credit_amount;
+                $refundCreditAmount = $order->credit_amount;
+                $totalCreditAmount = $userCreditAmountBalance + $refundCreditAmount;
+                // update user's credit amount
+                $this->updateUserPoints($order->user, ['credit_amount' => $totalCreditAmount]);
+            }
+            $title      = "Restaurant Kitchen Canceled";
+            $message    = "Your Order is #".$order->id." kitchen canceled";
         }
-        else
+        else if( $status == OrderSplit::KITCHEN_CONFIRM )
         {
             if( $order->order_split_food->update(['status' => OrderSplit::KITCHEN_CONFIRM]) )
             {
@@ -57,12 +85,16 @@ trait OrderStatus
 
             $message    = "Your Order is #".$order->id." ready for collection";
         }
+        else
+        {
+
+        }
 
         // send notification to waiters
         $this->notifyWaiters($order, $title, $message);
 
         // send notification to customer
-        $this->notifyCustomer($order, $title);
+        $this->notifyCustomer($order, $title, $message);
 
         return $order;
     }
@@ -123,19 +155,39 @@ trait OrderStatus
      * @return bool
      * @throws \App\Exceptions\GeneralException
      */
-    public function notifyCustomer(Order $order, string $title) : bool
+    public function notifyCustomer(Order $order, string $title, string $message) : bool
     {
         // Customer Notify
         $customer_devices   = $order->user->devices->count() ? $order->user->devices()->pluck('fcm_token')->toArray() : [];
-        $message            = "Your Order is #".$order->id." Ready for pickup";
         $orderid            = $order->id;
+
         if(!empty($customer_devices))
         {
-            return sendNotification($title,$message,$customer_devices,$orderid);
+            return sendNotification($title, $message, $customer_devices, $orderid);
         }
         else
         {
             throw new GeneralException('Device Token not Found.');
         }
+    }
+
+    /**
+     * Method refundCharge
+     *
+     * @param Order $order [explicite description]
+     *
+     * @return Order
+     */
+    public function refundCharge(Order $order): Order
+    {
+        $stripe            = new Stripe();
+        $refundArr = [
+            'charge'       => $order->charge_id,
+        ];
+        $refund_data                = $stripe->refundCreate($refundArr);
+        $updateArr['refunded_id']   = $refund_data->id;
+        $order->update($updateArr);
+
+        return $order;
     }
 }
