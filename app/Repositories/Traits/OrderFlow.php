@@ -498,6 +498,14 @@ trait OrderFlow
         // send notification to kitchens of the restaurant if order is food
         if( isset($order->order_split_food->id) )
         {
+            // debit payment
+            if( $order->charge_id )
+            {
+                $stripe                         = new Stripe();
+                $payment_data                   = $stripe->captureCharge($order->charge_id);
+                $updateArr['transaction_id']    = $payment_data->balance_transaction;
+            }
+
             $kitchenDevices = [];
             $kitchens = $order->restaurant->kitchens()->with(['user', 'user.devices'])->get();
 
@@ -530,16 +538,20 @@ trait OrderFlow
         $title              = $text;
         $message            = "Your Order is #".$order->id." placed";
         $orderid            = $order->id;
-        $send_notification  = sendNotification($title,$message,$devices,$orderid);
+        $send_notification  = sendNotification($title, $message, $devices, $orderid);
 
         // send notification to bar of the restaurant if order is drink
         if( isset($order->order_split_drink->id) )
         {
+            $bardevices     = [];
+            if(isset($pickup_point_id->user_id)){
+                $bardevices         = $order->pickup_point_user->devices()->pluck('fcm_token')->toArray();
+            }
             $bartitle           = "Order is placed by Customer";
             $barmessage         = "Order is #".$order->id." placed by customer";
-            $bardevices         = $pickup_point_id ? $order->pickup_point_user->devices()->pluck('fcm_token')->toArray() : [];
+            // $bardevices         = $pickup_point_id ? $order->pickup_point_user->devices()->pluck('fcm_token')->toArray() : [];
             if(!empty( $bardevices )) {
-                $bar_notification   = sendNotification($bartitle,$barmessage,$bardevices,$orderid);
+                $bar_notification   = sendNotification($bartitle, $barmessage, $bardevices, $orderid);
             }
         }
 

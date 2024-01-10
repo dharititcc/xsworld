@@ -52,7 +52,7 @@ trait OrderStatus
                 if( $order->order_split_food->update(['status' => OrderSplit::KITCHEN_CANCELED]) )
                 {
                     // update waiter status to Ready for collection
-                    $order->update(['status' => Order::CUSTOMER_CANCELED]);
+                    $order->update(['status' => Order::CUSTOMER_CANCELED, 'waiter_status' => Order::CUSTOMER_CANCELED]);
                 }
                 if(isset($order->charge_id) && $order->amount > 0)
                 {
@@ -82,6 +82,19 @@ trait OrderStatus
                     $order->update(['waiter_status' => Order::CURRENTLY_BEING_SERVED, 'status' => Order::CONFIRM_PICKUP]);
                 }
             }
+
+            $points         = $order->total * 3;
+            $totalPoints    = $order->user->points + round($points);
+
+            $this->insertCreditPoints($order->user, [
+                'model_name'    => '\App\Models\Order',
+                'model_id'      => $order->id,
+                'points'        => $points,
+                'type'          => 1
+            ]);
+
+            // update user's points
+            $this->updateUserPoints($order->user, ['points' => $totalPoints]);
 
             $message    = "Your Order is #".$order->id." ready for collection";
         }
