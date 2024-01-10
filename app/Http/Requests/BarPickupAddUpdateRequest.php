@@ -23,7 +23,19 @@ class BarPickupAddUpdateRequest extends FormRequest
     {
         return [
             'password'      => 'required|min:8',
-            'barpick_id'    => 'required|unique:users,username,'
+            'barpick_id'    => 'required|regex:/^\S*$/u|unique:users,username,'
+        ];
+    }
+
+         /**
+     * Get custom messages for validator errors.
+     *
+     * @return array
+     */
+    public function messages()
+    {
+        return [
+            'barpick_id.regex' => 'The :attribute must not include empty spaces.',
         ];
     }
 }

@@ -23,7 +23,19 @@ class KitchenAddUpdateRequest extends FormRequest
     {
         return [
             'password'      => 'required|min:8',
-            'kitchen_id'    => 'required|unique:users,username,'
+            'kitchen_id'    => 'required|regex:/^\S*$/u|unique:users,username,'
+        ];
+    }
+
+      /**
+     * Get custom messages for validator errors.
+     *
+     * @return array
+     */
+    public function messages()
+    {
+        return [
+            'kitchen_id.regex' => 'The :attribute must not include empty spaces.',
         ];
     }
 }
