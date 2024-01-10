@@ -543,9 +543,13 @@ trait OrderFlow
         // send notification to bar of the restaurant if order is drink
         if( isset($order->order_split_drink->id) )
         {
+            $bardevices     = [];
+            if(isset($pickup_point_id->user_id)){
+                $bardevices         = $order->pickup_point_user->devices()->pluck('fcm_token')->toArray();
+            }
             $bartitle           = "Order is placed by Customer";
             $barmessage         = "Order is #".$order->id." placed by customer";
-            $bardevices         = $pickup_point_id ? $order->pickup_point_user->devices()->pluck('fcm_token')->toArray() : [];
+            // $bardevices         = $pickup_point_id ? $order->pickup_point_user->devices()->pluck('fcm_token')->toArray() : [];
             if(!empty( $bardevices )) {
                 $bar_notification   = sendNotification($bartitle, $barmessage, $bardevices, $orderid);
             }
