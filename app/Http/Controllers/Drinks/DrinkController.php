@@ -116,6 +116,11 @@ class DrinkController extends Controller
         $restaurant = session('restaurant')->loadMissing(['main_categories', 'main_categories.children']);
         $categories = $request->get('category_id');
 
+        $request->validate([
+            'price' => 'required|numeric|between:0.1,9999999999.99'
+        ],[
+            'price.between' => "Please Enter valid price"
+        ]);
         foreach ($categories as $key => $value)
         {
             $drinkArr = [
@@ -244,6 +249,11 @@ class DrinkController extends Controller
             $this->upload($request->file('image'), $drink);
         }
 
+        $request->validate([
+            'price' => 'required|numeric|between:0.1,9999999999.99'
+        ],[
+            'price.between' => "Please Enter valid price"
+        ]);
         //category
         $category = $request->get('category_id');
 

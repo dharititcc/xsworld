@@ -47,7 +47,7 @@
                                 <input type="text" name="name" class="form-control vari2" placeholder="Mixer Name">
                             </div>
                             <div class="form-group mb-4">
-                                <input type="number" name="price" class="form-control vari2" placeholder="Mixer Price">
+                                <input type="text" name="price" id="price" class="form-control vari2" placeholder="Mixer Price">
                             </div>
                             <div class="list-catg">
                                 {{-- @foreach ($food_categories as $child)
@@ -205,7 +205,6 @@
         load_data();
 
         function load_data(data = null) {
-            // console.log(data);
             var table = $('.drink_datatable').DataTable({
                 processing: true,
                 serverSide: true,
@@ -366,7 +365,6 @@
                 });
 
                 var id = $('#mixer_model_a').data('id');
-                console.log(id);
                 $('#submitBtn').html('Please Wait...');
                 $("#submitBtn").attr("disabled", true);
 
@@ -384,6 +382,28 @@
                         //alert('Mixer has been added successfully');
                         //location.reload(true);
                         XS.Common.handleSwalSuccess('Mixer has been added successfully.');
+                    },
+                    error: function(xhr)
+                    {
+                        if( xhr.status === 422 )
+                        {
+                            const {error}   = xhr.responseJSON;
+                            const {message} = error;
+
+                            $.each(message, function(index, val)
+                            {
+                                var elem = $("#mixerpopup").find(`[name="${index}"]`);
+
+                                if(elem.is("input:text"))
+                                {
+                                    elem.closest('#price').after(`<label class="error">${val[0]}</label>`);
+                                }
+                            });
+                        }
+                    },
+                    complete: function()
+                    {
+                        XS.Common.btnProcessingStop($("#submitBtn"));
                     }
                 });
             }

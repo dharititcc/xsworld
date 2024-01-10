@@ -637,6 +637,21 @@
                         context.selectors.foodForm.find('.duplicate_product').after(`<span class="error">${error.message}</span>`);
                         // $this.closest('#add_form_category').find('.cat_name').after(`<span class="error">${error.message}</span>`);
                     }
+                    if( xhr.status === 422 )
+                    {
+                        const {error}   = xhr.responseJSON;
+                        const {message} = error;
+
+                        $.each(message, function(index, val)
+                        {
+                            var elem = context.selectors.foodForm.find(`[name="${index}"]`);
+
+                            if(elem.is("input:text"))
+                            {
+                                elem.closest('#price').after(`<label class="error">${val[0]}</label>`);
+                            }
+                        });
+                    }
                 },
                 complete: function()
                 {
