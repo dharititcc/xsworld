@@ -51,7 +51,7 @@
                     <div class="col-lg-7 col-xl-8">
                         <div class="grid colmn-3 h-100 m-h-100">
                             <a href="{{ route('restaurants.venue.index') }}" class="{{ Route::is('restaurants.venue.*') ? 'active' : '' }} grey-brd-box padbox text-center lable-box"><span>Venue Management</span></a>
-                            <a href="#" class="grey-brd-box padbox text-center lable-box"><span>Analytics</span></a>
+                            <a href="{{ route('analytics') }}" class="grey-brd-box padbox text-center lable-box"><span>Analytics</span></a>
                             <a href="{{ route('restaurants.table.index') }}" class="grey-brd-box padbox text-center lable-box"><span>Table Management</span></a>
                             <a href="{{ route('restaurants.foods.index') }}" class="grey-brd-box padbox text-center lable-box"><span>Food List</span></a>
                             <a href="{{ route('restaurants.drinks.index') }}" class="grey-brd-box padbox text-center lable-box"><span>Drink List</span></a>
