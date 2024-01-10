@@ -83,6 +83,19 @@ trait OrderStatus
                 }
             }
 
+            $points         = $order->total * 3;
+            $totalPoints    = $order->user->points + round($points);
+
+            $this->insertCreditPoints($order->user, [
+                'model_name'    => '\App\Models\Order',
+                'model_id'      => $order->id,
+                'points'        => $points,
+                'type'          => 1
+            ]);
+
+            // update user's points
+            $this->updateUserPoints($order->user, ['points' => $totalPoints]);
+
             $message    = "Your Order is #".$order->id." ready for collection";
         }
         else
