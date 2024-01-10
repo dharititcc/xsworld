@@ -2,6 +2,7 @@
 
 use App\Billing\Stripe;
 use App\Exceptions\GeneralException;
+use App\Http\Controllers\Api\V1\Traits\OrderStatus;
 use App\Models\Category;
 use App\Models\CreditPointsHistory;
 use App\Models\CustomerTable;
@@ -36,7 +37,7 @@ use Illuminate\Support\Facades\File;
 */
 class OrderRepository extends BaseRepository
 {
-    use CreditPoint, OrderFlow;
+    use CreditPoint, OrderFlow, OrderStatus;
 
     /**
     * Associated Repository Model.
@@ -524,6 +525,11 @@ class OrderRepository extends BaseRepository
                 $updateArr['status']        = Order::CUSTOMER_CANCELED;
                 $updateArr['waiter_status'] = Order::CUSTOMER_CANCELED;
 
+                $order->update($updateArr);
+                $totalCreditAmount = $userCreditAmountBalance + $refundCreditAmount;
+                // update user's credit amount
+                $this->updateUserPoints($user, ['credit_amount' => $totalCreditAmount]);
+
                 if( isset( $order->restaurant_table_id ) )
                 {
                     // send notification to kitchen
@@ -552,19 +558,19 @@ class OrderRepository extends BaseRepository
                         $kitchenMessage  = "Order #".$order->id." is canceled by customer";
                         sendNotification($kitchenTitle, $kitchenMessage, $kitchenDevices, $order->id);
                     }
+
+                    // send notification to waiters
+                    $this->notifyWaiters($order, $kitchenTitle, $kitchenMessage);
                 }
-            }
-
-            $order->update($updateArr);
-            $totalCreditAmount = $userCreditAmountBalance + $refundCreditAmount;
-            // update user's credit amount
-            $this->updateUserPoints($user, ['credit_amount' => $totalCreditAmount]);
-
-            $bartitle           = "Order canceled";
-            $barmessage         = "Order #".$order->id." is canceled by customer";
-            $bardevices         = $order->pickup_point_user_id ? $order->pickup_point_user->devices()->pluck('fcm_token')->toArray() : [];
-            if(!empty( $bardevices )) {
-                $bar_notification   = sendNotification($bartitle,$barmessage,$bardevices,$order->id);
+                else
+                {
+                    $bartitle           = "Order canceled";
+                    $barmessage         = "Order #".$order->id." is canceled by customer";
+                    $bardevices         = $order->pickup_point_user_id ? $order->pickup_point_user->devices()->pluck('fcm_token')->toArray() : [];
+                    if(!empty( $bardevices )) {
+                        $bar_notification   = sendNotification($bartitle,$barmessage,$bardevices,$order->id);
+                    }
+                }
             }
         }
 
