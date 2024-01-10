@@ -560,6 +560,8 @@ class OrderRepository extends BaseRepository
                     }
 
                     // send notification to waiters
+                    $kitchenTitle    = 'Order canceled';
+                    $kitchenMessage  = "Order #".$order->id." is canceled by customer";
                     $this->notifyWaiters($order, $kitchenTitle, $kitchenMessage);
                 }
                 else
