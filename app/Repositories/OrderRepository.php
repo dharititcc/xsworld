@@ -521,7 +521,8 @@ class OrderRepository extends BaseRepository
                     $updateArr['refunded_id']   = $refund_data->id;
                 }
                 $updateArr['cancel_date']   = Carbon::now();
-                $updateArr['status']        = $status;
+                $updateArr['status']        = Order::CUSTOMER_CANCELED;
+                $updateArr['waiter_status'] = Order::CUSTOMER_CANCELED;
 
                 if( isset( $order->restaurant_table_id ) )
                 {
