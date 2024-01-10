@@ -382,9 +382,6 @@ class HomeController extends APIController
     public function endWaiterSession(Request $request)
     {
         $CusToTblDel = $this->orderRepository->customerTableDel($request->all());
-        if(!$CusToTblDel) {
-            throw new GeneralException('Table Not Found');
-        }
         return $this->respondSuccess("Table Data Remove Successfully");
     }
 }

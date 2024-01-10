@@ -87,14 +87,14 @@ trait OrderStatus
         }
         else
         {
-            
+
         }
 
         // send notification to waiters
         $this->notifyWaiters($order, $title, $message);
 
         // send notification to customer
-        $this->notifyCustomer($order, $title);
+        $this->notifyCustomer($order, $title, $message);
 
         return $order;
     }
@@ -155,15 +155,15 @@ trait OrderStatus
      * @return bool
      * @throws \App\Exceptions\GeneralException
      */
-    public function notifyCustomer(Order $order, string $title) : bool
+    public function notifyCustomer(Order $order, string $title, string $message) : bool
     {
         // Customer Notify
         $customer_devices   = $order->user->devices->count() ? $order->user->devices()->pluck('fcm_token')->toArray() : [];
-        $message            = "Your Order is #".$order->id." Ready for pickup";
         $orderid            = $order->id;
+
         if(!empty($customer_devices))
         {
-            return sendNotification($title,$message,$customer_devices,$orderid);
+            return sendNotification($title, $message, $customer_devices, $orderid);
         }
         else
         {
