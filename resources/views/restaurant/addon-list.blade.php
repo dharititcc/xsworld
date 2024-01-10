@@ -46,7 +46,7 @@
                                 <input type="text" name="name" class="form-control vari2" placeholder="Addon Name">
                             </div>
                             <div class="form-group mb-4">
-                                <input type="number" name="price" class="form-control vari2" placeholder="Addon Price">
+                                <input type="text" name="price" id="price" class="form-control vari2" placeholder="Addon Price">
                             </div>
                             <div class="list-catg">
                                 @foreach ($drink_categories as $child)
@@ -391,6 +391,29 @@
                         //location.reload(true);
                         //document.getElementById("categorypopup").reset();
                         XS.Common.handleSwalSuccess('Addon has been added successfully.');
+                    },
+                    error: function(xhr)
+                    {
+                        if( xhr.status === 422 )
+                        {
+                            const {error}   = xhr.responseJSON;
+                            const {message} = error;
+
+                            $.each(message, function(index, val)
+                            {
+                                console.log(val);
+                                var elem = $("#addonpopup").find(`[name="${index}"]`);
+
+                                if(elem.is("input:text"))
+                                {
+                                    elem.closest('#price').after(`<label class="error">${val[0]}</label>`);
+                                }
+                            });
+                        }
+                    },
+                    complete: function()
+                    {
+                        XS.Common.btnProcessingStop($("#submitBtn"));
                     }
                 });
             }

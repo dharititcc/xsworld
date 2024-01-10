@@ -84,6 +84,11 @@ class AddonsController extends Controller
     {
         $restaurant = session('restaurant')->loadMissing(['main_categories', 'main_categories.children']);
         $category   = $request->get('category');
+        $request->validate([
+            'price' => 'required|numeric|between:0.1,9999999999.99'
+        ],[
+            'price.between' => "Please Enter valid price"
+        ]);
         foreach ($category as $key => $value)
         {
             $restaurantitem                       = new RestaurantItem();
@@ -144,6 +149,11 @@ class AddonsController extends Controller
     {
         $restaurant     = session('restaurant')->loadMissing(['main_categories', 'main_categories.children']);
         $category       = $request->get('category');
+        $request->validate([
+            'price' => 'required|numeric|between:0.1,9999999999.99'
+        ],[
+            'price.between' => "Please Enter valid price"
+        ]);
         // get old addons list
         $oldCategories  = RestaurantItem::where(['restaurant_id'=>$addon->restaurant_id,'type' => RestaurantItem::ADDON])
                             ->where('name',$addon->name)->pluck('category_id')->toArray();
@@ -189,11 +199,11 @@ class AddonsController extends Controller
                     $oldAddon->category_id = $cat;
                     $oldAddon->save();
 
-                    $oldAddon->attachment()->create([
-                        'stored_name'   => $profileImage,
-                        'original_name' => $profileImage,
-                        'attachmentable_id' => $oldAddon->id,
-                    ]);
+                    // $oldAddon->attachment()->create([
+                    //     'stored_name'   => $profileImage,
+                    //     'original_name' => $profileImage,
+                    //     'attachmentable_id' => $oldAddon->id,
+                    // ]);
                 } else {
                     //insert
                     $newAddon = RestaurantItem::create([
@@ -205,11 +215,11 @@ class AddonsController extends Controller
                         'restaurant_id'     => $restaurant->id
                     ]);
 
-                    $newAddon->attachment()->create([
-                        'stored_name'   => $profileImage,
-                        'original_name' => $profileImage,
-                        'attachmentable_id' => $newAddon->id,
-                    ]);
+                    // $newAddon->attachment()->create([
+                    //     'stored_name'   => $profileImage,
+                    //     'original_name' => $profileImage,
+                    //     'attachmentable_id' => $newAddon->id,
+                    // ]);
                 }
 
             }
