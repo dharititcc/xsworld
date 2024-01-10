@@ -39,7 +39,7 @@
                     @endif
                 </td>
                 <td>{{ $item->quantity }}</td>
-                <td><label class="cst-check"><input type="checkbox" value=""><span class="checkmark"></span></label></td>
+                <td>{{--<label class="cst-check"><input type="checkbox" value=""><span class="checkmark"></span></label>--}}</td>
             </tr>
             @endforeach
             @endif
@@ -82,18 +82,14 @@
             <td>{{ $restaurant->country->symbol }}{{ $order->total }}</td>
         </tr>
         <tr>
-            <td><strong class="yellow">Paid with</strong><br> Mastercard </td>
-            <td>**** - **** - **** - 2572<br>
-                IAN D SMITH</td>
+            <td><strong class="yellow">Paid with</strong><br> {{$card['brand']}} </td>
+            <td>**** - **** - **** - {{$card['last4']}}<br>
+                {{$card['name']}}</td>
         </tr>
     </table>
 </div>
 <div class="payopt-box">
     <table width="100%">
-        <tr>
-            <td class="green">15% Coupon discount was applied, user used 5,300 points.</td>
-            <td class="green">-$12.72</td>
-        </tr>
         <tr>
             <td colspan="2"></td>
 
@@ -120,7 +116,7 @@
             <td>{{ $order->served_time }}</td>
         </tr>
     </table>
-    <a href="#" class="bor-btn d-block text-center view-order mb-3">Refund Select Items
+    {{--<a href="#" class="bor-btn d-block text-center view-order mb-3">Refund Select Items
         ($0.00)</a>
-    <a href="#" class="bor-btn d-block text-center view-order">Discard Refund Request</a>
+    <a href="#" class="bor-btn d-block text-center view-order">Discard Refund Request</a> --}}
 </div>

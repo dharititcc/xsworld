@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Orders;
 
+use App\Billing\Stripe;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use Illuminate\Http\Request;
@@ -35,8 +36,10 @@ class OrderController extends Controller
      */
     public function show(Order $order)
     {
+        $stripe     = new Stripe();
         $restaurant = session('restaurant')->loadMissing(['country']);
-        $html = view('order.partials.order-detail', ['order' => $order, 'restaurant' => $restaurant])->render();
+        $card       = $order->card_details;
+        $html       = view('order.partials.order-detail', ['order' => $order, 'restaurant' => $restaurant, 'card' => $card])->render();
 
         return response()->json([
             'status'    => true,
