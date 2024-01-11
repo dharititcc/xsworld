@@ -93,7 +93,7 @@ class Order extends Model
         self::CURRENTLY_BEING_SERVED    => 'Currently Being Served',
         self::AWAITING_SERVICE          => 'Awaiting Service',
         self::READY_FOR_COLLECTION      => 'Ready for collection',
-        self::KITCHEN_CANCELED          => 'Kitchen Canceled',
+        self::KITCHEN_CANCELED          => 'Kitchen Cancelled',
     ];
 
     /**

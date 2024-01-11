@@ -554,20 +554,20 @@ class OrderRepository extends BaseRepository
 
                     if( !empty( $kitchenDevices ) )
                     {
-                        $kitchenTitle    = 'Order canceled';
-                        $kitchenMessage  = "Order #".$order->id." is canceled by customer";
+                        $kitchenTitle    = 'Order cancelled';
+                        $kitchenMessage  = "Order #".$order->id." is cancelled by customer";
                         sendNotification($kitchenTitle, $kitchenMessage, $kitchenDevices, $order->id);
                     }
 
                     // send notification to waiters
-                    $kitchenTitle    = 'Order canceled';
-                    $kitchenMessage  = "Order #".$order->id." is canceled by customer";
+                    $kitchenTitle    = 'Order cancelled';
+                    $kitchenMessage  = "Order #".$order->id." is cancelled by customer";
                     $this->notifyWaiters($order, $kitchenTitle, $kitchenMessage);
                 }
                 else
                 {
-                    $bartitle           = "Order canceled";
-                    $barmessage         = "Order #".$order->id." is canceled by customer";
+                    $bartitle           = "Order cancelled";
+                    $barmessage         = "Order #".$order->id." is cancelled by customer";
                     $bardevices         = $order->pickup_point_user_id ? $order->pickup_point_user->devices()->pluck('fcm_token')->toArray() : [];
                     if(!empty( $bardevices )) {
                         $bar_notification   = sendNotification($bartitle,$barmessage,$bardevices,$order->id);
