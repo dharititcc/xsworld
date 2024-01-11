@@ -23,7 +23,17 @@
                             </div>
                         </aside>
                         <div class="ord-status">
-                            <span class="green">{{ $order->order_status }}</span><br>
+                            @php
+                                if (in_array($order->status, [\App\Models\Order::CUSTOMER_CANCELED, \App\Models\Order::DENY_ORDER]) || in_array($order->waiter_status, [\App\Models\Order::CUSTOMER_CANCELED]))
+                                {
+                                    $class = 'red';
+                                }
+                                else
+                                {
+                                    $class = 'green';
+                                }
+                            @endphp
+                            <span class="{{ $class }}">{{ $order->order_status }}</span><br>
                             {{ $restaurant->country->symbol }}{{ $order->total }}
                         </div>
                     </article>
