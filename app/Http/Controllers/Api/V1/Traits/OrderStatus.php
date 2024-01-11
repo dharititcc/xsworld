@@ -4,6 +4,7 @@ use App\Exceptions\GeneralException;
 use App\Models\Order;
 use App\Models\OrderSplit;
 use App\Billing\Stripe;
+use App\Models\CustomerTable;
 use App\Repositories\Traits\CreditPoint;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -45,8 +46,9 @@ trait OrderStatus
             $title      = "Ready for pickup";
             $message    = "Your Order is #".$order->id." kitchen ready for pickup";
 
-        } elseif ($status == OrderSplit::KITCHEN_CANCELED) {
-
+        }
+        elseif ($status == OrderSplit::KITCHEN_CANCELED)
+        {
             if( isset( $order->restaurant_table_id ) )
             {
                 # update status in ordersplit tbl
@@ -66,6 +68,9 @@ trait OrderStatus
                 $totalCreditAmount = $userCreditAmountBalance + $refundCreditAmount;
                 // update user's credit amount
                 $this->updateUserPoints($order->user, ['credit_amount' => $totalCreditAmount]);
+
+                // update customer table update
+                CustomerTable::where('user_id', $order->user->id)->where('order_id', $order->id)->update(['order_id' => null]);
             }
             $title      = "Restaurant kitchen cancelled";
             $message    = "Your Order is #".$order->id." kitchen cancelled";
