@@ -100,10 +100,6 @@ trait OrderStatus
             $title      = "Restaurant kitchen confirm collection";
             $message    = "Your Order is #".$order->id." ready for collection";
         }
-        else
-        {
-
-        }
 
         // send notification to waiters
         $this->notifyWaiters($order, $title, $message);
