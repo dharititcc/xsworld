@@ -42,7 +42,7 @@ class OrderSplit extends Model
         self::READYFORPICKUP            => 'Ready For Pickup', // Kitchen prepared food. Waiter need to notify for pickup food from kitchen
         self::KITCHEN_CONFIRM           => 'Confirmed Pickup', // Kitchen collection orders. Need waiter to pick the order
         self::CURRENTLY_BEING_PREPARED  => 'Currently Being Prepared', // waiter placed order of food by defualt
-        self::KITCHEN_CANCELED          => 'Kitchen Canceled', //Kitchen Canceled food. Waiter/Customer need to notify
+        self::KITCHEN_CANCELED          => 'Kitchen Cancelled', //Kitchen Cancelled food. Waiter/Customer need to notify
     ];
 
     /**

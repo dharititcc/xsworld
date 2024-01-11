@@ -42,7 +42,8 @@ trait OrderStatus
             }
 
 
-            $title  = "Ready for pickup";
+            $title      = "Ready for pickup";
+            $message    = "Your Order is #".$order->id." kitchen ready for pickup";
 
         } elseif ($status == OrderSplit::KITCHEN_CANCELED) {
 
@@ -66,8 +67,8 @@ trait OrderStatus
                 // update user's credit amount
                 $this->updateUserPoints($order->user, ['credit_amount' => $totalCreditAmount]);
             }
-            $title      = "Restaurant Kitchen Canceled";
-            $message    = "Your Order is #".$order->id." kitchen canceled";
+            $title      = "Restaurant kitchen cancelled";
+            $message    = "Your Order is #".$order->id." kitchen cancelled";
         }
         else if( $status == OrderSplit::KITCHEN_CONFIRM )
         {
@@ -96,6 +97,7 @@ trait OrderStatus
             // update user's points
             $this->updateUserPoints($order->user, ['points' => $totalPoints]);
 
+            $title      = "Restaurant kitchen confirm collection";
             $message    = "Your Order is #".$order->id." ready for collection";
         }
         else

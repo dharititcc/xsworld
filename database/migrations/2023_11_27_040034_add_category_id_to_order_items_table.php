@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('order_items', function (Blueprint $table) {
             $table->unsignedBigInteger('category_id')->after('parent_item_id')->nullable();
-            $table->unsignedTinyInteger('status')->default(0)->comment('0=Pending, 1=Accepted, 2=Ready, 3=Completed, 4=Canceled, 11=ReadyForPickup, 12=kitchen_confirm,15=waiter_pending')->after('category_id');
+            $table->unsignedTinyInteger('status')->default(0)->comment('0=Pending, 1=Accepted, 2=Ready, 3=Completed, 4=Cancelled, 11=ReadyForPickup, 12=kitchen_confirm,15=waiter_pending')->after('category_id');
             $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');
         });
     }
