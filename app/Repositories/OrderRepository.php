@@ -530,6 +530,10 @@ class OrderRepository extends BaseRepository
                 // update user's credit amount
                 $this->updateUserPoints($user, ['credit_amount' => $totalCreditAmount]);
 
+                // deallocate table
+                // update customer table update
+                CustomerTable::where('user_id', $order->user->id)->where('order_id', $order->id)->delete();
+
                 if( isset( $order->restaurant_table_id ) )
                 {
                     // send notification to kitchen
