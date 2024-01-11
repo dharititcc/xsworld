@@ -1156,7 +1156,7 @@ class OrderRepository extends BaseRepository
 
         $venueList  = User::query()
                     ->select([
-                        '*',
+                        'users.*',
                         DB::raw("COALESCE(previous_qua, 0) AS previous_points"),
                         DB::raw("COALESCE(curr_qua, 0) AS current_points"),
                         DB::raw(
