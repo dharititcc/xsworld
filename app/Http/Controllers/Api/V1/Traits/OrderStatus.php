@@ -70,7 +70,7 @@ trait OrderStatus
                 $this->updateUserPoints($order->user, ['credit_amount' => $totalCreditAmount]);
 
                 // update customer table update
-                CustomerTable::where('user_id', $order->user->id)->where('order_id', $order->id)->update(['order_id' => null]);
+                CustomerTable::where('user_id', $order->user->id)->where('order_id', $order->id)->delete();
             }
             $title      = "Restaurant kitchen cancelled";
             $message    = "Your Order is #".$order->id." kitchen cancelled";
