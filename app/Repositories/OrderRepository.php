@@ -695,7 +695,6 @@ class OrderRepository extends BaseRepository
      */
     public function getCartdataWaiter(array $data): ?Order
     {
-        
         $order        = isset($data['order_id']) ? Order::findOrFail($data['order_id']) : null;
 
         $order->loadMissing(
@@ -739,9 +738,8 @@ class OrderRepository extends BaseRepository
             'order_mixer',
         ])
         ->where('type', Order::ORDER)
-        ->where('waiter_status', Order::COMPLETED)
-        ->whereNotNull('restaurant_table_id')
-        ->where('status', Order::CONFIRM_PICKUP);
+        ->whereIn('waiter_status', [Order::COMPLETED, Order::CUSTOMER_CANCELED])
+        ->whereNotNull('restaurant_table_id');
 
         if( $text )
         {
