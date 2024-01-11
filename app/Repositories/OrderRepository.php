@@ -1268,7 +1268,13 @@ class OrderRepository extends BaseRepository
         //     'user_id'   => $data['user_id'],
         //     'friend_id' => $auth_user->id,
         // ]);
-        $FriendRequest = FriendRequest::where('user_id', $data['user_id'])->where('friend_id', $auth_user->id,)->update(['status' => 1]);
+        // dd($data);
+        $user          = User::where('id',$data['user_id'])->count();
+        if($user == 0)
+        {
+            throw new GeneralException('No User Found');
+        }
+        $FriendRequest = FriendRequest::where('user_id', $data['user_id'])->where('friend_id', $auth_user->id,)->update(['status' => $data['status']]);
         return $FriendRequest;
     }
 

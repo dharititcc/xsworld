@@ -363,7 +363,12 @@ class OrderController extends APIController
     {
         $input  = $request->all();
         $friendStatus   =   $this->repository->friendRequestStatus($input);
-        return $this->respondSuccess('Friend Request Accepted Successfully', $friendStatus);
+        if($input['status'] == 1)
+        {
+            return $this->respondSuccess('Friend Request Accepted Successfully', $friendStatus);
+        } else {
+            return $this->respondSuccess('Friend Request Decline Successfully', $friendStatus);
+        }
     }
 
 
