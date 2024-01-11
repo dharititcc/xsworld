@@ -606,6 +606,8 @@
                     },
                     image: {
                         required: true,
+                        accept: "image/*",
+                        extension: "png|jpg|jpeg",
                     },
                     ingredients: {
                         required: true,
@@ -634,6 +636,7 @@
                     },
                     image: {
                         required: "Please upload files", //accept: 'Not an image!'
+                        accept:    "Only image files are allowed.", //accept: 'Not an image!'
                     },
                     'category_id[]': {
                         required: "Please select category",
@@ -681,6 +684,11 @@
                     year_of_production: {
                         required: true,
                     },
+                    image: {
+                        required: true,
+                        accept: "image/*",
+                        extension: "png|jpg|jpeg",
+                    },
                     message: {
                         required: true
                     },
@@ -690,11 +698,22 @@
                         required: "Please enter name",
                         maxlength: "Your name maxlength should be 50 characters long."
                     },
+                    image: {
+                        required: "Please upload files", //accept: 'Not an image!'
+                        accept:    "Only image files are allowed.", //accept: 'Not an image!'
+                    },
                     price: {
                         required: "Please enter amount",
                         pattern: "Please enter a valid price format (e.g., 100.50).",
                     },
 
+                },
+                errorPlacement: function (error, element) {
+                    if( element.attr("type") === 'file' ) {
+                        error.insertAfter($(element).closest('div'));
+                    }else{
+                        error.insertAfter($(element));
+                    }
                 },
                 submitHandler: function() {
                     context.submitDrinkForm(context.selectors.drinkForm.get(0));
@@ -745,6 +764,10 @@
                             if(elem.is("input:text"))
                             {
                                 elem.closest('#price').after(`<label class="error">${val[0]}</label>`);
+                            }
+                            if(elem.is("input:file"))
+                            {
+                                elem.closest('.featured-img').after(`<label class="error">${val[0]}</label>`);
                             }
                         });
                     }

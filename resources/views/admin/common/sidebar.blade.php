@@ -18,5 +18,5 @@
             @csrf
         </form>
   </div>
-    <div class="sidebar-footer"><label> what will it be today?</label> <span class="year">2023</span></div>
+    <div class="sidebar-footer"><label> what will it be today?</label> <span class="year">{{ now()->year }}</span></div>
 </div>

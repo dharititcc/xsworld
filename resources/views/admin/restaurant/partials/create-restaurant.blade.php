@@ -63,9 +63,11 @@
                                             <div class="row">
                                                 <div class="col-md-6">
                                                     <input type="datetime-local" class="form-control invert" id="start_date" name="start_date" >
+                                                    <em class="form-info">Start Date</em>
                                                 </div>
                                                 <div class="col-md-6">
                                                     <input type="datetime-local"  class="form-control invert" id="end_date" name="end_date">
+                                                    <em class="form-info">End Date</em>
                                                 </div>
                                             </div>
                                         </div>
@@ -83,10 +85,10 @@
                                         <div class="form-group full-w-form">
                                             <div class="row">
                                                 <div class="col-md-6">
-                                                    <input type="text" name="latitude" id="latitude" class="form-control " placeholder="latitude">
+                                                    <input type="text" name="latitude" id="latitude" class="form-control " placeholder="Latitude">
                                                 </div>
                                                 <div class="col-md-6">
-                                                    <input type="text" name="longitude" id="longitude" class="form-control " placeholder="longitude">
+                                                    <input type="text" name="longitude" id="longitude" class="form-control " placeholder="Longitude">
                                                 </div>
                                             </div>
                                         </div>
@@ -109,7 +111,7 @@
                                             <div class="form-group full-w-form">
                                                 <div class="row">
                                                 <div class="col-md-12">
-                                                    <input type="text" name="last_name" id="last_name" class="form-control " placeholder="last Name">
+                                                    <input type="text" name="last_name" id="last_name" class="form-control " placeholder="Last Name">
                                                 </div>
                                             </div>
                                             </div>
@@ -123,7 +125,7 @@
                                             <div class="form-group full-w-form">
                                                 <div class="row">
                                                 <div class="col-md-12">
-                                                    <input type="password" name="password" id="password" class="form-control " placeholder="password">
+                                                    <input type="password" name="password" id="password" class="form-control " placeholder="Password">
                                                 </div>
                                             </div>
                                             </div>
