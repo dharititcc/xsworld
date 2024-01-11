@@ -419,4 +419,9 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(User::class,'friendships','user_id','friend_id')->withTimestamps();
     }
+
+    public function friend()
+    {
+        return $this->hasOne(FriendRequest::class,'user_id','id');
+    }
 }

@@ -1170,6 +1170,7 @@ class OrderRepository extends BaseRepository
                     ])
                     ->with([
                         'attachment',
+                        'friend',
                         'orders',
                         'credit_points',
                         'orders.restaurant'
