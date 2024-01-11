@@ -13,6 +13,7 @@ use App\Http\Requests\OrderUpdateRequest;
 use App\Http\Requests\PlaceOrderRequest;
 use App\Http\Resources\OrderListResource;
 use App\Http\Resources\OrderResource;
+use App\Http\Resources\UserResource;
 use App\Http\Resources\VenueUserResource;
 use App\Models\Order;
 use App\Repositories\OrderRepository;
@@ -399,5 +400,12 @@ class OrderController extends APIController
         $input  = $request->all();
         $giftCredits    = $this->repository->giftCreditSend($input);
         return $this->respondSuccess("Gift Credit Send successfully",$giftCredits);
+    }
+
+    public function userProfile(Request $request)
+    {
+        $input  = $request->all();
+        $userProfile = $this->repository->userProfileData($input);
+        return $this->respondSuccess('Get user profile successfully ', new UserResource($userProfile));
     }
 }
