@@ -4,18 +4,19 @@
         /** table object for datatable */
         table: null,
         /** table columns for datatable */
-        tableCols: [{
-            "data": "id", // can be null or undefined
-            "defaultContent": "",
-            "width": "5%",
-            "sortable": false,
-            render: function (data, type, row) {
-                return `<label class="cst-check"><input name="id" class="checkboxitem" type="checkbox" data-type="2" value="${row.id}"><span class="checkmark"></span></label>`
-            }
-        },
+        tableCols: [
+        // {
+        //     "data": "id", // can be null or undefined
+        //     "defaultContent": "",
+        //     "width": "5%",
+        //     "sortable": false,
+        //     render: function (data, type, row) {
+        //         return `<label class="cst-check"><input name="id" class="checkboxitem" type="checkbox" data-type="2" value="${row.id}"><span class="checkmark"></span></label>`
+        //     }
+        // },
         {
             "data": "name", // can be null or undefined ->type
-            "width": "25%",
+            "width": "30",
             "defaultContent": "",
         },
         {
@@ -103,7 +104,7 @@
                 columns: context.tableCols,
                 drawCallback: function ( settings )
                 {
-                    context.selectors.eventTable.find('tbody tr').find('td:first').addClass('dt-center');
+                    context.selectors.eventTable.find('tbody tr').find('td:first');
                 }
             });
         },

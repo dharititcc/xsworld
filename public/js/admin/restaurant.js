@@ -8,20 +8,20 @@
         table: null,
         /** table columns for datatable */
         tableCols: [
-        {
-            "data": "id", // can be null or undefined ->type
-            "defaultContent": "",
-            "width": "5%",
-            "sortable": false,
-            render: function(data, type, row)
-            {
-                return `<label class="cst-check"><input name="id" class="checkboxitem" type="checkbox" value="${row.id}"><span class="checkmark"></span></label>`
-            }
-        },
+        // {
+        //     "data": "id", // can be null or undefined ->type
+        //     "defaultContent": "",
+        //     "width": "5%",
+        //     "sortable": false,
+        //     render: function(data, type, row)
+        //     {
+        //         return `<label class="cst-check"><input name="id" class="checkboxitem" type="checkbox" value="${row.id}"><span class="checkmark"></span></label>`
+        //     }
+        // },
         {
             "data": "name", // can be null or undefined ->type
             "defaultContent": "",
-            "width": "25%",
+            "width": "30%",
             render: function(data, type, row)
             {
                 return `${row.name}`
@@ -511,7 +511,7 @@
                 columns: context.tableCols,
                 drawCallback: function ( settings )
                 {
-                    context.selectors.restaurantTable.find('tbody tr').find('td:first').addClass('dt-center');
+                    context.selectors.restaurantTable.find('tbody tr').find('td:first');
                 }
             });
         },
