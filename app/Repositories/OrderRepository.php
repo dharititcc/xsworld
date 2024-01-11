@@ -554,20 +554,20 @@ class OrderRepository extends BaseRepository
 
                     if( !empty( $kitchenDevices ) )
                     {
-                        $kitchenTitle    = 'Order canceled';
-                        $kitchenMessage  = "Order #".$order->id." is canceled by customer";
+                        $kitchenTitle    = 'Order cancelled';
+                        $kitchenMessage  = "Order #".$order->id." is cancelled by customer";
                         sendNotification($kitchenTitle, $kitchenMessage, $kitchenDevices, $order->id);
                     }
 
                     // send notification to waiters
-                    $kitchenTitle    = 'Order canceled';
-                    $kitchenMessage  = "Order #".$order->id." is canceled by customer";
+                    $kitchenTitle    = 'Order cancelled';
+                    $kitchenMessage  = "Order #".$order->id." is cancelled by customer";
                     $this->notifyWaiters($order, $kitchenTitle, $kitchenMessage);
                 }
                 else
                 {
-                    $bartitle           = "Order canceled";
-                    $barmessage         = "Order #".$order->id." is canceled by customer";
+                    $bartitle           = "Order cancelled";
+                    $barmessage         = "Order #".$order->id." is cancelled by customer";
                     $bardevices         = $order->pickup_point_user_id ? $order->pickup_point_user->devices()->pluck('fcm_token')->toArray() : [];
                     if(!empty( $bardevices )) {
                         $bar_notification   = sendNotification($bartitle,$barmessage,$bardevices,$order->id);
@@ -695,7 +695,6 @@ class OrderRepository extends BaseRepository
      */
     public function getCartdataWaiter(array $data): ?Order
     {
-        
         $order        = isset($data['order_id']) ? Order::findOrFail($data['order_id']) : null;
 
         $order->loadMissing(
@@ -739,9 +738,8 @@ class OrderRepository extends BaseRepository
             'order_mixer',
         ])
         ->where('type', Order::ORDER)
-        ->where('waiter_status', Order::COMPLETED)
-        ->whereNotNull('restaurant_table_id')
-        ->where('status', Order::CONFIRM_PICKUP);
+        ->whereIn('waiter_status', [Order::COMPLETED, Order::CUSTOMER_CANCELED])
+        ->whereNotNull('restaurant_table_id');
 
         if( $text )
         {
