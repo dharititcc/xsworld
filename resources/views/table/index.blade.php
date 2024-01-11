@@ -56,7 +56,7 @@
                         </div>
                         <div class="ftr">
                             <a href="javascript:void(0);" class="active @if($res_table->status == 1)  green @endif status" data-status="1"  data-id="{{$res_table->id}}">Active</a>
-                            <a href="javascript:void(0);" class="disable @if($res_table->status == 0)  green @endif status" data-status="0" data-id="{{$res_table->id}}">Disable</a>
+                            <a href="javascript:void(0);" class="disable @if($res_table->status == 0)  red @endif status" data-status="0" data-id="{{$res_table->id}}">Disable</a>
                         </div>
                     </div>
                 @endforeach

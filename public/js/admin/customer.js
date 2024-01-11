@@ -5,15 +5,15 @@
         table: null,
         /** table columns for datatable */
         tableCols: [
-        {
-            "data": "id", // can be null or undefined
-            "defaultContent": "",
-            "width": "10%",
-            "sortable": false,
-            render: function (data, type, row) {
-                return `<label class="cst-check"><input name="id" class="checkboxitem" type="checkbox" value="${row.id}"><span class="checkmark"></span></label>`
-            }
-        },
+        // {
+        //     "data": "id", // can be null or undefined
+        //     "defaultContent": "",
+        //     "width": "10%",
+        //     "sortable": false,
+        //     render: function (data, type, row) {
+        //         return `<label class="cst-check"><input name="id" class="checkboxitem" type="checkbox" value="${row.id}"><span class="checkmark"></span></label>`
+        //     }
+        // },
         {
             "data": "full_name", // can be null or undefined
             "defaultContent": "",
@@ -88,7 +88,7 @@
                 columns: context.tableCols,
                 drawCallback: function ( settings )
                 {
-                    context.selectors.customerTable.find('tbody tr').find('td:first').addClass('dt-center');
+                    context.selectors.customerTable.find('tbody tr').find('td:first');
                 }
             });
         },

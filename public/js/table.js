@@ -106,11 +106,16 @@
                     dataType: "json",
                     data: {'status':status,'id':id},
                     success: function(res) {
-                        console.log(res);
                         // alert('Table Status has been updated successfully');
                         XS.Common.handleSwalSuccessWithoutReload("Table Status has been updated successfully.");
-                        $this.closest('.ftr').find('.status').removeClass('green');
-                        $this.addClass('green');
+                        // $this.closest('.ftr').find('.status').removeClass('green');
+                        if(status == 1) {
+                            $this.addClass('green');
+                            $this.closest('.ftr').find('.disable').removeClass('red');
+                        } else {
+                            $this.addClass('red');
+                            $this.closest('.ftr').find('.active').removeClass('green');
+                        }
                     },
                 });
             });
