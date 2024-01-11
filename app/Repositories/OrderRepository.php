@@ -1357,4 +1357,10 @@ class OrderRepository extends BaseRepository
         $destinationPath = asset('storage/order_pdf/').'/'.$filename;
         return $destinationPath;
     }
+
+    public function userProfileData(array $data)
+    {
+        $userData = User::find($data['user_id']);
+        return $userData;
+    }
 }
