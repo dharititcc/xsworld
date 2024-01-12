@@ -422,6 +422,6 @@ class User extends Authenticatable
 
     public function friend()
     {
-        return $this->hasOne(FriendRequest::class,'user_id','id');
+        return $this->hasOne(FriendRequest::class,'friend_id','id');
     }
 }
