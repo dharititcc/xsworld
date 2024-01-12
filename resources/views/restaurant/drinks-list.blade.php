@@ -89,15 +89,15 @@
                             </div>
                             <div class="grey-brd-box d-flex featured-img">
                                 <input id="upload" type="file" class="files" name="image" accept="image/*" hidden />
-                                <label for="upload" class="lbl-upload"><span class="img-text"> Product Image</span> <i
+                                <label for="upload" class="lbl-upload"><span class="img-text"> Product Image *</span> <i
                                         class="icon-plus add-edit"></i></label>
                             </div>
-                            <input type="text" name="price" id="price" class="form-control vari2 mb-3 show-error-info" placeholder="Enter Price">
+                            <input type="text" name="price" id="price" class="form-control vari2 mb-3 show-error-info" placeholder="Enter Price *">
 
                         </div>
                         <div class="col-md-8">
                             <div class="form-group mb-4">
-                                <input type="text" name="name" id="name" class="form-control vari3 duplicate_product" placeholder="Product Name">
+                                <input type="text" name="name" id="name" class="form-control vari3 duplicate_product" placeholder="Product Name *">
                                 <input id="product_type" type="hidden" class="product_type" name="is_variable" />
                                 <input id="is_featured" type="hidden" class="is_featured" name="is_featured" />
                                 {{-- <span class="error" id="duplicate_product"></span> --}}
@@ -119,16 +119,16 @@
                                     <h2 class="yellow">Additional Information</h2> <span class="optional-info"></span>
                                 </div>
                                 <div class="form-group">
-                                    <input type="text" name="ingredients" id="ingredients" class="form-control vari1" placeholder="Ingredients">
+                                    <input type="text" name="ingredients" id="ingredients" class="form-control vari1" placeholder="Ingredients *">
                                 </div>
                                 <div class="form-group full-w-form">
                                     <div class="row">
                                         <div class="col-md-3"><input type="text" name="country_of_origin" id="country_of_origin" class="form-control vari1"
-                                                placeholder="Country of Origin"></div>
+                                                placeholder="Country of Origin *"></div>
                                         <div class="col-md-4"><input type="text" name="year_of_production" id="year_of_production" class="form-control vari1"
-                                                placeholder="Year of Production"></div>
+                                                placeholder="Year of Production *"></div>
                                         <div class="col-md-5"><input type="text" name="type_of_drink" id="type_of_drink" class="form-control vari1"
-                                                placeholder="Type of Drink (Spirit/Wines)"></div>
+                                                placeholder="Type of Drink (Spirit/Wines) *"></div>
                                     </div>
                                 </div>
 
