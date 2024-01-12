@@ -44,10 +44,10 @@
                         <div style="min-height: 300px;">
                             <div class="form-group mb-4">
                                 <input id="mixer_id" type="hidden" class="mixer_id" name="mixer_id" />
-                                <input type="text" name="name" class="form-control vari2" placeholder="Mixer Name">
+                                <input type="text" name="name" class="form-control vari2" placeholder="Mixer Name *">
                             </div>
                             <div class="form-group mb-4">
-                                <input type="text" name="price" id="price" class="form-control vari2" placeholder="Mixer Price">
+                                <input type="text" name="price" id="price" class="form-control vari2" placeholder="Mixer Price *">
                             </div>
                             <div class="list-catg">
                                 {{-- @foreach ($food_categories as $child)
