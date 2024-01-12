@@ -167,27 +167,42 @@
                     // alert("Please select atleast one record to delete.");
                     XS.Common.handleSwalSuccessWithoutReload("Please select atleast one record to delete.");
                 } else {
-                    if(confirm("Are you sure, you want to delete the selected table?")){
-                        var strIds = idsArr.join(",");
-                        $.ajax({
-                            url:moduleConfig.tableDelete,
-                            type:'DELETE',
-                            data: 'ids='+strIds,
-                            headers: {
-                                'X-CSRF-TOKEN': jQuery('meta[name="csrf-token"]').attr('content')
-                            },
-                            success: function(res) {
-                                console.log(res);
-                                // alert('Table has been removed successfully');
-                                XS.Common.handleSwalSuccessWithoutReload("Table has been removed successfully.");
-                                $this.closest('.ftr').find('.status').removeClass('green');
-                                $this.addClass('green');
-                                location.reload(true);
-                            },
-                        });
-                    } else {
-                        $('.qr_select').prop('checked', false);
-                    }
+                    swal({
+                        title: `Are you sure you want to delete this Records?`,
+                        // text: "It will gone forevert",
+                        icon: "warning",
+                        buttons: true,
+                        dangerMode: true,
+                    })
+                    .then((willDelete) => {
+                        if (willDelete) {
+                            var strIds = idsArr.join(",");
+                            $.ajax({
+                                url:moduleConfig.tableDelete,
+                                type:'DELETE',
+                                data: 'ids='+strIds,
+                                headers: {
+                                    'X-CSRF-TOKEN': jQuery('meta[name="csrf-token"]').attr('content')
+                                },
+                                success: function(res) {
+                                    console.log(res);
+                                    // alert('Table has been removed successfully');
+                                    XS.Common.handleSwalSuccessWithoutReload("Table has been removed successfully.");
+                                    $this.closest('.ftr').find('.status').removeClass('green');
+                                    $this.addClass('green');
+                                    location.reload(true);
+                                },
+                            });
+                        }
+                        // else if (result.isDenied) {
+                        //     $('.qr_select').prop('checked', false);
+                        // }
+                    });
+                    // if(confirm("Are you sure, you want to delete the selected table?")){
+                        
+                    // } else {
+                    //     $('.qr_select').prop('checked', false);
+                    // }
                 }
             });
         },
