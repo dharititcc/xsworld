@@ -111,12 +111,37 @@ trait OrderFlow
                             'total'                 => $item['variation']['price'] * $item['variation']['quantity']
                         ];
 
-                        // add variation in the order items table
-                        $newOrderItem = $this->createOrderItem($order, $variationArr);
+                        // check same variation exist
+                        $newOrderItem = $this->checkSameItemExist($order, $item['item_id']);
+                        if( isset( $newOrderItem->id ) )
+                        {
+                            // update variation quantity and total of that item
+                            $variationQuantity = $newOrderItem->quantity + $item['variation']['quantity'];
+                            $variationTotal    = $variationQuantity * $item['variation']['price'];
+                            $newOrderItem->update(['quantity' => $variationQuantity, 'total' => $variationTotal]);
+                        }
+                        else
+                        {
+                            // add variation in the order items table
+                            $newOrderItem = $this->createOrderItem($order, $variationArr);
+                        }
                     }
                     else
                     {
-                        $newOrderItem = $this->createOrderItem($order, $itemArr);
+                        // check same item exist
+                        $newOrderItem = $this->checkSameItemExist($order, $item['item_id']);
+
+                        if( isset( $newOrderItem->id ) )
+                        {
+                            // update item quantity and total of that item
+                            $itemQuantity = $newOrderItem->quantity + $item['quantity'];
+                            $itemTotal    = $itemQuantity * $item['price'];
+                            $newOrderItem->update(['quantity' => $itemQuantity, 'total' => $itemTotal]);
+                        }
+                        else
+                        {
+                            $newOrderItem = $this->createOrderItem($order, $itemArr);
+                        }
                     }
 
                     // add item in the order items table
@@ -134,8 +159,20 @@ trait OrderFlow
                             'total'             => $item['mixer']['quantity'] * $item['mixer']['price']
                         ];
 
-                        // add mixer in the order items table
-                        $mixerItem = $this->createOrderItem($order, $mixerArr);
+                        // check mixer exist in the parent
+                        $mixerItem = $this->checkSameMixerExistInParent($order, $newOrderItem->id, $item['mixer']['id']);
+                        if( isset( $mixerItem->id ) )
+                        {
+                            // update mixer quantity
+                            $mixerQuantity = $mixerItem->quantity + $item['mixer']['quantity'];
+                            $mixerTotal    = $mixerQuantity * $item['mixer']['price'];
+                            $mixerItem->update(['quantity' => $mixerQuantity, 'total' => $mixerTotal]);
+                        }
+                        else
+                        {
+                            // add mixer in the order items table
+                            $mixerItem = $this->createOrderItem($order, $mixerArr);
+                        }
                     }
 
                     // make proper data for addons
@@ -157,8 +194,20 @@ trait OrderFlow
                                     'total'                 => $addon['quantity'] * $addon['price']
                                 ];
 
-                                // add addon in the order items table
-                                $addonItem = $this->createOrderItem($order, $addonData);
+                                // check mixer exist in the parent
+                                $addonItem = $this->checkSameAddonsExistInParent($order, $newOrderItem->id, $addon['id']);
+                                if( isset( $addonItem->id ) )
+                                {
+                                    // update mixer quantity
+                                    $addonQuantity = $addonItem->quantity + $addon['quantity'];
+                                    $addonTotal    = $addonQuantity * $addon['price'];
+                                    $addonItem->update(['quantity' => $addonQuantity, 'total' => $addonTotal]);
+                                }
+                                else
+                                {
+                                    // add addon in the order items table
+                                    $addonItem = $this->createOrderItem($order, $addonData);
+                                }
                             }
                         }
                     }
@@ -166,16 +215,6 @@ trait OrderFlow
             }
 
             $order->refresh();
-            // if( $this->checkOrderCategoryType($order->order_items) )
-            // {
-            //     // update order category to 1
-            //     $order_category_type = 1;
-            // }
-            // else
-            // {
-            //     // update order category to 0
-            //     $order_category_type = 0;
-            // }
             $order_category_type = $this->checkOrderCategoryType($order->order_items);
             $order->loadMissing(['items']);
             $order->update(['total' => $order->items->sum('total'),'order_category_type' => $order_category_type]);
@@ -184,6 +223,50 @@ trait OrderFlow
         }
 
         throw new GeneralException('Order could not be updated.');
+    }
+
+    /**
+     * Method checkSameItemExist
+     *
+     * @param Order $order [explicite description]
+     * @param $itemId $itemId [explicite description]
+     *
+     * @return null|OrderItem
+     */
+    public function checkSameItemExist(Order $order, $itemId): ?OrderItem
+    {
+        // check first item or variation
+        return $order->order_items()->where('restaurant_item_id', $itemId)->first();
+    }
+
+    /**
+     * Method checkSameMixerExistInParent
+     *
+     * @param Order $order [explicite description]
+     * @param int $parentId [explicite description]
+     * @param mixed $itemId [explicite description]
+     *
+     * @return null|OrderItem
+     */
+    public function checkSameMixerExistInParent(Order $order, $parentId, $itemId): ?OrderItem
+    {
+        // check first item or variation
+        return $order->order_mixer()->where('restaurant_item_id', $itemId)->where('parent_item_id', $parentId)->first();
+    }
+
+    /**
+     * Method checkSameAddonsExistInParent
+     *
+     * @param Order $order [explicite description]
+     * @param int $parentId [explicite description]
+     * @param mixed $itemId [explicite description]
+     *
+     * @return null|OrderItem
+     */
+    public function checkSameAddonsExistInParent(Order $order, $parentId, $itemId): ?OrderItem
+    {
+        // check first item or variation
+        return $order->order_addons()->where('restaurant_item_id', $itemId)->where('parent_item_id', $parentId)->first();
     }
 
     /**
