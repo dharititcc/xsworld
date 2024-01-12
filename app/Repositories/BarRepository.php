@@ -252,7 +252,7 @@ class BarRepository extends BaseRepository
                 // update user's credit amount
                 $this->updateUserPoints($user, ['credit_amount' => $totalCreditAmount]);
                 $title                      = $order->restaurant->name. " is processing your order";
-                $message                    = "Your Order #".$order_id." is canceled by".$order->restaurant->name;
+                $message                    = "Your Order #".$order_id." is cancelled by".$order->restaurant->name;
                 $send_notification          = sendNotification($title,$message,$user_tokens,$order_id);
             }
 

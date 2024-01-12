@@ -90,6 +90,7 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'v1', 'as' => 'api.v1.'], fun
         Route::post('/my-friend-request', 'OrderController@pendingFriendRequest')->name('pendingFriendRequest');
 
         Route::post('/gift-credit-send', 'OrderController@giftCredits')->name('giftCredits');
+        Route::post('/get-user-profile', 'OrderController@userProfile')->name('userProfile');
 
         // {api/v1/orderstatusupdate}
         Route::post('/orderstatusupdate', 'OrderController@orderStatusUpdate')->name('orderStatusUpdate');

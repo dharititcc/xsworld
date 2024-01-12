@@ -4,6 +4,7 @@ use App\Exceptions\GeneralException;
 use App\Models\Order;
 use App\Models\OrderSplit;
 use App\Billing\Stripe;
+use App\Models\CustomerTable;
 use App\Repositories\Traits\CreditPoint;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -42,10 +43,12 @@ trait OrderStatus
             }
 
 
-            $title  = "Ready for pickup";
+            $title      = "Ready for pickup";
+            $message    = "Your Order is #".$order->id." kitchen ready for pickup";
 
-        } elseif ($status == OrderSplit::KITCHEN_CANCELED) {
-
+        }
+        elseif ($status == OrderSplit::KITCHEN_CANCELED)
+        {
             if( isset( $order->restaurant_table_id ) )
             {
                 # update status in ordersplit tbl
@@ -65,9 +68,12 @@ trait OrderStatus
                 $totalCreditAmount = $userCreditAmountBalance + $refundCreditAmount;
                 // update user's credit amount
                 $this->updateUserPoints($order->user, ['credit_amount' => $totalCreditAmount]);
+
+                // update customer table update
+                CustomerTable::where('user_id', $order->user->id)->where('order_id', $order->id)->delete();
             }
-            $title      = "Restaurant Kitchen Canceled";
-            $message    = "Your Order is #".$order->id." kitchen canceled";
+            $title      = "Restaurant kitchen cancelled";
+            $message    = "Your Order is #".$order->id." kitchen cancelled";
         }
         else if( $status == OrderSplit::KITCHEN_CONFIRM )
         {
@@ -96,11 +102,8 @@ trait OrderStatus
             // update user's points
             $this->updateUserPoints($order->user, ['points' => $totalPoints]);
 
+            $title      = "Restaurant kitchen confirm collection";
             $message    = "Your Order is #".$order->id." ready for collection";
-        }
-        else
-        {
-
         }
 
         // send notification to waiters
