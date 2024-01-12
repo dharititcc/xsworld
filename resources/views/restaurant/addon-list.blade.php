@@ -43,10 +43,10 @@
                         <div style="min-height: 300px;">
                             <div class="form-group mb-4">
                                 <input id="addon_id" type="hidden" class="addon_id" name="addon_id" />
-                                <input type="text" name="name" class="form-control vari2" placeholder="Addon Name">
+                                <input type="text" name="name" class="form-control vari2" placeholder="Addon Name *">
                             </div>
                             <div class="form-group mb-4">
-                                <input type="text" name="price" id="price" class="form-control vari2" placeholder="Addon Price">
+                                <input type="text" name="price" id="price" class="form-control vari2" placeholder="Addon Price *">
                             </div>
                             <div class="list-catg">
                                 @foreach ($drink_categories as $child)
