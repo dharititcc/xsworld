@@ -122,10 +122,10 @@ trait OrderStatus
      * @param string $title [explicite description]
      * @param string $message [explicite description]
      *
-     * @return bool
+     * @return mixed
      * @throws \App\Exceptions\GeneralException
      */
-    public function notifyWaiters(Order $order, string $title, string $message): bool
+    public function notifyWaiters(Order $order, string $title, string $message): mixed
     {
         // send notification to waiter if table order
         if( isset( $order->restaurant_table_id ) )
@@ -168,10 +168,10 @@ trait OrderStatus
      * @param \App\Models\Order $order [explicite description]
      * @param string $title [explicite description]
      *
-     * @return bool
+     * @return mixed
      * @throws \App\Exceptions\GeneralException
      */
-    public function notifyCustomer(Order $order, string $title, string $message) : bool
+    public function notifyCustomer(Order $order, string $title, string $message) : mixed
     {
         // Customer Notify
         $customer_devices   = $order->user->devices->count() ? $order->user->devices()->pluck('fcm_token')->toArray() : [];
