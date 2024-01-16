@@ -119,14 +119,14 @@
                     @csrf
                     <div style="min-height: 300px;">
                         <div class="form-group mb-4">
-                            <input type="text" class="form-control vari2" name="pickup_name" id="pickup_name" placeholder="Zone Name">
+                            <input type="text" class="form-control vari2" name="pickup_name" id="pickup_name" placeholder="Zone Name *">
                             <span id="Errorname"></span>
                             <input id="pickup_id" type="hidden" class="pickup_id" name="pickup_id" />
                             <input id="types" type="hidden" class="types" name="types" value="" />
                         </div>
                         <div class="grey-brd-box custom-upload image_box">
                             <input id="upload" type="file" class="files" name="files" id="files" accept="image/*" hidden />
-                            <label for="upload"><span> Add Zone Feature Image <br> (This can be changed & is mandatory).</span> <i class="icon-plus"></i></label>
+                            <label for="upload"><span> Add Zone Feature Image <br> (This can be changed & is mandatory). *</span> <i class="icon-plus"></i></label>
                             <span id="Errorfiles"></span>
                         </div>
                         <input type="checkbox" name="is_table_order" value="1" /> Default pickup point for table order

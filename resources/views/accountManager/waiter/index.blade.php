@@ -133,17 +133,17 @@
                             <div class="form-group mb-4">
                                 <input id="user_id" type="hidden" class="user_id" name="user_id" />
                                 <input type="text" name="waiter_id" id="waiter_id" class="form-control vari2"
-                                    placeholder="Waiter ID" autocomplete="off">
+                                    placeholder="Waiter ID *" autocomplete="off">
                                 <span id="Errorid"></span>
                             </div>
                             <div class="form-group mb-4">
                                 <input type="text" name="first_name" id="waiter_name" class="form-control vari2"
-                                    placeholder="Waiter Name" autocomplete="off">
+                                    placeholder="Waiter Name *" autocomplete="off">
                                 <span id="Errorname"></span>
                             </div>
                             <div class="form-group">
                                 <input type="password" name="password" id="password" class="form-control vari2"
-                                    placeholder="Password" autocomplete="off">
+                                    placeholder="Password *" autocomplete="off">
                                     <i class="icon-eye-off show-password" data-type="0"></i>
                                 <span id="Errorpassword"></span>
                             </div>
@@ -173,12 +173,12 @@
                             <div class="form-group mb-4">
                                 <input id="user_id" type="hidden" class="user_id" name="user_id" />
                                 <input type="text" name="kitchen_id" id="kitchen_id" class="form-control vari2"
-                                    placeholder="Login ID" autocomplete="off">
+                                    placeholder="Login ID *" autocomplete="off">
                                 <span id="Errorid"></span>
                             </div>
                             <div class="form-group mb-4">
                                 <input type="password" name="password" id="password" class="form-control vari2"
-                                    placeholder="Password" autocomplete="off">
+                                    placeholder="Password *" autocomplete="off">
                                     <i class="icon-eye-off show-password" data-type="0"></i>
                                 <span id="Errorpassword"></span>
                             </div>
@@ -217,17 +217,17 @@
                             <div class="form-group mb-4">
                                 <input id="user_id" type="hidden" class="user_id" name="user_id" />
                                 <input type="text" name="barpick_id" id="barpick_id" class="form-control vari2"
-                                    placeholder="Login ID" autocomplete="off">
+                                    placeholder="Login ID *" autocomplete="off">
                                 <span id="Errorid"></span>
                             </div>
                             <div class="form-group mb-4">
                                 <input type="password" name="password" id="password" class="form-control vari2"
-                                    placeholder="Password" autocomplete="off">
+                                    placeholder="Password *" autocomplete="off">
                                     <i class="icon-eye-off show-password" data-type="0"></i>
                                 <span id="Errorpassword"></span>
                             </div>
                             <div class="form-group">
-                                <label class="white-lable d-block text-center">Pickup Location</label>
+                                <label class="white-lable d-block text-center">Pickup Location *</label>
                                 <select name="pickup_points" id="pickup_points" class="form-control vari2"></select>
 
                             </div>
