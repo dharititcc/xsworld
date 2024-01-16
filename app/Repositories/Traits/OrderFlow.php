@@ -118,7 +118,7 @@ trait OrderFlow
                         else
                         {
                             // check same variation exist
-                            $newOrderItem = $this->checkSameItemExist($order, $item['item_id']);
+                            $newOrderItem = $this->checkSameItemExist($order, $item['variation']['id']);
                             if( isset( $newOrderItem->id ) )
                             {
                                 // update variation quantity and total of that item
