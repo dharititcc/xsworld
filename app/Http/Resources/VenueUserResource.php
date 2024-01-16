@@ -29,6 +29,7 @@ class VenueUserResource extends JsonResource
             'credit_amount'         => (float) $this->credit_amount ?? 0,
             'points'                => $this->points ?? 0,
             'friendship'            => isset($this->friend) ? $this->friend->status : 3,
+            'member_id'             => $this->id,
             // 'restaurant'            => $this->restaurant,
             // ''
             // 'rating'                => (double) round($this->restaurant->avg_review_rating,1),
