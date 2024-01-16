@@ -2,6 +2,7 @@
 
 use App\Billing\Stripe;
 use App\Exceptions\GeneralException;
+use App\Http\Controllers\Api\V1\Traits\OrderStatus;
 use App\Models\Category;
 use App\Models\CustomerTable;
 use App\Models\Order;
@@ -18,6 +19,7 @@ use Illuminate\Support\Facades\Storage;
 
 trait OrderFlow
 {
+    use OrderStatus;
     /**
      * Method addTocart
      *
@@ -545,31 +547,10 @@ trait OrderFlow
             }
 
             // send notification to waiters of the restaurant
-            $waiterDevices = [];
-            $waiters = $order->restaurant->waiters()->with(['user', 'user.devices'])->get();
-
-            if( $waiters->count() )
-            {
-                foreach( $waiters as $waiter )
-                {
-                    $WaiterDevicesTokensArr = $waiter->user->devices->pluck('fcm_token')->toArray();
-                    // $waiterDevices = array_merge($waiterDevices, );
-                    if( !empty( $WaiterDevicesTokensArr ) )
-                    {
-                        foreach( $WaiterDevicesTokensArr as $token )
-                        {
-                            $waiterDevices[] = $token;
-                        }
-                    }
-                }
-            }
-
-            if( !empty( $waiterDevices ) )
-            {
-                $waiterTitle    = 'New order placed by customer';
-                $waiterMessage  = "Order is #{$order->id} placed by customer";
-                sendNotification($waiterTitle, $waiterMessage, $waiterDevices, $order->id);
-            }
+            $waiterTitle    = 'New order placed by customer';
+            $waiterMessage  = "Order is #{$order->id} placed by customer";
+            $code           = Order::WAITER_NEW_ORDER;
+            $this->notifyWaiters($order, $waiterTitle, $waiterMessage, $code);
         }
 
         // send notification to kitchens of the restaurant if order is food

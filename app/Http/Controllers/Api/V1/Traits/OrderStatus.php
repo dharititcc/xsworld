@@ -45,6 +45,7 @@ trait OrderStatus
 
             $title      = "Ready for pickup";
             $message    = "Your Order is #".$order->id." kitchen ready for pickup";
+            $code       = Order::READY_FOR_COLLECTION;
 
         }
         elseif ($status == OrderSplit::KITCHEN_CANCELED)
@@ -74,6 +75,7 @@ trait OrderStatus
             }
             $title      = "Restaurant kitchen cancelled";
             $message    = "Your Order is #".$order->id." kitchen cancelled";
+            $code       = Order::WAITER_CANCEL_ORDER;
         }
         else if( $status == OrderSplit::KITCHEN_CONFIRM )
         {
@@ -104,10 +106,11 @@ trait OrderStatus
 
             $title      = "Restaurant kitchen confirm collection";
             $message    = "Your Order is #".$order->id." ready for collection";
+            $code       = Order::WAITER_CONFIRM_COLLECTION;
         }
 
         // send notification to waiters
-        $this->notifyWaiters($order, $title, $message);
+        $this->notifyWaiters($order, $title, $message, $code);
 
         // send notification to customer
         $this->notifyCustomer($order, $title, $message);
@@ -125,7 +128,7 @@ trait OrderStatus
      * @return mixed
      * @throws \App\Exceptions\GeneralException
      */
-    public function notifyWaiters(Order $order, string $title, string $message): mixed
+    public function notifyWaiters(Order $order, string $title, string $message, int $code): mixed
     {
         // send notification to waiter if table order
         if( isset( $order->restaurant_table_id ) )
@@ -157,7 +160,7 @@ trait OrderStatus
             if( !empty( $waiterDevices ) )
             {
                 $orderid    = $order->id;
-                return sendNotification($title, $message, $waiterDevices, $orderid);
+                return waiterNotification($title, $message, $waiterDevices, $code);
             }
         }
     }

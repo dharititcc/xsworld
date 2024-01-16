@@ -47,6 +47,7 @@
                                 <input type="text" name="name" class="form-control vari2" placeholder="Mixer Name *">
                             </div>
                             <div class="form-group mb-4">
+                                <span class="input-text">{{ $restaurant->country->symbol }}</span>
                                 <input type="text" name="price" id="price" class="form-control vari2" placeholder="Mixer Price *">
                             </div>
                             <div class="list-catg">
