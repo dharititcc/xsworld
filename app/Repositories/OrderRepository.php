@@ -342,7 +342,6 @@ class OrderRepository extends BaseRepository
      */
     public function getMembershipPoints(User $user): array
     {
-
         // quarter logic goes here
         $previousQuarter    = get_previous_quarter();
         $currentQuarter     = get_current_quarter();
@@ -1168,7 +1167,7 @@ class OrderRepository extends BaseRepository
                         'users.credit_amount',
                         'users.points', 
                         DB::raw("COALESCE(previous_qua, 0) AS previous_points"),
-                        DB::raw("COALESCE(curr_qua, 0) AS current_points"),
+                        DB::raw("COALESCE(Abs(curr_qua), 0) AS current_points"),
                         DB::raw(
                         "
                             (
@@ -1227,24 +1226,39 @@ class OrderRepository extends BaseRepository
                     // echo common()->formatSql($venueList);die;
         if( $membershipLevel != "" )
         {
+            $filtered = $venueList;
             $membershipArr = explode(',', $membershipLevel);
+            // if(count($membershipArr) > 1)
+            // {
+            //     if (in_array(config('xs.bronze_level'), $membershipArr)) {
+            //         $filtered = $filtered->whereBetween('current_membership_points', [0, 100]);
+            //     }
+            //     if (in_array(config('xs.silver_level'), $membershipArr)) {
+            //         $filtered = $filtered->whereBetween('current_membership_points', [101, 200]);
+            //     }
+            //     if (in_array(config('xs.gold_level'), $membershipArr)) {
+            //         $filtered = $filtered->whereBetween('current_membership_points', [201, 300]);
+            //     }
+            //     if (in_array(config('xs.platinum_level'), $membershipArr)) {
+            //         $filtered = $filtered->orWhere('current_membership_points', '>', 300);
+            //     }
+            // }
 
-            // dd(in_array(config('xs.bronze_level'), $membershipArr));
             if( in_array(config('xs.bronze_level'), $membershipArr) )
             {
-                $filtered = $venueList->whereBetween('current_membership_points', [0,100]);
+                $filtered = $filtered->whereBetween('current_membership_points', config('xs.bronze'));
             }
             if( in_array(config('xs.silver_level'), $membershipArr) )
             {
-                $filtered = $venueList->whereBetween('current_membership_points', config('xs.silver'));
+                $filtered = $filtered->whereBetween('current_membership_points', config('xs.silver'));
             }
             if( in_array(config('xs.gold_level'), $membershipArr) )
             {
-                $filtered = $venueList->whereBetween('current_membership_points', [201,300]);
+                $filtered = $filtered->whereBetween('current_membership_points', config('xs.gold'));
             }
             if( in_array(config('xs.platinum_level'), $membershipArr) )
             {
-                $filtered = $venueList->where('current_membership_points', '>', 300);
+                $filtered = $filtered->where('current_membership_points', '>', 300);
             }
         }
         else
