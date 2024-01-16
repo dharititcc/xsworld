@@ -15,7 +15,7 @@
             </a>
         </div>
         <div class="sort-by d-flex mb-4">
-            <h2 class="yellow">Sort By</h2>
+            <h2 class="yellow">Search</h2>
             <div class="searchbox"><input type="text" name="search" id="search" class="searchbar"
                     placeholder="Find a Drink"></div>
         </div>
