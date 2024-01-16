@@ -97,6 +97,7 @@
                     context.selectors.waiterModalTitle.html('Add ');
                     context.addWaiterFormValidation();
                     context.selectors.waiterForm.attr('action', moduleConfig.waiterStore);
+                    context.selectors.waiterForm.find('input[type="password"]').attr('placeholder', 'Password *');
                 }
                 else
                 {
@@ -107,6 +108,7 @@
                     context.selectors.waiterId.attr('disabled',true);
                     context.getWaiterData(waiterId);
                     context.selectors.waiterForm.append(`<input type="hidden" name="_method" value="PUT" />`);
+                    context.selectors.waiterForm.find('input[type="password"]').attr('placeholder', 'Password');
                 }
 
                 context.selectors.waiterModal.modal('show');
@@ -168,7 +170,6 @@
                         required: "Please enter Password"
                     }
                 },
-                
                 submitHandler: function() {
                     context.submitWaiterForm(context.selectors.waiterForm.get(0))
                 }
@@ -254,10 +255,7 @@
                 success: function(res) {
                     $('#waiter_name').val(res.first_name);
                     $('#waiter_id').val(res.username);
-                    // $('#password').val(res.password);
-
                 },
-                
             });
 
         },
@@ -277,6 +275,7 @@
                     context.selectors.kitchenModalTitle.html('Add ');
                     context.addKitchenFormValidation();
                     context.selectors.kitchenForm.attr('action', moduleConfig.kitchenStore);
+                    context.selectors.kitchenForm.find('input[type="password"]').attr('placeholder', 'Password *');
                 }
                 else
                 {
@@ -287,6 +286,7 @@
                     context.selectors.kitchenId.attr('disabled',true);
                     context.getKitchenData(kitchenId);
                     context.selectors.kitchenForm.append(`<input type="hidden" name="_method" value="PUT" />`);
+                    context.selectors.kitchenForm.find('input[type="password"]').attr('placeholder', 'Password');
                 }
                 context.selectors.kitchenModal.modal('show');
             });
@@ -445,6 +445,7 @@
                     context.selectors.barModalTitle.html('Add ');
                     context.addBarFormValidation();
                     context.selectors.barForm.attr('action', moduleConfig.barpickStore);
+                    context.selectors.barForm.find('input[type="password"]').attr('placeholder', 'Password *');
                     context.getAvailablePickupPoints();
                 }
                 else
@@ -454,6 +455,7 @@
                     context.editBarFormValidation();
                     context.selectors.barForm.attr('action', moduleConfig.barpickUpdate.replace(':ID', barId));
                     context.selectors.barId.attr('disabled',true);
+                    context.selectors.barForm.find('input[type="password"]').attr('placeholder', 'Password');
                     context.getAvailablePickupPoints();
 
                     setTimeout(function(){
