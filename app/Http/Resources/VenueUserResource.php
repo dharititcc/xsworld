@@ -17,6 +17,7 @@ class VenueUserResource extends JsonResource
     public function toArray(Request $request): array
     {
         // dd((double) round($this->restaurant->avg_review_rating,1));
+        // dd($this->current_membership_points);
         return [
             'id'                    => $this->id,
             'first_name'            => $this->first_name,
