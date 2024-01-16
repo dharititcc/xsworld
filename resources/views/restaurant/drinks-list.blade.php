@@ -92,8 +92,10 @@
                                 <label for="upload" class="lbl-upload"><span class="img-text"> Product Image *</span> <i
                                         class="icon-plus add-edit"></i></label>
                             </div>
-                            <input type="text" name="price" id="price" class="form-control vari2 mb-3 show-error-info" placeholder="Enter Price *">
-
+                            <div class="form-group mb-0">
+                                <span class="input-text">{{ $restaurant->country->symbol }}</span>
+                                <input type="text" name="price" id="price" class="form-control vari2 mb-3 show-error-info" placeholder= "Enter Price *">
+                            </div>
                         </div>
                         <div class="col-md-8">
                             <div class="form-group mb-4">
@@ -216,6 +218,7 @@
                             <input type="text" name="variation_name" class="form-control vari2 variation_field" placeholder="Variation Name">
                         </div>
                         <div class="form-group mb-4">
+                            <span class="input-text">{{ $restaurant->country->symbol }}</span>
                             <input type="text" class="form-control vari2 variation_field" name="variation_price" placeholder="Variation Price">
                         </div>
                         {{-- <div class="form-group">

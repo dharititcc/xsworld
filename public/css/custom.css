@@ -465,6 +465,7 @@ th .sort-icon{ position: absolute; top: 20%;}
 
 .extr-info .form-group{ margin-bottom: 1.5rem;}
 .form-group .show-password{position: absolute; right: 0; top: 0; padding: 16px 10px; height: 100%; cursor: pointer;}
+.form-group .input-text{position: absolute; left: 0; top: 0; padding: 16px; height: 100%; cursor: pointer;}
 .extr-info .head{ position: relative; padding:.5rem 0 .75rem 0; border-bottom: 1px solid; border-image-source: var(--gold-line); border-image-slice: 1; margin-bottom: 1.5rem;}
 .extr-info .head .optional-info{ position: absolute; right: 0; top: 0; color: #fff; font-size: 15px; width: 24%; line-height: normal; text-align: right;}
 
@@ -562,7 +563,7 @@ time{ color: #fff; width: 46px; margin-right: 20px; word-break: break-all;}
 
 .dataTables_length label{ color:#fff;}
 div.dataTables_wrapper div.dataTables_length select{padding: 0.5rem 0.7rem; border: 1px solid #ced4da; margin: 0 10px;}
-select option { color: #000; background: #fff;}
+select option { color: #fff; background: #000;}
 .dataTables_length{margin-bottom: 10px;}
 .dataTables_wrapper .dataTables_processing{ height:auto; background-color: #fff !important; border-radius: 0 !important;}
 table.dataTable tbody tr { background-color: #ffffff00;}
