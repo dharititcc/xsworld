@@ -11,11 +11,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
 
 class Restaurant extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $table = 'restaurants';
 
@@ -324,10 +325,19 @@ class Restaurant extends Model
      */
     public function getActionButtonsAttribute()
     {
+        // dump($this->owners()->first());
+        if($this->owners()->first())
+        {
+            $id = $this->owners()->first();
+        }
+        else
+        {
+            $id = 2;
+        }
         $buttons = '<div class="action-box">
             ' . $this->getEditButtonAttribute('btn btn-warning btn-sm') . '
             ' . $this->getDeleteButtonAttribute('btn btn-danger btn-sm') . '
-                <a class="act-btn" href="'.route('impersonate', $this->owners()->first()).'" title="Impersonate this user"><i class="icon-user"></i></a>
+                <a class="act-btn" href="'.route('impersonate', $id).'" title="Impersonate this user"><i class="icon-user"></i></a>
             </div>';
 
         return $buttons;
