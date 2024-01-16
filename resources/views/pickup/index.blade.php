@@ -129,7 +129,7 @@
                             <label for="upload"><span> Add Zone Feature Image <br> (This can be changed & is mandatory). *</span> <i class="icon-plus"></i></label>
                             <span id="Errorfiles"></span>
                         </div>
-                        <input type="checkbox" name="is_table_order" value="1" /> Default pickup point for table order
+                        <label class="cst-check mt-3"><input type="checkbox" name="is_table_order" value="1" /><span class="checkmark me-2"></span>Default pickup point for table order</label>
                     </div>
                     <button class="bor-btn w-100 font-26 mt-4" id="pickup_submitBtn" type="submit">Save</button>
             </div>
