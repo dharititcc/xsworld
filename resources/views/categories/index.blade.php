@@ -77,7 +77,7 @@
                                 </div>
                             </div>
                             <div class="form-group mb-4">
-                                <input type="text" name="name" class="form-control vari2" placeholder="Category Name">
+                                <input type="text" name="name" class="form-control vari2" placeholder="Category Name *">
                                 <input id="category_id" type="hidden" class="category_id" name="category_id" />
                                 <span class="error" id="duplicate_category"></span>
                             </div>
@@ -86,7 +86,7 @@
                             </div>
                             <div class="grey-brd-box custom-upload image_box">
                                 <input id="upload" type="file" class="files" name="image" accept="image/*" hidden />
-                                <label for="upload"><span> Add Category Feature Image (This can be changed).</span> <i
+                                <label for="upload"><span> Add Category Feature Image (This can be changed). *</span> <i
                                         class="icon-plus"></i></label>
                             </div>
                         </div>
@@ -282,7 +282,7 @@
                 },
                 messages: {
                     name: {
-                        required: "Please enter name",
+                        required: "Please enter category name",
                         maxlength: "Your name maxlength should be 20 characters long."
                     },
                     image: {
@@ -308,7 +308,7 @@
                 },
                 messages: {
                     name: {
-                        required: "Please enter name",
+                        required: "Please enter category name",
                         maxlength: "Your name maxlength should be 20 characters long."
                     }
                 },

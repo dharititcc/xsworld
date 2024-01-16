@@ -133,7 +133,7 @@
                                 </div>
 
                                 <textarea id="description" name="description"
-                                    placeholder="Product descriptor goes into this box it can be brief or it can be long, this is to be displayed when the user clicks on the specific beverage."
+                                    placeholder="Product descriptor goes into this box it can be brief or it can be long, this is to be displayed when the user clicks on the specific beverage. *"
                                     class="prd-desc"></textarea>
 
 

@@ -23,7 +23,7 @@
                         </div>
                         <div class="col-md-8">
                             <div class="form-group mb-4">
-                                <input type="text" name="name" id="name" class="form-control vari3" placeholder="Restaurant Name">
+                                <input type="text" name="name" id="name" class="form-control vari3" placeholder="Restaurant Name *">
                                 <input type="hidden" name="id" id="id" value="" />
                                 <input type="hidden" name="type" id="type" value="" />
                             </div>
@@ -36,7 +36,7 @@
                                         <div class="form-group full-w-form">
                                             <div class="row">
                                                 <div class="col-md-6">
-                                                    <input type="text" name="street1" id="street1" class="form-control " placeholder="Street1">
+                                                    <input type="text" name="street1" id="street1" class="form-control " placeholder="Street1 *">
                                                 </div>
                                                 <div class="col-md-6">
                                                     <input type="text" name="street2" id="street2" class="form-control " placeholder="Street2">
@@ -46,8 +46,8 @@
                                         <div class="form-group full-w-form">
                                             <div class="row">
                                                 <div class="col-md-6">
-                                                    <select class="form-control " name="country_id" id="country_id">
-                                                        <option>Select Country</option>
+                                                    <select class="form-control" name="country_id" id="country_id">
+                                                        <option>Select Country *</option>
                                                         <option value="1">India</option>
                                                         <option value="2">United States of America</option>
                                                         <option value="3">Australlia</option>
@@ -63,21 +63,21 @@
                                             <div class="row">
                                                 <div class="col-md-6">
                                                     <input type="datetime-local" class="form-control invert" id="start_date" name="start_date" >
-                                                    <em class="form-info">Start Date</em>
+                                                    <em class="form-info">Start Date *</em>
                                                 </div>
                                                 <div class="col-md-6">
                                                     <input type="datetime-local"  class="form-control invert" id="end_date" name="end_date">
-                                                    <em class="form-info">End Date</em>
+                                                    <em class="form-info">End Date *</em>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="form-group full-w-form">
                                             <div class="row">
                                                 <div class="col-md-6">
-                                                    <input type="text" name="city" id="city" class="form-control " placeholder="City">
+                                                    <input type="text" name="city" id="city" class="form-control" placeholder="City *">
                                                 </div>
                                                 <div class="col-md-6">
-                                                    <input type="text" name="postcode" id="postcode" class="form-control " placeholder="Postcode">
+                                                    <input type="text" name="postcode" id="postcode" class="form-control" placeholder="Postcode *">
                                                 </div>
                                             </div>
                                         </div>
@@ -85,15 +85,15 @@
                                         <div class="form-group full-w-form">
                                             <div class="row">
                                                 <div class="col-md-6">
-                                                    <input type="text" name="latitude" id="latitude" class="form-control " placeholder="Latitude">
+                                                    <input type="text" name="latitude" id="latitude" class="form-control" placeholder="Latitude *">
                                                 </div>
                                                 <div class="col-md-6">
-                                                    <input type="text" name="longitude" id="longitude" class="form-control " placeholder="Longitude">
+                                                    <input type="text" name="longitude" id="longitude" class="form-control" placeholder="Longitude *">
                                                 </div>
                                             </div>
                                         </div>
 
-                                        <textarea id="description" name="description" placeholder="Description" class="prd-desc h-96"></textarea>
+                                        <textarea id="description" name="description" placeholder="Description *" class="prd-desc h-96"></textarea>
                                     </div>
                                 </div>
                                 <div class="col-md-4">
@@ -104,35 +104,35 @@
                                         </div>
                                         <div class="form-group full-w-form">
                                             <div class="row">
-                                                <div class="col-md-12 form-group ">
-                                                    <input type="text" name="first_name" id="first_name" class="form-control " placeholder="First Name">
+                                                <div class="col-md-12 form-group">
+                                                    <input type="text" name="first_name" id="first_name" class="form-control" placeholder="First Name *">
                                                 </div>
                                             </div>
                                             <div class="form-group full-w-form">
                                                 <div class="row">
                                                 <div class="col-md-12">
-                                                    <input type="text" name="last_name" id="last_name" class="form-control " placeholder="Last Name">
-                                                </div>
-                                            </div>
-                                            </div>
-                                            <div class="form-group full-w-form">
-                                                <div class="row">
-                                                <div class="col-md-12">
-                                                    <input type="text" name="email" id="email" class="form-control " placeholder="Email">
+                                                    <input type="text" name="last_name" id="last_name" class="form-control" placeholder="Last Name *">
                                                 </div>
                                             </div>
                                             </div>
                                             <div class="form-group full-w-form">
                                                 <div class="row">
                                                 <div class="col-md-12">
-                                                    <input type="password" name="password" id="password" class="form-control " placeholder="Password">
+                                                    <input type="text" name="email" id="email" class="form-control" placeholder="Email *">
+                                                </div>
+                                            </div>
+                                            </div>
+                                            <div class="form-group full-w-form">
+                                                <div class="row">
+                                                <div class="col-md-12">
+                                                    <input type="password" name="password" id="password" class="form-control" placeholder="Password *">
                                                 </div>
                                             </div>
                                             </div>
                                                 <div class="form-group full-w-form">
                                                     <div class="row">
                                                 <div class="col-md-12">
-                                                    <input type="text" name="phone" id="phone" class="form-control " placeholder="Phone">
+                                                    <input type="text" name="phone" id="phone" class="form-control" placeholder="Phone *">
                                                 </div>
                                             </div>
                                             </div>
