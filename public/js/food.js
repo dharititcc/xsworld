@@ -669,8 +669,8 @@
                 success: function(res) {
                     $('#name').val(res.data.name);
                     $('#ingredients').val(res.data.ingredients);
-                    $('#country_of_origin').val(res.data.country_of_origin);
-                    $('#year_of_production').val(res.data.year_of_production);
+                    // $('#country_of_origin').val(res.data.country_of_origin);
+                    // $('#year_of_production').val(res.data.year_of_production);
                     // $('#type_of_drink').val(res.data.type_of_drink);
                     $('#description').val(res.data.description);
                     $('input[name="category_id[]"]').val(res.data.categories);
