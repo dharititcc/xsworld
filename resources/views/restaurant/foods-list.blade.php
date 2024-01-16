@@ -47,7 +47,7 @@
                     <th class="dt-left"><label class="cst-check"><input type="checkbox" id="allcheck" value=""><span class="checkmark"></span></label></th>
                     <th>Name</th>
                     <th>Category</th>
-                    <th class="type">Type</th>
+                    <th class="type">Variations</th>
                     <th class="price">Price</th>
                     <th class="popularity">Popularity</th>
                     <th class="my-fav"></th>

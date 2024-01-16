@@ -46,7 +46,7 @@
                     }
                     return text
                 }
-                return "-"
+                return "Simple"
             }
         },
         {
