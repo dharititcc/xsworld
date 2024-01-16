@@ -231,8 +231,8 @@ class RestaurantController extends Controller
     public function destroy(string $id)
     {
         $delete = Restaurant::find($id);
-        $user = $delete->owners()->first();
-        $user->delete();
+        // $user = $delete->owners()->first();
+        // $user->delete();
         $delete->delete();
         return response()->json([
             'success' => 'Restaurant deleted successfully!'

@@ -342,6 +342,7 @@ class OrderRepository extends BaseRepository
      */
     public function getMembershipPoints(User $user): array
     {
+
         // quarter logic goes here
         $previousQuarter    = get_previous_quarter();
         $currentQuarter     = get_current_quarter();
@@ -1158,7 +1159,14 @@ class OrderRepository extends BaseRepository
 
         $venueList  = User::query()
                     ->select([
-                        'users.*',
+                        // 'users.*',
+                        'users.id',
+                        'users.first_name',
+                        'users.last_name',
+                        'users.email',
+                        'users.username',
+                        'users.credit_amount',
+                        'users.points', 
                         DB::raw("COALESCE(previous_qua, 0) AS previous_points"),
                         DB::raw("COALESCE(curr_qua, 0) AS current_points"),
                         DB::raw(
@@ -1215,18 +1223,20 @@ class OrderRepository extends BaseRepository
                     ->where('type', Order::ORDER)
                     ->groupBy('orders.user_id')
                     ->get();
+                    // dd($venueList);
                     // echo common()->formatSql($venueList);die;
         if( $membershipLevel != "" )
         {
             $membershipArr = explode(',', $membershipLevel);
 
+            // dd(in_array(config('xs.bronze_level'), $membershipArr));
             if( in_array(config('xs.bronze_level'), $membershipArr) )
             {
                 $filtered = $venueList->whereBetween('current_membership_points', [0,100]);
             }
             if( in_array(config('xs.silver_level'), $membershipArr) )
             {
-                $filtered = $venueList->whereBetween('current_membership_points', [101,200]);
+                $filtered = $venueList->whereBetween('current_membership_points', config('xs.silver'));
             }
             if( in_array(config('xs.gold_level'), $membershipArr) )
             {
