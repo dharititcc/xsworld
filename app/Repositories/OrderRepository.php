@@ -1,6 +1,4 @@
-<?php
-
-namespace App\Repositories;
+<?php namespace App\Repositories;
 
 use App\Billing\Stripe;
 use App\Exceptions\GeneralException;
@@ -36,21 +34,20 @@ use Illuminate\Support\Facades\File;
 
 /**
  * Class OrderRepository.
- */
+*/
 class OrderRepository extends BaseRepository
 {
     use CreditPoint, OrderFlow, OrderStatus;
 
     /**
-     * Associated Repository Model.
-     */
+    * Associated Repository Model.
+    */
     const MODEL = Order::class;
 
     /** @var \App\Repositories\UserRepository */
     protected $userRepository;
 
-    public function __construct(UserRepository $userRepository)
-    {
+    public function __construct(UserRepository $userRepository) {
         $this->userRepository = $userRepository;
     }
 
@@ -70,7 +67,8 @@ class OrderRepository extends BaseRepository
                 'latest_cart.order_items.addons',
                 'latest_cart.order_items.mixer',
                 'latest_cart.restaurant',
-                'latest_cart.restaurant.restaurant_pickup_points' => function ($query) {
+                'latest_cart.restaurant.restaurant_pickup_points' => function($query)
+                {
                     return $query->status(RestaurantPickupPoint::ONLINE);
                 }
             ]
@@ -95,26 +93,26 @@ class OrderRepository extends BaseRepository
             ]
         );
         return $user
-            ->orders()
-            ->whereIn('status', [Order::ACCEPTED, Order::DELAY_ORDER, Order::PENDNIG, Order::COMPLETED])
-            ->with([
-                'reviews',
-                'order_items',
-                'order_items.mixer',
-                'order_items.addons',
-                'order_items.variation',
-                'order_items.restaurant_item',
-                'order_items.restaurant_item.restaurant',
-                'order_items.restaurant_item.restaurant.currency',
-                'order_items.restaurant_item.restaurant.country',
-                'user',
-                'restaurant_pickup_point',
-                'restaurant_pickup_point.attachment',
-                'pickup_point_user',
-                'restaurant',
-                'restaurant.restaurant_pickup_points',
-                'restaurant.restaurant_pickup_points.attachment'
-            ])->orderBy('id', 'desc')->first();
+        ->orders()
+        ->whereIn('status', [Order::ACCEPTED, Order::DELAY_ORDER, Order::PENDNIG, Order::COMPLETED])
+        ->with([
+            'reviews',
+            'order_items',
+            'order_items.mixer',
+            'order_items.addons',
+            'order_items.variation',
+            'order_items.restaurant_item',
+            'order_items.restaurant_item.restaurant',
+            'order_items.restaurant_item.restaurant.currency',
+            'order_items.restaurant_item.restaurant.country',
+            'user',
+            'restaurant_pickup_point',
+            'restaurant_pickup_point.attachment',
+            'pickup_point_user',
+            'restaurant',
+            'restaurant.restaurant_pickup_points',
+            'restaurant.restaurant_pickup_points.attachment'
+        ])->orderBy('id', 'desc')->first();
     }
 
     /**
@@ -124,7 +122,7 @@ class OrderRepository extends BaseRepository
      *
      * @return mixed
      */
-    function getOrderdata(array $data): array
+    function getOrderdata(array $data) : array
     {
         $page   = isset($data['page']) ? $data['page'] : 1;
         $limit  = isset($data['limit']) ? $data['limit'] : 10;
@@ -138,28 +136,32 @@ class OrderRepository extends BaseRepository
         ]);
 
         $query = $user
-            ->orders()
-            ->where('type', Order::ORDER)
-            ->with([
-                'user',
-                'reviews',
-                'order_items',
-                'order_mixer',
-                'restaurant'
-            ]);
+        ->orders()
+        ->where('type', Order::ORDER)
+        ->with([
+            'user',
+            'reviews',
+            'order_items',
+            'order_mixer',
+            'restaurant'
+        ]);
 
-        if ($text) {
-            $query->where(function ($innerQuery) use ($text) {
+        if( $text )
+        {
+            $query->where(function($innerQuery) use($text)
+            {
                 $innerQuery->where('id', $text);
-                $innerQuery->orWhereHas('restaurant', function ($resQuery) use ($text) {
+                $innerQuery->orWhereHas('restaurant', function($resQuery) use($text)
+                {
                     $resQuery->where('name', 'like', "%{$text}%");
                 });
             });
         }
         $total = $query->count();
-        $query->limit($limit)->offset(($page - 1) * $limit)->orderBy('id', 'desc');
+        $query->limit($limit)->offset(($page - 1) * $limit)->orderBy('id','desc');
         $data = $query->get();
-        if ($data->count()) {
+        if( $data->count() )
+        {
             $data = [
                 'total_orders'   => $total,
                 'orders'         => $data
@@ -180,25 +182,30 @@ class OrderRepository extends BaseRepository
     public function nextMemberShipValue(array $membership): array
     {
         // dd($membership);
-        if ($membership['membership'] == config('xs.silver_membership') && $membership['membership_level'] == config('xs.silver_level')) {
+        if($membership['membership'] == config('xs.silver_membership') && $membership['membership_level'] == config('xs.silver_level'))
+        {
             $nextMembership         = config('xs.gold_membership');
             $nextMembership_level   = config('xs.gold_level');
             $nextMembership_value   = config('xs.gold');
-        } else if ($membership['membership'] == config('xs.bronze_membership') && $membership['membership_level'] == config('xs.bronze_level')) {
+
+        } else if($membership['membership'] == config('xs.bronze_membership') && $membership['membership_level'] == config('xs.bronze_level')) {
 
             $nextMembership         = config('xs.silver_membership');
             $nextMembership_level   = config('xs.silver_level');
             $nextMembership_value   = config('xs.silver');
-        } else if ($membership['membership'] == config('xs.gold_membership') && $membership['membership_level'] == config('xs.gold_level')) {
+
+        } else if($membership['membership'] == config('xs.gold_membership') && $membership['membership_level'] == config('xs.gold_level')) {
 
             $nextMembership         = config('xs.platinum_membership');
             $nextMembership_level   = config('xs.platinum_level');
             $nextMembership_value   = config('xs.platinum');
+
         } else {
 
             $nextMembership         = config('xs.platinum_membership');
             $nextMembership_level   = config('xs.platinum_level');
             $nextMembership_value   = config('xs.platinum');
+
         }
 
         return $membership = [
@@ -221,27 +228,36 @@ class OrderRepository extends BaseRepository
         $nextMembership = $this->nextMemberShipValue($membership);
         $points         = $this->getMembershipPoints($user);
 
-        if ($nextMembership['nextMembership_level'] === config('xs.platinum_level')) {
+        if( $nextMembership['nextMembership_level'] === config('xs.platinum_level') )
+        {
             $membershipDifference = config('xs.gold')[1] - (config('xs.gold')[0] - 1);
 
-            if ($points['current_points'] > config('xs.gold')[1]) {
-                $currentMembershipDiff = $points['current_points'] - config('xs.gold')[1];
-            } else {
-                $currentMembershipDiff = config('xs.gold')[1] - $points['current_points'];
+            if( $points['current_points'] > config('xs.gold')[1] )
+            {
+                $currentMembershipDiff= $points['current_points'] - config('xs.gold')[1];
+            }
+            else
+            {
+                $currentMembershipDiff= config('xs.gold')[1] - $points['current_points'];
             }
 
             $actualPoints         = $membershipDifference - $currentMembershipDiff;
 
             $nextMembershipValue = ($actualPoints * 100) / $membershipDifference;
-        } else {
+        }
+        else
+        {
             $membershipEnd        = $nextMembership['nextMembership_value'][0] - 1;
             $membershipDifference = $nextMembership['nextMembership_value'][1] - $membershipEnd;
 
-            if ($points['current_points'] > $membershipDifference) {
-                $currentMembershipDiff = $points['current_points'] - $membershipDifference;
-            } else {
-                $currentMembershipDiff = $membershipDifference - $points['current_points'];
-                $currentMembershipDiff = $membershipDifference - $currentMembershipDiff;
+            if( $points['current_points'] > $membershipDifference )
+            {
+                $currentMembershipDiff= $points['current_points'] - $membershipDifference;
+            }
+            else
+            {
+                $currentMembershipDiff= $membershipDifference - $points['current_points'];
+                $currentMembershipDiff= $membershipDifference - $currentMembershipDiff;
             }
 
             // $actualPoints         = $membershipDifference - $currentMembershipDiff;
@@ -249,7 +265,8 @@ class OrderRepository extends BaseRepository
             $nextMembershipValue = ($currentMembershipDiff * 100) / $membershipDifference;
         }
 
-        if ($membership['membership'] == config('xs.platinum_membership')) {
+        if($membership['membership'] == config('xs.platinum_membership'))
+        {
             $nextMembershipValue = 100;
         }
 
@@ -270,7 +287,7 @@ class OrderRepository extends BaseRepository
      *
      * @return array
      */
-    function getCartCount(): array
+    function getCartCount() : array
     {
         $user       = auth()->user();
 
@@ -301,7 +318,7 @@ class OrderRepository extends BaseRepository
      *
      * @return array
      */
-    public function getMembership(User $user): array
+    public function getMembership(User $user):array
     {
         $points = $this->getMembershipPoints($user);
 
@@ -325,7 +342,6 @@ class OrderRepository extends BaseRepository
      */
     public function getMembershipPoints(User $user): array
     {
-
         // quarter logic goes here
         $previousQuarter    = get_previous_quarter();
         $currentQuarter     = get_current_quarter();
@@ -333,24 +349,25 @@ class OrderRepository extends BaseRepository
         $previousQuarterOrders = $user->credit_points()->where(function ($query) use ($previousQuarter) {
             $query->whereRaw(DB::raw("DATE(created_at) BETWEEN '{$previousQuarter['start_date']}' AND '{$previousQuarter['end_date']}'"));
         })
-            ->get();
+        ->get();
         // echo common()->formatSql($previousQuarterOrders);die;
         // get current quarter points
         $currentQuarterOrders = $user->credit_points()->where(function ($query) use ($currentQuarter) {
             $query->whereRaw(DB::raw("DATE(created_at) BETWEEN '{$currentQuarter['start_date']}' AND '{$currentQuarter['end_date']}'"));
         })
-            ->get();
+        ->get();
         // echo common()->formatSql($currentQuarterOrders);die;
         $previousQuarterPoints  = $previousQuarterOrders->sum('points');
         $currentQuarterPoints   = $currentQuarterOrders->sum('points');
 
-        if ($currentQuarterPoints == 0) {
+        if($currentQuarterPoints == 0)
+        {
             $currentQuarterPoints = $user->points;
         }
 
         return [
             'current_points' => round($currentQuarterPoints),
-            'previous_points' => round($previousQuarterPoints)
+            'previous_points'=> round($previousQuarterPoints)
         ];
     }
 
@@ -365,7 +382,7 @@ class OrderRepository extends BaseRepository
     {
         $membership         = config('xs.bronze_membership');
         $membership_level   = config('xs.bronze_level');
-        //      >0                                   <=100
+                        //      >0                                   <=100
         if ($points > config('xs.bronze')[0] && $points <= config('xs.bronze')[1]) {
             $membership         = config('xs.bronze_membership');
             $membership_level   = config('xs.bronze_level');
@@ -404,14 +421,17 @@ class OrderRepository extends BaseRepository
     function deleteItem(array $data): Order
     {
         $order_item_id  = $data['order_item_id'] ? $data['order_item_id'] : null;
-        $orderItem      = OrderItem::with(['addons', 'mixer', 'order'])->findOrFail($order_item_id);
+        $orderItem      = OrderItem::with(['addons','mixer', 'order'])->findOrFail($order_item_id);
         $order          = $orderItem->order;
 
-        if ($orderItem->parent_item_id == null) {
+        if($orderItem->parent_item_id == null)
+        {
             $data = $orderItem->addons()->delete();
             $data = $orderItem->mixer()->delete();
             $orderItem->delete();
-        } else {
+        }
+        else
+        {
             $orderItem->delete();
         }
 
@@ -432,7 +452,7 @@ class OrderRepository extends BaseRepository
         $order_category_type = $this->checkOrderCategoryType($order->order_items);
 
         $order->loadMissing(['items']);
-        $order->update(['total' => $order->items->sum('total'), 'order_category_type' => $order_category_type]);
+        $order->update(['total' => $order->items->sum('total'),'order_category_type' => $order_category_type]);
 
         return $order;
     }
@@ -451,9 +471,11 @@ class OrderRepository extends BaseRepository
         $order_id   = $data['order_id'] ? $data['order_id'] : null;
         $order      = Order::findOrFail($data['order_id']);
 
-        if (isset($order->id)) {
+        if(isset($order->id))
+        {
             // check if order has customer table
-            if (isset($order->customer_table->id)) {
+            if( isset( $order->customer_table->id ) )
+            {
                 // update customer table to awaiting service
                 $order->customer_table()->update(['order_id' => null]);
             }
@@ -475,7 +497,7 @@ class OrderRepository extends BaseRepository
      *
      * @return Order
      */
-    function updateOrderStatus(array $data): Order
+    function updateOrderStatus(array $data) : Order
     {
         $order_id          = $data['order_id'] ? $data['order_id'] : null;
         $status            = $data['status'] ? $data['status'] : null;
@@ -486,9 +508,12 @@ class OrderRepository extends BaseRepository
         $userCreditAmountBalance = $user->credit_amount;
         $refundCreditAmount = $order->credit_amount;
 
-        if (isset($order->id)) {
-            if ($status == Order::CUSTOMER_CANCELED) {
-                if ($order->charge_id) {
+        if(isset($order->id))
+        {
+            if($status == Order::CUSTOMER_CANCELED)
+            {
+                if($order->charge_id)
+                {
                     $stripe            = new Stripe();
                     $refundArr = [
                         'charge'       => $order->charge_id,
@@ -509,39 +534,47 @@ class OrderRepository extends BaseRepository
                 // update customer table update
                 CustomerTable::where('user_id', $order->user->id)->where('order_id', $order->id)->delete();
 
-                if (isset($order->restaurant_table_id)) {
+                if( isset( $order->restaurant_table_id ) )
+                {
                     // send notification to kitchen
                     $kitchenDevices = [];
                     $kitchens = $order->restaurant->kitchens()->with(['user', 'user.devices'])->get();
 
-                    if ($kitchens->count()) {
-                        foreach ($kitchens as $kitchen) {
+                    if( $kitchens->count() )
+                    {
+                        foreach( $kitchens as $kitchen )
+                        {
                             $kitchenDevicesTokensArr = $kitchen->user->devices->pluck('fcm_token')->toArray();
                             // $waiterDevices = array_merge($waiterDevices, );
-                            if (!empty($kitchenDevicesTokensArr)) {
-                                foreach ($kitchenDevicesTokensArr as $token) {
+                            if( !empty( $kitchenDevicesTokensArr ) )
+                            {
+                                foreach( $kitchenDevicesTokensArr as $token )
+                                {
                                     $kitchenDevices[] = $token;
                                 }
                             }
                         }
                     }
 
-                    if (!empty($kitchenDevices)) {
+                    if( !empty( $kitchenDevices ) )
+                    {
                         $kitchenTitle    = 'Order cancelled';
-                        $kitchenMessage  = "Order #" . $order->id . " is cancelled by customer";
+                        $kitchenMessage  = "Order #".$order->id." is cancelled by customer";
                         sendNotification($kitchenTitle, $kitchenMessage, $kitchenDevices, $order->id);
                     }
 
                     // send notification to waiters
                     $kitchenTitle    = 'Order cancelled';
-                    $kitchenMessage  = "Order #" . $order->id . " is cancelled by customer";
+                    $kitchenMessage  = "Order #".$order->id." is cancelled by customer";
                     $this->notifyWaiters($order, $kitchenTitle, $kitchenMessage);
-                } else {
+                }
+                else
+                {
                     $bartitle           = "Order cancelled";
-                    $barmessage         = "Order #" . $order->id . " is cancelled by customer";
+                    $barmessage         = "Order #".$order->id." is cancelled by customer";
                     $bardevices         = $order->pickup_point_user_id ? $order->pickup_point_user->devices()->pluck('fcm_token')->toArray() : [];
-                    if (!empty($bardevices)) {
-                        $bar_notification   = sendNotification($bartitle, $barmessage, $bardevices, $order->id);
+                    if(!empty( $bardevices )) {
+                        $bar_notification   = sendNotification($bartitle,$barmessage,$bardevices,$order->id);
                     }
                 }
             }
@@ -561,7 +594,7 @@ class OrderRepository extends BaseRepository
      * @return OrderReview
      * @throws \App\Exceptions\GeneralException
      */
-    function ReviewOrder(array $data): OrderReview
+    function ReviewOrder(array $data) : OrderReview
     {
         $order      = isset($data['order_id']) ? Order::findOrFail($data['order_id']) : null;
         $rating     = isset($data['rating']) ? $data['rating'] : null;
@@ -575,7 +608,8 @@ class OrderRepository extends BaseRepository
             'comment'       => $comment
         ];
 
-        if (isset($order->id)) {
+        if(isset($order->id))
+        {
             $reviewOrder = OrderReview::create($reviewArr);
             return $reviewOrder;
         }
@@ -593,8 +627,9 @@ class OrderRepository extends BaseRepository
     public function categoryGet()
     {
         $auth_kitchen = auth('api')->user();
-        foreach ($auth_kitchen->restaurant_kitchen->restaurant->main_categories as $category) {
-            if ($category->name == "Food") {
+        foreach($auth_kitchen->restaurant_kitchen->restaurant->main_categories as $category)
+        {
+            if($category->name == "Food") {
                 $category_id = $category->id;
             }
         }
@@ -626,7 +661,7 @@ class OrderRepository extends BaseRepository
     public function updateStatus(array $data, int $isWaiter = 0)
     {
         $user   = auth()->user();
-        if ($isWaiter == 1) {
+        if($isWaiter == 1) {
             $user->restaurant_waiter()->update($data);
         } else {
             $user->restaurant_kitchen()->update($data);
@@ -643,14 +678,15 @@ class OrderRepository extends BaseRepository
     public function callWaiterNotify()
     {
         $user           = auth()->user();
-        $res_waiters    = RestaurantWaiter::where('restaurant_id', $user->restaurant_kitchen->restaurant_id)->get();
+        $res_waiters    = RestaurantWaiter::where('restaurant_id',$user->restaurant_kitchen->restaurant_id)->get();
 
-        foreach ($res_waiters as $res_waiter) {
+        foreach($res_waiters as $res_waiter)
+        {
             $devices            = $res_waiter->user->devices()->pluck('fcm_token')->toArray();
             $title              = "Kitchen calling you";
             $message            = "Kitchen calling you";
             $orderid            = $res_waiter->user_id;
-            $send_notification  = sendNotification($title, $message, $devices, $orderid);
+            $send_notification  = sendNotification($title,$message,$devices,$orderid);
         }
         return $user;
     }
@@ -685,7 +721,7 @@ class OrderRepository extends BaseRepository
      * @return mixed
      * @throws \App\Exceptions\GeneralException
      */
-    function getwaiterOrderdata(array $data): array
+    function getwaiterOrderdata(array $data) : array
     {
         $page   = isset($data['page']) ? $data['page'] : 1;
         $limit  = isset($data['limit']) ? $data['limit'] : 10;
@@ -709,18 +745,22 @@ class OrderRepository extends BaseRepository
         ->whereIn('waiter_status', [Order::COMPLETED, Order::CUSTOMER_CANCELED])
         ->whereNotNull('restaurant_table_id');
 
-        if ($text) {
-            $query->where(function ($innerQuery) use ($text) {
+        if( $text )
+        {
+            $query->where(function($innerQuery) use($text)
+            {
                 $innerQuery->where('id', $text);
-                $innerQuery->orWhereHas('restaurant', function ($resQuery) use ($text) {
+                $innerQuery->orWhereHas('restaurant', function($resQuery) use($text)
+                {
                     $resQuery->where('name', 'like', "%{$text}%");
                 });
             });
         }
         $total = $query->count();
-        $query->limit($limit)->offset(($page - 1) * $limit)->orderBy('id', 'desc');
+        $query->limit($limit)->offset(($page - 1) * $limit)->orderBy('id','desc');
         $data = $query->get();
-        if ($data->count()) {
+        if( $data->count() )
+        {
             $data = [
                 'total_orders'   => $total,
                 'orders'         => $data
@@ -759,24 +799,29 @@ class OrderRepository extends BaseRepository
             'restaurant.kitchens'
         ]);
 
-        if (isset($order->order_split_food->id)) {
+        if( isset($order->order_split_food->id) )
+        {
             $openKitchens = $order->restaurant->kitchens()->where('status', 1)->get();
 
-            if ($openKitchens->count() === 0) {
+            if( $openKitchens->count() === 0 )
+            {
                 throw new GeneralException('You cannot able to place order as kitchen is closed.');
             }
         }
 
         $pickup_point_id = '';
-        if ($order->order_category_type == Order::DRINK || $order->order_category_type == Order::BOTH) {
+        if($order->order_category_type == Order::DRINK || $order->order_category_type == Order::BOTH)
+        {
             $pickup_point_id    = $this->randomPickpickPoint($order);
         }
 
         foreach ($kitchens as $kitchen) {
             $tokens   = $kitchen->user->devices()->pluck('fcm_token')->toArray();
 
-            if (!empty($tokens)) {
-                foreach ($tokens as $token) {
+            if( !empty( $tokens ) )
+            {
+                foreach( $tokens as $token )
+                {
                     $kitchen_token[]    = $token; // remove  $token[0]
                 }
             }
@@ -787,8 +832,10 @@ class OrderRepository extends BaseRepository
         $paymentArr        = [];
         $stripe_customer_id = $user->stripe_customer_id;
 
-        if (isset($order->id)) {
-            if ($order->total <= $credit_amount) {
+        if(isset($order->id))
+        {
+            if($order->total <= $credit_amount)
+            {
                 $updateArr = [
                     'type'                  => Order::ORDER,
                     'pickup_point_id'       => ($pickup_point_id) ? $pickup_point_id->id : null,
@@ -805,10 +852,11 @@ class OrderRepository extends BaseRepository
             }
 
 
-            if ($order->total != $credit_amount) {
+            if( $order->total != $credit_amount )
+            {
                 $stripe         = new Stripe();
                 $customer_cards = $stripe->fetchCards($stripe_customer_id)->toArray();
-                if (empty($customer_cards['data'])) {
+                if(empty($customer_cards['data'])) {
                     throw new GeneralException('Please ask customer to Add Card details');
                 }
                 $getCusCardId   = $stripe->fetchCustomer($stripe_customer_id);
@@ -852,16 +900,16 @@ class OrderRepository extends BaseRepository
 
         //customer notify
         $title              = "place new order";
-        $message            = "Your Order has been #" . $order->id . " placed";
+        $message            = "Your Order has been #".$order->id." placed";
         $orderid            = $order->id;
-        if (!empty($devices)) {
-            $send_notification  = sendNotification($title, $message, $devices, $orderid);
+        if(!empty($devices)) {
+            $send_notification  = sendNotification($title,$message,$devices,$orderid);
         }
 
         //kitchen notify
         $kitchentitle           = "place new order";
-        $kitchenmessage         = "New Order has been #" . $order->id . " placed";
-        $kitchen_notification   = sendNotification($kitchentitle, $kitchenmessage, $kitchen_token, $orderid);
+        $kitchenmessage         = "New Order has been #".$order->id." placed";
+        $kitchen_notification   = sendNotification($kitchentitle,$kitchenmessage,$kitchen_token,$orderid);
 
         return $order;
     }
@@ -880,8 +928,10 @@ class OrderRepository extends BaseRepository
         $amount             = $data['amount'] ? $data['amount'] : null;
         $user               = $order->user_id ? User::findOrFail($order->user_id) : auth()->user();
         $paymentArr        = [];
-        if (isset($order->id)) {
-            if ($order->total == $amount) {
+        if(isset($order->id))
+        {
+            if($order->total == $amount)
+            {
                 $paymentArr = [
                     'amount'        =>  $amount * 100,
                     'currency'      =>  $order->restaurant->currency->code,
@@ -898,7 +948,7 @@ class OrderRepository extends BaseRepository
                     'card_id'               => $card_id,
                     'charge_id'             => $payment_data->id,
                     // 'credit_amount'         => $credit_amount,
-                    'user_payment_method_id' => UserPaymentMethod::CREDITCARD,
+                    'user_payment_method_id'=> UserPaymentMethod::CREDITCARD,
                 ];
             }
             $order->refresh();
@@ -917,15 +967,18 @@ class OrderRepository extends BaseRepository
     public function addNewCard(array $data): Order
     {
         $user = User::findOrFail($data['user_id']);
-        $token          = isset($data['token']) ? $this->userRepository->retrieveToken($data['token']) : null;
+        $token          = isset( $data['token'] ) ? $this->userRepository->retrieveToken($data['token']) : null;
         $fingerprint    = $token->card->fingerprint;
         $cards          = $this->userRepository->fetchCard(['customer_id' => $user->stripe_customer_id]);
         $stripe         = new Stripe();
 
         // check card exist
-        if (!$this->userRepository->checkCardAlreadyExist($cards, $fingerprint)) {
+        if( !$this->userRepository->checkCardAlreadyExist($cards, $fingerprint) )
+        {
             return $source = $this->userRepository->attachSource($stripe, $user->stripe_customer_id, $token);
-        } else {
+        }
+        else
+        {
             throw new GeneralException('Card is already taken for this customer.');
         }
 
@@ -936,7 +989,7 @@ class OrderRepository extends BaseRepository
     {
         $user   = auth()->user();
         $restaurant_id = $user->restaurant_waiter->restaurant_id;
-        $orders = Order::where(['restaurant_id' => $restaurant_id, 'waiter_id' => $user->id])->where('type', Order::CART)->get();
+        $orders = Order::where(['restaurant_id' => $restaurant_id, 'waiter_id' => $user->id])->where('type',Order::CART)->get();
         return $orders;
     }
 
@@ -950,10 +1003,11 @@ class OrderRepository extends BaseRepository
     public function reOrder(array $data): Order
     {
         $user                   = auth()->user();
-        $orderAgain             = $user->orders()->where('restaurant_id', $data['restaurant_id'])->where('type', Order::ORDER)->whereNotIn('status', [Order::CUSTOMER_CANCELED, Order::RESTAURANT_CANCELED, Order::RESTAURANT_TOXICATION, Order::DENY_ORDER, Order::CURRENTLY_BEING_PREPARED, Order::READYFORPICKUP, Order::COMPLETED])->orderByDesc('id')->first();
+        $orderAgain             = $user->orders()->where('restaurant_id', $data['restaurant_id'])->where('type', Order::ORDER)->whereNotIn('status',[Order::CUSTOMER_CANCELED,Order::RESTAURANT_CANCELED,Order::RESTAURANT_TOXICATION,Order::DENY_ORDER,Order::CURRENTLY_BEING_PREPARED,Order::READYFORPICKUP,Order::COMPLETED])->orderByDesc('id')->first();
 
-        $resName = Restaurant::select('name')->where('id', $data['restaurant_id'])->first();
-        if (!isset($orderAgain->id)) {
+        $resName = Restaurant::select('name')->where('id',$data['restaurant_id'])->first();
+        if( !isset($orderAgain->id) )
+        {
             throw new GeneralException('You have not placed order yet from ' . $resName['name']);
         }
 
@@ -961,7 +1015,8 @@ class OrderRepository extends BaseRepository
 
         $latestCart = $user->latest_cart;
 
-        if (isset($latestCart->id)) {
+        if( isset( $latestCart->id ) )
+        {
             // check restaurant id available in the cart
             $latestCart->delete();
         }
@@ -990,7 +1045,7 @@ class OrderRepository extends BaseRepository
 
         $newOrder->save();
 
-        $reOrderItems->loadMissing(['addons', 'mixer']);
+        $reOrderItems->loadMissing(['addons','mixer']);
 
         // get order items and store into order items table
         foreach ($reOrderItems as  $item) {
@@ -999,8 +1054,9 @@ class OrderRepository extends BaseRepository
             $newOrderItem = $newOrder->order_items()->create($item->toArray());
 
             // create addons
-            if ($item->addons->count()) {
-                foreach ($item->addons as $addon) {
+            if($item->addons->count()) {
+                foreach( $item->addons as $addon )
+                {
                     // clear old parent item id
                     $addon->offsetUnset('parent_item_id');
                     $addon->offsetUnset('order_id');
@@ -1010,7 +1066,8 @@ class OrderRepository extends BaseRepository
             }
 
             // create mixer
-            if (isset($item->mixer->id)) {
+            if( isset( $item->mixer->id ) )
+            {
                 // create mixer for specific item
                 // clear old parent item id
                 $item->mixer->offsetUnset('parent_item_id');
@@ -1036,33 +1093,36 @@ class OrderRepository extends BaseRepository
 
     public function customerTable(array $data)
     {
-        $getcusTbl = CustomerTable::where('user_id', $data['user_id'])->where('restaurant_table_id', $data['restaurant_table_id'])->first();
-        if ($getcusTbl) {
+        $getcusTbl = CustomerTable::where('user_id' , $data['user_id'])->where('restaurant_table_id', $data['restaurant_table_id'])->first();
+        if($getcusTbl) {
             throw new GeneralException('Already table allocated to this Customer');
             $customerTbl = 0;
         } else {
             $customerTbl = CustomerTable::updateOrCreate([
                 'restaurant_table_id' => $data['restaurant_table_id'],
                 'user_id'       => $data['user_id'],
-            ], [
+            ],[
                 'waiter_id'     => $data['waiter_id']
             ]);
         }
 
-        Order::where('type', Order::ORDER)->where('status', Order::PENDNIG)->where('restaurant_table_id', $data['restaurant_table_id'])->where('user_id', $data['user_id'])->update(['waiter_id' => $data['waiter_id']]);
+        Order::where('type',Order::ORDER)->where('status', Order::PENDNIG)->where('restaurant_table_id',$data['restaurant_table_id'])->where('user_id', $data['user_id'])->update(['waiter_id' => $data['waiter_id']]);
 
         return $customerTbl;
     }
 
     public function customerTableDel(array $data)
     {
-        if ($data['order_id']) {
+        if($data['order_id'])
+        {
             $order = Order::findOrFail($data['order_id']);
-            if ($order->type == Order::CART) {
+            if($order->type == Order::CART)
+            {
                 $order->delete();
             }
 
-            if ($order->id) {
+            if($order->id)
+            {
                 // update order to completed
                 $order->update(['waiter_status' => Order::COMPLETED, 'status' => Order::CONFIRM_PICKUP]);
                 $points                     = $order->total * 3;
@@ -1075,7 +1135,7 @@ class OrderRepository extends BaseRepository
                 CreditPointsHistory::create($creditArr);
             }
         }
-        $customerTblDel = CustomerTable::where('user_id', $data['user_id'])->where('restaurant_table_id', $data['restaurant_table_id'])->delete();
+        $customerTblDel = CustomerTable::where('user_id' , $data['user_id'])->where('restaurant_table_id',$data['restaurant_table_id'])->delete();
         return $customerTblDel;
     }
 
@@ -1107,7 +1167,7 @@ class OrderRepository extends BaseRepository
                         'users.credit_amount',
                         'users.points', 
                         DB::raw("COALESCE(previous_qua, 0) AS previous_points"),
-                        DB::raw("COALESCE(curr_qua, 0) AS current_points"),
+                        DB::raw("COALESCE(Abs(curr_qua), 0) AS current_points"),
                         DB::raw(
                         "
                             (
@@ -1184,7 +1244,6 @@ class OrderRepository extends BaseRepository
             //     }
             // }
 
-            // dd(in_array(config('xs.bronze_level'), $membershipArr));
             if( in_array(config('xs.bronze_level'), $membershipArr) )
             {
                 $filtered = $filtered->whereBetween('current_membership_points', config('xs.bronze'));
@@ -1239,8 +1298,9 @@ class OrderRepository extends BaseRepository
         //     'friend_id' => $auth_user->id,
         // ]);
         // dd($data);
-        $user          = User::where('id', $data['user_id'])->count();
-        if ($user == 0) {
+        $user          = User::where('id',$data['user_id'])->count();
+        if($user == 0)
+        {
             throw new GeneralException('No User Found');
         }
         $FriendRequest = FriendRequest::where('user_id', $data['user_id'])->where('friend_id', $auth_user->id,)->update(['status' => $data['status']]);
@@ -1250,12 +1310,12 @@ class OrderRepository extends BaseRepository
     public function pendingFriendReq(array $data)
     {
         $auth_user = auth()->user();
-        if ($data['request'] === 1) {
+        if($data['request'] === 1) {
             //my-new req show approve btn req get
-            $FriendRequest =  FriendRequest::where('friend_id', $auth_user->id)->where('status', 0);
+            $FriendRequest =  FriendRequest::where('friend_id',$auth_user->id)->where('status' , 0);
         } else {
             //my-new req show sent btn  req sent
-            $FriendRequest =  FriendRequest::where('user_id', $auth_user->id)->where('status', 0);
+           $FriendRequest =  FriendRequest::where('user_id',$auth_user->id)->where('status' , 0);
         }
         $FriendRequest = $FriendRequest->get();
         // FriendRequest::where('user_id', $data['user_id'])->where('friend_id', $data['user_id'])
@@ -1284,7 +1344,7 @@ class OrderRepository extends BaseRepository
         ];
         $stripe         = new Stripe();
         $payment_data   = $stripe->createCharge($paymentArr);
-
+        
         $addAmountToReceiver    = number_format($receiverCreditAmount + $amount, 2);
         // $deductAmountToAuthUser = number_format($authUserCreditAmount - $amount, 2);
         $receiverUser->credit_amount = $addAmountToReceiver;
@@ -1308,17 +1368,17 @@ class OrderRepository extends BaseRepository
 
         // Generate PDF
         $pdf        = app('dompdf.wrapper');
-        $pdf->loadView('pdf.index', compact('order', 'restaurant'));
-        $filename   = 'invoice_' . $order->id . '.pdf';
+        $pdf->loadView('pdf.index',compact('order','restaurant'));
+        $filename   = 'invoice_'.$order->id.'.pdf';
         $content    = $pdf->output();
         $file       = storage_path("app/public/order_pdf");
         !is_dir($file) &&
-            mkdir($file, 0777, true);
+        mkdir($file, 0777, true);
         $filePath = 'public/order_pdf/' . $filename;
 
         //Upload PDF to storage folder
         Storage::put($filePath, $content);
-        $destinationPath = asset('storage/order_pdf/') . '/' . $filename;
+        $destinationPath = asset('storage/order_pdf/').'/'.$filename;
         return $destinationPath;
     }
 
