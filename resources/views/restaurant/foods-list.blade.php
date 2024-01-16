@@ -120,8 +120,8 @@
                                 </div>
                                 <div class="form-group full-w-form">
                                     <div class="row">
-                                        <div class="col-md-6"><input type="text" name="country_of_origin" id="country_of_origin" class="form-control vari1" placeholder="Country of Origin *"></div>
-                                        <div class="col-md-6"><input type="text" id="year_of_production" name="year_of_production" class="form-control vari1" placeholder="Year of Production *"></div>
+                                        {{-- <div class="col-md-6"><input type="text" name="country_of_origin" id="country_of_origin" class="form-control vari1" placeholder="Country of Origin *"></div> --}}
+                                        {{-- <div class="col-md-6"><input type="text" id="year_of_production" name="year_of_production" class="form-control vari1" placeholder="Year of Production *"></div> --}}
                                         {{-- <div class="col-md-5"><input type="text" name="type_of_drink" id="type_of_drink" class="form-control vari1" placeholder="Type of Drink (Spirit/Wines)"></div> --}}
                                     </div>
                                 </div>
