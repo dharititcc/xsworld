@@ -186,7 +186,7 @@
                 var $this           = jQuery(this);
                 var restaurantId    = $(this).data('id');
                 var type            = $(this).data('type');
-                    
+
                     if(type == 2) {
                         $(".img-text").html('Event Image *');
                         $('.start_end_date').removeAttr("style");
@@ -204,12 +204,14 @@
                         context.selectors.restaurantModalTitle.html('Create');
                         context.addRestaurantFormValidation();
                         context.selectors.restaurantForm.attr('action', moduleConfig.storeRestaurant);
+                        context.selectors.restaurantForm.find('input[type="password"]').attr('placeholder', 'Password *');
                     } else {
                         context.selectors.restaurantModalTitle.html('Edit');
                         context.editRestaurantFormValidation();
                         context.selectors.restaurantForm.attr('action', moduleConfig.updateRestaurant.replace(':ID', restaurantId));
                         context.getRestaurantData(restaurantId);
                         context.selectors.restaurantForm.append(`<input type="hidden" name="_method" value="PUT" />`);
+                        context.selectors.restaurantForm.find('input[type="password"]').attr('placeholder', 'Password');
                     }
 
                     $("#type").val(type);

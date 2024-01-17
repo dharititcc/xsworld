@@ -23,6 +23,12 @@ class Order extends Model
     const CART  = 1;
     const ORDER = 2;
 
+    /** WAITER NOTIFICATION CODES */
+    const WAITER_NEW_ORDER              = 1;
+    const WAITER_CANCEL_ORDER           = 2;
+    const WAITER_READY_FOR_COLLECTION   = 3;
+    const WAITER_CONFIRM_COLLECTION     = 4;
+
     // Customer status
     const PENDNIG                       = 0;
     // const BAR_PENDING                   = 0;
