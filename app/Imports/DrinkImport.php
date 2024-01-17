@@ -14,7 +14,6 @@ class DrinkImport implements ToCollection,WithStartRow
     */
     public function collection(Collection $collection)
     {
-        dd($collection);
         return new RestaurantTime([
             'name' => $collection[0],
             'product_type' => $collection[0],

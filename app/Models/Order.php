@@ -76,7 +76,7 @@ class Order extends Model
         self::COMPLETED                 => 'Completed',
         self::RESTAURANT_CANCELED       => 'Restaurant Cancelled',
         self::CONFIRM_PICKUP            => 'Order Pickup',
-        self::RESTAURANT_TOXICATION     => 'Restaurant Toxication',
+        self::RESTAURANT_TOXICATION     => 'Cancelled', // Restaurant Toxication
         self::PARTIAL_REFUND            => 'Partially Refund',
         self::FULL_REFUND               => 'Full Refund',
         self::DELAY_ORDER               => 'Delay Order',
