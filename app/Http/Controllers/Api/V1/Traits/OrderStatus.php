@@ -159,8 +159,8 @@ trait OrderStatus
 
             if( !empty( $waiterDevices ) )
             {
-                $orderid    = $order->id;
-                return waiterNotification($title, $message, $waiterDevices, $code);
+                // $orderid    = $order->id;
+                return waiterNotification($title, $message, $waiterDevices, $code , $order->id);
             }
         }
     }
