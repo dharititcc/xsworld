@@ -14,7 +14,9 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Input;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\DrinkImport;
+use App\Imports\DrinksImport;
 use Carbon\Carbon;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
@@ -405,7 +407,36 @@ class DrinkController extends Controller
 
         $restaurant = session('restaurant')->loadMissing(['main_categories', 'main_categories.children']);
         if($file){
-            $data = Excel::toArray(new DrinkImport, $file);
+            // $data = Excel::import(new DrinksImport(), $file); // use for default imports
+            $data = Excel::toArray(new DrinkImport, $file); // use for get data without heading row
+            // $data = Excel::toArray([], $file);
+            // dd($data);
+
+            // $this->validateExcel($data , $restaurant);
+            // dd($validateDrink);
+
+            // if($validateDrink == true)
+            // {
+
+            // }
+            // exit;
+            $shouldRedirect = false;
+            foreach($data[0] as $key => $row)
+            {
+                $category = Category::where([
+                                'name'          => $row[2],
+                                'restaurant_id' => $restaurant->id
+                            ])->count();
+                if($category == 0)
+                {
+                    $shouldRedirect = true;
+                    $category_message = "This category is not found.Please enter valid category in row no ".$key+1;
+                    break;
+                }
+            }
+            if ($shouldRedirect == true) {
+                return redirect()->route('restaurants.drinks.index')->with('message', $category_message);
+            }
 
             foreach($data[0] as $row)
             {
@@ -446,6 +477,37 @@ class DrinkController extends Controller
                 }
             }
             return redirect()->route('restaurants.drinks.index')->with('message', 'Drinks imported successfully!');
+        }
+    }
+
+    /**
+     * Method validateExcel
+     *
+     * @param array $data [explicite description]
+     * @param Restaurant $restaurant [explicite description]
+     *
+     * @return mixed
+     */
+    public function validateExcel(array $data ,Restaurant $restaurant)
+    {
+        $shouldRedirect = false;
+        foreach($data[0] as $key => $row)
+        {
+            $category = Category::where([
+                            'name'          => $row[2],
+                            'restaurant_id' => $restaurant->id
+                        ])->count();
+
+            if($category == 0)
+            {
+                $shouldRedirect = true;
+                $category_message = "This category is not found.Please enter valid category in row no ".$key+1;
+                break;
+            }
+        }
+
+        if (isset($shouldRedirect)) {
+            return redirect()->route('restaurants.drinks.index')->with('message', $category_message);
         }
     }
 }
