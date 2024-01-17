@@ -377,10 +377,11 @@ if (! function_exists('waiterNotification')) {
      * @param String $message [explicite description]
      * @param array $tokens [explicite description]
      * @param int $orderid [explicite description]
+     * @param int $orderid [explicite description]
      *
      * @return mixed
      */
-    function waiterNotification(String $title, String $message, array $tokens, int $code)
+    function waiterNotification(String $title, String $message, array $tokens, int $code, int $orderid)
     {
         if( !empty( $tokens ) )
         {
@@ -394,7 +395,7 @@ if (! function_exists('waiterNotification')) {
                     'icon'                  =>  'myIcon',
                     'sound'                 => 'mySound',
                     'image'                 =>'',
-                    'order_id'              => $code,
+                    'order_id'              => $orderid,
                 ];
 
                 $newArray = array_merge($notification, ["click_action" => $code]);
