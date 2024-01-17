@@ -125,10 +125,10 @@ trait OrderStatus
      * @param string $title [explicite description]
      * @param string $message [explicite description]
      *
-     * @return mixed
+     * @return mixed|void
      * @throws \App\Exceptions\GeneralException
      */
-    public function notifyWaiters(Order $order, string $title, string $message, int $code): mixed
+    public function notifyWaiters(Order $order, string $title, string $message, int $code)
     {
         // send notification to waiter if table order
         if( isset( $order->restaurant_table_id ) )
