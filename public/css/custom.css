@@ -609,8 +609,25 @@ table.dataTable thead th{ padding: 1.1rem .4rem;}
 .swal-icon--success__hide-corners{ display:none;}
 .swal-icon--success:after, .swal-icon--success:before{ display:none;}
 
+/* Analytics datepicker */
+.w-300{ width: 300px;}
+.bor-btn:focus{ outline: none;}
+.daterangepicker{ background: #0F0E0E !important; border: 1px solid #EAC36C !important; transform: translateX(-10px);}
+.daterangepicker .calendar-table { border: 1px solid #ffffff26 !important; border-radius: 0px;  background-color: transparent !important;}
 
+.daterangepicker td.in-range { background-color: rgba(234, 195, 108, 0.30) !important; border-color: rgba(234, 195, 108, 0.30) !important; color: #fff !important;}
 
+.daterangepicker td.available:hover, .daterangepicker th.available:hover, .daterangepicker td.active, .daterangepicker td.active:hover{ background-color:#EAC36C !important;}
+
+.daterangepicker td.off, .daterangepicker td.off.in-range, .daterangepicker td.off.start-date, .daterangepicker td.off.end-date{background-color: #ffffff17 !important;}
+
+.daterangepicker .drp-buttons .btn.cancelBtn {border-color: #cf423b !important; color: #fff !important;}
+.daterangepicker .drp-buttons .btn.applyBtn {border-color: #A8A8A8 !important; color: #fff !important; background: transparent !important;}
+
+.daterangepicker:after{border-bottom-color: #eac36c !important; right: 10px !important; left: auto !important; }
+.daterangepicker.opensright:before{border-bottom-color: #eac36c !important; right: 10px !important; left: auto !important; }
+
+.daterangepicker .drp-buttons{border-top-color: #eac36c !important;}
 /* Sweetalert */
 .swal-modal {
 	background-color: #0F0E0E;
