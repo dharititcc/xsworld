@@ -1226,9 +1226,6 @@ class OrderRepository extends BaseRepository
         if( $membershipLevel != "" )
         {
             $filtered = '';//$venueList;
-            $filtered2 = '';
-            $filtered1 = '';
-            $filtered3 = '';
 
             $membershipArr = explode(',', $membershipLevel);
             
