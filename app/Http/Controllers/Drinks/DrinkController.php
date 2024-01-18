@@ -118,18 +118,21 @@ class DrinkController extends Controller
         $restaurant = session('restaurant')->loadMissing(['main_categories', 'main_categories.children']);
         $categories = $request->get('category_id');
 
-        $request->validate([
-            'price' => 'required|numeric|between:0.1,9999999999.99'
-        ],[
-            'price.between' => "Please Enter valid price"
-        ]);
+        if( $request->is_variable == 0 )
+        {
+            $request->validate([
+                'price' => 'required|numeric|between:0.1,9999999999.99'
+            ],[
+                'price.between' => "Please enter a valid price format (e.g., 100.50)"
+            ]);
+        }
         foreach ($categories as $key => $value)
         {
             $drinkArr = [
                 "name"                  => $request->get('name'),
                 "category_id"           => $value,
                 "description"           => $request->get('description'),
-                "price"                 => $request->get('price'),
+                "price"                 => $request->get('price') ?? 0,
                 "ingredients"           => $request->get('ingredients'),
                 "country_of_origin"     => $request->get('country_of_origin'),
                 "type_of_drink"         => $request->get('type_of_drink'),
@@ -251,11 +254,14 @@ class DrinkController extends Controller
             $this->upload($request->file('image'), $drink);
         }
 
-        $request->validate([
-            'price' => 'required|numeric|between:0.1,9999999999.99'
-        ],[
-            'price.between' => "Please Enter valid price"
-        ]);
+        if( $request->is_variable == 0 )
+        {
+            $request->validate([
+                'price' => 'required|numeric|between:0.1,9999999999.99'
+            ],[
+                'price.between' => "Please enter a valid price format (e.g., 100.50)"
+            ]);
+        }
         //category
         $category = $request->get('category_id');
 
@@ -271,7 +277,7 @@ class DrinkController extends Controller
             'category_id'       => $request->category_id[0],
             'type'              => RestaurantItem::ITEM,
             'is_variable'       => $request->is_variable,
-            'price'             => $request->price,
+            'price'             => $request->price ?? 0,
             'ingredients'       => $request->ingredients,
             'country_of_origin' => $request->country_of_origin,
             'year_of_production'=> $request->year_of_production,

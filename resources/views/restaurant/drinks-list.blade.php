@@ -92,7 +92,7 @@
                                 <label for="upload" class="lbl-upload"><span class="img-text"> Product Image *</span> <i
                                         class="icon-plus add-edit"></i></label>
                             </div>
-                            <div class="form-group mb-0">
+                            <div class="form-group mb-0 show_price">
                                 <span class="input-text">{{ $restaurant->country->symbol }}</span>
                                 <input type="text" name="price" id="price" class="form-control vari2 mb-3 show-error-info" placeholder= "Enter Price *">
                             </div>

@@ -58,7 +58,8 @@ class HomeController extends APIController
             'customer_tables.restaurant_table_id',
             'customer_tables.order_id',
             'restaurant_tables.restaurant_id',
-            DB::raw("0 as waiter_status")
+            DB::raw("0 as waiter_status"),
+            'customer_tables.updated_at AS order_date'
         ])
         ->with([
             'user',
@@ -79,7 +80,8 @@ class HomeController extends APIController
             'orders.id AS order_id',
             'orders.restaurant_id',
             'orders.type',
-            'orders.waiter_status'
+            'orders.waiter_status',
+            'orders.updated_at AS order_date'
         ])
         ->with([
             'restaurant_table',
@@ -99,7 +101,9 @@ class HomeController extends APIController
         ->whereIn('waiter_status', [Order::WAITER_PENDING, Order::CURRENTLY_BEING_PREPARED, Order::CURRENTLY_BEING_SERVED, Order::CURRENTLY_BEING_PREPARED, Order::READY_FOR_COLLECTION, Order::PENDNIG])
         ->get();
 
-        $orderTbl = $bookedOrderTable->merge($bookedTableModel);
+        $orderTbl = $bookedOrderTable->merge($bookedTableModel)->sortBy(function($item){
+            return strtotime($item->order_date);
+        });
 
         // $kitchen_status = Order::where('type',Order::ORDER)->where('waiter_id', $auth_waiter->id)->whereIn('status',[Order::READYFORPICKUP,Order::WAITER_PENDING, Order::CURRENTLY_BEING_PREPARED])->get();  //Order::KITCHEN_CONFIRM, remove
         $kitchen_status = Order::where('type',Order::ORDER)

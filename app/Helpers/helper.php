@@ -318,6 +318,7 @@ if (! function_exists('sendNotification')) {
      */
     function sendNotification(String $title, String $message, array $tokens, int $orderid)
     {
+        $tokens = array_unique($tokens);
         if( !empty( $tokens ) )
         {
             try {
@@ -383,6 +384,7 @@ if (! function_exists('waiterNotification')) {
      */
     function waiterNotification(String $title, String $message, array $tokens, int $code, int $orderid)
     {
+        $tokens = array_unique($tokens);
         if( !empty( $tokens ) )
         {
             try {
