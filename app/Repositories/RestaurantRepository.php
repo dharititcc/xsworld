@@ -125,7 +125,7 @@ class RestaurantRepository extends BaseRepository
         {
             $today = Carbon::now()->toDateTimeString();
             // $query = $query->whereDate('start_date', '<=' , $today);
-            $query = $query->whereDate('end_date', '>=', $today);
+            $query = $query->where('end_date', '>=', $today);
         }
 
         if( $restaurantName )
