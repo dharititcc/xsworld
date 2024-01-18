@@ -1220,14 +1220,18 @@ class OrderRepository extends BaseRepository
                     ->where('restaurant_id', $data['restaurant_id'])
                     ->whereNotIn('status', [Order::CUSTOMER_CANCELED])
                     ->where('type', Order::ORDER)
-                    ->groupBy('orders.user_id')
-                    ->get();
-                    // dd($venueList);
+                    ->groupBy('orders.user_id')->get();
+                    // dd($venueList->toarray());
                     // echo common()->formatSql($venueList);die;
         if( $membershipLevel != "" )
         {
-            $filtered = $venueList;
+            $filtered = '';//$venueList;
+            $filtered2 = '';
+            $filtered1 = '';
+            $filtered3 = '';
+
             $membershipArr = explode(',', $membershipLevel);
+            
             // if(count($membershipArr) > 1)
             // {
             //     if (in_array(config('xs.bronze_level'), $membershipArr)) {
@@ -1243,23 +1247,44 @@ class OrderRepository extends BaseRepository
             //         $filtered = $filtered->orWhere('current_membership_points', '>', 300);
             //     }
             // }
-
-            if( in_array(config('xs.bronze_level'), $membershipArr) )
-            {
-                $filtered = $filtered->whereBetween('current_membership_points', config('xs.bronze'));
-            }
-            if( in_array(config('xs.silver_level'), $membershipArr) )
-            {
-                $filtered = $filtered->whereBetween('current_membership_points', config('xs.silver'));
-            }
-            if( in_array(config('xs.gold_level'), $membershipArr) )
-            {
-                $filtered = $filtered->whereBetween('current_membership_points', config('xs.gold'));
-            }
-            if( in_array(config('xs.platinum_level'), $membershipArr) )
-            {
-                $filtered = $filtered->where('current_membership_points', '>', 300);
-            }
+            
+                if( in_array(config('xs.bronze_level'), $membershipArr) )
+                {
+                    
+                        $filtered =$venueList->whereBetween('current_membership_points', config('xs.bronze'));
+                    
+                }
+                if( in_array(config('xs.silver_level'), $membershipArr) )
+                {
+                    if(!empty($filtered) && $filtered->count() != 0){
+                        $filtered = $filtered->concat($venueList->whereBetween('current_membership_points', config('xs.silver')));
+                    }else{
+                        $filtered = $venueList->whereBetween('current_membership_points', config('xs.silver'));
+                    }                    
+                    
+                }
+                if( in_array(config('xs.gold_level'), $membershipArr) )
+                {
+                    
+                    if(!empty($filtered) && $filtered->count() != 0){
+                        $filtered = $filtered->concat($venueList->whereBetween('current_membership_points', config('xs.gold')));
+                    }else{
+                        $filtered = $venueList->whereBetween('current_membership_points', config('xs.gold'));
+                    }
+                   
+                    
+                }
+                if( in_array(config('xs.platinum_level'), $membershipArr) )
+                {
+                    
+                    if(!empty($filtered) && $filtered->count() != 0)
+                    {
+                        $filtered = $filtered->concat($venueList->where('current_membership_points','>',300));
+                    }else{
+                        $filtered = $venueList->where('current_membership_points','>',300);
+                    }
+                    
+                }
         }
         else
         {
