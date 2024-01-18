@@ -232,7 +232,7 @@ trait OrderFlow
     public function checkSameVariationItemExist(Order $order, int $parentItem, $itemId): ?OrderItem
     {
         // check first item or variation
-        return $order->order_items()->where('restaurant_item_id', $parentItem)->where('variation_id', $itemId)->first();
+        return $order->order_items()->where('restaurant_item_id', $parentItem)->where('variation_id', $itemId)->whereNull('parent_item_id')->first();
     }
 
     /**
