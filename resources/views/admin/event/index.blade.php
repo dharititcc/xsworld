@@ -17,6 +17,8 @@
                     <th class="type">Address</th>
                     <th class="price">Phone</th>
                     <th class="popularity">Country</th>
+                    <th class="popularity">Start Date</th>
+                    <th class="popularity">End date</th>
                     <th class="popularity">Actions</th>
                 </tr>
             </thead>
