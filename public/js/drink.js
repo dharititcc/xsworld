@@ -430,14 +430,14 @@
                     $('#product_type').val(1);
                     // document.getElementById("price").style.visibility='hidden';
                     $('.prd-variation').removeAttr("style");
-                    $('.show_price').css("display", "none");
+                    $('.show_price').addClass("d-none");
                 }
                 else
                 {
                     $('#product_type').val(0);
                     document.getElementById("price").style.visibility='visible';
                     $(".prd-variation").css("display", "none");
-                    $('.show_price').removeAttr('style');
+                    $('.show_price').removeClass('d-none');
 
                     // remove hidden variation
                     context.selectors.drinkModal.find('form').find('.variation_hidden').each(function()
@@ -474,6 +474,8 @@
                     context.selectors.drinkModalTitle.html('Manually Add');
                     context.addDrinkFormValidation();
                     context.selectors.drinkForm.attr('action', moduleConfig.drinkStore);
+
+                    $('.product_type:first').addClass('active').trigger('click');
 
                 } else {
                     context.selectors.drinkModalTitle.html('Manually Edit ');
@@ -603,8 +605,12 @@
                         required: true,
                     },
                     price: {
-                        required: false,
-                        pattern: /^\d+(\.\d{1,2})?$/,
+                        required: function(){
+                            return jQuery('.product_type.active').data('product_type') == 0 ? true : false;
+                        },
+                        // pattern: function(){
+                        //     return jQuery('.product_type').hasClass('active') ? /^\d+(\.\d{1,2})?$/ : false
+                        // },
                     },
                     image: {
                         required: true,
@@ -634,7 +640,7 @@
                     },
                     price: {
                         required: "Please enter amount",
-                        pattern: "Please enter a valid price format (e.g., 100.50).",
+                        // pattern: "Please enter a valid price format (e.g., 100.50).",
                     },
                     image: {
                         required: "Please upload files", //accept: 'Not an image!'
@@ -671,8 +677,12 @@
                         required: true,
                     },
                     price: {
-                        required: false,
-                        pattern: /^\d+(\.\d{1,2})?$/,
+                        required: function(){
+                            return jQuery('.product_type').hasClass('active').data('product_type') == 0 ? true : false
+                        },
+                        // pattern: function(){
+                        //     return jQuery('.product_type').hasClass('active') ? /^\d+(\.\d{1,2})?$/ : false
+                        // },
                     },
                     ingredients: {
                         required: true,
@@ -706,7 +716,7 @@
                     },
                     price: {
                         required: "Please enter amount",
-                        pattern: "Please enter a valid price format (e.g., 100.50).",
+                        // pattern: "Please enter a valid price format (e.g., 100.50).",
                     },
 
                 },
@@ -727,11 +737,21 @@
         {
             var context = this,
                 data = new FormData(form);
-            XS.Common.btnProcessingStart(context.selectors.drinkSubmitBtn);
             var category = [];
             $.each($("input[name='category_id']:checked"), function(i) {
                 category[i] = $(context).val();
             });
+
+            if( jQuery('.product_type.active').data('product_type') == 1 )
+            {
+                if( jQuery('input[name="drink_variation_name[]"]').length == 0 )
+                {
+                    XS.Common.handleSwalError('Please create atleast one variation.');
+                    return false;
+                }
+            }
+
+            XS.Common.btnProcessingStart(context.selectors.drinkSubmitBtn);
 
             $.ajax({
                 url: $(form).attr('action'),
@@ -752,8 +772,8 @@
                     {
                         var {error} = xhr.responseJSON;
                         context.selectors.drinkForm.find('.duplicate_product').after(`<span class="error">${error.message}</span>`);
-                        // $this.closest('#add_form_category').find('.cat_name').after(`<span class="error">${error.message}</span>`);
                     }
+
                     if( xhr.status === 422 )
                     {
                         const {error}   = xhr.responseJSON;
