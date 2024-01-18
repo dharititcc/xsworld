@@ -119,7 +119,7 @@ class DrinkController extends Controller
         $categories = $request->get('category_id');
 
         $request->validate([
-            'price' => 'required|numeric|between:0.1,9999999999.99'
+            'price' => 'nullable|numeric|between:0.1,9999999999.99'
         ],[
             'price.between' => "Please Enter valid price"
         ]);

@@ -430,12 +430,14 @@
                     $('#product_type').val(1);
                     // document.getElementById("price").style.visibility='hidden';
                     $('.prd-variation').removeAttr("style");
+                    $('.show_price').css("display", "none");
                 }
                 else
                 {
                     $('#product_type').val(0);
                     document.getElementById("price").style.visibility='visible';
                     $(".prd-variation").css("display", "none");
+                    $('.show_price').removeAttr('style');
 
                     // remove hidden variation
                     context.selectors.drinkModal.find('form').find('.variation_hidden').each(function()
@@ -601,7 +603,7 @@
                         required: true,
                     },
                     price: {
-                        required: true,
+                        required: false,
                         pattern: /^\d+(\.\d{1,2})?$/,
                     },
                     image: {
@@ -669,7 +671,7 @@
                         required: true,
                     },
                     price: {
-                        required: true,
+                        required: false,
                         pattern: /^\d+(\.\d{1,2})?$/,
                     },
                     ingredients: {
