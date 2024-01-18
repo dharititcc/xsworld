@@ -47,6 +47,16 @@
             "defaultContent": ""
         },
         {
+            "data": "start_date", // can be null or undefined
+            "sortable": false,
+            "defaultContent": ""
+        },
+        {
+            "data": "end_date", // can be null or undefined
+            "sortable": false,
+            "defaultContent": ""
+        },
+        {
             "data": "actions", // can be null or undefined
             "sortable": false,
             "defaultContent": "",
