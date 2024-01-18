@@ -101,7 +101,7 @@ class HomeController extends APIController
         ->whereIn('waiter_status', [Order::WAITER_PENDING, Order::CURRENTLY_BEING_PREPARED, Order::CURRENTLY_BEING_SERVED, Order::CURRENTLY_BEING_PREPARED, Order::READY_FOR_COLLECTION, Order::PENDNIG])
         ->get();
 
-        $orderTbl = $bookedOrderTable->merge($bookedTableModel)->sortByDesc(function($item){
+        $orderTbl = $bookedOrderTable->merge($bookedTableModel)->sortBy(function($item){
             return strtotime($item->order_date);
         });
 
