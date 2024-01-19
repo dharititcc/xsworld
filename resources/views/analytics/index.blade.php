@@ -13,6 +13,7 @@
                     <li><a href="#" class="active">General Overview</a></li>
                     @if ($categories->count())
                     @foreach ($categories as $category)
+                    {{-- {{ dump ($category)}} --}}
                     <li><a href="#">{{ $category->children_parent->name }} - {{ $category->name }}</a></li>
                     @endforeach
                     @endif
@@ -37,8 +38,10 @@
         <div class="d-flex mb-4 justify-content-between doubl-line gold-border align-items-center">
             <h2 class="yellow pd-20">24th July - 24th Aug 2023</h2>
             <div class="display-range pd-20">
-                <a href="#" class="bor-btn"><span>24/07/23 - 24/08/23</span></a>
-                <a href="#" class="bor-btn ms-3"><span>Display By</span></a>
+                <input type="text" name="dates" class="bor-btn w-300 text-center">
+                {{-- <button id="dateRangeBtn">Select Date Range</button> --}}
+                {{-- <a href="#" class="bor-btn" id="dateRangeBtn"><span>24/07/23 - 24/08/23</span></a> --}}
+                {{-- <a href="#" class="bor-btn ms-3"><span>Display By</span></a> --}}
             </div>
         </div>
         <div class="graph">

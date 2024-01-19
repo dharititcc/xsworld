@@ -7,6 +7,7 @@ use App\Models\OrderItem;
 use App\Models\Restaurant;
 use App\Models\RestaurantTable;
 use App\Repositories\BaseRepository;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 
@@ -25,11 +26,11 @@ class AnalyticRepository extends BaseRepository
      *
      * @param Restaurant $restaurant [explicite description]
      *
-     * @return \Illuminate\Database\Eloquent\Collection
+     * @return \Illuminate\Database\Eloquent\Collection | Void
      */
-    public function getAnalyticsTableData(Restaurant $restaurant): Collection
+    public function getAnalyticsTableData(Restaurant $restaurant)
     {
-        return $items = OrderItem::select([
+        return OrderItem::select([
             'order_items.*',
             'restaurant_item_variations.name AS variation_name',
             DB::raw("COUNT(variation_id) AS variation_count"),
@@ -62,7 +63,7 @@ class AnalyticRepository extends BaseRepository
         ->item()
         ->where(function($query)
         {
-            $query->whereRaw("DATE(`order_items`.`created_at`) BETWEEN '2023-12-25' AND '2024-01-05'");
+            $query->whereRaw("DATE(`order_items`.`created_at`) BETWEEN '2024-01-01' AND '2024-01-31'");
         })
         ->groupBy(['order_items.restaurant_item_id', 'order_items.variation_id'])
         // echo common()->formatSql($items);die;
@@ -73,13 +74,18 @@ class AnalyticRepository extends BaseRepository
      * Method getChart
      *
      * @param Restaurant $restaurant [explicite description]
+     * @param array $data [explicite description]
      *
      * @return array
      */
-    public function getChart(Restaurant $restaurant): array
+    public function getChart(Restaurant $restaurant,array $data ): array
     {
         $restaurant->loadMissing(['sub_categories']);
-        $dates      = get_dates_period('2023-12-25', '2024-01-05');
+
+        $startDate  = isset($data['start_date']) ? $data['start_date'] : Carbon::now()->startOfMonth()->toDateString();
+        $endDate    = isset($data['end_date']) ? $data['end_date'] : Carbon::now()->endOfMonth()->toDateString();
+
+        $dates      = get_dates_period($startDate, $endDate);
         $newDates   = array_map(function($date)
         {
             return $date->format('Y-m-d');
@@ -87,7 +93,7 @@ class AnalyticRepository extends BaseRepository
         $newData    = [];
 
         // get categories pluck
-        $categories = $restaurant->sub_categories;
+        $categories = $restaurant->categories()->with(['children_parent'])->whereNotNull('parent_id')->get();
 
         foreach( $categories as $kCat => $category )
         {

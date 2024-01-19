@@ -68,6 +68,14 @@
             context.makeDatatable();
             context.bindChart();
             context.filterChart();
+
+            // Analytics range picker
+            // alert('hi');
+            $('input[name="dates"]').daterangepicker({ maxDate: 0 }).on('apply.daterangepicker', function (e, picker) {
+                var startDate = picker.startDate.format('DD-MM-YYYY');
+                var endDate = picker.endDate.format('DD-MM-YYYY');
+                context.bindChart(startDate,endDate);
+            });
         },
 
         filterChart: function()
@@ -75,7 +83,7 @@
             context = this;
         },
 
-        bindChart: function()
+        bindChart: function(startDate,endDate)
         {
             var context = this;
 
@@ -91,7 +99,7 @@
                 headers: {
                     'X-CSRF-TOKEN': jQuery('meta[name="csrf-token"]').attr('content'),
                 },
-                data: {'is_featured':'Test','id':1},
+                data: {'is_featured':'Test','id':1,'start_date':startDate,'end_date':endDate},
                 success: function(res)
                 {
                     // console.log(res);
