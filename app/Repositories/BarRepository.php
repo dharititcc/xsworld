@@ -311,7 +311,7 @@ class BarRepository extends BaseRepository
             if( isset( $order->restaurant_table_id ) && !$order->order_split_food )
             {
                 // update waiter status to Ready for collection
-                $updateArr['waiter_status'] = OrderSplit::DENY_ORDER;
+                $updateArr['waiter_status'] = Order::CUSTOMER_CANCELED;
             }
         }
 
@@ -360,7 +360,7 @@ class BarRepository extends BaseRepository
             if( isset( $order->restaurant_table_id ) && !$order->order_split_food )
             {
                 // update waiter status to Ready for collection
-                $updateArr['waiter_status'] = OrderSplit::RESTAURANT_TOXICATION;
+                $updateArr['waiter_status'] = Order::CUSTOMER_CANCELED;
             }
         }
 
