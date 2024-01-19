@@ -2,6 +2,7 @@
 
 use App\Exceptions\GeneralException;
 use App\Models\Order;
+use Illuminate\Support\Facades\Log;
 
 trait XSNotifications
 {
@@ -47,6 +48,7 @@ trait XSNotifications
             if( !empty( $waiterDevices ) )
             {
                 // $orderid    = $order->id;
+                Log::debug("Waiter Notification Testing:  - {$order->id}");
                 return waiterNotification($title, $message, $waiterDevices, $code , $order->id);
             }
         }
@@ -69,6 +71,7 @@ trait XSNotifications
 
         if(!empty($customer_devices))
         {
+            Log::debug("Customer Notification Testing:  - {$order->id}");
             return sendNotification($title, $message, $customer_devices, $orderid);
         }
     }
@@ -107,6 +110,7 @@ trait XSNotifications
         {
             $kitchenTitle    = $title;
             $kitchenMessage  = $message;
+            Log::debug("Kitchen Notification Testing:  - {$order->id}");
             sendNotification($kitchenTitle, $kitchenMessage, $kitchenDevices, $order->id);
         }
     }
@@ -130,6 +134,7 @@ trait XSNotifications
 
         if(!empty( $bardevices ))
         {
+            Log::debug("Bar Notification Testing:  - {$order->id}");
             $bar_notification   = sendNotification($title, $message, $bardevices, $order->id);
         }
     }
