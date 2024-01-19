@@ -399,7 +399,7 @@ class OrderController extends APIController
     {
         $input  = $request->all();
         $giftCredits    = $this->repository->giftCreditSend($input);
-        return $this->respondSuccess("Gift Credit Send successfully",$giftCredits);
+        return $this->respondSuccess("Gift credits has been sent successfully.",$giftCredits);
     }
 
     public function userProfile(Request $request)
