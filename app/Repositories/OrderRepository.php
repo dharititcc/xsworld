@@ -808,6 +808,7 @@ class OrderRepository extends BaseRepository
         $userCreditAmountBalance = $user->credit_amount;
         $updateArr         = [];
         $paymentArr        = [];
+
         $stripe_customer_id = $user->stripe_customer_id;
 
         if(isset($order->id))
@@ -1335,15 +1336,25 @@ class OrderRepository extends BaseRepository
         $receiverCreditAmount   = $receiverUser->credit_amount;
         $authUserCreditAmount   = $auth_user->credit_amount;
         $amount                 = $data['amount'];
+        $stripe_customer_id     = $auth_user->stripe_customer_id;
+        $stripe                 = new Stripe();
+        $customer_cards         = $stripe->fetchCards($stripe_customer_id)->toArray();
+        
+        if(empty($customer_cards['data'])) {
+            throw new GeneralException('Please Add Card details');
+        }
+        $getCusCardId   = $stripe->fetchCustomer($stripe_customer_id);
+        $defaultCardId  = $getCusCardId->default_source;
+        
         $paymentArr = [
             'amount'        => number_format($amount, 2) * 100,
             // 'currency'      => $auth_user->orders->restaurant->currency->code,
             'currency'      => 'aud',
             'customer'      => $auth_user->stripe_customer_id,
-            'source'        => $data['card_id'],
+            'source'        => $defaultCardId,
             'description'   => "Gift Credit Send to ". $data['user_id']
         ];
-        $stripe         = new Stripe();
+        
         $payment_data   = $stripe->createCharge($paymentArr);
 
         $addAmountToReceiver    = number_format($receiverCreditAmount + $amount, 2);
