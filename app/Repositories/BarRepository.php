@@ -450,11 +450,14 @@ class BarRepository extends BaseRepository
             'remaining_date'    => Carbon::now()
         ];
 
-        if( $order->charge_id )
+        if( !isset($order->restaurant_table_id) && !isset( $order->waiter_id ) )
         {
-            $stripe                         = new Stripe();
-            $payment_data                   = $stripe->captureCharge($order->charge_id);
-            $updateArr['transaction_id']    = $payment_data->balance_transaction;
+            if( $order->charge_id )
+            {
+                $stripe                         = new Stripe();
+                $payment_data                   = $stripe->captureCharge($order->charge_id);
+                $updateArr['transaction_id']    = $payment_data->balance_transaction;
+            }
         }
 
         // update order split status for drink to completed
