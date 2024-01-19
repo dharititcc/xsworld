@@ -5,6 +5,7 @@ use App\Models\Category;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Twilio\Rest\Client;
 
@@ -361,6 +362,7 @@ if (! function_exists('sendNotification')) {
 
                 $rest = curl_exec($crl);
                 // dd($rest);
+                Log::debug("Waiter Notification Testing:  - {$rest}");
                 return true;
             } catch (Exception $e) {
                 throw new GeneralException($e->getMessage());
@@ -425,6 +427,8 @@ if (! function_exists('waiterNotification')) {
 
                 $rest = curl_exec($crl);
                 // dd($rest);
+                Log::debug("Waiter Notification Testing:  - {$rest}");
+
                 return true;
             } catch (Exception $e) {
                 throw new GeneralException($e->getMessage());
