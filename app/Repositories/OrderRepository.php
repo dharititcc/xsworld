@@ -537,31 +537,12 @@ class OrderRepository extends BaseRepository
 
                 if( isset( $order->restaurant_table_id ) )
                 {
-                    // send notification to kitchen
-                    $kitchenDevices = [];
-                    $kitchens = $order->restaurant->kitchens()->with(['user', 'user.devices'])->get();
-
-                    if( $kitchens->count() )
-                    {
-                        foreach( $kitchens as $kitchen )
-                        {
-                            $kitchenDevicesTokensArr = $kitchen->user->devices->pluck('fcm_token')->toArray();
-                            // $waiterDevices = array_merge($waiterDevices, );
-                            if( !empty( $kitchenDevicesTokensArr ) )
-                            {
-                                foreach( $kitchenDevicesTokensArr as $token )
-                                {
-                                    $kitchenDevices[] = $token;
-                                }
-                            }
-                        }
-                    }
-
-                    if( !empty( $kitchenDevices ) )
+                    // send notification to kitchen if order is for food
+                    if( isset($order->order_split_food->id) )
                     {
                         $kitchenTitle    = 'Order cancelled';
                         $kitchenMessage  = "Order #".$order->id." is cancelled by customer";
-                        sendNotification($kitchenTitle, $kitchenMessage, $kitchenDevices, $order->id);
+                        $this->notifyKitchens($order, $kitchenTitle, $kitchenMessage);
                     }
 
                     // send notification to waiters
@@ -573,10 +554,7 @@ class OrderRepository extends BaseRepository
                 {
                     $bartitle           = "Order cancelled";
                     $barmessage         = "Order #".$order->id." is cancelled by customer";
-                    $bardevices         = $order->pickup_point_user_id ? $order->pickup_point_user->devices()->pluck('fcm_token')->toArray() : [];
-                    if(!empty( $bardevices )) {
-                        $bar_notification   = sendNotification($bartitle,$barmessage,$bardevices,$order->id);
-                    }
+                    $this->notifyBars($order, $bartitle, $barmessage);
                 }
             }
         }
