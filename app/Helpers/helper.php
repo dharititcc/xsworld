@@ -328,6 +328,7 @@ if (! function_exists('sendNotification')) {
                 $notification = [
                     'title'                 =>  $title,
                     'body'                  =>  $message,
+                    'message'               =>  $message,
                     'icon'                  =>  'myIcon',
                     'sound'                 => 'mySound',
                     // 'notification_type'  => $type,
@@ -387,6 +388,7 @@ if (! function_exists('waiterNotification')) {
     {
         if( !empty( $tokens ) )
         {
+            Log::debug("Waiter Notification Testing:  - {$message}");
             try {
                 $accesstoken = getenv("FCM_TOKEN");
                 $URL = 'https://fcm.googleapis.com/fcm/send';
@@ -394,6 +396,7 @@ if (! function_exists('waiterNotification')) {
                 $notification = [
                     'title'                 =>  $title,
                     'body'                  =>  $message,
+                    'message'               =>  $message,
                     'icon'                  =>  'myIcon',
                     'sound'                 => 'mySound',
                     'image'                 =>'',
