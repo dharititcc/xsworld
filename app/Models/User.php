@@ -417,7 +417,27 @@ class User extends Authenticatable
      */
     public function friends(): BelongsToMany
     {
-        return $this->belongsToMany(User::class,'friendships','user_id','friend_id')->withTimestamps();
+        return $this->belongsToMany(User::class,'friendships','user_id','friend_id')->where('status',1)->withTimestamps();
+    }
+    
+    /**
+     * Get all of the pending_friends for the User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function pending_friends(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class,'friendships','user_id','friend_id')->where('status', 0)->withTimestamps();
+    }
+
+    /**
+     * Get all of the incoming_friends for the User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function incoming_friends(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class,'friendships','friend_id','user_id')->where('status', 0)->withTimestamps();
     }
 
     public function friend()
