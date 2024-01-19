@@ -63,7 +63,7 @@ trait XSNotifications
      * @return mixed|void
      * @throws \App\Exceptions\GeneralException
      */
-    public function notifyCustomer(Order $order, string $title, string $message) : mixed
+    public function notifyCustomer(Order $order, string $title, string $message)
     {
         // Customer Notify
         $customer_devices   = $order->user->devices->count() ? $order->user->devices()->pluck('fcm_token')->toArray() : [];

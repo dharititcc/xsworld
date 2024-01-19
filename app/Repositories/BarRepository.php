@@ -2,6 +2,7 @@
 
 use App\Billing\Stripe;
 use App\Exceptions\GeneralException;
+use App\Models\CustomerTable;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\OrderSplit;
@@ -302,17 +303,17 @@ class BarRepository extends BaseRepository
             $this->refundCharge($order);
         }
 
-        $order->update($updateArr);
-
         // update order split status for drink to completed
         if( $order->order_split_drink->update(['status' => $status]) ) // order split table status to intoxication
         {
             if( isset( $order->restaurant_table_id ) && !$order->order_split_food )
             {
                 // update waiter status to Ready for collection
-                $updateArr['waiter_status'] = OrderSplit::DENY_ORDER;
+                $updateArr['waiter_status'] = Order::CUSTOMER_CANCELED;
             }
         }
+
+        $order->update($updateArr);
 
         $userCreditAmountBalance = $order->user->credit_amount;
         $refundCreditAmount = $order->credit_amount;
@@ -326,6 +327,9 @@ class BarRepository extends BaseRepository
         // send notifications to waiter if order is placed from table
         if( isset($order->restaurant_table_id) )
         {
+            // delete customer table
+            CustomerTable::where('user_id' , $order->user_id)->where('restaurant_table_id', $order->restaurant_table_id)->where('order_id', $order->id)->delete();
+
             $waiterTitle                      = $order->restaurant->name. " is denied your order";
             $waiterMessage                    = "Your Order #".$order->id." is denied by ".$order->restaurant->name;
             $this->notifyWaiters($order, $waiterTitle, $waiterMessage, Order::WAITER_CANCEL_ORDER);
@@ -356,7 +360,7 @@ class BarRepository extends BaseRepository
             if( isset( $order->restaurant_table_id ) && !$order->order_split_food )
             {
                 // update waiter status to Ready for collection
-                $updateArr['waiter_status'] = OrderSplit::RESTAURANT_TOXICATION;
+                $updateArr['waiter_status'] = Order::CUSTOMER_CANCELED;
             }
         }
 
@@ -373,6 +377,9 @@ class BarRepository extends BaseRepository
         // send notifications to waiter if order is placed from table
         if( isset($order->restaurant_table_id) )
         {
+            // delete customer table
+            CustomerTable::where('user_id' , $order->user_id)->where('restaurant_table_id', $order->restaurant_table_id)->where('order_id', $order->id)->delete();
+
             $waiterTitle                      = $order->restaurant->name. " is intoxicated your order";
             $waiterMessage                    = "Your Order #".$order->id." is intoxicated by ".$order->restaurant->name;
             $this->notifyWaiters($order, $waiterTitle, $waiterMessage, Order::WAITER_CANCEL_ORDER);
@@ -450,11 +457,14 @@ class BarRepository extends BaseRepository
             'remaining_date'    => Carbon::now()
         ];
 
-        if( $order->charge_id )
+        if( !isset($order->restaurant_table_id) && !isset( $order->waiter_id ) )
         {
-            $stripe                         = new Stripe();
-            $payment_data                   = $stripe->captureCharge($order->charge_id);
-            $updateArr['transaction_id']    = $payment_data->balance_transaction;
+            if( $order->charge_id )
+            {
+                $stripe                         = new Stripe();
+                $payment_data                   = $stripe->captureCharge($order->charge_id);
+                $updateArr['transaction_id']    = $payment_data->balance_transaction;
+            }
         }
 
         // update order split status for drink to completed
