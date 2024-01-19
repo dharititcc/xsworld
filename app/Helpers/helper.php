@@ -328,6 +328,7 @@ if (! function_exists('sendNotification')) {
                 $notification = [
                     'title'                 =>  $title,
                     'body'                  =>  $message,
+                    'message'               =>  $message,
                     'icon'                  =>  'myIcon',
                     'sound'                 => 'mySound',
                     // 'notification_type'  => $type,
