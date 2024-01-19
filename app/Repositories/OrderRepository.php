@@ -1270,8 +1270,8 @@ class OrderRepository extends BaseRepository
     {
         $auth_user = auth()->user();
         $friend = User::find($data['user_id']);
-        $checkFriend    = FriendRequest::where('friend_id',$auth_user->id)->where('user_id',$data['user_id'])->count();
-        if($checkFriend > 1) {
+        $checkFriend    = FriendRequest::where('friend_id',$auth_user->id)->where('user_id',$data['user_id'])->first();
+        if($checkFriend->status != 2) {
             throw new GeneralException('Already send Friend request'); 
         }
         $auth_user->friends()->attach($friend->id);
