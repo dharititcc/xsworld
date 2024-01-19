@@ -2,6 +2,7 @@
 
 use App\Billing\Stripe;
 use App\Exceptions\GeneralException;
+use App\Models\CustomerTable;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\OrderSplit;
@@ -326,6 +327,9 @@ class BarRepository extends BaseRepository
         // send notifications to waiter if order is placed from table
         if( isset($order->restaurant_table_id) )
         {
+            // delete customer table
+            CustomerTable::where('user_id' , $order->user_id)->where('restaurant_table_id', $order->restaurant_table_id)->delete();
+
             $waiterTitle                      = $order->restaurant->name. " is denied your order";
             $waiterMessage                    = "Your Order #".$order->id." is denied by ".$order->restaurant->name;
             $this->notifyWaiters($order, $waiterTitle, $waiterMessage, Order::WAITER_CANCEL_ORDER);
