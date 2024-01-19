@@ -387,6 +387,7 @@ if (! function_exists('waiterNotification')) {
     {
         if( !empty( $tokens ) )
         {
+            Log::debug("Waiter Notification Testing:  - {$message}");
             try {
                 $accesstoken = getenv("FCM_TOKEN");
                 $URL = 'https://fcm.googleapis.com/fcm/send';
