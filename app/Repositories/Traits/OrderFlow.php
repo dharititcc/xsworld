@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Storage;
 
 trait OrderFlow
 {
-    use OrderStatus;
+    use OrderStatus, XSNotifications;
     /**
      * Method addTocart
      *
@@ -453,7 +453,6 @@ trait OrderFlow
             'order_split_drink'
         ])->findOrFail($data['order_id']);
         $user               = $order->user_id ? User::findOrFail($order->user_id) : auth()->user();
-        $devices            = $user->devices()->pluck('fcm_token')->toArray();
         $pickup_point_id    = '';
 
         $getcusTbl = CustomerTable::where('user_id' , $user->id)->where('restaurant_table_id', $table_id)->where('order_id', $order->id)->first();
@@ -558,11 +557,7 @@ trait OrderFlow
                     'restaurant_table_id' => $table_id,
                     'user_id'       => $user->id,
                     'order_id'      => $data['order_id'],
-                ],
-                // [
-                //     'waiter_id'     => $data['waiter_id']
-                // ]
-                );
+                ]);
             }
 
             // send notification to waiters of the restaurant
@@ -582,54 +577,24 @@ trait OrderFlow
                 $payment_data                   = $stripe->captureCharge($order->charge_id);
                 $updateArr['transaction_id']    = $payment_data->balance_transaction;
             }
-
-            $kitchenDevices = [];
-            $kitchens = $order->restaurant->kitchens()->with(['user', 'user.devices'])->get();
-
-            if( $kitchens->count() )
-            {
-                foreach( $kitchens as $kitchen )
-                {
-                    $kitchenDevicesTokensArr = $kitchen->user->devices->pluck('fcm_token')->toArray();
-                    // $waiterDevices = array_merge($waiterDevices, );
-                    if( !empty( $kitchenDevicesTokensArr ) )
-                    {
-                        foreach( $kitchenDevicesTokensArr as $token )
-                        {
-                            $kitchenDevices[] = $token;
-                        }
-                    }
-                }
-            }
-
-            if( !empty( $kitchenDevices ) )
-            {
-                $kitchenTitle    = 'New order placed by customer';
-                $kitchenMessage  = "Order is #{$order->id} placed by customer";
-                sendNotification($kitchenTitle, $kitchenMessage, $kitchenDevices, $order->id);
-            }
+            $kitchenTitle    = 'New order placed by customer';
+            $kitchenMessage  = "Order is #{$order->id} placed by customer";
+            $this->notifyKitchens($order, $kitchenTitle, $kitchenMessage);
         }
 
         // customer notification
         $text               = $order->restaurant->name. ' is processing your order';
         $title              = $text;
         $message            = "Your Order is #".$order->id." placed";
-        $orderid            = $order->id;
-        $send_notification  = sendNotification($title, $message, $devices, $orderid);
+
+        $this->notifyCustomer($order, $title, $message);
 
         // send notification to bar of the restaurant if order is drink
         if( isset($order->order_split_drink->id) )
         {
-            $bardevices     = [];
-            if(isset($pickup_point_id->user_id)){
-                $bardevices         = $order->pickup_point_user->devices()->pluck('fcm_token')->toArray();
-            }
             $bartitle           = "Order is placed by Customer";
             $barmessage         = "Order is #".$order->id." placed by customer";
-            // $bardevices         = $pickup_point_id ? $order->pickup_point_user->devices()->pluck('fcm_token')->toArray() : [];
-            if(!empty( $bardevices )) {
-                $bar_notification   = sendNotification($bartitle, $barmessage, $bardevices, $orderid);
-            }
+            $this->notifyBars($order, $bartitle, $barmessage);
         }
 
         return $order;

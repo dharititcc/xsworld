@@ -19,6 +19,7 @@ use App\Models\UserPaymentMethod;
 use App\Repositories\BaseRepository;
 use App\Repositories\Traits\CreditPoint;
 use App\Repositories\Traits\OrderFlow;
+use App\Repositories\Traits\XSNotifications;
 use Barryvdh\DomPDF;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
@@ -37,7 +38,7 @@ use Illuminate\Support\Facades\File;
 */
 class OrderRepository extends BaseRepository
 {
-    use CreditPoint, OrderFlow, OrderStatus;
+    use CreditPoint, OrderFlow, OrderStatus, XSNotifications;
 
     /**
     * Associated Repository Model.
@@ -786,7 +787,6 @@ class OrderRepository extends BaseRepository
         $table_id           = $data['table_id'] ? $data['table_id'] : null;
         $order              = Order::findOrFail($data['order_id']);
         $user               = $order->user_id ? User::findOrFail($order->user_id) : auth()->user();
-        $devices            = $user->devices()->pluck('fcm_token')->toArray();
 
         $kitchens          = $order->restaurant->kitchens;
         $kitchen_token     = [];
@@ -815,17 +815,17 @@ class OrderRepository extends BaseRepository
             $pickup_point_id    = $this->randomPickpickPoint($order);
         }
 
-        foreach ($kitchens as $kitchen) {
-            $tokens   = $kitchen->user->devices()->pluck('fcm_token')->toArray();
+        // foreach ($kitchens as $kitchen) {
+        //     $tokens   = $kitchen->user->devices()->pluck('fcm_token')->toArray();
 
-            if( !empty( $tokens ) )
-            {
-                foreach( $tokens as $token )
-                {
-                    $kitchen_token[]    = $token; // remove  $token[0]
-                }
-            }
-        }
+        //     if( !empty( $tokens ) )
+        //     {
+        //         foreach( $tokens as $token )
+        //         {
+        //             $kitchen_token[]    = $token; // remove  $token[0]
+        //         }
+        //     }
+        // }
 
         $userCreditAmountBalance = $user->credit_amount;
         $updateArr         = [];
@@ -893,23 +893,44 @@ class OrderRepository extends BaseRepository
         }
 
         $order->refresh();
-        $order->loadMissing(['items']);
+        $order->loadMissing([
+            'items',
+            'restaurant.kitchens',
+            'order_split_food',
+            'order_split_drink'
+        ]);
 
         // Generate PDF
         $this->generatePDF($order);
 
+        // send notification to kitchens of the restaurant if order is food
+        if( isset($order->order_split_food->id) )
+        {
+            // debit payment
+            if( $order->charge_id )
+            {
+                $stripe                         = new Stripe();
+                $payment_data                   = $stripe->captureCharge($order->charge_id);
+                $updateArr['transaction_id']    = $payment_data->balance_transaction;
+            }
+           //kitchen notify
+            $kitchentitle    = "place new order";
+            $kitchenmessage  = "New Order has been #".$order->id." placed";
+            $this->notifyKitchens($order, $kitchentitle, $kitchenmessage);
+        }
+
+        // send notification to bar of the restaurant if order is drink
+        if( isset($order->order_split_drink->id) )
+        {
+            $bartitle           = "New order placed";
+            $barmessage         = "Order is #".$order->id." placed by waiter";
+            $this->notifyBars($order, $bartitle, $barmessage);
+        }
+
         //customer notify
         $title              = "place new order";
         $message            = "Your Order has been #".$order->id." placed";
-        $orderid            = $order->id;
-        if(!empty($devices)) {
-            $send_notification  = sendNotification($title,$message,$devices,$orderid);
-        }
-
-        //kitchen notify
-        $kitchentitle           = "place new order";
-        $kitchenmessage         = "New Order has been #".$order->id." placed";
-        $kitchen_notification   = sendNotification($kitchentitle,$kitchenmessage,$kitchen_token,$orderid);
+        $this->notifyCustomer($order, $title, $message);
 
         return $order;
     }
@@ -1165,7 +1186,7 @@ class OrderRepository extends BaseRepository
                         'users.email',
                         'users.username',
                         'users.credit_amount',
-                        'users.points', 
+                        'users.points',
                         DB::raw("COALESCE(previous_qua, 0) AS previous_points"),
                         DB::raw("COALESCE(Abs(curr_qua), 0) AS current_points"),
                         DB::raw(
@@ -1228,60 +1249,35 @@ class OrderRepository extends BaseRepository
             $filtered = '';//$venueList;
 
             $membershipArr = explode(',', $membershipLevel);
-            
-            // if(count($membershipArr) > 1)
-            // {
-            //     if (in_array(config('xs.bronze_level'), $membershipArr)) {
-            //         $filtered = $filtered->whereBetween('current_membership_points', [0, 100]);
-            //     }
-            //     if (in_array(config('xs.silver_level'), $membershipArr)) {
-            //         $filtered = $filtered->whereBetween('current_membership_points', [101, 200]);
-            //     }
-            //     if (in_array(config('xs.gold_level'), $membershipArr)) {
-            //         $filtered = $filtered->whereBetween('current_membership_points', [201, 300]);
-            //     }
-            //     if (in_array(config('xs.platinum_level'), $membershipArr)) {
-            //         $filtered = $filtered->orWhere('current_membership_points', '>', 300);
-            //     }
-            // }
-            
                 if( in_array(config('xs.bronze_level'), $membershipArr) )
-                {
-                    
-                        $filtered =$venueList->whereBetween('current_membership_points', config('xs.bronze'));
-                    
+            {
+                $filtered =$venueList->whereBetween('current_membership_points', config('xs.bronze'));
+            }
+            if( in_array(config('xs.silver_level'), $membershipArr) )
+            {
+                if(!empty($filtered) && $filtered->count() != 0){
+                    $filtered = $filtered->concat($venueList->whereBetween('current_membership_points', config('xs.silver')));
+                }else{
+                    $filtered = $venueList->whereBetween('current_membership_points', config('xs.silver'));
                 }
-                if( in_array(config('xs.silver_level'), $membershipArr) )
-                {
-                    if(!empty($filtered) && $filtered->count() != 0){
-                        $filtered = $filtered->concat($venueList->whereBetween('current_membership_points', config('xs.silver')));
-                    }else{
-                        $filtered = $venueList->whereBetween('current_membership_points', config('xs.silver'));
-                    }                    
-                    
+            }
+            if( in_array(config('xs.gold_level'), $membershipArr) )
+            {
+                if(!empty($filtered) && $filtered->count() != 0){
+                    $filtered = $filtered->concat($venueList->whereBetween('current_membership_points', config('xs.gold')));
+                }else{
+                    $filtered = $venueList->whereBetween('current_membership_points', config('xs.gold'));
                 }
-                if( in_array(config('xs.gold_level'), $membershipArr) )
+            }
+            if( in_array(config('xs.platinum_level'), $membershipArr) )
+            {
+                if(!empty($filtered) && $filtered->count() != 0)
                 {
-                    
-                    if(!empty($filtered) && $filtered->count() != 0){
-                        $filtered = $filtered->concat($venueList->whereBetween('current_membership_points', config('xs.gold')));
-                    }else{
-                        $filtered = $venueList->whereBetween('current_membership_points', config('xs.gold'));
-                    }
-                   
-                    
+                    $filtered = $filtered->concat($venueList->where('current_membership_points','>',300));
+                }else{
+                    $filtered = $venueList->where('current_membership_points','>',300);
                 }
-                if( in_array(config('xs.platinum_level'), $membershipArr) )
-                {
-                    
-                    if(!empty($filtered) && $filtered->count() != 0)
-                    {
-                        $filtered = $filtered->concat($venueList->where('current_membership_points','>',300));
-                    }else{
-                        $filtered = $venueList->where('current_membership_points','>',300);
-                    }
-                    
-                }
+            }
         }
         else
         {
@@ -1366,7 +1362,7 @@ class OrderRepository extends BaseRepository
         ];
         $stripe         = new Stripe();
         $payment_data   = $stripe->createCharge($paymentArr);
-        
+
         $addAmountToReceiver    = number_format($receiverCreditAmount + $amount, 2);
         // $deductAmountToAuthUser = number_format($authUserCreditAmount - $amount, 2);
         $receiverUser->credit_amount = $addAmountToReceiver;

@@ -1,17 +1,17 @@
 <?php namespace App\Http\Controllers\Api\V1\Traits;
 
-use App\Exceptions\GeneralException;
 use App\Models\Order;
 use App\Models\OrderSplit;
 use App\Billing\Stripe;
 use App\Models\CustomerTable;
 use App\Repositories\Traits\CreditPoint;
+use App\Repositories\Traits\XSNotifications;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 trait OrderStatus
 {
-    use CreditPoint;
+    use CreditPoint, XSNotifications;
     /**
      * Method statusChange
      *
@@ -116,78 +116,6 @@ trait OrderStatus
         $this->notifyCustomer($order, $title, $message);
 
         return $order;
-    }
-
-    /**
-     * Method notifyWaiters
-     *
-     * @param \App\Models\Order $order [explicite description]
-     * @param string $title [explicite description]
-     * @param string $message [explicite description]
-     *
-     * @return mixed|void
-     * @throws \App\Exceptions\GeneralException
-     */
-    public function notifyWaiters(Order $order, string $title, string $message, int $code)
-    {
-        // send notification to waiter if table order
-        if( isset( $order->restaurant_table_id ) )
-        {
-            $order->loadMissing([
-                'restaurant',
-                'restaurant.waiters'
-            ]);
-
-            $waiterDevices  = [];
-            $waiters        = $order->restaurant->waiters()->with(['user', 'user.devices'])->get();
-
-            if( $waiters->count() )
-            {
-                foreach( $waiters as $waiter )
-                {
-                    $WaiterDevicesTokensArr = $waiter->user->devices->pluck('fcm_token')->toArray();
-
-                    if( !empty( $WaiterDevicesTokensArr ) )
-                    {
-                        foreach( $WaiterDevicesTokensArr as $token )
-                        {
-                            $waiterDevices[] = $token;
-                        }
-                    }
-                }
-            }
-
-            if( !empty( $waiterDevices ) )
-            {
-                // $orderid    = $order->id;
-                return waiterNotification($title, $message, $waiterDevices, $code , $order->id);
-            }
-        }
-    }
-
-    /**
-     * Method notifyCustomer
-     *
-     * @param \App\Models\Order $order [explicite description]
-     * @param string $title [explicite description]
-     *
-     * @return mixed
-     * @throws \App\Exceptions\GeneralException
-     */
-    public function notifyCustomer(Order $order, string $title, string $message) : mixed
-    {
-        // Customer Notify
-        $customer_devices   = $order->user->devices->count() ? $order->user->devices()->pluck('fcm_token')->toArray() : [];
-        $orderid            = $order->id;
-
-        if(!empty($customer_devices))
-        {
-            return sendNotification($title, $message, $customer_devices, $orderid);
-        }
-        else
-        {
-            throw new GeneralException('Device Token not Found.');
-        }
     }
 
     /**
