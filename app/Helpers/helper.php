@@ -362,7 +362,7 @@ if (! function_exists('sendNotification')) {
 
                 $rest = curl_exec($crl);
                 // dd($rest);
-                Log::debug("Waiter Notification Testing:  - {$rest}");
+                Log::debug("Notification Testing Helper Log:  - {$rest}");
                 return true;
             } catch (Exception $e) {
                 throw new GeneralException($e->getMessage());
@@ -427,7 +427,7 @@ if (! function_exists('waiterNotification')) {
 
                 $rest = curl_exec($crl);
                 // dd($rest);
-                Log::debug("Waiter Notification Testing:  - {$rest}");
+                Log::debug("Waiter Notification Log Helper:  - {$rest}");
 
                 return true;
             } catch (Exception $e) {
