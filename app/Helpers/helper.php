@@ -395,6 +395,7 @@ if (! function_exists('waiterNotification')) {
                 $notification = [
                     'title'                 =>  $title,
                     'body'                  =>  $message,
+                    'message'               =>  $message,
                     'icon'                  =>  'myIcon',
                     'sound'                 => 'mySound',
                     'image'                 =>'',
