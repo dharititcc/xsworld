@@ -765,6 +765,14 @@ class OrderRepository extends BaseRepository
         $table_id           = $data['table_id'] ? $data['table_id'] : null;
         $order              = Order::findOrFail($data['order_id']);
         $user               = $order->user_id ? User::findOrFail($order->user_id) : auth()->user();
+        $stripe_customer_id = $user->stripe_customer_id;
+        $stripe             = new Stripe();
+        $customer_cards     = $stripe->fetchCards($stripe_customer_id)->toArray();
+
+        if(empty($customer_cards['data']))
+        {
+            throw new GeneralException('Please ask customer to Add Card details');
+        }
 
         $kitchens          = $order->restaurant->kitchens;
         $kitchen_token     = [];
@@ -808,7 +816,6 @@ class OrderRepository extends BaseRepository
         $userCreditAmountBalance = $user->credit_amount;
         $updateArr         = [];
         $paymentArr        = [];
-        $stripe_customer_id = $user->stripe_customer_id;
 
         if(isset($order->id))
         {
@@ -832,11 +839,6 @@ class OrderRepository extends BaseRepository
 
             if( $order->total != $credit_amount )
             {
-                $stripe         = new Stripe();
-                $customer_cards = $stripe->fetchCards($stripe_customer_id)->toArray();
-                if(empty($customer_cards['data'])) {
-                    throw new GeneralException('Please ask customer to Add Card details');
-                }
                 $getCusCardId   = $stripe->fetchCustomer($stripe_customer_id);
                 $defaultCardId  = $getCusCardId->default_source;
 
