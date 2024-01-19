@@ -328,7 +328,7 @@ class BarRepository extends BaseRepository
         if( isset($order->restaurant_table_id) )
         {
             // delete customer table
-            CustomerTable::where('user_id' , $order->user_id)->where('restaurant_table_id', $order->restaurant_table_id)->delete();
+            CustomerTable::where('user_id' , $order->user_id)->where('restaurant_table_id', $order->restaurant_table_id)->where('order_id', $order->id)->delete();
 
             $waiterTitle                      = $order->restaurant->name. " is denied your order";
             $waiterMessage                    = "Your Order #".$order->id." is denied by ".$order->restaurant->name;
@@ -377,6 +377,9 @@ class BarRepository extends BaseRepository
         // send notifications to waiter if order is placed from table
         if( isset($order->restaurant_table_id) )
         {
+            // delete customer table
+            CustomerTable::where('user_id' , $order->user_id)->where('restaurant_table_id', $order->restaurant_table_id)->where('order_id', $order->id)->delete();
+
             $waiterTitle                      = $order->restaurant->name. " is intoxicated your order";
             $waiterMessage                    = "Your Order #".$order->id." is intoxicated by ".$order->restaurant->name;
             $this->notifyWaiters($order, $waiterTitle, $waiterMessage, Order::WAITER_CANCEL_ORDER);
