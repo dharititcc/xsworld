@@ -303,8 +303,6 @@ class BarRepository extends BaseRepository
             $this->refundCharge($order);
         }
 
-        $order->update($updateArr);
-
         // update order split status for drink to completed
         if( $order->order_split_drink->update(['status' => $status]) ) // order split table status to intoxication
         {
@@ -314,6 +312,8 @@ class BarRepository extends BaseRepository
                 $updateArr['waiter_status'] = Order::CUSTOMER_CANCELED;
             }
         }
+
+        $order->update($updateArr);
 
         $userCreditAmountBalance = $order->user->credit_amount;
         $refundCreditAmount = $order->credit_amount;
