@@ -43,9 +43,12 @@ trait OrderStatus
             }
 
 
-            $title      = "Ready for pickup";
-            $message    = "Your Order is #".$order->id." kitchen ready for pickup";
-            $code       = Order::READY_FOR_COLLECTION;
+            $titleWaiter      = "Ready for pickup";
+            $messageWaiter    = "Your Order is #".$order->id." kitchen ready for pickup";
+            $codeWaiter       = Order::READY_FOR_COLLECTION;
+
+            // send notification to waiters
+            $this->notifyWaiters($order, $titleWaiter, $messageWaiter, $codeWaiter);
 
         }
         elseif ($status == OrderSplit::KITCHEN_CANCELED)
@@ -73,9 +76,12 @@ trait OrderStatus
                 // update customer table update
                 CustomerTable::where('user_id', $order->user->id)->where('order_id', $order->id)->delete();
             }
-            $title      = "Restaurant kitchen cancelled";
-            $message    = "Your Order is #".$order->id." kitchen cancelled";
-            $code       = Order::WAITER_CANCEL_ORDER;
+            $titleWaiter      = "Restaurant kitchen cancelled";
+            $messageWaiter    = "Your Order is #".$order->id." kitchen cancelled";
+            $codeWaiter       = Order::WAITER_CANCEL_ORDER;
+
+            // send notification to waiters
+            $this->notifyWaiters($order, $titleWaiter, $messageWaiter, $codeWaiter);
         }
         else if( $status == OrderSplit::KITCHEN_CONFIRM )
         {
@@ -104,13 +110,13 @@ trait OrderStatus
             // update user's points
             $this->updateUserPoints($order->user, ['points' => $totalPoints]);
 
-            $title      = "Restaurant kitchen confirm collection";
-            $message    = "Your Order is #".$order->id." ready for collection";
-            $code       = Order::WAITER_CONFIRM_COLLECTION;
-        }
+            $titleWaiter      = "Restaurant kitchen confirm collection";
+            $messageWaiter    = "Your Order is #".$order->id." ready for collection";
+            $codeWaiter       = Order::WAITER_CONFIRM_COLLECTION;
 
-        // send notification to waiters
-        $this->notifyWaiters($order, $title, $message, $code);
+            // send notification to waiters
+            $this->notifyWaiters($order, $titleWaiter, $messageWaiter, $codeWaiter);
+        }
 
         // send notification to customer
         $this->notifyCustomer($order, $title, $message);
