@@ -18,6 +18,8 @@ use App\Http\Resources\UserResource;
 use App\Http\Resources\VenueUserResource;
 use App\Models\Order;
 use App\Repositories\OrderRepository;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class OrderController extends APIController
@@ -410,10 +412,18 @@ class OrderController extends APIController
         return $this->respondSuccess('Get user profile successfully ', new UserResource($userProfile));
     }
 
-    public function friendShip(Request $request)
+    /**
+     * Method friendShip
+     *
+     * @param Request $request [explicite description]
+     *
+     * @return JsonResponse
+     */
+    public function friendShip(Request $request):JsonResponse
     {
         $input          = $request->all();
         $myFriendList   = $this->repository->myFriendList($input);
+
         if($myFriendList->count())
         {
             return $this->respondSuccess('Venue User List', MyFriendsResource::collection($myFriendList));
