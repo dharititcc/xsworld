@@ -22,6 +22,8 @@ class VenueController extends Controller
     {
         $restaurant = session('restaurant');
         $restaurant->refresh();
+
+        // dd($restaurant);
         $restaurant->loadMissing(['orders', 'reviews']);
         $order_reviews = $restaurant->reviews()->with(['order', 'order.user'])->orderByDesc('id')->paginate(10);
         // dd($order_reviews);
@@ -96,6 +98,11 @@ class VenueController extends Controller
             $this->upload($request->file('image'), $restaurant);
         }
         return true;
+    }
+
+    public function venueUpdate(Request $request)
+    {
+        dd($request->all());
     }
 
     /**

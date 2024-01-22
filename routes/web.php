@@ -132,6 +132,7 @@ Route::group(['prefix' => 'restaurants', 'as' => 'restaurants.', 'middleware' =>
     {
         Route::resource('venue', 'VenueController');
         Route::post('imageupload','VenueController@imageUpload')->name('res-image-upload');
+        Route::post('venue-edit','VenueController@venueUpdate')->name('venue-edit');
     });
 
 });

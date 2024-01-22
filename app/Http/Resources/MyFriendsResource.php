@@ -25,7 +25,7 @@ class MyFriendsResource extends JsonResource
             'membership_level'      => $this->membership['membership_level'],
             'credit_amount'         => (float) $this->credit_amount ?? 0,
             'points'                => $this->points ?? 0,
-            'friendship'            => isset($this->friend) ? $this->friend->status : 3,
+            'friendship'            => isset($this->friend) && !empty($this->friend) ? $this->friend->status : 3,
             // 'myfriend'              => isset($this->friends) ? $this->friends : [],
             'member_id'             => $this->id,
         ];
