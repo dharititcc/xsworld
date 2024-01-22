@@ -37,7 +37,7 @@ class UserResource extends JsonResource
             'email_verified_at'     => $this->email_verified_at ?? "",
             'is_mobile_verify'      => (int) $this->is_mobile_verify ?? 0,
             'created_at'            => $this->created_at->format('Y-m-d H:i:s'),
-            'friendship'            => isset($this->getMyfriend) && !empty($this->getMyfriend) ? $this->getMyfriend->status : 3,
+            'friendship'            => isset($this->friendship_status) ? $this->friendship_status  : 3
         ];
     }
 }

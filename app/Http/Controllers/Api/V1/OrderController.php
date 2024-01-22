@@ -421,6 +421,6 @@ class OrderController extends APIController
             return $this->respondSuccess('Venue User List', MyFriendsResource::collection($myFriendList));
         }
 
-        throw new GeneralException('No user found in this restaurant.');
+        throw new GeneralException("You don't have anyfriends please make a new friends.");
     }
 }

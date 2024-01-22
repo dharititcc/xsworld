@@ -1359,10 +1359,58 @@ class OrderRepository extends BaseRepository
         if( $data['request'] === 1 )
         {
             $FriendRequest =  $auth_user->pending_friends;
+            // $FriendRequest = User::select([
+            //     'users.*',
+            //     'friendship_status_tbl.friendship_status AS fr'
+            // ])
+            // ->join(DB::raw
+            // (
+            //     "(SELECT
+            //         status AS friendship_status,
+            //         user_id,
+            //         friend_id
+            //     FROM friendships
+            //     WHERE (
+            //         user_id = {$auth_user->id}
+            //         OR friend_id = {$auth_user->id}
+            //     ))  AS `friendship_status_tbl`
+            //     "
+            // ), function($join)
+            // {
+            //     $join->on('users.id', '=', 'friendship_status_tbl.user_id');
+            //     $join->orOn('users.id', '=', 'friendship_status_tbl.friend_id');
+            // })
+            // ->where('users.id', '!=', $auth_user->id)
+            // ->where('friendship_status_tbl.friendship_status', 0)
+            // ->get();
         }
         else
         {
             $FriendRequest =  $auth_user->incoming_friends;
+            // $FriendRequest = User::select([
+            //     'users.*',
+            //     'friendship_status_tbl.friendship_status AS fr'
+            // ])
+            // ->join(DB::raw
+            // (
+            //     "(SELECT
+            //         status AS friendship_status,
+            //         user_id,
+            //         friend_id
+            //     FROM friendships
+            //     WHERE (
+            //         user_id = {$auth_user->id}
+            //         OR friend_id = {$auth_user->id}
+            //     ))  AS `friendship_status_tbl`
+            //     "
+            // ), function($join)
+            // {
+            //     $join->on('users.id', '=', 'friendship_status_tbl.user_id');
+            //     $join->orOn('users.id', '=', 'friendship_status_tbl.friend_id');
+            // })
+            // ->where('users.id', '!=', $auth_user->id)
+            // ->where('friendship_status_tbl.friendship_status', 0)
+            // ->get();
         }
         return $FriendRequest;
     }
@@ -1434,30 +1482,27 @@ class OrderRepository extends BaseRepository
 
     public function userProfileData(array $data)
     {
-        $userData = $userData = User::where('id',$data['user_id'])->with(['getMyfriend'])->first();
-        // $userData  = User::select([
-        //     'users.*',
-        //     'friendship_status_tbl.friendship_status AS fr'
-        // ])
-        // ->join(DB::raw
-        // (
-        //     "(SELECT
-        //         status AS friendship_status,
-        //         user_id,
-        //         friend_id
-        //     FROM friendships
-        //     WHERE (
-        //         user_id = {$data['user_id']}
-        //         OR friend_id = {$data['user_id']}
-        //     ))  AS `friendship_status_tbl`
-        //     "
-        // ), function($join)
-        // {
-        //     $join->on('users.id', '=', 'friendship_status_tbl.user_id');
-        //     $join->orOn('users.id', '=', 'friendship_status_tbl.friend_id');
-        // })
-        // ->where('users.id',  $data['user_id'])
-        // ->first();
+        $authId = auth()->user()->id;
+        // $userData = $userData = User::where('id',$data['user_id'])->with(['getMyfriend'])->first();
+        $userData = User::where('id', $data['user_id'])
+            ->leftJoin(DB::raw
+            (
+                "(SELECT
+                    status AS friendship_status,
+                    user_id,
+                    friend_id
+                FROM friendships
+                WHERE (
+                    user_id = {$authId}
+                    OR friend_id = {$authId}
+                ))  AS `friendship_status_tbl`
+                "
+                ),function($join)
+            {
+                $join->on('users.id', '=', 'friendship_status_tbl.user_id');
+                $join->orOn('users.id', '=', 'friendship_status_tbl.friend_id');
+            })->first();
+
         return $userData;
     }
 
