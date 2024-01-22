@@ -453,6 +453,7 @@ class User extends Authenticatable
      */
     public function myfriends(): BelongsToMany
     {
+        //request sent
         return $this->belongsToMany(User::class,'friendships','user_id','friend_id')->where('status', 1)->withTimestamps();
     }
 
@@ -463,6 +464,7 @@ class User extends Authenticatable
      */
     public function mefriends(): BelongsToMany
     {
+        //accept request
         return $this->belongsToMany(User::class,'friendships','friend_id','user_id')->where('status', 1)->withTimestamps();
     }
 }

@@ -1132,6 +1132,7 @@ class OrderRepository extends BaseRepository
      */
     public function venueUserList(array $data)
     {
+        $user           = auth()->user();
         $now            = Carbon::now();
         $lastHour       = Carbon::now()->subHour(1);
         $membershipLevel= isset( $data['membership_level'] ) ? $data['membership_level'] : "";
@@ -1150,6 +1151,18 @@ class OrderRepository extends BaseRepository
                         'users.username',
                         'users.credit_amount',
                         'users.points',
+                        DB::raw(
+                            "
+                            (
+                                CASE
+                                    WHEN friendship_status_tbl.friendship_status = 0 THEN 0
+                                    WHEN friendship_status_tbl.friendship_status = 1 THEN 1
+                                    WHEN friendship_status_tbl.friendship_status = 2 THEN 2
+                                    ELSE 
+                                    3
+                                END
+                            ) AS friendship_status
+                        "),
                         DB::raw("COALESCE(previous_qua, 0) AS previous_points"),
                         DB::raw("COALESCE(Abs(curr_qua), 0) AS current_points"),
                         DB::raw(
@@ -1201,11 +1214,30 @@ class OrderRepository extends BaseRepository
                     {
                         $join->on('users.id', '=', 'current_quarter.user_id');
                     })
+                    ->leftJoin(DB::raw
+                    (
+                        "(SELECT
+                            status AS friendship_status,
+                            user_id,
+                            friend_id
+                        FROM friendships
+                        WHERE (
+                            user_id = {$user->id}
+                            OR friend_id = {$user->id}
+                        ))  AS `friendship_status_tbl`
+                        "
+                    ), function($join)
+                    {
+                        $join->on('users.id', '=', 'friendship_status_tbl.user_id');
+                        $join->orOn('users.id', '=', 'friendship_status_tbl.friend_id');
+                    })
                     ->where('restaurant_id', $data['restaurant_id'])
                     ->whereNotIn('status', [Order::CUSTOMER_CANCELED])
                     ->where('type', Order::ORDER)
-                    ->groupBy('orders.user_id')->get();
-                    // dd($venueList->toarray());
+                    // ->where('users.id',auth()->user()->id)
+                    ->groupBy('orders.user_id')
+                    ->get();
+                    // dd($venueList->refresh());
                     // echo common()->formatSql($venueList);die;
         if( $membershipLevel != "" )
         {
