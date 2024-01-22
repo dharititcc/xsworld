@@ -1269,8 +1269,8 @@ class OrderRepository extends BaseRepository
             if($checkFriend->status != 2) {
                 throw new GeneralException('Already send Friend request');
             }
-            $auth_user->friends()->attach($friend->id);
         }
+        $auth_user->friends()->attach($friend->id);
 
         // $FriendRequest = FriendRequest::create([
         //     'user_id'   => $auth_user->id,
@@ -1301,7 +1301,8 @@ class OrderRepository extends BaseRepository
             throw new GeneralException('No User Found');
         }
         $FriendRequest = FriendRequest::where('user_id', $data['user_id'])->where('friend_id', $auth_user->id,)->update(['status' => $data['status']]);
-        return $FriendRequest;
+        $auth_user->friend;
+        return $auth_user;
     }
 
     public function pendingFriendReq(array $data)
@@ -1408,7 +1409,9 @@ class OrderRepository extends BaseRepository
     public function myFriendList(array $data)
     {
         $user = auth()->user();
+        // $user = $user->with(['attachment']);
+        // dd($user->image);
 
-        return $user->friends;
+        return $user->myfriends;
     }
 }
