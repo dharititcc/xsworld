@@ -2,15 +2,15 @@
 
 use App\Billing\Stripe;
 use App\Exceptions\GeneralException;
-use App\Models\CreditPointsHistory;
+use App\Models\CustomerTable;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\OrderSplit;
 use App\Models\User;
 use App\Repositories\BaseRepository;
 use App\Repositories\Traits\CreditPoint;
+use App\Repositories\Traits\XSNotifications;
 use Carbon\Carbon;
-use Carbon\CarbonInterval;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 
@@ -19,7 +19,7 @@ use Illuminate\Support\Collection;
 */
 class BarRepository extends BaseRepository
 {
-    use CreditPoint;
+    use CreditPoint, XSNotifications;
     /**
     * Associated Repository Model.
     */
@@ -251,9 +251,18 @@ class BarRepository extends BaseRepository
                 $totalCreditAmount = $userCreditAmountBalance + $refundCreditAmount;
                 // update user's credit amount
                 $this->updateUserPoints($user, ['credit_amount' => $totalCreditAmount]);
-                $title                      = $order->restaurant->name. " is processing your order";
+                $title                      = $order->restaurant->name. " is cancelled your order";
                 $message                    = "Your Order #".$order_id." is cancelled by".$order->restaurant->name;
-                $send_notification          = sendNotification($title,$message,$user_tokens,$order_id);
+                // $send_notification          = sendNotification($title,$message,$user_tokens,$order_id);
+                $this->notifyCustomer($order, $title, $message);
+
+                // send notifications to waiter if order is placed from table
+                if( isset($order->restaurant_table_id) )
+                {
+                    $waiterTitle                      = $order->restaurant->name. " is cancelled your order";
+                    $waiterMessage                    = "Your Order #".$order_id." is cancelled by".$order->restaurant->name;
+                    $this->notifyWaiters($order, $waiterTitle, $waiterMessage, Order::WAITER_CANCEL_ORDER);
+                }
             }
 
             if($status == OrderSplit::CONFIRM_PICKUP)
@@ -294,26 +303,37 @@ class BarRepository extends BaseRepository
             $this->refundCharge($order);
         }
 
-        $order->update($updateArr);
-
         // update order split status for drink to completed
         if( $order->order_split_drink->update(['status' => $status]) ) // order split table status to intoxication
         {
             if( isset( $order->restaurant_table_id ) && !$order->order_split_food )
             {
                 // update waiter status to Ready for collection
-                $updateArr['waiter_status'] = OrderSplit::DENY_ORDER;
+                $updateArr['waiter_status'] = Order::CUSTOMER_CANCELED;
             }
         }
+
+        $order->update($updateArr);
 
         $userCreditAmountBalance = $order->user->credit_amount;
         $refundCreditAmount = $order->credit_amount;
         $totalCreditAmount = $userCreditAmountBalance + $refundCreditAmount;
         // update user's credit amount
         $this->updateUserPoints($order->user, ['credit_amount' => $totalCreditAmount]);
-        $title                      = $order->restaurant->name. " is processing your order";
+        $title                      = $order->restaurant->name. " is denied your order";
         $message                    = "Your Order #".$order->id." is denied by ".$order->restaurant->name;
-        $send_notification          = sendNotification($title,$message,$user_tokens,$order->id);
+        $this->notifyCustomer($order, $title, $message);
+
+        // send notifications to waiter if order is placed from table
+        if( isset($order->restaurant_table_id) )
+        {
+            // delete customer table
+            CustomerTable::where('user_id' , $order->user_id)->where('restaurant_table_id', $order->restaurant_table_id)->where('order_id', $order->id)->delete();
+
+            $waiterTitle                      = $order->restaurant->name. " is denied your order";
+            $waiterMessage                    = "Your Order #".$order->id." is denied by ".$order->restaurant->name;
+            $this->notifyWaiters($order, $waiterTitle, $waiterMessage, Order::WAITER_CANCEL_ORDER);
+        }
     }
 
     /**
@@ -340,7 +360,7 @@ class BarRepository extends BaseRepository
             if( isset( $order->restaurant_table_id ) && !$order->order_split_food )
             {
                 // update waiter status to Ready for collection
-                $updateArr['waiter_status'] = OrderSplit::RESTAURANT_TOXICATION;
+                $updateArr['waiter_status'] = Order::CUSTOMER_CANCELED;
             }
         }
 
@@ -350,9 +370,20 @@ class BarRepository extends BaseRepository
         $totalCreditAmount = $userCreditAmountBalance + $refundCreditAmount;
         // update user's credit amount
         $this->updateUserPoints($order->user, ['credit_amount' => $totalCreditAmount]);
-        $title                      = $order->restaurant->name. " is processing your order";
+        $title                      = $order->restaurant->name. " is intoxicated your order";
         $message                    = "Your Order #".$order->id." is intoxicated by ".$order->restaurant->name;
-        $send_notification          = sendNotification($title,$message,$user_tokens,$order->id);
+        $this->notifyCustomer($order, $title, $message);
+
+        // send notifications to waiter if order is placed from table
+        if( isset($order->restaurant_table_id) )
+        {
+            // delete customer table
+            CustomerTable::where('user_id' , $order->user_id)->where('restaurant_table_id', $order->restaurant_table_id)->where('order_id', $order->id)->delete();
+
+            $waiterTitle                      = $order->restaurant->name. " is intoxicated your order";
+            $waiterMessage                    = "Your Order #".$order->id." is intoxicated by ".$order->restaurant->name;
+            $this->notifyWaiters($order, $waiterTitle, $waiterMessage, Order::WAITER_CANCEL_ORDER);
+        }
     }
 
     /**
@@ -398,7 +429,15 @@ class BarRepository extends BaseRepository
 
         $title                      = $order->restaurant->name. " is processing your order";
         $message                    = "Your Order #".$order->id." is pick up from the ".$order->restaurant->name;
-        $send_notification          = sendNotification($title, $message, $user_tokens, $order->id);
+        $this->notifyCustomer($order, $title, $message);
+
+        // send notifications to waiter if order is placed from table
+        if( isset($order->restaurant_table_id) )
+        {
+            $waiterTitle                      = $order->restaurant->name. " is processing your order";
+            $waiterMessage                    = "Your Order #".$order->id." is pick up from the ".$order->restaurant->name;
+            $this->notifyWaiters($order, $waiterTitle, $waiterMessage, Order::WAITER_CONFIRM_COLLECTION);
+        }
     }
 
     /**
@@ -418,11 +457,14 @@ class BarRepository extends BaseRepository
             'remaining_date'    => Carbon::now()
         ];
 
-        if( $order->charge_id )
+        if( !isset($order->restaurant_table_id) && !isset( $order->waiter_id ) )
         {
-            $stripe                         = new Stripe();
-            $payment_data                   = $stripe->captureCharge($order->charge_id);
-            $updateArr['transaction_id']    = $payment_data->balance_transaction;
+            if( $order->charge_id )
+            {
+                $stripe                         = new Stripe();
+                $payment_data                   = $stripe->captureCharge($order->charge_id);
+                $updateArr['transaction_id']    = $payment_data->balance_transaction;
+            }
         }
 
         // update order split status for drink to completed
@@ -440,7 +482,15 @@ class BarRepository extends BaseRepository
 
         $title                      = $order->restaurant->name. " is processing your order";
         $message                    = "Your Order #".$order->id." is completed by ".$order->restaurant->name;
-        $send_notification          = sendNotification($title, $message, $user_tokens, $order->id);
+        $this->notifyCustomer($order, $title, $message);
+
+        // send notifications to waiter if order is placed from table
+        if( isset($order->restaurant_table_id) )
+        {
+            $waiterTitle                      = $order->restaurant->name. " is processing your order";
+            $waiterMessage                    = "Your Order #".$order->id." is completed by ".$order->restaurant->name;
+            $this->notifyWaiters($order, $waiterTitle, $waiterMessage, Order::WAITER_READY_FOR_COLLECTION);
+        }
     }
 
     /**
@@ -494,10 +544,18 @@ class BarRepository extends BaseRepository
                         // update order
                         $order->update($orderArr);
 
-                        // send notification for accepted
+                        // send notification to customer for accepted
                         $title                      = $order->restaurant->name. " is processing your order";
                         $message                    = $order->restaurant->name. " has accepted your order #".$order->id;
-                        $send_notification          = sendNotification($title, $message, $user_tokens, $order->id);
+                        $this->notifyCustomer($order, $title, $message);
+                    }
+
+                    // send notifications to waiter if order is placed from table
+                    if( isset($order->restaurant_table_id) )
+                    {
+                        $waiterTitle                      = $order->restaurant->name. " is processing your order";
+                        $waiterMessage                    = $order->restaurant->name. " has accepted your order #".$order->id;
+                        $this->notifyWaiters($order, $waiterTitle, $waiterMessage, Order::WAITER_READY_FOR_COLLECTION);
                     }
                 }
 
@@ -544,7 +602,16 @@ class BarRepository extends BaseRepository
                     // send notification for delay order
                     $title                      = $order->restaurant->name. " is processing your order";
                     $message                    = "Your Order #".$order->id." is delayed by ".$order->restaurant->name;
-                    $send_notification          = sendNotification($title, $message, $user_tokens, $order->id);
+                    // $send_notification          = sendNotification($title, $message, $user_tokens, $order->id);
+                    $this->notifyCustomer($order, $title, $message);
+
+                    // send notifications to waiter if order is placed from table
+                    if( isset($order->restaurant_table_id) )
+                    {
+                        $waiterTitle                      = $order->restaurant->name. " is processing your order";
+                        $waiterMessage                    = "Your Order #".$order->id." is delayed by ".$order->restaurant->name;
+                        $this->notifyWaiters($order, $waiterTitle, $waiterMessage, Order::WAITER_READY_FOR_COLLECTION);
+                    }
                 }
             }
             else

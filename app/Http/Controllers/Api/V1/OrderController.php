@@ -11,6 +11,7 @@ use App\Http\Requests\OrderHistoryRequest;
 use App\Http\Requests\OrderReviewRequest;
 use App\Http\Requests\OrderUpdateRequest;
 use App\Http\Requests\PlaceOrderRequest;
+use App\Http\Resources\MyFriendsResource;
 use App\Http\Resources\OrderListResource;
 use App\Http\Resources\OrderResource;
 use App\Http\Resources\UserResource;
@@ -376,7 +377,7 @@ class OrderController extends APIController
     public function pendingFriendRequest(Request $request)
     {
         $friends    = $this->repository->pendingFriendReq($request->all());
-        return $this->respondSuccess('New Friend Request Successfully', $friends);
+        return $this->respondSuccess('New Friend Request Successfully', VenueUserResource::collection($friends));
     }
 
     public function printOrder(Request $request,Order $order)
@@ -399,7 +400,7 @@ class OrderController extends APIController
     {
         $input  = $request->all();
         $giftCredits    = $this->repository->giftCreditSend($input);
-        return $this->respondSuccess("Gift Credit Send successfully",$giftCredits);
+        return $this->respondSuccess("Gift credits has been sent successfully.",$giftCredits);
     }
 
     public function userProfile(Request $request)
@@ -407,5 +408,17 @@ class OrderController extends APIController
         $input  = $request->all();
         $userProfile = $this->repository->userProfileData($input);
         return $this->respondSuccess('Get user profile successfully ', new UserResource($userProfile));
+    }
+
+    public function friendShip(Request $request)
+    {
+        $input          = $request->all();
+        $myFriendList   = $this->repository->myFriendList($input);
+        if($myFriendList->count())
+        {
+            return $this->respondSuccess('Venue User List', VenueUserResource::collection($myFriendList));
+        }
+
+        throw new GeneralException('No user found in this restaurant.');
     }
 }

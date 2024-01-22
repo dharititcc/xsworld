@@ -5,6 +5,7 @@ use App\Models\Category;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Twilio\Rest\Client;
 
@@ -318,7 +319,6 @@ if (! function_exists('sendNotification')) {
      */
     function sendNotification(String $title, String $message, array $tokens, int $orderid)
     {
-        $tokens = array_unique($tokens);
         if( !empty( $tokens ) )
         {
             try {
@@ -328,6 +328,7 @@ if (! function_exists('sendNotification')) {
                 $notification = [
                     'title'                 =>  $title,
                     'body'                  =>  $message,
+                    'message'               =>  $message,
                     'icon'                  =>  'myIcon',
                     'sound'                 => 'mySound',
                     // 'notification_type'  => $type,
@@ -361,6 +362,7 @@ if (! function_exists('sendNotification')) {
 
                 $rest = curl_exec($crl);
                 // dd($rest);
+                Log::debug("Notification Testing Helper Log:  - {$rest}");
                 return true;
             } catch (Exception $e) {
                 throw new GeneralException($e->getMessage());
@@ -384,9 +386,9 @@ if (! function_exists('waiterNotification')) {
      */
     function waiterNotification(String $title, String $message, array $tokens, int $code, int $orderid)
     {
-        $tokens = array_unique($tokens);
         if( !empty( $tokens ) )
         {
+            Log::debug("Waiter Notification Testing:  - {$message}");
             try {
                 $accesstoken = getenv("FCM_TOKEN");
                 $URL = 'https://fcm.googleapis.com/fcm/send';
@@ -394,6 +396,7 @@ if (! function_exists('waiterNotification')) {
                 $notification = [
                     'title'                 =>  $title,
                     'body'                  =>  $message,
+                    'message'               =>  $message,
                     'icon'                  =>  'myIcon',
                     'sound'                 => 'mySound',
                     'image'                 =>'',
@@ -425,6 +428,8 @@ if (! function_exists('waiterNotification')) {
 
                 $rest = curl_exec($crl);
                 // dd($rest);
+                Log::debug("Waiter Notification Log Helper:  - {$rest}");
+
                 return true;
             } catch (Exception $e) {
                 throw new GeneralException($e->getMessage());

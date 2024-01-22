@@ -80,7 +80,7 @@ class HomeController extends Controller
     {
         $restaurant = session('restaurant')->loadMissing(['main_categories', 'country']);
         $categories = $restaurant->categories()->with(['children_parent'])->whereNotNull('parent_id')->get();
-
+        // dd($categories);
         if($request->ajax())
         {
             $items = $this->repository->getAnalyticsTableData($restaurant);
@@ -107,8 +107,9 @@ class HomeController extends Controller
      */
     public function filterAnalytics(Request $request)
     {
+        $input = $request->all();
         $restaurant = session('restaurant')->loadMissing(['main_categories', 'country']);
-        $chartData  = $this->repository->getChart($restaurant);
+        $chartData  = $this->repository->getChart($restaurant ,$input);
         // dd($chartData);
         return response()->json([
             'message' => 'Hello Test',

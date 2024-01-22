@@ -19,6 +19,7 @@ use App\Models\UserPaymentMethod;
 use App\Repositories\BaseRepository;
 use App\Repositories\Traits\CreditPoint;
 use App\Repositories\Traits\OrderFlow;
+use App\Repositories\Traits\XSNotifications;
 use Barryvdh\DomPDF;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
@@ -37,7 +38,7 @@ use Illuminate\Support\Facades\File;
 */
 class OrderRepository extends BaseRepository
 {
-    use CreditPoint, OrderFlow, OrderStatus;
+    use CreditPoint, OrderFlow, OrderStatus, XSNotifications;
 
     /**
     * Associated Repository Model.
@@ -536,31 +537,12 @@ class OrderRepository extends BaseRepository
 
                 if( isset( $order->restaurant_table_id ) )
                 {
-                    // send notification to kitchen
-                    $kitchenDevices = [];
-                    $kitchens = $order->restaurant->kitchens()->with(['user', 'user.devices'])->get();
-
-                    if( $kitchens->count() )
-                    {
-                        foreach( $kitchens as $kitchen )
-                        {
-                            $kitchenDevicesTokensArr = $kitchen->user->devices->pluck('fcm_token')->toArray();
-                            // $waiterDevices = array_merge($waiterDevices, );
-                            if( !empty( $kitchenDevicesTokensArr ) )
-                            {
-                                foreach( $kitchenDevicesTokensArr as $token )
-                                {
-                                    $kitchenDevices[] = $token;
-                                }
-                            }
-                        }
-                    }
-
-                    if( !empty( $kitchenDevices ) )
+                    // send notification to kitchen if order is for food
+                    if( isset($order->order_split_food->id) )
                     {
                         $kitchenTitle    = 'Order cancelled';
                         $kitchenMessage  = "Order #".$order->id." is cancelled by customer";
-                        sendNotification($kitchenTitle, $kitchenMessage, $kitchenDevices, $order->id);
+                        $this->notifyKitchens($order, $kitchenTitle, $kitchenMessage);
                     }
 
                     // send notification to waiters
@@ -572,10 +554,7 @@ class OrderRepository extends BaseRepository
                 {
                     $bartitle           = "Order cancelled";
                     $barmessage         = "Order #".$order->id." is cancelled by customer";
-                    $bardevices         = $order->pickup_point_user_id ? $order->pickup_point_user->devices()->pluck('fcm_token')->toArray() : [];
-                    if(!empty( $bardevices )) {
-                        $bar_notification   = sendNotification($bartitle,$barmessage,$bardevices,$order->id);
-                    }
+                    $this->notifyBars($order, $bartitle, $barmessage);
                 }
             }
         }
@@ -786,7 +765,14 @@ class OrderRepository extends BaseRepository
         $table_id           = $data['table_id'] ? $data['table_id'] : null;
         $order              = Order::findOrFail($data['order_id']);
         $user               = $order->user_id ? User::findOrFail($order->user_id) : auth()->user();
-        $devices            = $user->devices()->pluck('fcm_token')->toArray();
+        $stripe_customer_id = $user->stripe_customer_id;
+        $stripe             = new Stripe();
+        $customer_cards     = $stripe->fetchCards($stripe_customer_id)->toArray();
+
+        if(empty($customer_cards['data']))
+        {
+            throw new GeneralException('Please ask customer to Add Card details');
+        }
 
         $kitchens          = $order->restaurant->kitchens;
         $kitchen_token     = [];
@@ -815,21 +801,10 @@ class OrderRepository extends BaseRepository
             $pickup_point_id    = $this->randomPickpickPoint($order);
         }
 
-        foreach ($kitchens as $kitchen) {
-            $tokens   = $kitchen->user->devices()->pluck('fcm_token')->toArray();
-
-            if( !empty( $tokens ) )
-            {
-                foreach( $tokens as $token )
-                {
-                    $kitchen_token[]    = $token; // remove  $token[0]
-                }
-            }
-        }
-
         $userCreditAmountBalance = $user->credit_amount;
         $updateArr         = [];
         $paymentArr        = [];
+
         $stripe_customer_id = $user->stripe_customer_id;
 
         if(isset($order->id))
@@ -854,11 +829,6 @@ class OrderRepository extends BaseRepository
 
             if( $order->total != $credit_amount )
             {
-                $stripe         = new Stripe();
-                $customer_cards = $stripe->fetchCards($stripe_customer_id)->toArray();
-                if(empty($customer_cards['data'])) {
-                    throw new GeneralException('Please ask customer to Add Card details');
-                }
                 $getCusCardId   = $stripe->fetchCustomer($stripe_customer_id);
                 $defaultCardId  = $getCusCardId->default_source;
 
@@ -893,23 +863,37 @@ class OrderRepository extends BaseRepository
         }
 
         $order->refresh();
-        $order->loadMissing(['items']);
+        $order->loadMissing([
+            'items',
+            'restaurant.kitchens',
+            'order_split_food',
+            'order_split_drink'
+        ]);
 
         // Generate PDF
         $this->generatePDF($order);
 
+        // send notification to kitchens of the restaurant if order is food
+        if( isset($order->order_split_food->id) )
+        {
+           //kitchen notify
+            $kitchentitle    = "place new order";
+            $kitchenmessage  = "New Order has been #".$order->id." placed";
+            $this->notifyKitchens($order, $kitchentitle, $kitchenmessage);
+        }
+
+        // send notification to bar of the restaurant if order is drink
+        if( isset($order->order_split_drink->id) )
+        {
+            $bartitle           = "New order placed";
+            $barmessage         = "Order is #".$order->id." placed by waiter";
+            $this->notifyBars($order, $bartitle, $barmessage);
+        }
+
         //customer notify
         $title              = "place new order";
         $message            = "Your Order has been #".$order->id." placed";
-        $orderid            = $order->id;
-        if(!empty($devices)) {
-            $send_notification  = sendNotification($title,$message,$devices,$orderid);
-        }
-
-        //kitchen notify
-        $kitchentitle           = "place new order";
-        $kitchenmessage         = "New Order has been #".$order->id." placed";
-        $kitchen_notification   = sendNotification($kitchentitle,$kitchenmessage,$kitchen_token,$orderid);
+        $this->notifyCustomer($order, $title, $message);
 
         return $order;
     }
@@ -1165,7 +1149,7 @@ class OrderRepository extends BaseRepository
                         'users.email',
                         'users.username',
                         'users.credit_amount',
-                        'users.points', 
+                        'users.points',
                         DB::raw("COALESCE(previous_qua, 0) AS previous_points"),
                         DB::raw("COALESCE(Abs(curr_qua), 0) AS current_points"),
                         DB::raw(
@@ -1228,60 +1212,35 @@ class OrderRepository extends BaseRepository
             $filtered = '';//$venueList;
 
             $membershipArr = explode(',', $membershipLevel);
-            
-            // if(count($membershipArr) > 1)
-            // {
-            //     if (in_array(config('xs.bronze_level'), $membershipArr)) {
-            //         $filtered = $filtered->whereBetween('current_membership_points', [0, 100]);
-            //     }
-            //     if (in_array(config('xs.silver_level'), $membershipArr)) {
-            //         $filtered = $filtered->whereBetween('current_membership_points', [101, 200]);
-            //     }
-            //     if (in_array(config('xs.gold_level'), $membershipArr)) {
-            //         $filtered = $filtered->whereBetween('current_membership_points', [201, 300]);
-            //     }
-            //     if (in_array(config('xs.platinum_level'), $membershipArr)) {
-            //         $filtered = $filtered->orWhere('current_membership_points', '>', 300);
-            //     }
-            // }
-            
                 if( in_array(config('xs.bronze_level'), $membershipArr) )
-                {
-                    
-                        $filtered =$venueList->whereBetween('current_membership_points', config('xs.bronze'));
-                    
+            {
+                $filtered =$venueList->whereBetween('current_membership_points', config('xs.bronze'));
+            }
+            if( in_array(config('xs.silver_level'), $membershipArr) )
+            {
+                if(!empty($filtered) && $filtered->count() != 0){
+                    $filtered = $filtered->concat($venueList->whereBetween('current_membership_points', config('xs.silver')));
+                }else{
+                    $filtered = $venueList->whereBetween('current_membership_points', config('xs.silver'));
                 }
-                if( in_array(config('xs.silver_level'), $membershipArr) )
-                {
-                    if(!empty($filtered) && $filtered->count() != 0){
-                        $filtered = $filtered->concat($venueList->whereBetween('current_membership_points', config('xs.silver')));
-                    }else{
-                        $filtered = $venueList->whereBetween('current_membership_points', config('xs.silver'));
-                    }                    
-                    
+            }
+            if( in_array(config('xs.gold_level'), $membershipArr) )
+            {
+                if(!empty($filtered) && $filtered->count() != 0){
+                    $filtered = $filtered->concat($venueList->whereBetween('current_membership_points', config('xs.gold')));
+                }else{
+                    $filtered = $venueList->whereBetween('current_membership_points', config('xs.gold'));
                 }
-                if( in_array(config('xs.gold_level'), $membershipArr) )
+            }
+            if( in_array(config('xs.platinum_level'), $membershipArr) )
+            {
+                if(!empty($filtered) && $filtered->count() != 0)
                 {
-                    
-                    if(!empty($filtered) && $filtered->count() != 0){
-                        $filtered = $filtered->concat($venueList->whereBetween('current_membership_points', config('xs.gold')));
-                    }else{
-                        $filtered = $venueList->whereBetween('current_membership_points', config('xs.gold'));
-                    }
-                   
-                    
+                    $filtered = $filtered->concat($venueList->where('current_membership_points','>',300));
+                }else{
+                    $filtered = $venueList->where('current_membership_points','>',300);
                 }
-                if( in_array(config('xs.platinum_level'), $membershipArr) )
-                {
-                    
-                    if(!empty($filtered) && $filtered->count() != 0)
-                    {
-                        $filtered = $filtered->concat($venueList->where('current_membership_points','>',300));
-                    }else{
-                        $filtered = $venueList->where('current_membership_points','>',300);
-                    }
-                    
-                }
+            }
         }
         else
         {
@@ -1292,11 +1251,25 @@ class OrderRepository extends BaseRepository
     }
 
 
+    public function getMembershipQuery($restaurantID,$userId=0)
+    {
+
+        $user = auth()->user();
+
+        return $user->friends;
+
+    }
+
     public function sendFriendReq(array $data)
     {
         $auth_user = auth()->user();
         $friend = User::find($data['user_id']);
+        $checkFriend    = FriendRequest::where('friend_id',$auth_user->id)->where('user_id',$data['user_id'])->first();
+        if($checkFriend->status != 2) {
+            throw new GeneralException('Already send Friend request'); 
+        }
         $auth_user->friends()->attach($friend->id);
+
         // $FriendRequest = FriendRequest::create([
         //     'user_id'   => $auth_user->id,
         //     'friend_id' => $data['user_id'],
@@ -1332,20 +1305,30 @@ class OrderRepository extends BaseRepository
     public function pendingFriendReq(array $data)
     {
         $auth_user = auth()->user();
-        if($data['request'] === 1) {
-            //my-new req show approve btn req get
-            $FriendRequest =  FriendRequest::where('friend_id',$auth_user->id)->where('status' , 0);
-        } else {
-            //my-new req show sent btn  req sent
-           $FriendRequest =  FriendRequest::where('user_id',$auth_user->id)->where('status' , 0);
+        // incoming friend request which is pending
+        // if($data['request'] === 1) {
+        //     //my-new req show approve btn req get
+        //     $FriendRequest =  $auth_user->pending_friends;//FriendRequest::where('friend_id',$auth_user->id)->where('status' , 0);
+        // } else {
+        //     //my-new req show sent btn  req sent
+        //    $FriendRequest =  FriendRequest::where('user_id',$auth_user->id)->where('status' , 0);
+        // }
+        // $FriendRequest = $FriendRequest->get();
+        // // FriendRequest::where('user_id', $data['user_id'])->where('friend_id', $data['user_id'])
+        // //SELECT * FROM `friend_requests` where ( user_id = 3 OR friend_id = 3) AND ( user_id = 18 OR friend_id = 18 );
+        // // $FriendRequest = FriendRequest::create([
+        // //     'user_id'   => $data['user_id'],
+        // //     'friend_id' => $auth_user->id,
+        // // ]);
+
+        if( $data['request'] === 1 )
+        {
+            $FriendRequest =  $auth_user->pending_friends;
         }
-        $FriendRequest = $FriendRequest->get();
-        // FriendRequest::where('user_id', $data['user_id'])->where('friend_id', $data['user_id'])
-        //SELECT * FROM `friend_requests` where ( user_id = 3 OR friend_id = 3) AND ( user_id = 18 OR friend_id = 18 );
-        // $FriendRequest = FriendRequest::create([
-        //     'user_id'   => $data['user_id'],
-        //     'friend_id' => $auth_user->id,
-        // ]);
+        else
+        {
+            $FriendRequest =  $auth_user->incoming_friends;
+        }
         return $FriendRequest;
     }
 
@@ -1356,17 +1339,27 @@ class OrderRepository extends BaseRepository
         $receiverCreditAmount   = $receiverUser->credit_amount;
         $authUserCreditAmount   = $auth_user->credit_amount;
         $amount                 = $data['amount'];
+        $stripe_customer_id     = $auth_user->stripe_customer_id;
+        $stripe                 = new Stripe();
+        $customer_cards         = $stripe->fetchCards($stripe_customer_id)->toArray();
+        
+        if(empty($customer_cards['data'])) {
+            throw new GeneralException('Please Add Card details');
+        }
+        $getCusCardId   = $stripe->fetchCustomer($stripe_customer_id);
+        $defaultCardId  = $getCusCardId->default_source;
+        
         $paymentArr = [
             'amount'        => number_format($amount, 2) * 100,
-            'currency'      => $auth_user->orders->restaurant->currency->code,
+            // 'currency'      => $auth_user->orders->restaurant->currency->code,
+            'currency'      => 'aud',
             'customer'      => $auth_user->stripe_customer_id,
-            'capture'       => false,
-            'source'        => $data['card_id'],
-            'description'   => $auth_user->id
+            'source'        => $defaultCardId,
+            'description'   => "Gift Credit Send to ". $data['user_id']
         ];
-        $stripe         = new Stripe();
-        $payment_data   = $stripe->createCharge($paymentArr);
         
+        $payment_data   = $stripe->createCharge($paymentArr);
+
         $addAmountToReceiver    = number_format($receiverCreditAmount + $amount, 2);
         // $deductAmountToAuthUser = number_format($authUserCreditAmount - $amount, 2);
         $receiverUser->credit_amount = $addAmountToReceiver;
@@ -1408,5 +1401,12 @@ class OrderRepository extends BaseRepository
     {
         $userData = User::find($data['user_id']);
         return $userData;
+    }
+
+    public function myFriendList(array $data)
+    {
+        $user = auth()->user();
+
+        return $user->friends;
     }
 }

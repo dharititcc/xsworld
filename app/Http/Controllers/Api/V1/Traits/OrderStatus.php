@@ -1,17 +1,17 @@
 <?php namespace App\Http\Controllers\Api\V1\Traits;
 
-use App\Exceptions\GeneralException;
 use App\Models\Order;
 use App\Models\OrderSplit;
 use App\Billing\Stripe;
 use App\Models\CustomerTable;
 use App\Repositories\Traits\CreditPoint;
+use App\Repositories\Traits\XSNotifications;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 trait OrderStatus
 {
-    use CreditPoint;
+    use CreditPoint, XSNotifications;
     /**
      * Method statusChange
      *
@@ -43,9 +43,12 @@ trait OrderStatus
             }
 
 
-            $title      = "Ready for pickup";
-            $message    = "Your Order is #".$order->id." kitchen ready for pickup";
-            $code       = Order::READY_FOR_COLLECTION;
+            $titleWaiter      = "Ready for pickup";
+            $messageWaiter    = "Your Order is #".$order->id." kitchen ready for pickup";
+            $codeWaiter       = Order::READY_FOR_COLLECTION;
+
+            // send notification to waiters
+            $this->notifyWaiters($order, $titleWaiter, $messageWaiter, $codeWaiter);
 
         }
         elseif ($status == OrderSplit::KITCHEN_CANCELED)
@@ -73,9 +76,12 @@ trait OrderStatus
                 // update customer table update
                 CustomerTable::where('user_id', $order->user->id)->where('order_id', $order->id)->delete();
             }
-            $title      = "Restaurant kitchen cancelled";
-            $message    = "Your Order is #".$order->id." kitchen cancelled";
-            $code       = Order::WAITER_CANCEL_ORDER;
+            $titleWaiter      = "Restaurant kitchen cancelled";
+            $messageWaiter    = "Your Order is #".$order->id." kitchen cancelled";
+            $codeWaiter       = Order::WAITER_CANCEL_ORDER;
+
+            // send notification to waiters
+            $this->notifyWaiters($order, $titleWaiter, $messageWaiter, $codeWaiter);
         }
         else if( $status == OrderSplit::KITCHEN_CONFIRM )
         {
@@ -104,90 +110,18 @@ trait OrderStatus
             // update user's points
             $this->updateUserPoints($order->user, ['points' => $totalPoints]);
 
-            $title      = "Restaurant kitchen confirm collection";
-            $message    = "Your Order is #".$order->id." ready for collection";
-            $code       = Order::WAITER_CONFIRM_COLLECTION;
-        }
+            $titleWaiter      = "Restaurant kitchen confirm collection";
+            $messageWaiter    = "Your Order is #".$order->id." ready for collection";
+            $codeWaiter       = Order::WAITER_CONFIRM_COLLECTION;
 
-        // send notification to waiters
-        $this->notifyWaiters($order, $title, $message, $code);
+            // send notification to waiters
+            $this->notifyWaiters($order, $titleWaiter, $messageWaiter, $codeWaiter);
+        }
 
         // send notification to customer
         $this->notifyCustomer($order, $title, $message);
 
         return $order;
-    }
-
-    /**
-     * Method notifyWaiters
-     *
-     * @param \App\Models\Order $order [explicite description]
-     * @param string $title [explicite description]
-     * @param string $message [explicite description]
-     *
-     * @return mixed|void
-     * @throws \App\Exceptions\GeneralException
-     */
-    public function notifyWaiters(Order $order, string $title, string $message, int $code)
-    {
-        // send notification to waiter if table order
-        if( isset( $order->restaurant_table_id ) )
-        {
-            $order->loadMissing([
-                'restaurant',
-                'restaurant.waiters'
-            ]);
-
-            $waiterDevices  = [];
-            $waiters        = $order->restaurant->waiters()->with(['user', 'user.devices'])->get();
-
-            if( $waiters->count() )
-            {
-                foreach( $waiters as $waiter )
-                {
-                    $WaiterDevicesTokensArr = $waiter->user->devices->pluck('fcm_token')->toArray();
-
-                    if( !empty( $WaiterDevicesTokensArr ) )
-                    {
-                        foreach( $WaiterDevicesTokensArr as $token )
-                        {
-                            $waiterDevices[] = $token;
-                        }
-                    }
-                }
-            }
-
-            if( !empty( $waiterDevices ) )
-            {
-                // $orderid    = $order->id;
-                return waiterNotification($title, $message, $waiterDevices, $code , $order->id);
-            }
-        }
-    }
-
-    /**
-     * Method notifyCustomer
-     *
-     * @param \App\Models\Order $order [explicite description]
-     * @param string $title [explicite description]
-     *
-     * @return mixed
-     * @throws \App\Exceptions\GeneralException
-     */
-    public function notifyCustomer(Order $order, string $title, string $message) : mixed
-    {
-        // Customer Notify
-        $customer_devices   = $order->user->devices->count() ? $order->user->devices()->pluck('fcm_token')->toArray() : [];
-        $orderid            = $order->id;
-
-        if(!empty($customer_devices))
-        {
-            return sendNotification($title, $message, $customer_devices, $orderid);
-        }
-        else
-        {
-            throw new GeneralException('Device Token not Found.');
-        }
     }
 
     /**
