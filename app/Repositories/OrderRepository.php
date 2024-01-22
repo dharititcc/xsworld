@@ -1438,16 +1438,42 @@ class OrderRepository extends BaseRepository
         return $userData;
     }
 
-    public function myFriendList(array $data)
+    /**
+     * Method myFriendList
+     *
+     * @param array $data [explicite description]
+     *
+     * @return Collection
+     */
+    public function myFriendList(array $data): Collection
     {
         $user = auth()->user();
-        
-        if($user->mefriends->isNotEmpty()) {
-            $user   = $user->mefriends;
-        } else {
-            $user   = $user->myfriends;
-        }
 
-        return $user;
+        $sql = User::select([
+            'users.*',
+            'friendship_status_tbl.friendship_status AS fr'
+        ])
+        ->join(DB::raw
+        (
+            "(SELECT
+                status AS friendship_status,
+                user_id,
+                friend_id
+            FROM friendships
+            WHERE (
+                user_id = {$user->id}
+                OR friend_id = {$user->id}
+            ))  AS `friendship_status_tbl`
+            "
+        ), function($join)
+        {
+            $join->on('users.id', '=', 'friendship_status_tbl.user_id');
+            $join->orOn('users.id', '=', 'friendship_status_tbl.friend_id');
+        })
+        ->where('users.id', '!=', $user->id)
+        ->where('friendship_status_tbl.friendship_status', 1)
+        ->get();
+
+        return $sql;
     }
 }
