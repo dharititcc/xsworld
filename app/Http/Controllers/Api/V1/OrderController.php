@@ -377,7 +377,7 @@ class OrderController extends APIController
     public function pendingFriendRequest(Request $request)
     {
         $friends    = $this->repository->pendingFriendReq($request->all());
-        return $this->respondSuccess('New Friend Request Successfully', VenueUserResource::collection($friends));
+        return $this->respondSuccess('New Friend Request Successfully', MyFriendsResource::collection($friends));
     }
 
     public function printOrder(Request $request,Order $order)
@@ -416,7 +416,7 @@ class OrderController extends APIController
         $myFriendList   = $this->repository->myFriendList($input);
         if($myFriendList->count())
         {
-            return $this->respondSuccess('Venue User List', VenueUserResource::collection($myFriendList));
+            return $this->respondSuccess('Venue User List', MyFriendsResource::collection($myFriendList));
         }
 
         throw new GeneralException('No user found in this restaurant.');
