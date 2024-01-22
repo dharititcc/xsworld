@@ -440,11 +440,32 @@ class User extends Authenticatable
         return $this->belongsToMany(User::class,'friendships','friend_id','user_id')->where('status', 0)->withTimestamps();
     }
 
-    public function friend()
+    /**
+     * Get the FriendRequest associated with the User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+    */
+
+    public function friend(): HasOne
     {
         return $this->hasOne(FriendRequest::class,'friend_id','id');
     }
 
+    /**
+     * Get the FriendRequest associated with the User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+    */
+
+    public function getMyfriend(): HasOne
+    {
+        // return $this->hasOne(FriendRequest::class)->where('user_id',auth()->user()->id)->orWhere('friend_id',auth()->user()->id);
+        return $this->hasOne(FriendRequest::class, 'user_id', 'id')
+            ->where(function ($query) {
+                $query->where('friend_id', auth()->user()->id)
+                      ->orWhere('user_id', auth()->user()->id);
+            });
+    }
 
     /**
      * Get all of the myfriends for the User

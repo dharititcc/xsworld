@@ -1434,14 +1434,36 @@ class OrderRepository extends BaseRepository
 
     public function userProfileData(array $data)
     {
-        $userData = User::find($data['user_id'])->with(['friend']);
+        $userData = $userData = User::where('id',$data['user_id'])->with(['getMyfriend'])->first();
+        // $userData  = User::select([
+        //     'users.*',
+        //     'friendship_status_tbl.friendship_status AS fr'
+        // ])
+        // ->join(DB::raw
+        // (
+        //     "(SELECT
+        //         status AS friendship_status,
+        //         user_id,
+        //         friend_id
+        //     FROM friendships
+        //     WHERE (
+        //         user_id = {$data['user_id']}
+        //         OR friend_id = {$data['user_id']}
+        //     ))  AS `friendship_status_tbl`
+        //     "
+        // ), function($join)
+        // {
+        //     $join->on('users.id', '=', 'friendship_status_tbl.user_id');
+        //     $join->orOn('users.id', '=', 'friendship_status_tbl.friend_id');
+        // })
+        // ->where('users.id',  $data['user_id'])
+        // ->first();
         return $userData;
     }
 
     /**
      * Method myFriendList
      *
-     * @param array $data [explicite description]
      *
      * @return Collection
      */
