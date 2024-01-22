@@ -449,9 +449,44 @@ trait OrderFlow
         $order              = Order::with([
             'restaurant',
             'restaurant.kitchens',
+            'order_splits',
             'order_split_food',
             'order_split_drink'
         ])->findOrFail($data['order_id']);
+
+        // clone newOrder
+        $newOrder           = $order->clone()->first();
+        $newOrder->loadMissing([
+            'restaurant',
+            'restaurant.kitchens',
+            'order_splits',
+            'order_split_food',
+            'order_split_drink'
+        ]);
+        dd($newOrder);
+        // check if order if of category type both or single(food/drink)
+        if( $newOrder->order_category_type === Order::BOTH )
+        {
+            // check order split count > 1
+            if( $newOrder->order_splits->count() > 1 )
+            {
+                foreach( $newOrder->order_splits as $key => $split )
+                {
+                    $split->loadMissing(['items']);
+
+                    if( $key === 1 )
+                    {
+                        // create new different orders for food and drink
+                        $newOrder->order_category_type = $split->is_food == 1 ? Order::FOOD : Order::DRINK;
+                    }
+                    else
+                    {
+                        // create new order
+                    }
+                }
+            }
+        }
+        die;
         $user               = $order->user_id ? User::findOrFail($order->user_id) : auth()->user();
         $pickup_point_id    = '';
 
