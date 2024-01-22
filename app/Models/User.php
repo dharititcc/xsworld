@@ -447,12 +447,22 @@ class User extends Authenticatable
 
 
     /**
-     * Get all of the friends for the User
+     * Get all of the myfriends for the User
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
     public function myfriends(): BelongsToMany
     {
         return $this->belongsToMany(User::class,'friendships','user_id','friend_id')->where('status', 1)->withTimestamps();
+    }
+
+    /**
+     * Get all of the mefriends for the User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function mefriends(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class,'friendships','friend_id','user_id')->where('status', 1)->withTimestamps();
     }
 }

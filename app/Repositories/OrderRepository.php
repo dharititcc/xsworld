@@ -1409,9 +1409,13 @@ class OrderRepository extends BaseRepository
     public function myFriendList(array $data)
     {
         $user = auth()->user();
-        // $user = $user->with(['attachment']);
-        // dd($user->image);
+        
+        if($user->mefriends->isNotEmpty()) {
+            $user   = $user->mefriends;
+        } else {
+            $user   = $user->myfriends;
+        }
 
-        return $user->myfriends;
+        return $user;
     }
 }
