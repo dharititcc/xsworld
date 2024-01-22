@@ -33,47 +33,48 @@
 
                             </div>
                         </div>
-                        <div class="grey-brd-box mt-lg-4">
+                        <div class="grey-brd-box mt-lg-4 ">
                             <div class="title">
-                                <h2>Venue Settings</h2> <a href="#" class="edit">EDIT</a>
+                                <h2>Venue Settings</h2> <a href="javascript:void(0);" class="edit_venue_data">EDIT</a>
                             </div>
                             <div class="padbox">
-                                <div class="form-group">
-                                    <input type="text" class="form-control vari1" placeholder="??">
-                                </div>
-                                <div class="form-group">
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <input type="text" class="form-control vari1" placeholder="??">
-                                        </div>
-                                        <div class="col-md-6">
-                                            <input type="text" class="form-control vari1" placeholder="??">
+                                <form name="addvenueform" id="addvenueform" method="post">
+                                    <div class="form-group">
+                                        <input type="text" class="form-control vari1" name="res_name" id="res_name" value="{{$restaurant->name}}" placeholder="??" disabled>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <input type="text" class="form-control vari1" name="street1" id="street1" value="{{$restaurant->street1}}" placeholder="??" disabled>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <input type="text" class="form-control vari1" name="street2" id="street2" value="{{$restaurant->street2}}" placeholder="street2" disabled>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="form-group">
-                                    <input type="text" class="form-control vari1" placeholder="??">
-                                </div>
-                                <div class="form-group">
-                                    <input type="text" class="form-control vari1" placeholder="??">
-                                </div>
-                                <div class="form-group">
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <input type="text" class="form-control vari1" placeholder="??">
-                                        </div>
-                                        <div class="col-md-6">
-                                            <input type="text" class="form-control vari1" placeholder="??">
+                                    <div class="form-group">
+                                        <input type="text" class="form-control vari1" name="city" id="city" value="{{$restaurant->city}}" placeholder="??" disabled>
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="text" class="form-control vari1" name="state" id="state" value="{{$restaurant->state}}" placeholder="??" disabled>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <input type="text" class="form-control vari1" name="postcode" id="postcode" value="{{$restaurant->postcode}}" placeholder="??" disabled>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <input type="text" class="form-control vari1" name="phone" id="phone" value="{{$restaurant->phone}}" placeholder="??" disabled>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="form-group">
-                                    <input type="text" class="form-control vari1" placeholder="??">
-                                </div>
-                                =
+                                    <div class="form-group">
+                                        <textarea class="form-control vari1" name="specialisation" id="specialisation" value="" placeholder="??" disabled>{{$restaurant->specialisation}}</textarea>
+                                    </div>
+                                </form>
                             </div>
 
-                            <button class="bor-btn w-100 font-30 top-bor" type="button">Support</button>
+                            <button class="bor-btn w-100 font-30 top-bor" id="venue_data_submitBtn" style="display: none"  type="submit">Submit</button>
                         </div>
                     </div>
                     <div class="col-lg-6 col-xl-6 col-xxl-4 m-xxl-space review-box-outer">
@@ -197,7 +198,8 @@
     <script>
         var moduleConfig = {
             venueStore: "{!! route('restaurants.venue.store') !!}",
-            resImageUpload: "{!! route('restaurants.res-image-upload') !!}"
+            resImageUpload: "{!! route('restaurants.res-image-upload') !!}",
+            venueEdit: "{!! route('restaurants.venue-edit') !!}",
         };
         $(document).ready(function() {
             XS.Venue.init();

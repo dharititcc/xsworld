@@ -1434,7 +1434,7 @@ class OrderRepository extends BaseRepository
 
     public function userProfileData(array $data)
     {
-        $userData = User::find($data['user_id']);
+        $userData = User::find($data['user_id'])->with(['friend']);
         return $userData;
     }
 
@@ -1445,7 +1445,7 @@ class OrderRepository extends BaseRepository
      *
      * @return Collection
      */
-    public function myFriendList(array $data): Collection
+    public function myFriendList(): Collection
     {
         $user = auth()->user();
 

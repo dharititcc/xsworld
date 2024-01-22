@@ -409,21 +409,13 @@ class OrderController extends APIController
     {
         $input  = $request->all();
         $userProfile = $this->repository->userProfileData($input);
-        return $this->respondSuccess('Get user profile successfully ', new UserResource($userProfile));
+        return $this->respondSuccess('Get user profile successfully ', new MyFriendsResource($userProfile));
     }
 
-    /**
-     * Method friendShip
-     *
-     * @param Request $request [explicite description]
-     *
-     * @return JsonResponse
-     */
-    public function friendShip(Request $request):JsonResponse
+    public function friendShip()
     {
-        $input          = $request->all();
-        $myFriendList   = $this->repository->myFriendList($input);
-
+        // $input          = $request->all();
+        $myFriendList   = $this->repository->myFriendList();
         if($myFriendList->count())
         {
             return $this->respondSuccess('Venue User List', MyFriendsResource::collection($myFriendList));
