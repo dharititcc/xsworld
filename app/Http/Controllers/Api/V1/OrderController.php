@@ -14,6 +14,7 @@ use App\Http\Requests\PlaceOrderRequest;
 use App\Http\Resources\MyFriendsResource;
 use App\Http\Resources\OrderListResource;
 use App\Http\Resources\OrderResource;
+use App\Http\Resources\PendingFriendsResource;
 use App\Http\Resources\UserResource;
 use App\Http\Resources\VenueUserResource;
 use App\Models\Order;
@@ -379,7 +380,7 @@ class OrderController extends APIController
     public function pendingFriendRequest(Request $request)
     {
         $friends    = $this->repository->pendingFriendReq($request->all());
-        return $this->respondSuccess('New Friend Request Successfully', MyFriendsResource::collection($friends));
+        return $this->respondSuccess('New Friend Request Successfully', PendingFriendsResource::collection($friends));
     }
 
     public function printOrder(Request $request,Order $order)
