@@ -424,4 +424,11 @@ class OrderController extends APIController
 
         throw new GeneralException("You don't have anyfriends please make a new friends.");
     }
+
+    public function unFriend(Request $request)
+    {
+        $input          = $request->all();
+        $myFriendList   = $this->repository->unFriend($input);
+        return $this->respondSuccess('Un friend successfully',$myFriendList);
+    }
 }
