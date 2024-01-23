@@ -439,9 +439,9 @@ trait OrderFlow
      *
      * @param array $data [explicite description]
      *
-     * @return Order
+     * @return bool
      */
-    function placeOrder(array $data): Order
+    function placeOrder(array $data): bool
     {
         $card_id            = $data['card_id'] ?? null;
         $credit_amount      = $data['credit_amount'] ? $data['credit_amount'] : null;
@@ -499,6 +499,7 @@ trait OrderFlow
             {
                 foreach( $newOrder->order_splits as $key => $split )
                 {
+                    $latest = null;
                     $split->loadMissing(['items']);
 
                     if( $key === 1 )
@@ -526,7 +527,7 @@ trait OrderFlow
 
                         $newOrder->refresh();
 
-                        $newOrder = Order::with([
+                        $latest = Order::with([
                             'restaurant',
                             'restaurant.kitchens',
                             'order_splits',
@@ -535,7 +536,7 @@ trait OrderFlow
                         ])->find($newOrder->id);
 
                         // Generate PDF
-                        $this->generatePDF($newOrder);
+                        $this->generatePDF($latest);
                     }
                     else
                     {
@@ -562,7 +563,7 @@ trait OrderFlow
                         $newOrder->update(['total' => $newOrder->items->sum('total')]);
 
                         $newOrder->refresh();
-                        $newOrder = Order::with([
+                        $latest = Order::with([
                             'restaurant',
                             'restaurant.kitchens',
                             'order_splits',
@@ -570,56 +571,47 @@ trait OrderFlow
                             'order_split_drink'
                         ])->find($newOrder->id);
 
-                        $newOrder->loadMissing([
-                            'restaurant',
-                            'restaurant.kitchens',
-                            'order_splits',
-                            'order_split_food',
-                            'order_split_drink'
-                        ]);
-
                         // Generate PDF
-                        $this->generatePDF($newOrder);
+                        $this->generatePDF($latest);
                     }
 
-                    Log::debug("Order ID: ".$newOrder->id);
                     // charge payment
-                    $this->getOrderPayment($newOrder, $user, $credit_amount, $newOrder->total, $card_id);
+                    $this->getOrderPayment($latest, $user, $credit_amount, $newOrder->total, $card_id);
 
                     // send waiter notification if table is selected
                     if( isset( $table_id ) )
                     {
-                        $this->sendWaiterNotification($newOrder, $user, $table_id);
+                        $this->sendWaiterNotification($latest, $user, $table_id);
                     }
 
                     // send notification to kitchens of the restaurant if order is food
-                    if( isset($newOrder->order_split_food->id) )
+                    if( isset($latest->order_split_food->id) )
                     {
                         // debit payment
-                        if( $newOrder->charge_id )
+                        if( $latest->charge_id )
                         {
                             $stripe                         = new Stripe();
-                            $payment_data                   = $stripe->captureCharge($order->charge_id);
+                            $payment_data                   = $stripe->captureCharge($latest->charge_id);
                             $updateArr['transaction_id']    = $payment_data->balance_transaction;
                         }
                         $kitchenTitle    = 'New order placed by customer';
-                        $kitchenMessage  = "Order is #{$order->id} placed by customer";
-                        $this->notifyKitchens($newOrder, $kitchenTitle, $kitchenMessage);
+                        $kitchenMessage  = "Order is #{$latest->id} placed by customer";
+                        $this->notifyKitchens($latest, $kitchenTitle, $kitchenMessage);
                     }
 
                     // customer notification
-                    $text               = $newOrder->restaurant->name. ' is processing your order';
+                    $text               = $latest->restaurant->name. ' is processing your order';
                     $title              = $text;
-                    $message            = "Your Order is #".$newOrder->id." placed";
+                    $message            = "Your Order is #".$latest->id." placed";
 
-                    $this->notifyCustomer($newOrder, $title, $message);
+                    $this->notifyCustomer($latest, $title, $message);
 
                     // send notification to bar of the restaurant if order is drink
-                    if( isset($newOrder->order_split_drink->id) )
+                    if( isset($latest->order_split_drink->id) )
                     {
                         $bartitle           = "Order is placed by Customer";
-                        $barmessage         = "Order is #".$newOrder->id." placed by customer";
-                        $this->notifyBars($newOrder, $bartitle, $barmessage);
+                        $barmessage         = "Order is #".$latest->id." placed by customer";
+                        $this->notifyBars($latest, $bartitle, $barmessage);
                     }
                 }
             }
@@ -677,9 +669,9 @@ trait OrderFlow
                 $barmessage         = "Order is #".$order->id." placed by customer";
                 $this->notifyBars($order, $bartitle, $barmessage);
             }
-
-            return $order;
         }
+
+        return true;
     }
 
     /**
@@ -687,15 +679,16 @@ trait OrderFlow
      *
      * @param Order $order [explicite description]
      * @param User $user [explicite description]
-     * @param float $credit_amount [explicite description]
+     * @param mixed $credit_amount [explicite description]
      * @param float $amount [explicite description]
      * @param string $card_id [explicite description]
      *
      * @return void
      */
-    public function getOrderPayment(Order $order, User $user, float $credit_amount, float $amount, string $card_id)
+    public function getOrderPayment(Order $order, User $user, mixed $credit_amount, float $amount, string $card_id)
     {
         $userCreditAmountBalance    = $user->credit_amount;
+        $credit_amount              = isset( $credit_amount ) ? $credit_amount : 0;
         // payment logic
         if($order->total <= $credit_amount)
         {
@@ -756,18 +749,6 @@ trait OrderFlow
             'restaurant',
             'restaurant.waiters'
         ]);
-
-        $getcusTbl = CustomerTable::where('user_id' , $user->id)->where('restaurant_table_id', $table_id)->where('order_id', $order->id)->first();
-        if($getcusTbl) {
-            throw new GeneralException('Already table allocated');
-            $customerTbl = 0;
-        } else {
-            $customerTbl = CustomerTable::updateOrCreate([
-                'restaurant_table_id' => $table_id,
-                'user_id'       => $user->id,
-                'order_id'      => $order->id,
-            ]);
-        }
 
         // send notification to waiters of the restaurant
         $waiterTitle    = 'New order placed by customer';
