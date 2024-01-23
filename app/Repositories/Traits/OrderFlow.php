@@ -458,16 +458,6 @@ trait OrderFlow
         $getcusTbl          = CustomerTable::where('user_id' , $user->id)->where('restaurant_table_id', $table_id)->where('order_id', $order->id)->first();
         $pickup_point_id    = '';
 
-        // clone newOrder
-        $newOrder           = $order->clone()->first();
-        $newOrder->loadMissing([
-            'restaurant',
-            'restaurant.kitchens',
-            'order_splits',
-            'order_split_food',
-            'order_split_drink'
-        ]);
-
         if( isset( $getcusTbl->id ) )
         {
             throw new GeneralException('Already table allocated to this Customer');
@@ -490,14 +480,14 @@ trait OrderFlow
         }
 
         // check if order if of category type both or single(food/drink)
-        if( $newOrder->order_category_type == Order::BOTH )
+        if( $order->order_category_type == Order::BOTH )
         {
             $pickup_point_id    = $this->randomPickpickPoint($order);
 
             // check order split count > 1
-            if( $newOrder->order_splits->count() > 1 )
+            if( $order->order_splits->count() > 1 )
             {
-                foreach( $newOrder->order_splits as $key => $split )
+                foreach( $order->order_splits as $key => $split )
                 {
                     $latest = null;
                     $split->loadMissing(['items']);
@@ -507,26 +497,26 @@ trait OrderFlow
                         $orderArr = [
                             'user_id'               => $user->id,
                             'order_category_type'   => $split->is_food == 1 ? Order::FOOD : Order::DRINK,
-                            'restaurant_id'         => $newOrder->restaurant_id,
+                            'restaurant_id'         => $order->restaurant_id,
                             'pickup_point_id'       => $split->is_food == 0 ? $pickup_point_id->id : null,
                             'pickup_point_user_id'  => $split->is_food == 0 ? $pickup_point_id->user_id : null,
                             'restaurant_table_id'   => isset($table_id) ? $table_id : null,
                             'status'                => Order::PENDNIG,
                             'waiter_status'         => Order::CURRENTLY_BEING_PREPARED,
-                            'currency_id'           => $newOrder->restaurant->currency_id,
+                            'currency_id'           => $order->restaurant->currency_id,
                             'place_at'              => Carbon::now(),
                         ];
 
-                        $newOrder->update($orderArr);
+                        $order->update($orderArr);
 
-                        $split->update(['order_id' => $newOrder->id]);
-                        $split->items()->update(['order_id' => $newOrder->id]);
+                        $split->update(['order_id' => $order->id]);
+                        $split->items()->update(['order_id' => $order->id]);
 
-                        $newOrder->refresh();
+                        $order->refresh();
 
                         // update total of the order by items
-                        $newOrder->loadMissing(['items']);
-                        $newOrder->update(['total' => $split->all_items->sum('total')]);
+                        $order->loadMissing(['items']);
+                        $order->update(['total' => $split->all_items->sum('total')]);
 
                         $latest = Order::with([
                             'restaurant',
@@ -534,7 +524,7 @@ trait OrderFlow
                             'order_splits',
                             'order_split_food',
                             'order_split_drink'
-                        ])->find($newOrder->id);
+                        ])->find($order->id);
 
                         // Generate PDF
                         $this->generatePDF($latest);
@@ -544,27 +534,27 @@ trait OrderFlow
                         $orderArr = [
                             'user_id'               => $user->id,
                             'order_category_type'   => $split->is_food == 1 ? Order::FOOD : Order::DRINK,
-                            'restaurant_id'         => $newOrder->restaurant_id,
+                            'restaurant_id'         => $order->restaurant_id,
                             'pickup_point_id'       => $split->is_food == 0 ? $pickup_point_id->id : null,
                             'pickup_point_user_id'  => $split->is_food == 0 ? $pickup_point_id->user_id : null,
                             'restaurant_table_id'   => isset($table_id) ? $table_id : null,
                             'type'                  => Order::ORDER,
                             'status'                => Order::PENDNIG,
                             'waiter_status'         => Order::CURRENTLY_BEING_PREPARED,
-                            'currency_id'           => $newOrder->restaurant->currency_id,
+                            'currency_id'           => $order->restaurant->currency_id,
                             'place_at'              => Carbon::now(),
                         ];
 
-                        $newOrder = Order::create($orderArr);
+                        $order = Order::create($orderArr);
 
-                        $split->update(['order_id' => $newOrder->id]);
-                        $split->items()->update(['order_id' => $newOrder->id]);
+                        $split->update(['order_id' => $order->id]);
+                        $split->items()->update(['order_id' => $order->id]);
 
-                        $newOrder->refresh();
+                        $order->refresh();
 
                         // update total of the order by items
-                        $newOrder->loadMissing(['items']);
-                        $newOrder->update(['total' => $split->all_items->sum('total')]);
+                        $order->loadMissing(['items']);
+                        $order->update(['total' => $split->all_items->sum('total')]);
 
                         $latest = Order::with([
                             'restaurant',
@@ -572,7 +562,7 @@ trait OrderFlow
                             'order_splits',
                             'order_split_food',
                             'order_split_drink'
-                        ])->find($newOrder->id);
+                        ])->find($order->id);
 
                         // Generate PDF
                         $this->generatePDF($latest);
