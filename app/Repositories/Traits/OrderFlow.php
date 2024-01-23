@@ -510,7 +510,6 @@ trait OrderFlow
                             'pickup_point_id'       => $split->is_food == 0 ? $pickup_point_id->id : null,
                             'pickup_point_user_id'  => $split->is_food == 0 ? $pickup_point_id->user_id : null,
                             'restaurant_table_id'   => isset($table_id) ? $table_id : null,
-                            'type'                  => Order::ORDER,
                             'status'                => Order::PENDNIG,
                             'waiter_status'         => Order::CURRENTLY_BEING_PREPARED,
                             'currency_id'           => $newOrder->restaurant->currency_id,
@@ -727,6 +726,7 @@ trait OrderFlow
             $payment_data   = $stripe->createCharge($paymentArr);
 
             $updateArr = [
+                'type'                  => Order::ORDER,
                 'card_id'               => $card_id,
                 'charge_id'             => $payment_data->id,
                 'credit_amount'         => $credit_amount,
