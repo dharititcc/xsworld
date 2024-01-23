@@ -145,10 +145,9 @@
         {
             var context = this;
             context.selectors.restaurantSubmitBtn.on('click', function() {
-                alert('hi');
+
                 var $this   = $(this),
                     data    = new FormData(context.selectors.restaurantForm.get(0));
-                    console.log(data);
 
                 $.ajax({
                     url: moduleConfig.venueEdit,
