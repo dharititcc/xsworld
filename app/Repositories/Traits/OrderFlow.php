@@ -502,7 +502,7 @@ trait OrderFlow
                     $latest = null;
                     $split->loadMissing(['items']);
 
-                    if( $key === 1 )
+                    if( $key === 0 )
                     {
                         $orderArr = [
                             'user_id'               => $user->id,
@@ -514,6 +514,7 @@ trait OrderFlow
                             'status'                => Order::PENDNIG,
                             'waiter_status'         => Order::CURRENTLY_BEING_PREPARED,
                             'currency_id'           => $newOrder->restaurant->currency_id,
+                            'place_at'              => Carbon::now(),
                         ];
 
                         $newOrder->update($orderArr);
@@ -521,11 +522,11 @@ trait OrderFlow
                         $split->update(['order_id' => $newOrder->id]);
                         $split->items()->update(['order_id' => $newOrder->id]);
 
+                        $newOrder->refresh();
+
                         // update total of the order by items
                         $newOrder->loadMissing(['items']);
-                        $newOrder->update(['total' => $newOrder->items->sum('total')]);
-
-                        $newOrder->refresh();
+                        $newOrder->update(['total' => $split->all_items->sum('total')]);
 
                         $latest = Order::with([
                             'restaurant',
@@ -551,18 +552,20 @@ trait OrderFlow
                             'status'                => Order::PENDNIG,
                             'waiter_status'         => Order::CURRENTLY_BEING_PREPARED,
                             'currency_id'           => $newOrder->restaurant->currency_id,
+                            'place_at'              => Carbon::now(),
                         ];
 
-                        $$newOrder = Order::create($orderArr);
+                        $newOrder = Order::create($orderArr);
 
                         $split->update(['order_id' => $newOrder->id]);
                         $split->items()->update(['order_id' => $newOrder->id]);
 
+                        $newOrder->refresh();
+
                         // update total of the order by items
                         $newOrder->loadMissing(['items']);
-                        $newOrder->update(['total' => $newOrder->items->sum('total')]);
+                        $newOrder->update(['total' => $split->all_items->sum('total')]);
 
-                        $newOrder->refresh();
                         $latest = Order::with([
                             'restaurant',
                             'restaurant.kitchens',
@@ -576,7 +579,7 @@ trait OrderFlow
                     }
 
                     // charge payment
-                    $this->getOrderPayment($latest, $user, $credit_amount, $newOrder->total, $card_id);
+                    $this->getOrderPayment($latest, $user, $credit_amount, $latest->total, $card_id);
 
                     // send waiter notification if table is selected
                     if( isset( $table_id ) )
