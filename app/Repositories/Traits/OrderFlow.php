@@ -625,7 +625,6 @@ trait OrderFlow
         {
             $pickup_point_id            = isset($data['pickup_point_id']) ? RestaurantPickupPoint::findOrFail($data['pickup_point_id']) : null;
             $updateArr                  = [];
-            $paymentArr                 = [];
 
             if(isset($order->id))
             {

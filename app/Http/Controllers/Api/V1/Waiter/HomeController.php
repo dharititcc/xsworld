@@ -306,7 +306,7 @@ class HomeController extends APIController
     public function placeOrder(PlaceOrderRequest $request)
     {
         $place_order = $this->orderRepository->placeOrderwaiter($request->validated());
-        return $this->respondSuccess('Order payment successfully.', new OrderResource($place_order));
+        return $this->respondSuccess('Order payment successfully.');
     }
 
     /**
