@@ -45,31 +45,31 @@
                                     <div class="form-group">
                                         <div class="row">
                                             <div class="col-md-6">
-                                                <input type="text" class="form-control vari1" name="street1" id="street1" value="{{$restaurant->street1}}" placeholder="??" disabled>
+                                                <input type="text" class="form-control vari1" name="street1" id="street1" value="{{$restaurant->street1}}" placeholder="Street1" disabled>
                                             </div>
                                             <div class="col-md-6">
-                                                <input type="text" class="form-control vari1" name="street2" id="street2" value="{{$restaurant->street2}}" placeholder="street2" disabled>
+                                                <input type="text" class="form-control vari1" name="street2" id="street2" value="{{$restaurant->street2}}" placeholder="Street2" disabled>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <input type="text" class="form-control vari1" name="city" id="city" value="{{$restaurant->city}}" placeholder="??" disabled>
+                                        <input type="text" class="form-control vari1" name="city" id="city" value="{{$restaurant->city}}" placeholder="city" disabled>
                                     </div>
                                     <div class="form-group">
-                                        <input type="text" class="form-control vari1" name="state" id="state" value="{{$restaurant->state}}" placeholder="??" disabled>
+                                        <input type="text" class="form-control vari1" name="state" id="state" value="{{$restaurant->state}}" placeholder="State" disabled>
                                     </div>
                                     <div class="form-group">
                                         <div class="row">
                                             <div class="col-md-6">
-                                                <input type="text" class="form-control vari1" name="postcode" id="postcode" value="{{$restaurant->postcode}}" placeholder="??" disabled>
+                                                <input type="text" class="form-control vari1" name="postcode" id="postcode" value="{{$restaurant->postcode}}" placeholder="Postcode" disabled>
                                             </div>
                                             <div class="col-md-6">
-                                                <input type="text" class="form-control vari1" name="phone" id="phone" value="{{$restaurant->phone}}" placeholder="??" disabled>
+                                                <input type="text" class="form-control vari1" name="phone" id="phone" value="{{$restaurant->phone}}" placeholder="Phone" disabled>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <textarea class="form-control vari1" name="specialisation" id="specialisation" value="" placeholder="??" disabled>{{$restaurant->specialisation}}</textarea>
+                                        <textarea class="form-control vari1" name="specialisation" id="specialisation" value="" placeholder="specialisation" disabled>{{$restaurant->specialisation}}</textarea>
                                     </div>
                                 </form>
                             </div>
