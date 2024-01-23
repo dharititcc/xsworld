@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class MyFriendsResource extends JsonResource
+class PendingFriendsResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -25,7 +25,7 @@ class MyFriendsResource extends JsonResource
             'membership_level'      => $this->membership['membership_level'],
             'credit_amount'         => (float) $this->credit_amount ?? 0,
             'points'                => $this->points ?? 0,
-            'friendship'            => $this->fr,
+            'friendship'            => 0,
             // 'myfriend'              => isset($this->friends) ? $this->friends : [],
             'member_id'             => $this->id,
         ];

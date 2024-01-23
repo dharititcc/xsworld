@@ -14,6 +14,7 @@ use App\Http\Requests\PlaceOrderRequest;
 use App\Http\Resources\MyFriendsResource;
 use App\Http\Resources\OrderListResource;
 use App\Http\Resources\OrderResource;
+use App\Http\Resources\PendingFriendsResource;
 use App\Http\Resources\UserResource;
 use App\Http\Resources\VenueUserResource;
 use App\Models\Order;
@@ -379,7 +380,7 @@ class OrderController extends APIController
     public function pendingFriendRequest(Request $request)
     {
         $friends    = $this->repository->pendingFriendReq($request->all());
-        return $this->respondSuccess('New Friend Request Successfully', MyFriendsResource::collection($friends));
+        return $this->respondSuccess('New Friend Request Successfully', PendingFriendsResource::collection($friends));
     }
 
     public function printOrder(Request $request,Order $order)
@@ -418,9 +419,16 @@ class OrderController extends APIController
         $myFriendList   = $this->repository->myFriendList();
         if($myFriendList->count())
         {
-            return $this->respondSuccess('Venue User List', MyFriendsResource::collection($myFriendList));
+            return $this->respondSuccess('Get my friends successfully', MyFriendsResource::collection($myFriendList));
         }
 
         throw new GeneralException("You don't have anyfriends please make a new friends.");
+    }
+
+    public function unFriend(Request $request)
+    {
+        $input          = $request->all();
+        $myFriendList   = $this->repository->unFriend($input);
+        return $this->respondSuccess('Un friend successfully',$myFriendList);
     }
 }
