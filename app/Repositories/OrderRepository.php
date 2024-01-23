@@ -894,10 +894,11 @@ class OrderRepository extends BaseRepository
                     // charge payment
                     $this->getOrderPayment($latest, $user, $credit_amount, $latest->total, $defaultCardId);
 
-                    $getcusTbl = CustomerTable::where('user_id', $user->id)->where('restaurant_table_id', $table_id)->where('order_id', $latest->id)->first();
+                    $getcusTbl = CustomerTable::where('user_id', $user->id)->where('restaurant_table_id', $table_id)->first();
                     if($getcusTbl) {
-                        throw new GeneralException('Already table allocated');
-                        $customerTbl = 0;
+                        // throw new GeneralException('Already table allocated');
+                        // $customerTbl = 0;
+                        $getcusTbl->update(['order_id' => $latest->id]);
                     } else {
                         $customerTbl = CustomerTable::updateOrCreate([
                             'restaurant_table_id'   => $table_id,
