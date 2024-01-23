@@ -171,7 +171,6 @@ class RestaurantController extends Controller
      */
     public function update(RestaurantUpdateRequest $request, Restaurant $restaurant)
     {
-        
         $currency_id = Currency::select('id')->where('id', $request->country_id)->first();
         $address = [];
         if(!isset($request->latitude) && !isset($request->longitude))

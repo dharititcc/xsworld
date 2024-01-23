@@ -70,7 +70,6 @@
             context.filterChart();
 
             // Analytics range picker
-            // alert('hi');
             $('input[name="dates"]').daterangepicker({ maxDate: 0 }).on('apply.daterangepicker', function (e, picker) {
                 var startDate = picker.startDate.format('DD-MM-YYYY');
                 var endDate = picker.endDate.format('DD-MM-YYYY');

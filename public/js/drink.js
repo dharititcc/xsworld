@@ -678,7 +678,7 @@
                     },
                     price: {
                         required: function(){
-                            return jQuery('.product_type').hasClass('active').data('product_type') == 0 ? true : false
+                            return jQuery('.product_type.active').data('product_type') == 0 ? true : false
                         },
                         // pattern: function(){
                         //     return jQuery('.product_type').hasClass('active') ? /^\d+(\.\d{1,2})?$/ : false
