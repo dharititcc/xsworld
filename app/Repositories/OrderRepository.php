@@ -942,6 +942,8 @@ class OrderRepository extends BaseRepository
         {
             $updateArr          = [];
 
+            $order->update(['pickup_point_id' => $pickup_point_id->id, 'pickup_point_user_id' => $pickup_point_id->user_id]);
+
             if(isset($order->id))
             {
                 // $order->update($updateArr);
