@@ -15,6 +15,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 trait OrderFlow
@@ -489,6 +490,7 @@ trait OrderFlow
         }
 
         // check if order if of category type both or single(food/drink)
+        Log::debug('Order Category Type = 2 '. ($newOrder->order_category_type === Order::BOTH));
         if( $newOrder->order_category_type === Order::BOTH )
         {
             $pickup_point_id    = $this->randomPickpickPoint($order);
