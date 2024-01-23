@@ -850,7 +850,7 @@ class OrderRepository extends BaseRepository
                         ])->find($order->id);
 
                         // Generate PDF
-                        $this->generatePDF($latest);
+                        $this->generatePDF($order);
                     }
                     else
                     {
@@ -888,7 +888,7 @@ class OrderRepository extends BaseRepository
                         ])->find($order->id);
 
                         // Generate PDF
-                        $this->generatePDF($latest);
+                        $this->generatePDF($order);
                     }
 
                     // charge payment
