@@ -581,6 +581,18 @@ trait OrderFlow
                     // charge payment
                     $this->getOrderPayment($latest, $user, $credit_amount, $latest->total, $card_id);
 
+                    $getcusTbl = CustomerTable::where('user_id', $user->id)->where('restaurant_table_id', $table_id)->where('order_id', $latest->id)->first();
+                    if($getcusTbl) {
+                        throw new GeneralException('Already table allocated');
+                        $customerTbl = 0;
+                    } else {
+                        $customerTbl = CustomerTable::updateOrCreate([
+                            'restaurant_table_id'   => $table_id,
+                            'user_id'               => $user->id,
+                            'order_id'              => $latest->id,
+                        ]);
+                    }
+
                     // send waiter notification if table is selected
                     if( isset( $table_id ) )
                     {
@@ -636,6 +648,18 @@ trait OrderFlow
 
             // Generate PDF
             $this->generatePDF($order);
+
+            $getcusTbl = CustomerTable::where('user_id', $user->id)->where('restaurant_table_id', $table_id)->where('order_id', $order->id)->first();
+            if($getcusTbl) {
+                throw new GeneralException('Already table allocated');
+                $customerTbl = 0;
+            } else {
+                $customerTbl = CustomerTable::updateOrCreate([
+                    'restaurant_table_id'   => $table_id,
+                    'user_id'               => $user->id,
+                    'order_id'              => $order->id,
+                ]);
+            }
 
             // send notification to waiter if table order
             if( isset( $table_id ) )
