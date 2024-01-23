@@ -419,7 +419,7 @@ class OrderController extends APIController
         $myFriendList   = $this->repository->myFriendList();
         if($myFriendList->count())
         {
-            return $this->respondSuccess('Venue User List', MyFriendsResource::collection($myFriendList));
+            return $this->respondSuccess('Get my friends successfully', MyFriendsResource::collection($myFriendList));
         }
 
         throw new GeneralException("You don't have anyfriends please make a new friends.");
