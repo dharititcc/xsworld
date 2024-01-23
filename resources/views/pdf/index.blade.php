@@ -152,7 +152,7 @@
             </div>
         </div><!--End Invoice Mid-->
 
-        <div id="bot">
+        <div id="bots">
             <div id="table">
                 <table>
                     <tr class="tabletitle">
@@ -169,19 +169,46 @@
                             <h2>Sub Total</h2>
                         </td>
                     </tr>
-                    @foreach ($order->items as $items)
+                    @foreach ($order->order_items as $items)
                         <tr class="service">
+                            <?php
+                                $total = $items->total;
+
+                                if( isset($items->mixer->id) )
+                                {
+                                    $total += $items->mixer->total;
+                                }
+
+                                if( $items->addons->count() )
+                                {
+                                    $total += $items->addons->sum('total');
+                                }
+                            ?>
                             <td class="tableitem">
-                                <p class="itemtext"> {{ $items->restaurant_item->name }}</p>
+                                <p class="itemtext">
+                                    {{ $items->restaurant_item->name }}
+                                    @if ( isset($items->variation->id) )
+                                        - ({{ $items->variation->name }})
+                                    @endif<br>
+                                    @if (isset($items->mixer->id))
+                                        {{ $items->mixer->restaurant_item->name }}<br>
+                                    @endif
+
+                                    @if ($items->addons->count())
+                                        @foreach ($items->addons as $addon)
+                                            {{ $addon->restaurant_item->name }}<br/>
+                                        @endforeach
+                                    @endif
+                                </p>
                             </td>
                             <td class="tableitem">
                                 <p class="itemtext"> {{ $items->quantity }} </p>
                             </td>
                             <td class="tableitem">
-                                <p class="itemtext"> {{ $order->restaurant->country->symbol . $items->price }} </p>
+                                <p class="itemtext"> {{ $order->restaurant->country->symbol .number_format($total, 2) }} </p>
                             </td>
                             <td class="tableitem">
-                                <p class="itemtext"> {{ $order->restaurant->country->symbol . $items->total }} </p>
+                                <p class="itemtext"> {{ $order->restaurant->country->symbol .number_format($total, 2) }} </p>
                             </td>
                         </tr>
                     @endforeach
