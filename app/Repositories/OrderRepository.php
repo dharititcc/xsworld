@@ -769,6 +769,7 @@ class OrderRepository extends BaseRepository
         $stripe             = new Stripe();
         $getCusCardId       = $stripe->fetchCustomer($stripe_customer_id);
         $defaultCardId      = $getCusCardId->default_source;
+        $pickup_point_id    = $this->randomPickpickPoint($order);
 
         if(!isset( $defaultCardId ))
         {
@@ -804,8 +805,6 @@ class OrderRepository extends BaseRepository
         // check if order if of category type both or single(food/drink)
         if( $order->order_category_type == Order::BOTH )
         {
-            $pickup_point_id    = $this->randomPickpickPoint($order);
-
             // check order split count > 1
             if( $order->order_splits->count() > 1 )
             {
@@ -941,7 +940,6 @@ class OrderRepository extends BaseRepository
         }
         else
         {
-            $pickup_point_id    = isset($data['pickup_point_id']) ? RestaurantPickupPoint::findOrFail($data['pickup_point_id']) : null;
             $updateArr          = [];
 
             if(isset($order->id))
