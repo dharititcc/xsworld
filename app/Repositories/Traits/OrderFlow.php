@@ -490,8 +490,7 @@ trait OrderFlow
         }
 
         // check if order if of category type both or single(food/drink)
-        Log::debug('Order Category Type = 2 '. ($newOrder->order_category_type === Order::BOTH));
-        if( $newOrder->order_category_type === Order::BOTH )
+        if( $newOrder->order_category_type == Order::BOTH )
         {
             $pickup_point_id    = $this->randomPickpickPoint($order);
 
@@ -586,6 +585,7 @@ trait OrderFlow
                         $this->generatePDF($newOrder);
                     }
 
+                    Log::debug("Order ID: ".$newOrder->id);
                     // charge payment
                     $this->getOrderPayment($newOrder, $user, $credit_amount, $newOrder->total, $card_id);
 
