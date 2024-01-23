@@ -956,10 +956,11 @@ class OrderRepository extends BaseRepository
             // Generate PDF
             $this->generatePDF($order);
 
-            $getcusTbl = CustomerTable::where('user_id', $user->id)->where('restaurant_table_id', $table_id)->where('order_id', $order->id)->first();
+            $getcusTbl = CustomerTable::where('user_id', $user->id)->where('restaurant_table_id', $table_id)->first();
             if($getcusTbl) {
-                throw new GeneralException('Already table allocated');
-                $customerTbl = 0;
+                // throw new GeneralException('Already table allocated');
+                // $customerTbl = 0;
+                $getcusTbl->update(['order_id' => $order->id]);
             } else {
                 $customerTbl = CustomerTable::updateOrCreate([
                     'restaurant_table_id'   => $table_id,
