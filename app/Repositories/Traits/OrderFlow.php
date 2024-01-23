@@ -513,7 +513,6 @@ trait OrderFlow
                             'status'                => Order::PENDNIG,
                             'waiter_status'         => Order::CURRENTLY_BEING_PREPARED,
                             'currency_id'           => $newOrder->restaurant->currency_id,
-                            'place_at'              => Carbon::now(),
                         ];
 
                         $newOrder->update($orderArr);
@@ -551,7 +550,6 @@ trait OrderFlow
                             'status'                => Order::PENDNIG,
                             'waiter_status'         => Order::CURRENTLY_BEING_PREPARED,
                             'currency_id'           => $newOrder->restaurant->currency_id,
-                            'place_at'              => Carbon::now(),
                         ];
 
                         $$newOrder = Order::create($orderArr);
@@ -731,6 +729,7 @@ trait OrderFlow
                 'charge_id'             => $payment_data->id,
                 'credit_amount'         => $credit_amount,
                 'amount'                => $amount,
+                'place_at'              => Carbon::now(),
             ];
             $remaingAmount = $userCreditAmountBalance - $credit_amount;
 
