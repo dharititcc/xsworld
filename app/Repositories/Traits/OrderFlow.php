@@ -818,9 +818,11 @@ trait OrderFlow
      *
      * @return Builder
      */
-    public function getKitchenOrdersQuery(User $kitchen, $status, string $sort = 'asc'): Builder
+    public function getKitchenOrdersQuery(User $kitchen, $status, string $sort = 'asc', $data=[]): Builder
     {
-        return $query = Order::query()
+        $page   = isset($data['page']) ? $data['page'] : 1;
+        $limit  = isset($data['limit']) ? $data['limit'] : 10;
+        $query = Order::query()
                         ->with(
                             [
                                 'restaurant',
@@ -848,8 +850,9 @@ trait OrderFlow
                                 $query->whereIn('status', [$status]);
                             }
                         })
-                        ->where('restaurant_id', $kitchen->restaurant_kitchen->restaurant_id)
-                        ->orderBy('id', $sort);
+                        ->where('restaurant_id', $kitchen->restaurant_kitchen->restaurant_id);
+                $total = $query->count();
+                return $query->limit($limit)->offset(($page - 1) * $limit)->orderBy('id', $sort);
     }
 
     /**
@@ -873,15 +876,15 @@ trait OrderFlow
      *
      * @return Collection
      */
-    public function getCompletedKitchenOrders(): Collection
+    public function getCompletedKitchenOrders(array $data): Collection
     {
 
         $kitchen = auth()->user();
-
+        
         // load restaurant relationship
         $kitchen->loadMissing(['restaurant_kitchen']);
 
-        $query = $this->getKitchenOrdersQuery($kitchen, [OrderSplit::KITCHEN_CONFIRM, OrderSplit::KITCHEN_CANCELED], 'desc');
+        $query = $this->getKitchenOrdersQuery($kitchen, [OrderSplit::KITCHEN_CONFIRM, OrderSplit::KITCHEN_CANCELED], 'desc',$data);
         return $query->get();
     }
 

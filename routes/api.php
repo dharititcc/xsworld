@@ -195,7 +195,7 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'v1', 'as' => 'api.v1.'], fun
             Route::post('logout', 'AuthController@logout')->name('kitchen.logout');
 
             Route::get('order/list','OrderController@orderList')->name('kitchen.order.list');
-            Route::get('order-history','OrderController@orderHistory')->name('kitchen.order.history');
+            Route::post('order-history','OrderController@orderHistory')->name('kitchen.order.history');
             Route::post('order-update-status','OrderController@updateOrderStauts')->name('kitchen.order.update.status');
             Route::post('order-show','OrderController@orderDetail')->name('kitchen.order.show');
             Route::post('gostatus','OrderController@gostatus')->name('kitchen.gostatus');
