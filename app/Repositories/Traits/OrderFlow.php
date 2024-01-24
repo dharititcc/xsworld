@@ -844,7 +844,6 @@ trait OrderFlow
                             }
                         })
                         ->where('restaurant_id', $kitchen->restaurant_kitchen->restaurant_id);
-                $total = $query->count();
                 return $query->limit($limit)->offset(($page - 1) * $limit)->orderBy('id', $sort);
     }
 
@@ -867,18 +866,18 @@ trait OrderFlow
     /**
      * Method getCompletedKitchenOrders
      *
-     * @return Collection
+     * @return Builder
      */
-    public function getCompletedKitchenOrders(array $data): Collection
+    public function getCompletedKitchenOrders(array $data): Builder
     {
-
         $kitchen = auth()->user();
         
         // load restaurant relationship
         $kitchen->loadMissing(['restaurant_kitchen']);
 
         $query = $this->getKitchenOrdersQuery($kitchen, [OrderSplit::KITCHEN_CONFIRM, OrderSplit::KITCHEN_CANCELED], 'desc',$data);
-        return $query->get();
+        
+        return $query;
     }
 
     /**
