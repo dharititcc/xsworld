@@ -445,7 +445,7 @@ trait OrderFlow
     {
         $card_id            = $data['card_id'] ?? null;
         $credit_amount      = $data['credit_amount'] ? $data['credit_amount'] : null;
-        $amount             = $data['amount'] ? $data['amount'] : null;
+        $amount             = $data['amount'] ? $data['amount'] : 0;
         $table_id           = $data['table_id'] ? $data['table_id'] : null;
         $order              = Order::with([
             'restaurant',
@@ -569,7 +569,7 @@ trait OrderFlow
                     }
 
                     // charge payment
-                    $this->getOrderPayment($latest, $user, $credit_amount, $latest->total, $card_id);
+                    $this->getOrderPayment($latest, $user, $credit_amount, $amount, $card_id);
 
                     $getcusTbl = CustomerTable::where('user_id', $user->id)->where('restaurant_table_id', $table_id)->where('order_id', $latest->id)->first();
                     if($getcusTbl) {
@@ -715,9 +715,6 @@ trait OrderFlow
         // payment logic
         if($order->total <= $credit_amount)
         {
-            $updateArr = [
-                'credit_amount'         => $credit_amount
-            ];
             $remaingAmount = $userCreditAmountBalance - $credit_amount;
 
             // update user's credit amount
