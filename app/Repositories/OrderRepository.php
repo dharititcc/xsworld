@@ -849,7 +849,7 @@ class OrderRepository extends BaseRepository
                         ])->find($order->id);
 
                         // Generate PDF
-                        // $this->generatePDF($order);
+                        $this->generatePDF($order);
                     }
                     else
                     {
@@ -887,7 +887,7 @@ class OrderRepository extends BaseRepository
                         ])->find($order->id);
 
                         // Generate PDF
-                        // $this->generatePDF($order);
+                        $this->generatePDF($order);
                     }
 
                     // charge payment
@@ -954,7 +954,7 @@ class OrderRepository extends BaseRepository
             $order->loadMissing(['items']);
 
             // Generate PDF
-            // $this->generatePDF($order);
+            $this->generatePDF($order);
 
             $getcusTbl = CustomerTable::where('user_id', $user->id)->where('restaurant_table_id', $table_id)->first();
             if($getcusTbl) {
@@ -999,8 +999,6 @@ class OrderRepository extends BaseRepository
                 $this->notifyBars($order, $bartitle, $barmessage);
             }
         }
-        // Generate PDF
-        $this->generatePDF($order);
 
         return true;
     }

@@ -527,7 +527,7 @@ trait OrderFlow
                         ])->find($order->id);
 
                         // Generate PDF
-                        // $this->generatePDF($order);
+                        $this->generatePDF($order);
                     }
                     else
                     {
@@ -565,7 +565,7 @@ trait OrderFlow
                         ])->find($order->id);
 
                         // Generate PDF
-                        // $this->generatePDF($order);
+                        $this->generatePDF($order);
                     }
 
                     // charge payment
@@ -636,7 +636,7 @@ trait OrderFlow
             $order->loadMissing(['items']);
 
             // Generate PDF
-            // $this->generatePDF($order);
+            $this->generatePDF($order);
 
             $getcusTbl = CustomerTable::where('user_id', $user->id)->where('restaurant_table_id', $table_id)->where('order_id', $order->id)->first();
             if($getcusTbl) {
@@ -686,8 +686,6 @@ trait OrderFlow
                 $this->notifyBars($order, $bartitle, $barmessage);
             }
         }
-        // Generate PDF
-        $this->generatePDF($order);
         return true;
     }
 
