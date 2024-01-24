@@ -527,7 +527,7 @@ trait OrderFlow
                         ])->find($order->id);
 
                         // Generate PDF
-                        $this->generatePDF($order);
+                        $this->generatePDF($latest);
                     }
                     else
                     {
@@ -565,7 +565,7 @@ trait OrderFlow
                         ])->find($order->id);
 
                         // Generate PDF
-                        $this->generatePDF($order);
+                        $this->generatePDF($latest);
                     }
 
                     // charge payment
@@ -709,6 +709,7 @@ trait OrderFlow
      */
     public function getOrderPayment(Order $order, User $user, mixed $credit_amount, float $amount, string $card_id)
     {
+        $paymentArr                 = [];
         $userCreditAmountBalance    = $user->credit_amount;
         $credit_amount              = isset( $credit_amount ) ? $credit_amount : 0;
         // payment logic
@@ -730,7 +731,7 @@ trait OrderFlow
                 'amount'        => number_format($amount, 2) * 100,
                 'currency'      => $order->restaurant->currency->code,
                 'customer'      => $user->stripe_customer_id,
-                'capture'       => isset($order->order_split_food->id) ? true : false,
+                'capture'       => false,
                 'source'        => $card_id,
                 'description'   => $order->id
             ];
