@@ -1338,11 +1338,10 @@ class OrderRepository extends BaseRepository
                     })
                     ->where('restaurant_id', $data['restaurant_id'])
                     ->whereNotIn('status', [Order::CUSTOMER_CANCELED])
+                    ->where('users.id', '!=', $user->id)
                     ->where('type', Order::ORDER)
-                    // ->where('users.id',auth()->user()->id)
                     ->groupBy('orders.user_id')
                     ->get();
-                    // dd($venueList->refresh());
                     // echo common()->formatSql($venueList);die;
         if( $membershipLevel != "" )
         {
