@@ -715,6 +715,7 @@ trait OrderFlow
         // payment logic
         if($order->total <= $credit_amount)
         {
+            $updateArr['credit_amount'] = $credit_amount;
             $remaingAmount = $userCreditAmountBalance - $credit_amount;
 
             // update user's credit amount
