@@ -703,11 +703,11 @@ trait OrderFlow
      * @param User $user [explicite description]
      * @param mixed $credit_amount [explicite description]
      * @param float $amount [explicite description]
-     * @param string $card_id [explicite description]
+     * @param mixed $card_id [explicite description]
      *
      * @return void
      */
-    public function getOrderPayment(Order $order, User $user, mixed $credit_amount, float $amount, string $card_id)
+    public function getOrderPayment(Order $order, User $user, mixed $credit_amount, float $amount, $card_id)
     {
         $paymentArr                 = [];
         $userCreditAmountBalance    = $user->credit_amount;
