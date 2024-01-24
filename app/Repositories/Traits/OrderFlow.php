@@ -628,7 +628,14 @@ trait OrderFlow
 
             if(isset($order->id))
             {
-                // $order->update($updateArr);
+                $updateArr = [
+                    'user_id'               => $user->id,
+                    'restaurant_id'         => $order->restaurant_id,
+                    'pickup_point_id'       => isset($order->order_split_drink->id) ? $pickup_point_id->id : null,
+                    'pickup_point_user_id'  => isset($order->order_split_drink->id) ? $pickup_point_id->user_id : null,
+                    'restaurant_table_id'   => isset($table_id) ? $table_id : null,
+                ];
+                $order->update($updateArr);
                 $this->getOrderPayment($order, $user, $credit_amount, $amount, $card_id);
             }
 
