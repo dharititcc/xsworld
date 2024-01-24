@@ -686,7 +686,6 @@ trait OrderFlow
                 $this->notifyBars($order, $bartitle, $barmessage);
             }
         }
-
         return true;
     }
 
