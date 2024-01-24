@@ -709,6 +709,7 @@ trait OrderFlow
      */
     public function getOrderPayment(Order $order, User $user, mixed $credit_amount, float $amount, string $card_id)
     {
+        $paymentArr                 = [];
         $userCreditAmountBalance    = $user->credit_amount;
         $credit_amount              = isset( $credit_amount ) ? $credit_amount : 0;
         // payment logic
