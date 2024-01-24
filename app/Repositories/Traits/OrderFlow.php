@@ -568,6 +568,11 @@ trait OrderFlow
                         $this->generatePDF($latest);
                     }
 
+                    $credit_amount = isset( $credit_amount ) ? $credit_amount : 0;
+                    if($latest->total <= $credit_amount)
+                    {
+                        $credit_amount -= $latest->total;
+                    }
                     // charge payment
                     $this->getOrderPayment($latest, $user, $credit_amount, $amount, $card_id);
 
