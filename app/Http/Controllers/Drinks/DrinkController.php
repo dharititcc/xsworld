@@ -376,13 +376,13 @@ class DrinkController extends Controller
     }
 
     /**
-     * Method sampleFile
+     * Method SampleFileDrink
      *
      * @return void
      */
-    public function sampleFile()
+    public function SampleFileDrink()
     {
-        $destinationPath = public_path('/XSWorld_sample_data.xlsx');
+        $destinationPath = public_path('/XSWorld_sample_data_drink.xlsx');
         return response()->download($destinationPath);
     }
 
@@ -416,16 +416,40 @@ class DrinkController extends Controller
             // $data = Excel::import(new DrinksImport(), $file); // use for default imports
             $data = Excel::toArray(new DrinkImport, $file); // use for get data without heading row
             // $data = Excel::toArray([], $file);
-            // dd($data);
 
             // $this->validateExcel($data , $restaurant);
-            // dd($validateDrink);
 
             // if($validateDrink == true)
             // {
 
             // }
             // exit;
+
+            $shouldRedirectProduct = false;
+            foreach($data[0] as $key => $row)
+            {
+                $text = htmlentities(strtolower($row[1]));
+
+                $category = Category::where([
+                                'name'          => $row[2],
+                                'restaurant_id' => $restaurant->id
+                            ])->first();
+
+                $restaurants = RestaurantItem::whereRaw(DB::raw("LOWER(`name`) = '{$text}'"))
+                ->where('restaurant_id', $restaurant->id)
+                ->where('category_id', $category->id)
+                ->count();
+                if($restaurants == 1)
+                {
+                    $shouldRedirectProduct = true;
+                    $category_message = "The Product is already exist with ".$row[2]." . Please enter valid items in row no ".$key+2;
+                    break;
+                }
+            }
+            if ($shouldRedirectProduct == true) {
+                return redirect()->route('restaurants.drinks.index')->with('message', $category_message);
+            }
+
             $shouldRedirect = false;
             foreach($data[0] as $key => $row)
             {
@@ -436,7 +460,7 @@ class DrinkController extends Controller
                 if($category == 0)
                 {
                     $shouldRedirect = true;
-                    $category_message = "This category is not found.Please enter valid category in row no ".$key+1;
+                    $category_message = $row[2]." category is not found.Please enter valid category in row no ".$key+2;
                     break;
                 }
             }
