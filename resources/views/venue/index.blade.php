@@ -157,8 +157,7 @@
                             class="grey-brd-box padbox text-center lable-box mt-3 {{ Route::is('restaurants.drinks.*') ? 'active' : '' }}"><span>Drinks
                                 Management</span></a>
                         <a href="{{ route('restaurants.mixers.index') }}"
-                            class="grey-brd-box padbox text-center lable-box mt-3 {{ Route::is('restaurants.mixers.*') ? 'active' : '' }}"
-                            data-bs-toggle="modal" data-bs-target="#exampleModal"><span>Mixer Management</span></a>
+                            class="grey-brd-box padbox text-center lable-box mt-3 {{ Route::is('restaurants.mixers.*') ? 'active' : '' }}"><span>Mixer Management</span></a>
                         <a href="{{ route('restaurants.pickup.index') }}"
                             class="grey-brd-box padbox text-center lable-box mt-3 {{ Route::is('restaurants.pickup.*') ? 'active' : '' }}"><span>Pick-up
                                 Zones</span></a>
