@@ -29,7 +29,7 @@ class VenueUserResource extends JsonResource
             'membership_level'      => $this->membership['membership_level'],
             'credit_amount'         => (float) $this->credit_amount ?? 0,
             'points'                => $this->points ?? 0,
-            'friendship'            => $this->friendship_status,
+            'friendship'            => isset($this->friendship_status) ? $this->friendship_status  : 3,
             'member_id'             => $this->id,
             // 'restaurant'            => $this->restaurant,
             // ''

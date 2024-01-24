@@ -410,7 +410,7 @@ class OrderController extends APIController
     {
         $input  = $request->all();
         $userProfile = $this->repository->userProfileData($input);
-        return $this->respondSuccess('Get user profile successfully ', new UserResource($userProfile));
+        return $this->respondSuccess('Get user profile successfully ', new VenueUserResource($userProfile));
     }
 
     public function friendShip()
