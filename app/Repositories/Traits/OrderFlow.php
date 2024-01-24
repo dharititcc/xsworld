@@ -527,7 +527,7 @@ trait OrderFlow
                         ])->find($order->id);
 
                         // Generate PDF
-                        $this->generatePDF($order);
+                        $this->generatePDF($latest);
                     }
                     else
                     {
@@ -565,7 +565,7 @@ trait OrderFlow
                         ])->find($order->id);
 
                         // Generate PDF
-                        $this->generatePDF($order);
+                        $this->generatePDF($latest);
                     }
 
                     // charge payment

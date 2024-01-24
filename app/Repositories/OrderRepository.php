@@ -849,7 +849,7 @@ class OrderRepository extends BaseRepository
                         ])->find($order->id);
 
                         // Generate PDF
-                        $this->generatePDF($order);
+                        $this->generatePDF($latest);
                     }
                     else
                     {
@@ -887,7 +887,7 @@ class OrderRepository extends BaseRepository
                         ])->find($order->id);
 
                         // Generate PDF
-                        $this->generatePDF($order);
+                        $this->generatePDF($latest);
                     }
 
                     // charge payment
@@ -946,7 +946,14 @@ class OrderRepository extends BaseRepository
 
             if(isset($order->id))
             {
-                // $order->update($updateArr);
+                $updateArr = [
+                    'user_id'               => $user->id,
+                    'restaurant_id'         => $order->restaurant_id,
+                    'pickup_point_id'       => isset($order->order_split_drink->id) ? $pickup_point_id->id : null,
+                    'pickup_point_user_id'  => isset($order->order_split_drink->id) ? $pickup_point_id->user_id : null,
+                    'restaurant_table_id'   => isset($table_id) ? $table_id : null,
+                ];
+                $order->update($updateArr);
                 $this->getOrderPayment($order, $user, $credit_amount, $amount, $defaultCardId);
             }
 
