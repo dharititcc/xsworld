@@ -819,11 +819,9 @@ trait OrderFlow
      *
      * @return Builder
      */
-    public function getKitchenOrdersQuery(User $kitchen, $status, string $sort = 'asc', $data=[]): Builder
+    public function getKitchenOrdersQuery(User $kitchen, $status, string $sort = 'asc'): Builder
     {
-        $page   = isset($data['page']) ? $data['page'] : 1;
-        $limit  = isset($data['limit']) ? $data['limit'] : 10;
-        $query = Order::query()
+        return Order::query()
                         ->with(
                             [
                                 'restaurant',
@@ -851,8 +849,8 @@ trait OrderFlow
                                 $query->whereIn('status', [$status]);
                             }
                         })
-                        ->where('restaurant_id', $kitchen->restaurant_kitchen->restaurant_id);
-                return $query->limit($limit)->offset(($page - 1) * $limit)->orderBy('id', $sort);
+                        ->where('restaurant_id', $kitchen->restaurant_kitchen->restaurant_id)
+                        ->orderBy('id', $sort);
     }
 
     /**
@@ -874,18 +872,33 @@ trait OrderFlow
     /**
      * Method getCompletedKitchenOrders
      *
-     * @return Builder
+     * @return array
      */
-    public function getCompletedKitchenOrders(array $data): Builder
+    public function getCompletedKitchenOrders(array $data): array
     {
         $kitchen = auth()->user();
         
+        $page   = isset($data['page']) ? $data['page'] : 1;
+        $limit  = isset($data['limit']) ? $data['limit'] : 10;
         // load restaurant relationship
         $kitchen->loadMissing(['restaurant_kitchen']);
 
-        $query = $this->getKitchenOrdersQuery($kitchen, [OrderSplit::KITCHEN_CONFIRM, OrderSplit::KITCHEN_CANCELED], 'desc',$data);
-        
-        return $query;
+        $query = $this->getKitchenOrdersQuery($kitchen, [OrderSplit::KITCHEN_CONFIRM, OrderSplit::KITCHEN_CANCELED],'desc');
+        $total = $query->count();
+        $query->limit($limit)->offset(($page - 1) * $limit)->orderBy('id', 'desc');
+        $query = $query->get();
+        if( $query->count() )
+        {
+            $orderData = [
+                'total_orders'   => $total,
+                'orders'         => $query
+            ];
+
+            return $orderData;
+        }
+
+        throw new GeneralException('There is no order found.');
+        // return $query;
     }
 
     /**
