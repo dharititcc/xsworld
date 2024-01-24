@@ -717,6 +717,7 @@ trait OrderFlow
         {
             $updateArr['credit_amount'] = $credit_amount;
             $updateArr['type']          = Order::ORDER;
+            $updateArr['place_at']      = Carbon::now();
             $remaingAmount = $userCreditAmountBalance - $credit_amount;
 
             // update user's credit amount
