@@ -98,32 +98,36 @@
                                 </div>
                             </div>
                             <div class="scroll-y review-box-height">
-                                @foreach ($order_reviews as $orderReview)
-                                    <div class="line-gradient">
-                                        <table width="100%" class="reviewer mb-2">
-                                            <tr>
-                                                <td>{{ \Carbon\Carbon::parse($orderReview->order->created_at)->format('d/m
-                                                Y') }}</td>
-                                                <td>
-                                                    <div class="name">{{$orderReview->order->user->first_name}}</div>
-                                                    <div class="order">Order #{{$orderReview->order->id}}</div>
-                                                </td>
-                                                <td><i class="icon-ok-circled"></i> ${{$orderReview->order->total}}</td>
-                                            </tr>
-                                        </table>
-                                        <div class="complete mb-2">Complete
-                                            <div class="stars">
-                                                @for ($i=0; $i<(float) $orderReview->rating; $i++)
-                                                    <i class="icon-star"></i>
-                                                @endfor
+                                @if ($order_reviews->count())
+                                    @foreach ($order_reviews as $orderReview)
+                                        <div class="line-gradient">
+                                            <table width="100%" class="reviewer mb-2">
+                                                <tr>
+                                                    <td>{{ \Carbon\Carbon::parse($orderReview->order->created_at)->format('d/m
+                                                    Y') }}</td>
+                                                    <td>
+                                                        <div class="name">{{$orderReview->order->user->first_name}}</div>
+                                                        <div class="order">Order #{{$orderReview->order->id}}</div>
+                                                    </td>
+                                                    <td><i class="icon-ok-circled"></i> ${{$orderReview->order->total}}</td>
+                                                </tr>
+                                            </table>
+                                            <div class="complete mb-2">Complete
+                                                <div class="stars">
+                                                    @for ($i=0; $i<(float) $orderReview->rating; $i++)
+                                                        <i class="icon-star"></i>
+                                                    @endfor
+                                                </div>
                                             </div>
-                                        </div>
 
-                                            <div class="rvnote mb-4">{{$orderReview->comment}} </div>
-                                            <div class="ord-time">Order Time - {{ \Carbon\Carbon::parse($orderReview->order->created_at)->format('H:i') }}
-                                            </div>
-                                    </div>
-                                @endforeach
+                                                <div class="rvnote mb-4">{{$orderReview->comment}} </div>
+                                                <div class="ord-time">Order Time - {{ \Carbon\Carbon::parse($orderReview->order->created_at)->format('H:i') }}
+                                                </div>
+                                        </div>
+                                    @endforeach
+                                @else
+                                    <div> No Order reviews Found </div>
+                                @endif
                             </div>
 
                             @if ($order_reviews->total() > 10)

@@ -40,6 +40,8 @@
                     <a href="javascript:void(0);" class="bor-btn d-block text-center view-order" data-order_id="{{ $order->id }}">View Order</a>
                 </li>
                 @endforeach
+            @else
+                <div>No Orders Found</div>
             @endif
         </ul>
 
