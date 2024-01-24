@@ -288,7 +288,7 @@ class HomeController extends APIController
         if($order_data)
         {
             $data = [
-                'total_order' => $order_data['total_orders'],
+                'total_orders'=> $order_data['total_orders'],
                 'orders'      => $order_data['total_orders'] ? WaiterOrderListResource::collection($order_data['orders']) : ''
             ];
             return $this->respondSuccess('Order data found', $data);
