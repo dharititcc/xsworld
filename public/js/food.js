@@ -665,6 +665,7 @@
                             if(elem.is("input:text"))
                             {
                                 elem.closest('#price').after(`<label class="error">${val[0]}</label>`);
+                                elem.closest('#name').after(`<label class="error">${val[0]}</label>`);
                             }
                         });
                     }

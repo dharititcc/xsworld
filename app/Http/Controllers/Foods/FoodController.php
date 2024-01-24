@@ -118,6 +118,11 @@ class FoodController extends Controller
     {
         $restaurant = session('restaurant')->loadMissing(['main_categories', 'main_categories.children']);
         $categories = $request->get('category_id');
+        $request->validate([
+            'name' => 'regex:/^[a-zA-Z\s]+$/u'
+        ],[
+            'name.regex' => "Only allow letters and spaces"
+        ]);
 
         if( $request->is_variable == 0 )
         {
@@ -253,8 +258,10 @@ class FoodController extends Controller
         $restaurant = session('restaurant')->loadMissing(['main_categories', 'main_categories.children']);
 
         $request->validate([
+            'name' => 'regex:/^[a-zA-Z\s]+$/u',
             'price' => 'required|numeric|between:0.1,9999999999.99'
         ],[
+            'name.regex' => "Only allow letters and spaces",
             'price.between' => "Please Enter valid price"
         ]);
         if ($request->hasFile('image'))
