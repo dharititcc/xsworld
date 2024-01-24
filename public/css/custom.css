@@ -57,7 +57,7 @@ form .logo{ margin: 0 auto 6vh auto; display: block; max-width: 72%;}
 
 .form-control.invert{filter: invert(1); color: #000 !important;} 
 
-.form-info{ font-size: 12px; color: var(--d-grey);}
+.form-info{ font-size: 12px;}
 
 .btn-box{ margin-top: 60px;}
 
