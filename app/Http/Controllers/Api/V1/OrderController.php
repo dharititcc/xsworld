@@ -14,10 +14,13 @@ use App\Http\Requests\PlaceOrderRequest;
 use App\Http\Resources\MyFriendsResource;
 use App\Http\Resources\OrderListResource;
 use App\Http\Resources\OrderResource;
+use App\Http\Resources\PendingFriendsResource;
 use App\Http\Resources\UserResource;
 use App\Http\Resources\VenueUserResource;
 use App\Models\Order;
 use App\Repositories\OrderRepository;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class OrderController extends APIController
@@ -264,7 +267,7 @@ class OrderController extends APIController
     {
         $place_order = $this->repository->placeOrder($request->validated());
 
-        return $this->respondSuccess('Order payment successfully.', new OrderResource($place_order));
+        return $this->respondSuccess('Order payment successfully.');
     }
 
     /**
@@ -377,7 +380,7 @@ class OrderController extends APIController
     public function pendingFriendRequest(Request $request)
     {
         $friends    = $this->repository->pendingFriendReq($request->all());
-        return $this->respondSuccess('New Friend Request Successfully', VenueUserResource::collection($friends));
+        return $this->respondSuccess('New Friend Request Successfully', PendingFriendsResource::collection($friends));
     }
 
     public function printOrder(Request $request,Order $order)
@@ -407,18 +410,25 @@ class OrderController extends APIController
     {
         $input  = $request->all();
         $userProfile = $this->repository->userProfileData($input);
-        return $this->respondSuccess('Get user profile successfully ', new UserResource($userProfile));
+        return $this->respondSuccess('Get user profile successfully ', new VenueUserResource($userProfile));
     }
 
-    public function friendShip(Request $request)
+    public function friendShip()
     {
-        $input          = $request->all();
-        $myFriendList   = $this->repository->myFriendList($input);
+        // $input          = $request->all();
+        $myFriendList   = $this->repository->myFriendList();
         if($myFriendList->count())
         {
-            return $this->respondSuccess('Venue User List', VenueUserResource::collection($myFriendList));
+            return $this->respondSuccess('Get my friends successfully', MyFriendsResource::collection($myFriendList));
         }
 
-        throw new GeneralException('No user found in this restaurant.');
+        throw new GeneralException("You don't have anyfriends please make a new friends.");
+    }
+
+    public function unFriend(Request $request)
+    {
+        $input          = $request->all();
+        $myFriendList   = $this->repository->unFriend($input);
+        return $this->respondSuccess('Un friend successfully',$myFriendList);
     }
 }

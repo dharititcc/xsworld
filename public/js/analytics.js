@@ -31,7 +31,7 @@
             "width": "20%",
             "bSortable": false,
             render: function (data, type, row) {
-                return `${row.order.restaurant.country.symbol}${row.restaurant_item.price}`;
+                return `${row.order.restaurant.country.symbol}${row.order.total}`;
             }
         },
         {
@@ -70,7 +70,6 @@
             context.filterChart();
 
             // Analytics range picker
-            // alert('hi');
             $('input[name="dates"]').daterangepicker({ maxDate: 0 }).on('apply.daterangepicker', function (e, picker) {
                 var startDate = picker.startDate.format('DD-MM-YYYY');
                 var endDate = picker.endDate.format('DD-MM-YYYY');

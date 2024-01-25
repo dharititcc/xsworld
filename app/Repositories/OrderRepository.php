@@ -10,6 +10,7 @@ use App\Models\FriendRequest;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\OrderReview;
+use App\Models\OrderSplit;
 use App\Models\Restaurant;
 use App\Models\RestaurantItem;
 use App\Models\RestaurantPickupPoint;
@@ -756,9 +757,9 @@ class OrderRepository extends BaseRepository
      *
      * @param array $data [explicite description]
      *
-     * @return App\Models\Order
+     * @return bool
      */
-    function placeOrderwaiter(array $data): Order
+    function placeOrderwaiter(array $data): bool
     {
         $credit_amount      = $data['credit_amount'] ? $data['credit_amount'] : null;
         $amount             = $data['amount'] ? $data['amount'] : null;
@@ -767,18 +768,18 @@ class OrderRepository extends BaseRepository
         $user               = $order->user_id ? User::findOrFail($order->user_id) : auth()->user();
         $stripe_customer_id = $user->stripe_customer_id;
         $stripe             = new Stripe();
-        $customer_cards     = $stripe->fetchCards($stripe_customer_id)->toArray();
+        $getCusCardId       = $stripe->fetchCustomer($stripe_customer_id);
+        $defaultCardId      = $getCusCardId->default_source;
+        $pickup_point_id    = $this->randomPickpickPoint($order);
 
-        if(empty($customer_cards['data']))
+        if(!isset( $defaultCardId ))
         {
             throw new GeneralException('Please ask customer to Add Card details');
         }
 
-        $kitchens          = $order->restaurant->kitchens;
-        $kitchen_token     = [];
-
         // load missing order items
         $order->loadMissing([
+            'order_splits',
             'order_split_food',
             'order_split_drink',
             'restaurant',
@@ -787,115 +788,227 @@ class OrderRepository extends BaseRepository
 
         if( isset($order->order_split_food->id) )
         {
-            $openKitchens = $order->restaurant->kitchens()->where('status', 1)->get();
-
-            if( $openKitchens->count() === 0 )
+            if( $order->restaurant->kitchens->count() )
             {
-                throw new GeneralException('You cannot able to place order as kitchen is closed.');
+                $openKitchens = $order->restaurant->kitchens()->where('status', 1)->get();
+
+                if( $openKitchens->count() === 0 )
+                {
+                    throw new GeneralException('You cannot able to place order as kitchen is closed.');
+                }
+            }
+            else
+            {
+                throw new GeneralException('You cannot able to place order as there is no kitchen found.');
             }
         }
 
-        $pickup_point_id = '';
-        if($order->order_category_type == Order::DRINK || $order->order_category_type == Order::BOTH)
+        // check if order if of category type both or single(food/drink)
+        if( $order->order_category_type == Order::BOTH )
         {
-            $pickup_point_id    = $this->randomPickpickPoint($order);
+            // check order split count > 1
+            if( $order->order_splits->count() > 1 )
+            {
+                foreach( $order->order_splits as $key => $split )
+                {
+                    $latest = null;
+                    $split->loadMissing(['items']);
+
+                    if( $key === 0 )
+                    {
+                        $orderArr = [
+                            'user_id'               => $user->id,
+                            'order_category_type'   => $split->is_food == 1 ? Order::FOOD : Order::DRINK,
+                            'restaurant_id'         => $order->restaurant_id,
+                            'pickup_point_id'       => $split->is_food == 0 ? $pickup_point_id->id : null,
+                            'pickup_point_user_id'  => $split->is_food == 0 ? $pickup_point_id->user_id : null,
+                            'restaurant_table_id'   => isset($table_id) ? $table_id : null,
+                            'status'                => Order::PENDNIG,
+                            'waiter_status'         => Order::CURRENTLY_BEING_PREPARED,
+                            'currency_id'           => $order->restaurant->currency_id,
+                            'place_at'              => Carbon::now(),
+                            'type'                  => Order::ORDER
+                        ];
+
+                        $order->update($orderArr);
+
+                        $split->update(['order_id' => $order->id]);
+                        $split->items()->update(['order_id' => $order->id]);
+
+                        $order->refresh();
+
+                        // update total of the order by items
+                        $order->loadMissing(['items']);
+                        $order->update(['total' => $split->all_items->sum('total')]);
+
+                        $latest = Order::with([
+                            'restaurant',
+                            'restaurant.kitchens',
+                            'order_splits',
+                            'order_split_food',
+                            'order_split_drink'
+                        ])->find($order->id);
+
+                        // Generate PDF
+                        $this->generatePDF($latest);
+                    }
+                    else
+                    {
+                        $orderArr = [
+                            'user_id'               => $user->id,
+                            'order_category_type'   => $split->is_food == 1 ? Order::FOOD : Order::DRINK,
+                            'restaurant_id'         => $order->restaurant_id,
+                            'pickup_point_id'       => $split->is_food == 0 ? $pickup_point_id->id : null,
+                            'pickup_point_user_id'  => $split->is_food == 0 ? $pickup_point_id->user_id : null,
+                            'restaurant_table_id'   => isset($table_id) ? $table_id : null,
+                            'type'                  => Order::ORDER,
+                            'status'                => Order::PENDNIG,
+                            'waiter_status'         => Order::CURRENTLY_BEING_PREPARED,
+                            'currency_id'           => $order->restaurant->currency_id,
+                            'place_at'              => Carbon::now(),
+                        ];
+
+                        $order = Order::create($orderArr);
+
+                        $split->update(['order_id' => $order->id]);
+                        $split->items()->update(['order_id' => $order->id]);
+
+                        $order->refresh();
+
+                        // update total of the order by items
+                        $order->loadMissing(['items']);
+                        $order->update(['total' => $split->all_items->sum('total')]);
+
+                        $latest = Order::with([
+                            'restaurant',
+                            'restaurant.kitchens',
+                            'order_splits',
+                            'order_split_food',
+                            'order_split_drink'
+                        ])->find($order->id);
+
+                        // Generate PDF
+                        $this->generatePDF($latest);
+                    }
+
+                    // charge payment
+                    $this->getOrderPayment($latest, $user, $credit_amount, $latest->total, $defaultCardId);
+
+                    $getcusTbl = CustomerTable::where('user_id', $user->id)->where('restaurant_table_id', $table_id)->first();
+                    if($getcusTbl) {
+                        // throw new GeneralException('Already table allocated');
+                        // $customerTbl = 0;
+                        $getcusTbl->update(['order_id' => $latest->id]);
+                    } else {
+                        $customerTbl = CustomerTable::updateOrCreate([
+                            'restaurant_table_id'   => $table_id,
+                            'user_id'               => $user->id,
+                            'order_id'              => $latest->id,
+                        ]);
+                    }
+
+                    // send notification to kitchens of the restaurant if order is food
+                    if( isset($latest->order_split_food->id) )
+                    {
+                        // debit payment
+                        if( $latest->charge_id )
+                        {
+                            $stripe                         = new Stripe();
+                            $payment_data                   = $stripe->captureCharge($latest->charge_id);
+                            $updateArr['transaction_id']    = $payment_data->balance_transaction;
+                        }
+                        $kitchenTitle    = 'New order placed by waiter';
+                        $kitchenMessage  = "Order is #{$latest->id} placed by waiter";
+                        $this->notifyKitchens($latest, $kitchenTitle, $kitchenMessage);
+                    }
+
+                    // customer notification
+                    $text               = $latest->restaurant->name. ' is processing your order';
+                    $title              = $text;
+                    $message            = "Your Order is #".$latest->id." placed";
+
+                    $this->notifyCustomer($latest, $title, $message);
+
+                    // send notification to bar of the restaurant if order is drink
+                    if( isset($latest->order_split_drink->id) )
+                    {
+                        $bartitle           = "Order is placed by waiter";
+                        $barmessage         = "Order is #".$latest->id." placed by waiter";
+                        $this->notifyBars($latest, $bartitle, $barmessage);
+                    }
+                }
+            }
         }
-
-        $userCreditAmountBalance = $user->credit_amount;
-        $updateArr         = [];
-        $paymentArr        = [];
-
-        $stripe_customer_id = $user->stripe_customer_id;
-
-        if(isset($order->id))
+        else
         {
-            if($order->total <= $credit_amount)
+            $updateArr          = [];
+
+            $order->update(['pickup_point_id' => $pickup_point_id->id, 'pickup_point_user_id' => $pickup_point_id->user_id]);
+
+            if(isset($order->id))
             {
                 $updateArr = [
-                    'type'                  => Order::ORDER,
-                    'pickup_point_id'       => ($pickup_point_id) ? $pickup_point_id->id : null,
-                    'pickup_point_user_id'  => ($pickup_point_id) ? $pickup_point_id->user_id : null,
-                    'credit_amount'         => $credit_amount,
-                    'restaurant_table_id'   => ($table_id) ? $table_id : null,
-                    'waiter_status'         => Order::CURRENTLY_BEING_PREPARED,
-                    'status'                => Order::PENDNIG,
-                    'place_at'              => Carbon::now()->format('Y-m-d H:i:s'),
+                    'user_id'               => $user->id,
+                    'restaurant_id'         => $order->restaurant_id,
+                    'pickup_point_id'       => isset($order->order_split_drink->id) ? $pickup_point_id->id : null,
+                    'pickup_point_user_id'  => isset($order->order_split_drink->id) ? $pickup_point_id->user_id : null,
+                    'restaurant_table_id'   => isset($table_id) ? $table_id : null,
                 ];
-                $remaingAmount = $userCreditAmountBalance - $credit_amount;
-                // update user's credit amount
-                $this->updateUserPoints($user, ['credit_amount' => $remaingAmount]);
+                $order->update($updateArr);
+                $this->getOrderPayment($order, $user, $credit_amount, $amount, $defaultCardId);
             }
 
+            $order->refresh();
+            $order->loadMissing(['items']);
 
-            if( $order->total != $credit_amount )
+            // Generate PDF
+            $this->generatePDF($order);
+
+            $getcusTbl = CustomerTable::where('user_id', $user->id)->where('restaurant_table_id', $table_id)->first();
+            if($getcusTbl) {
+                // throw new GeneralException('Already table allocated');
+                // $customerTbl = 0;
+                $getcusTbl->update(['order_id' => $order->id]);
+            } else {
+                $customerTbl = CustomerTable::updateOrCreate([
+                    'restaurant_table_id'   => $table_id,
+                    'user_id'               => $user->id,
+                    'order_id'              => $order->id,
+                ]);
+            }
+
+            // send notification to kitchens of the restaurant if order is food
+            if( isset($order->order_split_food->id) )
             {
-                $getCusCardId   = $stripe->fetchCustomer($stripe_customer_id);
-                $defaultCardId  = $getCusCardId->default_source;
-
-                $paymentArr = [
-                    'amount'        => number_format($amount, 2) * 100,
-                    'currency'      => $order->restaurant->currency->code,
-                    'customer'      => $user->stripe_customer_id,
-                    // 'capture'       => false,
-                    'source'        => $defaultCardId,
-                    'description'   => "Order #{$order->id} place Successfully with Payment of {$amount}"
-                ];
-                $payment_data   = $stripe->createCharge($paymentArr);
-
-                $updateArr = [
-                    'type'                  => Order::ORDER,
-                    'card_id'               => $defaultCardId,
-                    'charge_id'             => $payment_data->id,
-                    'pickup_point_id'       => ($pickup_point_id) ? $pickup_point_id->id : null,
-                    'pickup_point_user_id'  => ($pickup_point_id) ? $pickup_point_id->user_id : null,
-                    'credit_amount'         => $credit_amount,
-                    'restaurant_table_id'   => ($table_id) ? $table_id : null,
-                    'amount'                => $amount,
-                    'place_at'              => Carbon::now()->format('Y-m-d H:i:s'),
-                ];
-                $remaingAmount = $userCreditAmountBalance - $credit_amount;
-
-                // update user's credit amount
-                $this->updateUserPoints($user, ['credit_amount' => $remaingAmount]);
+                // debit payment
+                if( $order->charge_id )
+                {
+                    $stripe                         = new Stripe();
+                    $payment_data                   = $stripe->captureCharge($order->charge_id);
+                    $updateArr['transaction_id']    = $payment_data->balance_transaction;
+                }
+                $kitchenTitle    = 'New order placed by waiter';
+                $kitchenMessage  = "Order is #{$order->id} placed by waiter";
+                $this->notifyKitchens($order, $kitchenTitle, $kitchenMessage);
             }
 
-            $order->update($updateArr);
+            // customer notification
+            $text               = $order->restaurant->name. ' is processing your order';
+            $title              = $text;
+            $message            = "Your Order is #".$order->id." placed";
+
+            $this->notifyCustomer($order, $title, $message);
+
+            // send notification to bar of the restaurant if order is drink
+            if( isset($order->order_split_drink->id) )
+            {
+                $bartitle           = "Order is placed by waiter";
+                $barmessage         = "Order is #".$order->id." placed by waiter";
+                $this->notifyBars($order, $bartitle, $barmessage);
+            }
         }
 
-        $order->refresh();
-        $order->loadMissing([
-            'items',
-            'restaurant.kitchens',
-            'order_split_food',
-            'order_split_drink'
-        ]);
-
-        // Generate PDF
-        $this->generatePDF($order);
-
-        // send notification to kitchens of the restaurant if order is food
-        if( isset($order->order_split_food->id) )
-        {
-           //kitchen notify
-            $kitchentitle    = "place new order";
-            $kitchenmessage  = "New Order has been #".$order->id." placed";
-            $this->notifyKitchens($order, $kitchentitle, $kitchenmessage);
-        }
-
-        // send notification to bar of the restaurant if order is drink
-        if( isset($order->order_split_drink->id) )
-        {
-            $bartitle           = "New order placed";
-            $barmessage         = "Order is #".$order->id." placed by waiter";
-            $this->notifyBars($order, $bartitle, $barmessage);
-        }
-
-        //customer notify
-        $title              = "place new order";
-        $message            = "Your Order has been #".$order->id." placed";
-        $this->notifyCustomer($order, $title, $message);
-
-        return $order;
+        return true;
     }
 
     /**
@@ -1007,10 +1120,12 @@ class OrderRepository extends BaseRepository
 
         $reOrder                        = $orderAgain;
         $reOrderItems                   = $reOrder->order_items;
+        $reOrderSplit                   = $reOrder->order_splits;
         $newOrder                       = $reOrder->replicate();
         $newOrder->type                 = Order::CART;
         $newOrder->status               = Order::PENDNIG;
         $newOrder->credit_amount        = 0.00;
+        $newOrder->order_category_type  = $reOrder->order_category_type;
         $newOrder->transaction_id       = null;
         $newOrder->card_id              = null;
         $newOrder->charge_id            = null;
@@ -1018,8 +1133,6 @@ class OrderRepository extends BaseRepository
         $newOrder->last_delayed_time    = null;
         $newOrder->remaining_date       = null;
         $newOrder->accepted_date        = null;
-        // $newOrder->pickup_point_id      = null;
-        // $newOrder->pickup_point_user_id = null;
         $newOrder->waiter_id            = null;
         $newOrder->served_date          = null;
         $newOrder->completion_date      = null;
@@ -1028,6 +1141,20 @@ class OrderRepository extends BaseRepository
         $newOrder->updated_at           = Carbon::now();
 
         $newOrder->save();
+
+        if( $reOrderSplit->count() )
+        {
+            foreach( $reOrderSplit as $split )
+            {
+                $newSplit = new OrderSplit();
+
+                $newSplit->order_id = $newOrder->id;
+                $newSplit->is_food  = $split->is_food;
+                $newSplit->status   = OrderSplit::PENDING;
+
+                $newSplit->save();
+            }
+        }
 
         $reOrderItems->loadMissing(['addons','mixer']);
 
@@ -1132,6 +1259,7 @@ class OrderRepository extends BaseRepository
      */
     public function venueUserList(array $data)
     {
+        $user           = auth()->user();
         $now            = Carbon::now();
         $lastHour       = Carbon::now()->subHour(1);
         $membershipLevel= isset( $data['membership_level'] ) ? $data['membership_level'] : "";
@@ -1150,6 +1278,18 @@ class OrderRepository extends BaseRepository
                         'users.username',
                         'users.credit_amount',
                         'users.points',
+                        DB::raw(
+                            "
+                            (
+                                CASE
+                                    WHEN friendship_status_tbl.friendship_status = 0 THEN 0
+                                    WHEN friendship_status_tbl.friendship_status = 1 THEN 1
+                                    WHEN friendship_status_tbl.friendship_status = 2 THEN 2
+                                    ELSE 
+                                    3
+                                END
+                            ) AS friendship_status
+                        "),
                         DB::raw("COALESCE(previous_qua, 0) AS previous_points"),
                         DB::raw("COALESCE(Abs(curr_qua), 0) AS current_points"),
                         DB::raw(
@@ -1201,11 +1341,29 @@ class OrderRepository extends BaseRepository
                     {
                         $join->on('users.id', '=', 'current_quarter.user_id');
                     })
+                    ->leftJoin(DB::raw
+                    (
+                        "(SELECT
+                            status AS friendship_status,
+                            user_id,
+                            friend_id
+                        FROM friendships
+                        WHERE (
+                            user_id = {$user->id}
+                            OR friend_id = {$user->id}
+                        ))  AS `friendship_status_tbl`
+                        "
+                    ), function($join)
+                    {
+                        $join->on('users.id', '=', 'friendship_status_tbl.user_id');
+                        $join->orOn('users.id', '=', 'friendship_status_tbl.friend_id');
+                    })
                     ->where('restaurant_id', $data['restaurant_id'])
                     ->whereNotIn('status', [Order::CUSTOMER_CANCELED])
+                    ->where('users.id', '!=', $user->id)
                     ->where('type', Order::ORDER)
-                    ->groupBy('orders.user_id')->get();
-                    // dd($venueList->toarray());
+                    ->groupBy('orders.user_id')
+                    ->get();
                     // echo common()->formatSql($venueList);die;
         if( $membershipLevel != "" )
         {
@@ -1264,9 +1422,39 @@ class OrderRepository extends BaseRepository
     {
         $auth_user = auth()->user();
         $friend = User::find($data['user_id']);
+        $checkDeclineRequest = User::where('id', $data['user_id'])
+            ->leftJoin(DB::raw
+            (
+                "(SELECT
+                    id AS friendship_id,
+                    status AS friendship_status,
+                    user_id,
+                    friend_id
+                FROM friendships
+                WHERE (
+                    user_id = {$auth_user->id}
+                    OR friend_id = {$auth_user->id}
+                ))  AS `friendship_status_tbl`
+                "
+                ),function($join)
+            {
+                $join->on('users.id', '=', 'friendship_status_tbl.user_id');
+                $join->orOn('users.id', '=', 'friendship_status_tbl.friend_id');
+            })
+            ->where('friendship_status_tbl.friendship_status', 2)
+            ->first();
+
+        if(!empty($checkDeclineRequest))
+        {
+            FriendRequest::where('id', $checkDeclineRequest->friendship_id)->delete();
+        }
+        
+
         $checkFriend    = FriendRequest::where('friend_id',$auth_user->id)->where('user_id',$data['user_id'])->first();
-        if($checkFriend->status != 2) {
-            throw new GeneralException('Already send Friend request'); 
+        if(isset($checkFriend)) {
+            if($checkFriend->status != 2) {
+                throw new GeneralException('Already send Friend request');
+            }
         }
         $auth_user->friends()->attach($friend->id);
 
@@ -1299,7 +1487,8 @@ class OrderRepository extends BaseRepository
             throw new GeneralException('No User Found');
         }
         $FriendRequest = FriendRequest::where('user_id', $data['user_id'])->where('friend_id', $auth_user->id,)->update(['status' => $data['status']]);
-        return $FriendRequest;
+        $auth_user->friend;
+        return $auth_user;
     }
 
     public function pendingFriendReq(array $data)
@@ -1378,12 +1567,18 @@ class OrderRepository extends BaseRepository
      */
     public function printOrder($data)
     {
-        $order          = Order::where(['id' => $data])->first();
+        $order          = Order::with([
+            'order_items' => [
+                'restaurant_item',
+                'addons',
+                'mixer'
+            ]
+        ])->where(['id' => $data])->first();
         $restaurant     = $order->restaurant->owners()->first();
 
         // Generate PDF
         $pdf        = app('dompdf.wrapper');
-        $pdf->loadView('pdf.index',compact('order','restaurant'));
+        $pdf->loadView('pdf.index',compact('order','restaurant'))->setPaper('3.5in', '8.5in');;
         $filename   = 'invoice_'.$order->id.'.pdf';
         $content    = $pdf->output();
         $file       = storage_path("app/public/order_pdf");
@@ -1399,14 +1594,97 @@ class OrderRepository extends BaseRepository
 
     public function userProfileData(array $data)
     {
-        $userData = User::find($data['user_id']);
+        $authId = auth()->user()->id;
+        // $userData = $userData = User::where('id',$data['user_id'])->with(['getMyfriend'])->first();
+        $userData = User::where('id', $data['user_id'])
+            ->leftJoin(DB::raw
+            (
+                "(SELECT
+                    status AS friendship_status,
+                    user_id,
+                    friend_id
+                FROM friendships
+                WHERE (
+                    user_id = {$authId}
+                    OR friend_id = {$authId}
+                ))  AS `friendship_status_tbl`
+                "
+                ),function($join)
+            {
+                $join->on('users.id', '=', 'friendship_status_tbl.user_id');
+                $join->orOn('users.id', '=', 'friendship_status_tbl.friend_id');
+            })
+            ->first();
+
         return $userData;
     }
 
-    public function myFriendList(array $data)
+    /**
+     * Method myFriendList
+     *
+     *
+     * @return Collection
+     */
+    public function myFriendList(): Collection
     {
         $user = auth()->user();
 
-        return $user->friends;
+        $sql = User::select([
+            'users.*',
+            'friendship_status_tbl.friendship_status AS fr'
+        ])
+        ->join(DB::raw
+        (
+            "(SELECT
+                status AS friendship_status,
+                user_id,
+                friend_id
+            FROM friendships
+            WHERE (
+                user_id = {$user->id}
+                OR friend_id = {$user->id}
+            ))  AS `friendship_status_tbl`
+            "
+        ), function($join)
+        {
+            $join->on('users.id', '=', 'friendship_status_tbl.user_id');
+            $join->orOn('users.id', '=', 'friendship_status_tbl.friend_id');
+        })
+        ->where('users.id', '!=', $user->id)
+        ->where('friendship_status_tbl.friendship_status', 1)
+        ->get();
+
+        return $sql;
+    }
+
+    public function unFriend(array $data)
+    {
+        $auth_user = auth()->user();
+        $checkUnFriendRequest = User::where('id', $data['user_id'])
+            ->leftJoin(DB::raw
+            (
+                "(SELECT
+                    id AS friendship_id,
+                    status AS friendship_status,
+                    user_id,
+                    friend_id
+                FROM friendships
+                WHERE (
+                    user_id = {$auth_user->id}
+                    OR friend_id = {$auth_user->id}
+                ))  AS `friendship_status_tbl`
+                "
+                ),function($join)
+            {
+                $join->on('users.id', '=', 'friendship_status_tbl.user_id');
+                $join->orOn('users.id', '=', 'friendship_status_tbl.friend_id');
+            })
+            ->first();
+        
+        if(!empty($checkUnFriendRequest))
+        {
+            $delete = FriendRequest::where('id', $checkUnFriendRequest->friendship_id)->delete();
+        }
+        return $delete;
     }
 }

@@ -20,14 +20,14 @@ class VenueController extends Controller
      */
     public function index()
     {
+        // Restaurant Session
         $restaurant = session('restaurant');
         $restaurant->refresh();
-        $restaurant->loadMissing(['orders', 'reviews']);
+        $restaurant->loadMissing(['orders', 'reviews','restaurant_time']);
+
         $order_reviews = $restaurant->reviews()->with(['order', 'order.user'])->orderByDesc('id')->paginate(10);
-        // dd($order_reviews);
-        $days = Day::all();
-        $restaurant->loadMissing(['restaurant_time']);
-        $res_times = $restaurant->restaurant_time;
+        $days          = Day::all();
+        $res_times     = $restaurant->restaurant_time;
         // $order_reviews = OrderReview::all();
 
         return view('venue.index', compact('restaurant','days','res_times','order_reviews'));
@@ -89,13 +89,36 @@ class VenueController extends Controller
     public function imageUpload(Request $request)
     {
         $restaurant = session('restaurant');
-        // dd($request->all());
-        
+
         if ($request->hasFile('image'))
         {
             $this->upload($request->file('image'), $restaurant);
         }
         return true;
+    }
+
+    public function venueUpdate(Request $request)
+    {
+        $restaurant = session('restaurant');
+        $address    = [];
+
+        // $address    = addressLatLong($request->street1 .  $request->city . $request->state);
+
+        $addressInfo    = [
+            'name'          => $request->res_name,
+            'street1'       => $request->street1,
+            'street2'       => $request->street2,
+            'state'         => $request->state,
+            // 'latitude'      => isset($request->latitude) ? $request->latitude : $address['latitude'],
+            // 'longitude'     => isset($request->longitude) ? $request->longitude : $address['longitude'],
+            'postcode'      => $request->postcode,
+            'city'          => $request->city,
+            'specialisation'=> $request->specialisation,
+        ];
+
+        $restaurant->update($addressInfo);
+
+        return $restaurant->refresh();
     }
 
     /**

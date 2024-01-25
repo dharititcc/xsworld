@@ -2,12 +2,10 @@
 
 namespace App\Http\Resources;
 
-use App\Models\Order;
-use App\Repositories\OrderRepository;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class VenueUserResource extends JsonResource
+class PendingFriendsResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -16,8 +14,6 @@ class VenueUserResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        // dd((double) round($this->restaurant->avg_review_rating,1));
-        // dd($this->friend);
         return [
             'id'                    => $this->id,
             'first_name'            => $this->first_name,
@@ -29,12 +25,9 @@ class VenueUserResource extends JsonResource
             'membership_level'      => $this->membership['membership_level'],
             'credit_amount'         => (float) $this->credit_amount ?? 0,
             'points'                => $this->points ?? 0,
-            'friendship'            => isset($this->friendship_status) ? $this->friendship_status  : 3,
+            'friendship'            => 0,
+            // 'myfriend'              => isset($this->friends) ? $this->friends : [],
             'member_id'             => $this->id,
-            // 'restaurant'            => $this->restaurant,
-            // ''
-            // 'rating'                => (double) round($this->restaurant->avg_review_rating,1),
-            // 'distance'              => (float) $this->restaurant->distance,
         ];
     }
 }

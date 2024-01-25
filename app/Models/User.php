@@ -411,13 +411,13 @@ class User extends Authenticatable
     }
 
     /**
-     * Get all of the credit_points for the User
+     * Get all of the friends for the User
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
     public function friends(): BelongsToMany
     {
-        return $this->belongsToMany(User::class,'friendships','user_id','friend_id')->where('status',1)->withTimestamps();
+        return $this->belongsToMany(User::class,'friendships','user_id','friend_id')->withTimestamps();
     }
     
     /**
@@ -440,8 +440,52 @@ class User extends Authenticatable
         return $this->belongsToMany(User::class,'friendships','friend_id','user_id')->where('status', 0)->withTimestamps();
     }
 
-    public function friend()
+    /**
+     * Get the FriendRequest associated with the User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+    */
+
+    public function friend(): HasOne
     {
         return $this->hasOne(FriendRequest::class,'friend_id','id');
+    }
+
+    /**
+     * Get the FriendRequest associated with the User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+    */
+
+    public function getMyfriend(): HasOne
+    {
+        // return $this->hasOne(FriendRequest::class)->where('user_id',auth()->user()->id)->orWhere('friend_id',auth()->user()->id);
+        return $this->hasOne(FriendRequest::class, 'user_id', 'id')
+            ->where(function ($query) {
+                $query->where('friend_id', auth()->user()->id)
+                      ->orWhere('user_id', auth()->user()->id);
+            });
+    }
+
+    /**
+     * Get all of the myfriends for the User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function myfriends(): BelongsToMany
+    {
+        //request sent
+        return $this->belongsToMany(User::class,'friendships','user_id','friend_id')->where('status', 1)->withTimestamps();
+    }
+
+    /**
+     * Get all of the mefriends for the User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function mefriends(): BelongsToMany
+    {
+        //accept request
+        return $this->belongsToMany(User::class,'friendships','friend_id','user_id')->where('status', 1)->withTimestamps();
     }
 }

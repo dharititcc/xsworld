@@ -57,7 +57,7 @@ form .logo{ margin: 0 auto 6vh auto; display: block; max-width: 72%;}
 
 .form-control.invert{filter: invert(1); color: #000 !important;} 
 
-.form-info{ font-size: 12px; color: var(--d-grey);}
+.form-info{ font-size: 12px;}
 
 .btn-box{ margin-top: 60px;}
 
@@ -86,7 +86,7 @@ form .logo{ margin: 0 auto 6vh auto; display: block; max-width: 72%;}
 .custom-nav.navbar .right-info-element{ min-width: 16%; display: flex;}
 
 main{ padding: 0 15px;}
-.orders main{ padding: 0;}
+.orders main{ padding: 0; height: 100%;}
 
 .hero{ height: 400px; transition: .3s;} 
 .hero img{ width: 100%; object-fit: cover; height: 100%; object-position: center;}
@@ -504,7 +504,7 @@ textarea.prd-desc.h-96{ height:96px;}
 .hitory-list{ padding-right: 0;}
 
 .history-pagination,
-.hitory-list ul.order-scroll{position: fixed; width: calc(58.33333333% - 9.8rem); transition: .25s;}
+.hitory-list ul.order-scroll{position: fixed; width: calc(58.33333333% - 10.4rem); transition: .25s;}
 
 .hitory-list ul.order-scroll{ padding: 0 0 0 0; margin: 0 0 0 0; list-style: none; }
 
@@ -557,8 +557,10 @@ time{ color: #fff; width: 46px; margin-right: 20px; word-break: break-all;}
 .no-history-view{ max-width: 70%; margin: auto;}
 
 .sb-sidenav-toggled .hitory-list ul.order-scroll,
-.sb-sidenav-toggled .history-pagination{ width: calc(58.33333333% - .4rem);}
-
+.sb-sidenav-toggled .history-pagination{ width: calc(58.33333333% - 1.1rem)}
+.form-control:disabled, .form-control[readonly] {
+  background-color: transparent;
+}
 .error { color: #C00;}
 
 .dataTables_length label{ color:#fff;}
@@ -724,6 +726,10 @@ table.dataTable thead th{ padding: 1.1rem .4rem;}
 }
 
 .orders .dataTables_length{margin-left: 10px;}
+.orders #wrapper{ height: 100%;}
+.orders .navbar + .container-fluid{ height: 100%;}
+.orders main .row{ height: 100%;}
+
 
 
 /* responsive */

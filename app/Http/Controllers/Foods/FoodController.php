@@ -118,6 +118,11 @@ class FoodController extends Controller
     {
         $restaurant = session('restaurant')->loadMissing(['main_categories', 'main_categories.children']);
         $categories = $request->get('category_id');
+        $request->validate([
+            'name' => 'regex:/^[a-zA-Z\s]+$/u'
+        ],[
+            'name.regex' => "Only allow letters and spaces"
+        ]);
 
         if( $request->is_variable == 0 )
         {
@@ -253,8 +258,10 @@ class FoodController extends Controller
         $restaurant = session('restaurant')->loadMissing(['main_categories', 'main_categories.children']);
 
         $request->validate([
+            'name' => 'regex:/^[a-zA-Z\s]+$/u',
             'price' => 'required|numeric|between:0.1,9999999999.99'
         ],[
+            'name.regex' => "Only allow letters and spaces",
             'price.between' => "Please Enter valid price"
         ]);
         if ($request->hasFile('image'))
@@ -390,7 +397,6 @@ class FoodController extends Controller
             // $data = Excel::import(new DrinksImport(), $file); // use for default imports
             $data = Excel::toArray(new FoodImport, $file); // use for get data without heading row
             // $data = Excel::toArray([], $file);
-            // dd($data);
 
             // $this->validateExcel($data , $restaurant);
             // dd($validateDrink);
@@ -400,6 +406,32 @@ class FoodController extends Controller
 
             // }
             // exit;
+
+            $shouldRedirectProduct = false;
+            foreach($data[0] as $key => $row)
+            {
+                $text = htmlentities(strtolower($row[1]));
+
+                $category = Category::where([
+                                'name'          => $row[2],
+                                'restaurant_id' => $restaurant->id
+                            ])->first();
+
+                $restaurants = RestaurantItem::whereRaw(DB::raw("LOWER(`name`) = '{$text}'"))
+                ->where('restaurant_id', $restaurant->id)
+                ->where('category_id', $category->id)
+                ->count();
+                if($restaurants == 1)
+                {
+                    $shouldRedirectProduct = true;
+                    $category_message = "The Product is already exist with ".$row[2]." . Please enter valid items in row no ".$key+2;
+                    break;
+                }
+            }
+            if ($shouldRedirectProduct == true) {
+                return redirect()->route('restaurants.drinks.index')->with('message', $category_message);
+            }
+
             $shouldRedirect = false;
             foreach($data[0] as $key => $row)
             {
@@ -430,15 +462,12 @@ class FoodController extends Controller
                 $drinkArr = [
                     "name"                  => $row[1],
                     "category_id"           => $category->id,
-                    "description"           => $row[8],
+                    "description"           => $row[5],
                     "price"                 => $row[3],
-                    "country_of_origin"     => $row[5],
                     "ingredients"           => $row[4],
-                    "type_of_drink"         => $row[7],
-                    "year_of_production"    => $row[6],
-                    "is_available"          => $row[9],
-                    "is_featured"           => $row[10],
-                    "is_variable"           => $row[11],
+                    "is_available"          => $row[6],
+                    "is_featured"           => $row[7],
+                    "is_variable"           => $row[8],
                     "type"                  => RestaurantItem::ITEM,
                     "restaurant_id"         => $restaurant->id,
                     "created_at"            => Carbon::now(),
@@ -460,5 +489,16 @@ class FoodController extends Controller
             }
             return redirect()->route('restaurants.foods.index')->with('message', 'Foods imported successfully!');;
         }
+    }
+
+    /**
+     * Method SampleFileFood
+     *
+     * @return void
+     */
+    public function SampleFileFood()
+    {
+        $destinationPath = public_path('/XSWorld_sample_data_food.xlsx');
+        return response()->download($destinationPath);
     }
 }

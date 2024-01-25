@@ -2,16 +2,19 @@
 {
     XS.Venue = {
         selectors: {
-            venueModalBtn:  $('.venue_popup_modal'),
-            venueLabelTime: $('.times'),
-            venueStartTime: $('.start_time'),
-            venueCloseTime: $('.close_time'),
-            venueSubmitBtn: $('#venue_submitBtn'),
-            venueForm:      $('#addtimerform'),
-            venueResImage:  $('.venue_res_image'),
+            venueModalBtn:      $('.venue_popup_modal'),
+            venueLabelTime:     $('.times'),
+            venueStartTime:     $('.start_time'),
+            venueCloseTime:     $('.close_time'),
+            venueSubmitBtn:     $('#venue_submitBtn'),
+            venueForm:          $('#addtimerform'),
+            venueResImage:      $('.venue_res_image'),
             venueImageUpload:   $('#img-upload'),
-            venueImageForm: $('#addimageform'),
+            venueImageForm:     $('#addimageform'),
             venueImgSubmitBtn:  $('#venueImg_submitBtn'),
+            restaurantEditBtn:  $('.edit_venue_data'),
+            restaurantForm:     $("#addvenueform"),
+            restaurantSubmitBtn:$("#venue_data_submitBtn"),
         },
 
         init: function()
@@ -25,6 +28,7 @@
 
             context.editVenueModal();
             context.editVenueImage();
+            context.editVenueData();
         },
 
         editVenueModal: function()
@@ -36,6 +40,17 @@
                 context.selectors.venueCloseTime.removeAttr("style");
                 context.selectors.venueSubmitBtn.removeAttr("style");
 
+            });
+
+            context.selectors.restaurantEditBtn.on("click", function() {
+                context.selectors.restaurantSubmitBtn.removeAttr("style");
+                $('#res_name').removeAttr('disabled');
+                $('#street1').removeAttr('disabled');
+                $('#street2').removeAttr('disabled');
+                $('#city').removeAttr('disabled');
+                $('#state').removeAttr('disabled');
+                $('#postcode').removeAttr('disabled');
+                $('#specialisation').removeAttr('disabled');
             });
 
             context.selectors.venueSubmitBtn.on("click", function(e) {
@@ -123,6 +138,42 @@
                         console.log('Error');
                     },
                 });
+            });
+        },
+
+        editVenueData: function()
+        {
+            var context = this;
+            context.selectors.restaurantSubmitBtn.on('click', function() {
+
+                var $this   = $(this),
+                    data    = new FormData(context.selectors.restaurantForm.get(0));
+
+                $.ajax({
+                    url: moduleConfig.venueEdit,
+                    type: "POST",
+                    data: data,
+                    processData: false,
+                    contentType: false,
+                    headers: {
+                        'X-CSRF-TOKEN': jQuery('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function(res) {
+                        $('#res_name').attr('disabled');
+                        $('#street1').attr('disabled');
+                        $('#street2').attr('disabled');
+                        $('#city').attr('disabled');
+                        $('#state').attr('disabled');
+                        $('#postcode').attr('disabled');
+                        $('#specialisation').attr('disabled');
+                        context.selectors.restaurantSubmitBtn.attr("style","display: none");
+                        // location.reload();
+                        XS.Common.handleSwalSuccess('Venue Updated successfully.');
+                    },
+                    error:function(request, status, error) {
+                        console.log('Error');
+                    },
+                })
             });
         },
     }

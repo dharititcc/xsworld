@@ -89,12 +89,18 @@ class OrderController extends APIController
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function orderHistory()
+    public function orderHistory(Request $request)
     {
-        $orderList = $this->repository->getCompletedKitchenOrders();
-        if( $orderList->count() )
+        $orderList = $this->repository->getCompletedKitchenOrders($request->all());
+        
+        if( $orderList['orders']->count() )
         {
-            return $this->respondSuccess('Order History Fetched successfully.', KitchenOrderListResource::collection($orderList));
+            $historyArray = [
+                'total_orders'  => $orderList['total_orders'],
+                'orders'        => KitchenOrderListResource::collection($orderList['orders'])
+            ];
+
+            return $this->respondSuccess('Order History Fetched successfully.', $historyArray);
         }
 
         throw new GeneralException('There is no order found');

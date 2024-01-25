@@ -85,4 +85,14 @@ class OrderSplit extends Model
     {
         return $this->hasMany(OrderItem::class, 'order_split_id', 'id')->where('type', RestaurantItem::ITEM);
     }
+
+    /**
+     * Get all of the all_items for the OrderSplit
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function all_items(): HasMany
+    {
+        return $this->hasMany(OrderItem::class, 'order_split_id', 'id');
+    }
 }

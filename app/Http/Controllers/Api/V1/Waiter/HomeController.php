@@ -288,7 +288,7 @@ class HomeController extends APIController
         if($order_data)
         {
             $data = [
-                'total_order' => $order_data['total_orders'],
+                'total_orders'=> $order_data['total_orders'],
                 'orders'      => $order_data['total_orders'] ? WaiterOrderListResource::collection($order_data['orders']) : ''
             ];
             return $this->respondSuccess('Order data found', $data);
@@ -306,7 +306,7 @@ class HomeController extends APIController
     public function placeOrder(PlaceOrderRequest $request)
     {
         $place_order = $this->orderRepository->placeOrderwaiter($request->validated());
-        return $this->respondSuccess('Order payment successfully.', new OrderResource($place_order));
+        return $this->respondSuccess('Order payment successfully.');
     }
 
     /**

@@ -12,15 +12,19 @@
     </div>
     <div class="grid colmn-5">
 
-        @foreach ($waiters as $waiter)
-        {{-- {{dump($waiter)}} --}}
-        <div class="grey-brd-box waiters">
-            <div class="status-box "># {{ $waiter->id }} {{$waiter->waiter->first_name}}
-                <div class="status"> Active</div>
+        @if ($waiters->count())
+            @foreach ($waiters as $waiter)
+            {{-- {{dump($waiter)}} --}}
+            <div class="grey-brd-box waiters">
+                <div class="status-box "># {{ $waiter->id }} {{$waiter->waiter->first_name}}
+                    <div class="status"> Active</div>
+                </div>
+                <div class="wait-footer">Currently Serving {{ $waiter->restaurant_table->name }}</div>
             </div>
-            <div class="wait-footer">Currently Serving {{ $waiter->restaurant_table->name }}</div>
-        </div>
-        @endforeach
+            @endforeach
+        @else
+            <div>No Waiter Found</div>
+        @endif
         {{-- <div class="grey-brd-box waiters">
                     <div class="status-box ">#02 Samantha   <div class="status"> Active</div></div>
                     <div class="wait-footer">Currently Idle</div>

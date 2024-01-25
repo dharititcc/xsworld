@@ -12,10 +12,12 @@
                 <ul>
                     <li><a href="#" class="active">General Overview</a></li>
                     @if ($categories->count())
-                    @foreach ($categories as $category)
-                    {{-- {{ dump ($category)}} --}}
-                    <li><a href="#">{{ $category->children_parent->name }} - {{ $category->name }}</a></li>
-                    @endforeach
+                        @foreach ($categories as $category)
+                        {{-- {{ dump ($category)}} --}}
+                        <li><a href="#">{{ $category->children_parent->name }} - {{ $category->name }}</a></li>
+                        @endforeach
+                    @else
+                        <div>No categories Found</div>
                     @endif
                 </ul>
             </div>

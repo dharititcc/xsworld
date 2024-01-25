@@ -33,47 +33,48 @@
 
                             </div>
                         </div>
-                        <div class="grey-brd-box mt-lg-4">
+                        <div class="grey-brd-box mt-lg-4 ">
                             <div class="title">
-                                <h2>Venue Settings</h2> <a href="#" class="edit">EDIT</a>
+                                <h2>Venue Settings</h2> <a href="javascript:void(0);" class="edit_venue_data">EDIT</a>
                             </div>
                             <div class="padbox">
-                                <div class="form-group">
-                                    <input type="text" class="form-control vari1" placeholder="??">
-                                </div>
-                                <div class="form-group">
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <input type="text" class="form-control vari1" placeholder="??">
-                                        </div>
-                                        <div class="col-md-6">
-                                            <input type="text" class="form-control vari1" placeholder="??">
+                                <form name="addvenueform" id="addvenueform" method="post">
+                                    <div class="form-group">
+                                        <input type="text" class="form-control vari1" name="res_name" id="res_name" value="{{$restaurant->name}}" placeholder="??" disabled>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <input type="text" class="form-control vari1" name="street1" id="street1" value="{{$restaurant->street1}}" placeholder="Street1" disabled>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <input type="text" class="form-control vari1" name="street2" id="street2" value="{{$restaurant->street2}}" placeholder="Street2" disabled>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="form-group">
-                                    <input type="text" class="form-control vari1" placeholder="??">
-                                </div>
-                                <div class="form-group">
-                                    <input type="text" class="form-control vari1" placeholder="??">
-                                </div>
-                                <div class="form-group">
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <input type="text" class="form-control vari1" placeholder="??">
-                                        </div>
-                                        <div class="col-md-6">
-                                            <input type="text" class="form-control vari1" placeholder="??">
+                                    <div class="form-group">
+                                        <input type="text" class="form-control vari1" name="city" id="city" value="{{$restaurant->city}}" placeholder="city" disabled>
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="text" class="form-control vari1" name="state" id="state" value="{{$restaurant->state}}" placeholder="State" disabled>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <input type="text" class="form-control vari1" name="postcode" id="postcode" value="{{$restaurant->postcode}}" placeholder="Postcode" disabled>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <input type="text" class="form-control vari1" name="phone" id="phone" value="{{$restaurant->phone}}" placeholder="Phone" disabled>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="form-group">
-                                    <input type="text" class="form-control vari1" placeholder="??">
-                                </div>
-                                =
+                                    <div class="form-group">
+                                        <textarea class="form-control vari1" name="specialisation" id="specialisation" value="" placeholder="specialisation" disabled>{{$restaurant->specialisation}}</textarea>
+                                    </div>
+                                </form>
                             </div>
 
-                            <button class="bor-btn w-100 font-30 top-bor" type="button">Support</button>
+                            <button class="bor-btn w-100 font-30 top-bor" id="venue_data_submitBtn" style="display: none"  type="submit">Submit</button>
                         </div>
                     </div>
                     <div class="col-lg-6 col-xl-6 col-xxl-4 m-xxl-space review-box-outer">
@@ -97,32 +98,36 @@
                                 </div>
                             </div>
                             <div class="scroll-y review-box-height">
-                                @foreach ($order_reviews as $orderReview)
-                                    <div class="line-gradient">
-                                        <table width="100%" class="reviewer mb-2">
-                                            <tr>
-                                                <td>{{ \Carbon\Carbon::parse($orderReview->order->created_at)->format('d/m
-                                                Y') }}</td>
-                                                <td>
-                                                    <div class="name">{{$orderReview->order->user->first_name}}</div>
-                                                    <div class="order">Order #{{$orderReview->order->id}}</div>
-                                                </td>
-                                                <td><i class="icon-ok-circled"></i> ${{$orderReview->order->total}}</td>
-                                            </tr>
-                                        </table>
-                                        <div class="complete mb-2">Complete
-                                            <div class="stars">
-                                                @for ($i=0; $i<(float) $orderReview->rating; $i++)
-                                                    <i class="icon-star"></i>
-                                                @endfor
+                                @if ($order_reviews->count())
+                                    @foreach ($order_reviews as $orderReview)
+                                        <div class="line-gradient">
+                                            <table width="100%" class="reviewer mb-2">
+                                                <tr>
+                                                    <td>{{ \Carbon\Carbon::parse($orderReview->order->created_at)->format('d/m
+                                                    Y') }}</td>
+                                                    <td>
+                                                        <div class="name">{{$orderReview->order->user->first_name}}</div>
+                                                        <div class="order">Order #{{$orderReview->order->id}}</div>
+                                                    </td>
+                                                    <td><i class="icon-ok-circled"></i> ${{$orderReview->order->total}}</td>
+                                                </tr>
+                                            </table>
+                                            <div class="complete mb-2">Complete
+                                                <div class="stars">
+                                                    @for ($i=0; $i<(float) $orderReview->rating; $i++)
+                                                        <i class="icon-star"></i>
+                                                    @endfor
+                                                </div>
                                             </div>
-                                        </div>
 
-                                            <div class="rvnote mb-4">{{$orderReview->comment}} </div>
-                                            <div class="ord-time">Order Time - {{ \Carbon\Carbon::parse($orderReview->order->created_at)->format('H:i') }}
-                                            </div>
-                                    </div>
-                                @endforeach
+                                                <div class="rvnote mb-4">{{$orderReview->comment}} </div>
+                                                <div class="ord-time">Order Time - {{ \Carbon\Carbon::parse($orderReview->order->created_at)->format('H:i') }}
+                                                </div>
+                                        </div>
+                                    @endforeach
+                                @else
+                                    <div> No Order reviews Found </div>
+                                @endif
                             </div>
 
                             @if ($order_reviews->total() > 10)
@@ -156,8 +161,7 @@
                             class="grey-brd-box padbox text-center lable-box mt-3 {{ Route::is('restaurants.drinks.*') ? 'active' : '' }}"><span>Drinks
                                 Management</span></a>
                         <a href="{{ route('restaurants.mixers.index') }}"
-                            class="grey-brd-box padbox text-center lable-box mt-3 {{ Route::is('restaurants.mixers.*') ? 'active' : '' }}"
-                            data-bs-toggle="modal" data-bs-target="#exampleModal"><span>Mixer Management</span></a>
+                            class="grey-brd-box padbox text-center lable-box mt-3 {{ Route::is('restaurants.mixers.*') ? 'active' : '' }}"><span>Mixer Management</span></a>
                         <a href="{{ route('restaurants.pickup.index') }}"
                             class="grey-brd-box padbox text-center lable-box mt-3 {{ Route::is('restaurants.pickup.*') ? 'active' : '' }}"><span>Pick-up
                                 Zones</span></a>
@@ -197,7 +201,8 @@
     <script>
         var moduleConfig = {
             venueStore: "{!! route('restaurants.venue.store') !!}",
-            resImageUpload: "{!! route('restaurants.res-image-upload') !!}"
+            resImageUpload: "{!! route('restaurants.res-image-upload') !!}",
+            venueEdit: "{!! route('restaurants.venue-edit') !!}",
         };
         $(document).ready(function() {
             XS.Venue.init();

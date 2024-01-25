@@ -90,8 +90,9 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'v1', 'as' => 'api.v1.'], fun
         Route::post('/my-friend-request', 'OrderController@pendingFriendRequest')->name('pendingFriendRequest');
 
         Route::post('/gift-credit-send', 'OrderController@giftCredits')->name('giftCredits');
-        Route::post('/friendship-list', 'OrderController@friendShip')->name('friendShip');
+        Route::get('/friendship-list', 'OrderController@friendShip')->name('friendShip');
         Route::post('/get-user-profile', 'OrderController@userProfile')->name('userProfile');
+        Route::post('/un-friend', 'OrderController@unFriend')->name('unFriend');
 
         // {api/v1/orderstatusupdate}
         Route::post('/orderstatusupdate', 'OrderController@orderStatusUpdate')->name('orderStatusUpdate');
@@ -194,7 +195,7 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'v1', 'as' => 'api.v1.'], fun
             Route::post('logout', 'AuthController@logout')->name('kitchen.logout');
 
             Route::get('order/list','OrderController@orderList')->name('kitchen.order.list');
-            Route::get('order-history','OrderController@orderHistory')->name('kitchen.order.history');
+            Route::post('order-history','OrderController@orderHistory')->name('kitchen.order.history');
             Route::post('order-update-status','OrderController@updateOrderStauts')->name('kitchen.order.update.status');
             Route::post('order-show','OrderController@orderDetail')->name('kitchen.order.show');
             Route::post('gostatus','OrderController@gostatus')->name('kitchen.gostatus');

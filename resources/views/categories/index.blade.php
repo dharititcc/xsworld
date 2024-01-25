@@ -48,6 +48,8 @@
                     $cnt++;
                 @endphp
             @endforeach
+        @else
+            <div>No categories Found</div>
         @endif
     </div>
 
