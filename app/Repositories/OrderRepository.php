@@ -1130,18 +1130,15 @@ class OrderRepository extends BaseRepository
 
         $newOrder->save();
 
-        $newSplit = new OrderSplit();
+        // $newSplit = new OrderSplit();
 
         if( $reOrderSplit->count() )
         {
-            foreach( $reOrderSplit as $split )
-            {
-                $newSplit->order_id = $newOrder->id;
-                $newSplit->is_food  = $split->is_food;
-                $newSplit->status   = OrderSplit::PENDING;
-
-                $newSplit->save();
-            }
+            $orderSplit = OrderSplit::create([
+                'order_id'  => $newOrder->id,
+                'is_food'   => $reOrderSplit[0]->is_food,
+                'status'    => OrderSplit::PENDING
+            ]);
         }
 
         $reOrderItems->loadMissing(['addons','mixer']);
@@ -1160,7 +1157,7 @@ class OrderRepository extends BaseRepository
                     $addon->offsetUnset('parent_item_id');
                     $addon->offsetUnset('order_id');
                     $addon->order_id        =  $newOrderItem->order_id;
-                    $addon->order_split_id  =  $newSplit->id;
+                    $addon->order_split_id  =  $orderSplit->id;
                     $newOrderItem->addons()->create($addon->toArray());
                 }
             }
