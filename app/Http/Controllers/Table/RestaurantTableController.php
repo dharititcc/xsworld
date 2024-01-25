@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Table;
 
+use App\Exceptions\GeneralException;
 use App\Http\Controllers\Controller;
 use App\Models\CustomerTable;
 use App\Models\RestaurantTable;
@@ -75,6 +76,17 @@ class RestaurantTableController extends Controller
     public function store(Request $request)
     {
         $restaurant = session('restaurant');
+        $tableNameValidation = RestaurantTable::where('restaurant_id', $restaurant->id)->where('name',$request->name)->count();
+        $tableCodeValidation = RestaurantTable::where('restaurant_id', $restaurant->id)->where('code',$request->code)->count();
+        if($tableNameValidation > 0 && $tableCodeValidation > 0) {
+            throw new GeneralException('Please enter unique value');
+        } 
+        if($tableNameValidation > 0) {
+            throw new GeneralException('Please enter unique Table name');
+        } 
+        if($tableCodeValidation > 0) {
+            throw new GeneralException('Please enter unique table code');
+        }
         $table = RestaurantTable::create([
             'name'  => $request->name,
             'code'  => $request->code,
