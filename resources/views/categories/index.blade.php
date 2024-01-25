@@ -235,7 +235,8 @@
 
                 data.append('name', cat_name);
                 data.append('photo', photo);
-
+                $(".error").remove();
+                
                 $.ajax({
                     url: moduleConfig.categoryName,
                     type: "POST",
