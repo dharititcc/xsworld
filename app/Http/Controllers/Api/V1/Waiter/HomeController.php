@@ -59,7 +59,7 @@ class HomeController extends APIController
             'customer_tables.order_id',
             'restaurant_tables.restaurant_id',
             DB::raw("0 as waiter_status"),
-            'customer_tables.updated_at AS order_date'
+            'customer_tables.created_at AS order_date'
         ])
         ->with([
             'user',
@@ -81,7 +81,7 @@ class HomeController extends APIController
             'orders.restaurant_id',
             'orders.type',
             'orders.waiter_status',
-            'orders.updated_at AS order_date'
+            'orders.created_at AS order_date'
         ])
         ->with([
             'restaurant_table',
