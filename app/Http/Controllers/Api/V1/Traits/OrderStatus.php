@@ -42,6 +42,9 @@ trait OrderStatus
                 }
             }
 
+            $title      = "Kitchen ready for pickup";
+            $message    = "Your Order is #".$order->id." kitchen ready for pickup";
+
 
             $titleWaiter      = "Ready for pickup";
             $messageWaiter    = "Your Order is #".$order->id." kitchen ready for pickup";
@@ -76,6 +79,10 @@ trait OrderStatus
                 // update customer table update
                 CustomerTable::where('user_id', $order->user->id)->where('order_id', $order->id)->delete();
             }
+
+            $title      = "Kitchen cancelled your order";
+            $message    = "Your Order is #".$order->id." cancelled";
+
             $titleWaiter      = "Restaurant kitchen cancelled";
             $messageWaiter    = "Your Order is #".$order->id." kitchen cancelled";
             $codeWaiter       = Order::WAITER_CANCEL_ORDER;
@@ -109,6 +116,9 @@ trait OrderStatus
 
             // update user's points
             $this->updateUserPoints($order->user, ['points' => $totalPoints]);
+
+            $title      = "Restaurant kitchen confirm collection";
+            $message    = "Your Order is #".$order->id." ready for collection";
 
             $titleWaiter      = "Restaurant kitchen confirm collection";
             $messageWaiter    = "Your Order is #".$order->id." ready for collection";
