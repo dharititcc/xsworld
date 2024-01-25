@@ -1088,7 +1088,7 @@ class OrderRepository extends BaseRepository
     public function reOrder(array $data): Order
     {
         $user                   = auth()->user();
-        $orderAgain             = $user->orders()->where('restaurant_id', $data['restaurant_id'])->where('type', Order::ORDER)->whereNotIn('status',[Order::CUSTOMER_CANCELED,Order::RESTAURANT_CANCELED,Order::RESTAURANT_TOXICATION,Order::DENY_ORDER,Order::CURRENTLY_BEING_PREPARED,Order::READYFORPICKUP,Order::COMPLETED])->orderByDesc('id')->first();
+        $orderAgain             = $user->orders()->where('restaurant_id', $data['restaurant_id'])->where('type', Order::ORDER)->whereNotIn('status',[Order::CUSTOMER_CANCELED,Order::RESTAURANT_CANCELED,Order::RESTAURANT_TOXICATION,Order::DENY_ORDER,Order::CURRENTLY_BEING_PREPARED,Order::READYFORPICKUP,Order::COMPLETED, Order::PENDNIG])->orderByDesc('id')->first();
 
         $resName = Restaurant::select('name')->where('id',$data['restaurant_id'])->first();
         if( !isset($orderAgain->id) )
