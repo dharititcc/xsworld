@@ -75,6 +75,41 @@
                 var endDate = picker.endDate.format('DD-MM-YYYY');
                 context.bindChart(startDate,endDate);
             });
+
+            // With category
+            
+        },
+
+        categoryFilter: function(){
+            jQuery('.product_items').on('click', function(e)
+            {
+                e.preventDefault();
+                var $this       = $(this),
+                    categoryId  = $this.data('category_id');
+                    console.log(categoryId);
+
+                // clear active class
+                $this.closest('ul').find('li').find('a').each(function(){
+                    $(this).removeClass('active');
+                });
+
+                if( !categoryId )
+                {
+                    // all focus
+                    $this.find('.product_items').removeClass('active');
+                    $this.addClass('active');
+                }
+                else
+                {
+                    // specific category focus
+                    $this.find('.product_items').removeClass('active');
+                    $this.addClass('active');
+                }
+
+                context.table.ajax.reload();
+
+                context.makeDatatable(categoryId);
+            });
         },
 
         filterChart: function()
@@ -187,6 +222,8 @@
         makeDatatable: function (){
             var context     = this;
 
+            context.categoryFilter();
+
             context.table = context.selectors.drinkTable.DataTable({
                 processing: true,
                 serverSide: true,
@@ -196,7 +233,11 @@
                 order: [[0, 'asc']],
                 ajax: {
                     url: moduleConfig.getAccessibles,
-                    type: 'get'
+                    type: 'get',
+                    data: function(data)
+                    {
+                        data.category   = $('.item-list.overview').find('li').find('a.active').data('category_id')
+                    },
                 },
                 columns: context.tableColumns,
                 drawCallback: function ( settings )
