@@ -191,7 +191,7 @@
                                     <h2 class="yellow">Download sample file</h2> Please import only 500 product items at a time<span class="optional-info"></span>
                                 </div>
                                 <div class="form-group">
-                                    <a href={{ route('restaurants.SampleFile') }}>Sample file</a>
+                                    <a href={{ route('restaurants.SampleFileDrink') }}>Sample file</a>
                                     <input type="file" id="upload_data" name="upload_data" class="form-control" accept=".xlsx,.xls," placeholder="Upload drinks data" required>
                                 </div>
                             </div>
