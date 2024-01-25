@@ -80,9 +80,11 @@ class HomeController extends Controller
     {
         $restaurant = session('restaurant')->loadMissing(['main_categories', 'country']);
         $categories = $restaurant->categories()->with(['children_parent'])->whereNotNull('parent_id')->get();
-        // dd($categories);
+
+
         if($request->ajax())
         {
+            dd($request->get('category'));
             $items = $this->repository->getAnalyticsTableData($restaurant);
 
             return Datatables::of($items)

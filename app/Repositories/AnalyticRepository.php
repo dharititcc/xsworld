@@ -10,6 +10,7 @@ use App\Repositories\BaseRepository;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 /**
  * Class AnalyticRepository.
@@ -30,7 +31,8 @@ class AnalyticRepository extends BaseRepository
      */
     public function getAnalyticsTableData(Restaurant $restaurant)
     {
-        return OrderItem::select([
+        // return 
+        $items = OrderItem::select([
             'order_items.*',
             'restaurant_item_variations.name AS variation_name',
             DB::raw("COUNT(variation_id) AS variation_count"),
@@ -65,9 +67,9 @@ class AnalyticRepository extends BaseRepository
         {
             $query->whereRaw("DATE(`order_items`.`created_at`) BETWEEN '2024-01-01' AND '2024-01-31'");
         })
-        ->groupBy(['order_items.restaurant_item_id', 'order_items.variation_id'])
-        // echo common()->formatSql($items);die;
-        ->get();
+        ->groupBy(['order_items.restaurant_item_id', 'order_items.variation_id']);
+        echo common()->formatSql($items);die;
+        // ->get();
     }
 
     /**
@@ -94,7 +96,7 @@ class AnalyticRepository extends BaseRepository
 
         // get categories pluck
         $categories = $restaurant->categories()->with(['children_parent'])->whereNotNull('parent_id')->get();
-
+        // dd($categories);
         foreach( $categories as $kCat => $category )
         {
             $newData[$kCat]['name'] = $category->name;
@@ -108,10 +110,12 @@ class AnalyticRepository extends BaseRepository
                         "SELECT
                             categories.name,
                             SUM(order_items.total) AS total_txn,
+                            SUM(orders.total) AS total_order_txn,
                             DATE(order_items.created_at) AS order_date
                         FROM categories
                         RIGHT JOIN restaurant_items on restaurant_items.category_id = categories.id
                         RIGHT JOIN order_items ON order_items.restaurant_item_id = restaurant_items.id
+                        RIGHT JOIN orders ON orders.id = order_items.order_id
                         where restaurant_items.type = ".Item::ITEM."
                         AND categories.restaurant_id = {$restaurant->id}
                         AND categories.id = {$category->id}
@@ -120,12 +124,11 @@ class AnalyticRepository extends BaseRepository
                         AND DATE(order_items.created_at) = '{$date}'
                         GROUP BY categories.id, DATE(order_items.created_at)"
                     );
-
                     if( !empty( $result ) )
                     {
                         if( isset( $newData[$kCat]['name'] ) && $newData[$kCat]['name'] == $category->name )
                         {
-                            $total[] = (float) $result[0]->total_txn;
+                            $total[] = (float) $result[0]->total_order_txn;
                         }
                     }
                     else
