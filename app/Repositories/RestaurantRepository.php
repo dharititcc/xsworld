@@ -296,7 +296,7 @@ class RestaurantRepository extends BaseRepository
 
         if( $restaurantId )
         {
-            $query->where('restaurant_id', $restaurantId)->where('is_featured', 1);
+            $query->where('restaurant_id', $restaurantId)->where('is_featured', 1)->where('is_available', 1);
         }
 
         if( isset($category->id) )

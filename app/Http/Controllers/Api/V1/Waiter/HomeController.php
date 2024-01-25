@@ -59,7 +59,7 @@ class HomeController extends APIController
             'customer_tables.order_id',
             'restaurant_tables.restaurant_id',
             DB::raw("0 as waiter_status"),
-            'customer_tables.updated_at AS order_date'
+            'customer_tables.created_at AS order_date'
         ])
         ->with([
             'user',
@@ -81,7 +81,7 @@ class HomeController extends APIController
             'orders.restaurant_id',
             'orders.type',
             'orders.waiter_status',
-            'orders.updated_at AS order_date'
+            'customer_tables.created_at AS order_date'
         ])
         ->with([
             'restaurant_table',
@@ -96,8 +96,9 @@ class HomeController extends APIController
             'order_items.addons',
             'order_items.addons.restaurant_item',
         ])
+        ->join('customer_tables', 'customer_tables.order_id', '=', 'orders.id')
         ->where('restaurant_id', $auth_waiter->restaurant_waiter->restaurant->id)
-        ->whereNotNull('restaurant_table_id')
+        ->whereNotNull('orders.restaurant_table_id')
         ->whereIn('waiter_status', [Order::WAITER_PENDING, Order::CURRENTLY_BEING_PREPARED, Order::CURRENTLY_BEING_SERVED, Order::CURRENTLY_BEING_PREPARED, Order::READY_FOR_COLLECTION, Order::PENDNIG])
         ->get();
 

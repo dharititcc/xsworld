@@ -10,6 +10,7 @@ use App\Models\FriendRequest;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\OrderReview;
+use App\Models\OrderSplit;
 use App\Models\Restaurant;
 use App\Models\RestaurantItem;
 use App\Models\RestaurantPickupPoint;
@@ -1119,10 +1120,12 @@ class OrderRepository extends BaseRepository
 
         $reOrder                        = $orderAgain;
         $reOrderItems                   = $reOrder->order_items;
+        $reOrderSplit                   = $reOrder->order_splits;
         $newOrder                       = $reOrder->replicate();
         $newOrder->type                 = Order::CART;
         $newOrder->status               = Order::PENDNIG;
         $newOrder->credit_amount        = 0.00;
+        $newOrder->order_category_type  = $reOrder->order_category_type;
         $newOrder->transaction_id       = null;
         $newOrder->card_id              = null;
         $newOrder->charge_id            = null;
@@ -1130,8 +1133,6 @@ class OrderRepository extends BaseRepository
         $newOrder->last_delayed_time    = null;
         $newOrder->remaining_date       = null;
         $newOrder->accepted_date        = null;
-        // $newOrder->pickup_point_id      = null;
-        // $newOrder->pickup_point_user_id = null;
         $newOrder->waiter_id            = null;
         $newOrder->served_date          = null;
         $newOrder->completion_date      = null;
@@ -1140,6 +1141,20 @@ class OrderRepository extends BaseRepository
         $newOrder->updated_at           = Carbon::now();
 
         $newOrder->save();
+
+        if( $reOrderSplit->count() )
+        {
+            foreach( $reOrderSplit as $split )
+            {
+                $newSplit = new OrderSplit();
+
+                $newSplit->order_id = $newOrder->id;
+                $newSplit->is_food  = $split->is_food;
+                $newSplit->status   = OrderSplit::PENDING;
+
+                $newSplit->save();
+            }
+        }
 
         $reOrderItems->loadMissing(['addons','mixer']);
 

@@ -75,13 +75,14 @@ Route::group(['prefix' => 'restaurants', 'as' => 'restaurants.', 'middleware' =>
     {
         Route::resource('drinks', 'DrinkController');
         Route::post('favorite-status-update',[DrinkController::class,'favoriteStatusUpdate'])->name('favoriteStatusUpdate');
-        Route::get('sample-file',[DrinkController::class,'SampleFile'])->name('SampleFile');
+        Route::get('sample-file-drink',[DrinkController::class,'SampleFileDrink'])->name('SampleFileDrink');
         Route::post('upload-drink-data',[DrinkController::class,'uploadDrinkData'])->name('uploadDrinkData');
     });
     Route::group(['namespace' => 'Foods'], function()
     {
         Route::resource('foods', 'FoodController');
         Route::post('upload-food-data',[FoodController::class,'uploadFoodData'])->name('uploadFoodData');
+        Route::get('sample-file-food',[FoodController::class,'SampleFileFood'])->name('SampleFileFood');
     });
     Route::group(['namespace' => 'Orders'], function()
     {
