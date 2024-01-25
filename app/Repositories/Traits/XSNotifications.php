@@ -33,7 +33,7 @@ trait XSNotifications
             {
                 foreach( $waiters as $waiter )
                 {
-                    $WaiterDevicesTokensArr = $waiter->user->devices->pluck('fcm_token')->toArray();
+                    $WaiterDevicesTokensArr = $waiter->user->devices->pluck('fcm_token')->unique()->toArray();
 
                     if( !empty( $WaiterDevicesTokensArr ) )
                     {
@@ -66,7 +66,7 @@ trait XSNotifications
     public function notifyCustomer(Order $order, string $title, string $message)
     {
         // Customer Notify
-        $customer_devices   = $order->user->devices->count() ? $order->user->devices()->pluck('fcm_token')->toArray() : [];
+        $customer_devices   = $order->user->devices->count() ? $order->user->devices()->pluck('fcm_token')->unique()->toArray() : [];
         $orderid            = $order->id;
 
         if(!empty($customer_devices))
@@ -94,7 +94,7 @@ trait XSNotifications
         {
             foreach( $kitchens as $kitchen )
             {
-                $kitchenDevicesTokensArr = $kitchen->user->devices->pluck('fcm_token')->toArray();
+                $kitchenDevicesTokensArr = $kitchen->user->devices->pluck('fcm_token')->unique()->toArray();
                 // $waiterDevices = array_merge($waiterDevices, );
                 if( !empty( $kitchenDevicesTokensArr ) )
                 {
@@ -129,7 +129,7 @@ trait XSNotifications
         $bardevices     = [];
         if(isset($order->pickup_point_user_id))
         {
-            $bardevices = $order->pickup_point_user->devices()->pluck('fcm_token')->toArray();
+            $bardevices = $order->pickup_point_user->devices()->pluck('fcm_token')->unique()->toArray();
         }
 
         if(!empty( $bardevices ))
