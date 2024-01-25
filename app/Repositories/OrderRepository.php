@@ -1147,6 +1147,7 @@ class OrderRepository extends BaseRepository
         foreach ($reOrderItems as  $item) {
             // $item->offsetUnset('order_id');
             $item->status = OrderItem::PENDNIG;
+            $item->order_split_id = $orderSplit->id;
             $newOrderItem = $newOrder->order_items()->create($item->toArray());
 
             // create addons
@@ -1169,7 +1170,8 @@ class OrderRepository extends BaseRepository
                 // clear old parent item id
                 $item->mixer->offsetUnset('parent_item_id');
                 $item->mixer->offsetUnset('order_id');
-                $item->mixer->order_id =  $newOrderItem->order_id;
+                $item->mixer->order_id          =  $newOrderItem->order_id;
+                $item->mixer->order_split_id    =  $orderSplit->id;
                 $newOrderItem->mixer()->create($item->mixer->toArray());
             }
         }
