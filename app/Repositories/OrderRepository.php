@@ -1130,12 +1130,12 @@ class OrderRepository extends BaseRepository
 
         $newOrder->save();
 
+        $newSplit = new OrderSplit();
+
         if( $reOrderSplit->count() )
         {
             foreach( $reOrderSplit as $split )
             {
-                $newSplit = new OrderSplit();
-
                 $newSplit->order_id = $newOrder->id;
                 $newSplit->is_food  = $split->is_food;
                 $newSplit->status   = OrderSplit::PENDING;
@@ -1159,7 +1159,8 @@ class OrderRepository extends BaseRepository
                     // clear old parent item id
                     $addon->offsetUnset('parent_item_id');
                     $addon->offsetUnset('order_id');
-                    $addon->order_id =  $newOrderItem->order_id;
+                    $addon->order_id        =  $newOrderItem->order_id;
+                    $addon->order_split_id  =  $newSplit->id;
                     $newOrderItem->addons()->create($addon->toArray());
                 }
             }
