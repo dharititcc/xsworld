@@ -439,18 +439,6 @@ class OrderRepository extends BaseRepository
 
         $order->refresh();
 
-        // dd($this->checkOrderCategoryType($order->order_items));
-        // if( $this->checkOrderCategoryType($order->order_items) )
-        // {
-        //     // update order category to 1
-        //     $order_category_type = 1;
-        // }
-        // else
-        // {
-        //     // update order category to 0
-        //     $order_category_type = 0;
-        // }
-
         $order_category_type = $this->checkOrderCategoryType($order->order_items);
 
         $order->loadMissing(['items']);
