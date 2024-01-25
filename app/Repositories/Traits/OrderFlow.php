@@ -418,7 +418,7 @@ trait OrderFlow
             }
         }
 
-        if( $isDrinkCategory === 1 && $isFoodCategory === 1 )
+        if( $isDrinkCategory == 1 && $isFoodCategory == 1 )
         {
             $isOrderCategoryType = 2;
         }
@@ -636,8 +636,8 @@ trait OrderFlow
                 $updateArr = [
                     'user_id'               => $user->id,
                     'restaurant_id'         => $order->restaurant_id,
-                    'pickup_point_id'       => isset($order->order_split_drink->id) ? $pickup_point_id->id : null,
-                    'pickup_point_user_id'  => isset($order->order_split_drink->id) ? $pickup_point_id->user_id : null,
+                    'pickup_point_id'       => isset($order->order_split_drink->id) && isset( $pickup_point_id->id ) ? $pickup_point_id->id : null,
+                    'pickup_point_user_id'  => isset($order->order_split_drink->id) && isset( $pickup_point_id->id ) ? $pickup_point_id->user_id : null,
                     'restaurant_table_id'   => isset($table_id) ? $table_id : null,
                 ];
                 $order->update($updateArr);
