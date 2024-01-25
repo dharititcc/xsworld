@@ -98,7 +98,7 @@ class HomeController extends APIController
         ])
         ->join('customer_tables', 'customer_tables.order_id', '=', 'orders.id')
         ->where('restaurant_id', $auth_waiter->restaurant_waiter->restaurant->id)
-        ->whereNotNull('restaurant_table_id')
+        ->whereNotNull('orders.restaurant_table_id')
         ->whereIn('waiter_status', [Order::WAITER_PENDING, Order::CURRENTLY_BEING_PREPARED, Order::CURRENTLY_BEING_SERVED, Order::CURRENTLY_BEING_PREPARED, Order::READY_FOR_COLLECTION, Order::PENDNIG])
         ->get();
 
