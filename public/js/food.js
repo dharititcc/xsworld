@@ -428,6 +428,7 @@
                     context.selectors.foodModalTitle.html('Manually Edit ');
                     context.editFoodFormValidation();
                     context.selectors.foodForm.attr('action', moduleConfig.updateFood.replace(':ID', foodId));
+                    $('#item_id').val(foodId);
                     context.getFoodData(foodId);
                     context.selectors.foodForm.append(`<input type="hidden" name="_method" value="PUT" />`);
                 }
@@ -629,7 +630,7 @@
                     return false;
                 }
             }
-
+            $(".error").remove();
             XS.Common.btnProcessingStart(context.selectors.foodSubmitBtn);
 
             $.ajax({
@@ -701,7 +702,9 @@
                         $('.is_favorite').addClass('null');
                     }
 
+                    console.log(res.data);
                     $('#price').val(res.data.price);
+                    $('#item_id').val(id);
                     context.selectors.foodForm.find('.modal-body').find('.variety').find('.item-box').not('.add_variations').remove();
 
                     $('.product_type').each(function(){

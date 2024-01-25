@@ -95,6 +95,7 @@
                         </div>
                         <div class="col-md-8">
                             <div class="form-group mb-4">
+                                <input type="hidden" id="item_id" name="item_id" value=""/>
                                 <input type="text" name="name" id="name" class="form-control vari3 duplicate_product" placeholder="Product Name *">
                                 <input id="product_type" type="hidden" class="product_type" name="is_variable" />
                                 <input id="is_featured" type="hidden" class="is_featured" name="is_featured" />
