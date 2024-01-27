@@ -2,7 +2,7 @@
     XS.Analytic = {
         table: null,
         tableColumns: [{
-                "data": "name", // can be null or undefined ->type
+                "data": "restaurant_items.name", // can be null or undefined ->type
                 "width": "35%",
                 "defaultContent": "",
                 render: function(data, type, row) {
@@ -27,7 +27,10 @@
                 "width": "20%",
                 "bSortable": false,
                 render: function(data, type, row) {
-                    return `${row.order.restaurant.country.symbol}${row.total}`;
+                    var total_price = parseInt(row.price) * parseInt(row.total_quantity ? row.total_quantity : 0);
+                    console.log(total_price);
+
+                    return `${row.order.restaurant.country.symbol}${total_price}`;
                 }
             },
             {
@@ -40,8 +43,8 @@
                         var cal = parseInt(row.variation_count) * parseInt(row.variation_qty_sum);
                         return `${cal} Units Sold`;
                     } else {
-                        var cal = parseInt(row.total_item ? row.total_item : 0) * parseInt(row.total_quantity ? row.total_quantity : 0)
-                        return `${cal} Units Sold`;
+                        // var cal = parseInt(row.total_item ? row.total_item : 0) * parseInt(row.total_quantity ? row.total_quantity : 0)
+                        return `${row.total_quantity} Units Sold`;
                     }
                 }
             }
@@ -69,7 +72,7 @@
                 context.bindChart(startDate, endDate);
             });
 
-            // With category
+            context.categoryFilter();
 
         },
 
@@ -78,7 +81,6 @@
                 e.preventDefault();
                 var $this = $(this),
                     categoryId = $this.data('category_id');
-                console.log(categoryId);
 
                 // clear active class
                 $this.closest('ul').find('li').find('a').each(function() {
@@ -96,8 +98,6 @@
                 }
 
                 context.table.ajax.reload();
-
-                context.makeDatatable(categoryId);
             });
         },
 
@@ -204,8 +204,6 @@
          */
         makeDatatable: function() {
             var context = this;
-
-            context.categoryFilter();
 
             context.table = context.selectors.drinkTable.DataTable({
                 processing: true,
