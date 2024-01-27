@@ -1,106 +1,95 @@
-(function () {
+(function() {
     XS.Analytic = {
         table: null,
-        tableColumns: [
-        {
-            "data": "name", // can be null or undefined ->type
-            "width": "35%",
-            "defaultContent": "",
-            render: function (data, type, row)
-            {
-                return `${row.restaurant_item.name}`;
-            }
-        },
-        {
-            "data": "type", // can be null or undefined ->type
-            "width": "20%",
-            "defaultContent": "",
-            render: function (data, type, row)
-            {
-                if( row.variation )
-                {
-                    return `${row.variation_name}`;
+        tableColumns: [{
+                "data": "name", // can be null or undefined ->type
+                "width": "35%",
+                "defaultContent": "",
+                render: function(data, type, row) {
+                    return `${row.restaurant_item.name}`;
                 }
+            },
+            {
+                "data": "type", // can be null or undefined ->type
+                "width": "20%",
+                "defaultContent": "",
+                render: function(data, type, row) {
+                    if (row.variation) {
+                        return `${row.variation_name}`;
+                    }
 
-                return `-`;
-            }
-        },
-        {
-            "data": "price", // can be null or undefined
-            "defaultContent": "",
-            "width": "20%",
-            "bSortable": false,
-            render: function (data, type, row) {
-                return `${row.order.restaurant.country.symbol}${row.order.total}`;
-            }
-        },
-        {
-            "data": "count", // can be null or undefined
-            "defaultContent": "",
-            "width": "25%",
-            "bSortable": false,
-            render: function (data, type, row) {
-                if( row.variation_id )
-                {
-                    var cal = parseInt(row.variation_count) * parseInt(row.variation_qty_sum);
-                    return `${cal} Units Sold`;
+                    return `-`;
                 }
-                else
-                {
-                    var cal = parseInt(row.total_item ? row.total_item : 0) * parseInt(row.total_quantity ? row.total_quantity : 0)
-                    return `${cal} Units Sold`;
+            },
+            {
+                "data": "price", // can be null or undefined
+                "defaultContent": "",
+                "width": "20%",
+                "bSortable": false,
+                render: function(data, type, row) {
+                    return `${row.order.restaurant.country.symbol}${row.total}`;
+                }
+            },
+            {
+                "data": "count", // can be null or undefined
+                "defaultContent": "",
+                "width": "25%",
+                "bSortable": false,
+                render: function(data, type, row) {
+                    if (row.variation_id) {
+                        var cal = parseInt(row.variation_count) * parseInt(row.variation_qty_sum);
+                        return `${cal} Units Sold`;
+                    } else {
+                        var cal = parseInt(row.total_item ? row.total_item : 0) * parseInt(row.total_quantity ? row.total_quantity : 0)
+                        return `${cal} Units Sold`;
+                    }
                 }
             }
-        }
         ],
         selectors: {
-            drinkModal:     jQuery('#wd930'),
+            drinkModal: jQuery('#wd930'),
             graphContainer: jQuery('#mygraph'),
-            drinkTable:     jQuery('.drink_datatable'),
+            drinkTable: jQuery('.drink_datatable'),
         },
 
-        init: function (){
+        init: function() {
             this.addHandler();
         },
 
-        addHandler: function (){
+        addHandler: function() {
             var context = this;
             context.makeDatatable();
             context.bindChart();
             context.filterChart();
 
             // Analytics range picker
-            $('input[name="dates"]').daterangepicker({ maxDate: 0 }).on('apply.daterangepicker', function (e, picker) {
+            $('input[name="dates"]').daterangepicker({ maxDate: 0 }).on('apply.daterangepicker', function(e, picker) {
                 var startDate = picker.startDate.format('DD-MM-YYYY');
                 var endDate = picker.endDate.format('DD-MM-YYYY');
-                context.bindChart(startDate,endDate);
+                context.bindChart(startDate, endDate);
             });
 
             // With category
-            
+
         },
 
-        categoryFilter: function(){
-            jQuery('.product_items').on('click', function(e)
-            {
+        categoryFilter: function() {
+            jQuery('.product_items').on('click', function(e) {
                 e.preventDefault();
-                var $this       = $(this),
-                    categoryId  = $this.data('category_id');
-                    console.log(categoryId);
+                var $this = $(this),
+                    categoryId = $this.data('category_id');
+                console.log(categoryId);
 
                 // clear active class
-                $this.closest('ul').find('li').find('a').each(function(){
+                $this.closest('ul').find('li').find('a').each(function() {
                     $(this).removeClass('active');
                 });
 
-                if( !categoryId )
-                {
+                if (!categoryId) {
                     // all focus
                     $this.find('.product_items').removeClass('active');
                     $this.addClass('active');
-                }
-                else
-                {
+                } else {
                     // specific category focus
                     $this.find('.product_items').removeClass('active');
                     $this.addClass('active');
@@ -112,35 +101,30 @@
             });
         },
 
-        filterChart: function()
-        {
+        filterChart: function() {
             context = this;
         },
 
-        bindChart: function(startDate,endDate)
-        {
+        bindChart: function(startDate, endDate) {
             var context = this;
 
             context.getChart([]);
 
             XS.Common.showLoader(jQuery('#mygraph'));
 
-            jQuery.ajax(
-            {
-                url:moduleConfig.graphUrl,
-                type:'POST',
+            jQuery.ajax({
+                url: moduleConfig.graphUrl,
+                type: 'POST',
                 dataType: "json",
                 headers: {
                     'X-CSRF-TOKEN': jQuery('meta[name="csrf-token"]').attr('content'),
                 },
-                data: {'is_featured':'Test','id':1,'start_date':startDate,'end_date':endDate},
-                success: function(res)
-                {
+                data: { 'is_featured': 'Test', 'id': 1, 'start_date': startDate, 'end_date': endDate },
+                success: function(res) {
                     // console.log(res);
                     context.getChart(res);
                 },
-                complete: function()
-                {
+                complete: function() {
                     XS.Common.hideLoader(jQuery('#mygraph'));
                 },
             });
@@ -150,12 +134,11 @@
          * Get Chart
          * @param {*} chartResponse
          */
-        getChart: function(chartResponse)
-        {
-            var context     = this,
-                chart       = null,
-                categories  = chartResponse.data,
-                seriesArr   = [];
+        getChart: function(chartResponse) {
+            var context = this,
+                chart = null,
+                categories = chartResponse.data,
+                seriesArr = [];
 
             context.chart = new Highcharts.Chart({
                 chart: {
@@ -176,8 +159,8 @@
                 },
                 tooltip: {
                     formatter: function() {
-                            return '<b>'+ this.series.name +'</b><br/>'+
-                            this.x +': '+ this.y;
+                        return '<b>' + this.series.name + '</b><br/>' +
+                            this.x + ': ' + this.y;
                     }
                 },
                 legend: {
@@ -219,8 +202,8 @@
         /**
          * Make Datatable
          */
-        makeDatatable: function (){
-            var context     = this;
+        makeDatatable: function() {
+            var context = this;
 
             context.categoryFilter();
 
@@ -230,18 +213,19 @@
                 searching: false,
                 scrollCollapse: true,
                 scrollY: '500px',
-                order: [[0, 'asc']],
+                order: [
+                    [0, 'asc']
+                ],
                 ajax: {
                     url: moduleConfig.getAccessibles,
                     type: 'get',
-                    data: function(data)
-                    {
-                        data.category   = $('.item-list.overview').find('li').find('a.active').data('category_id')
+                    data: function(data) {
+                        var categoryFilter = $('.item-list.overview').find('li').find('a.active').data('category_id');
+                        data.category = categoryFilter === undefined ? 0 : categoryFilter
                     },
                 },
                 columns: context.tableColumns,
-                drawCallback: function ( settings )
-                {
+                drawCallback: function(settings) {
                     context.selectors.drinkTable.find('tbody tr').find('td:first').addClass('dt-center');
                 }
             });
