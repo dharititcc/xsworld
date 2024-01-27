@@ -32,12 +32,7 @@ class AnalyticRepository extends BaseRepository
      */
     public function getAnalyticsTableData(Restaurant $restaurant , Array $data)
     {
-        $cate_id = NULL;
-        if(!empty($input['category']))
-        {
-            $cate_id = $input['category'];
-        }
-        return  OrderItem::select([
+        $query = OrderItem::select([
             'order_items.*',
             'restaurant_item_variations.name AS variation_name',
             DB::raw("COUNT(variation_id) AS variation_count"),
@@ -80,11 +75,19 @@ class AnalyticRepository extends BaseRepository
         ->where(function($query)
         {
             $query->whereRaw("DATE(`order_items`.`created_at`) BETWEEN '2024-01-01' AND '2024-01-31'");
-        })
-        ->groupBy(['order_items.restaurant_item_id', 'order_items.variation_id'])
-        // echo common()->formatSql($items);die;
+        });
+
+        if( isset($data['category']) && $data['category'] )
+        {
+            $query->where('restaurant_items.category_id', $data['category']);
+        }
+
+        $query->groupBy(['order_items.restaurant_item_id', 'order_items.variation_id'])
+        // echo common()->formatSql($query);die;
         ->get();
         // return $items->get();
+
+        return $query;
     }
 
     /**

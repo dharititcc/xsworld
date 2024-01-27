@@ -84,9 +84,7 @@ class HomeController extends Controller
 
         if($request->ajax())
         {
-            // dd($request->get('category'));
             $items = $this->repository->getAnalyticsTableData($restaurant , $input);
-            // dd($items);
             return Datatables::of($items)
             ->make(true);
         }
