@@ -5,6 +5,7 @@ use App\Models\Item;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Restaurant;
+use App\Models\RestaurantItem;
 use App\Models\RestaurantTable;
 use App\Repositories\BaseRepository;
 use Carbon\Carbon;
@@ -29,10 +30,14 @@ class AnalyticRepository extends BaseRepository
      *
      * @return \Illuminate\Database\Eloquent\Collection | Void
      */
-    public function getAnalyticsTableData(Restaurant $restaurant)
+    public function getAnalyticsTableData(Restaurant $restaurant , Array $data)
     {
-        // return 
-        $items = OrderItem::select([
+        $cate_id = NULL;
+        if(!empty($input['category']))
+        {
+            $cate_id = $input['category'];
+        }
+        return  OrderItem::select([
             'order_items.*',
             'restaurant_item_variations.name AS variation_name',
             DB::raw("COUNT(variation_id) AS variation_count"),
@@ -50,6 +55,7 @@ class AnalyticRepository extends BaseRepository
                 FROM order_items
                 LEFT JOIN orders ON orders.id = order_items.order_id
                 WHERE variation_id IS NULL
+                AND orders.status = ".Order::CONFIRM_PICKUP."
                 AND orders.restaurant_id = {$restaurant->id}
                 GROUP BY restaurant_item_id, variation_id
             ) AS `tmp`
@@ -59,17 +65,26 @@ class AnalyticRepository extends BaseRepository
         })
         ->leftJoin('restaurant_item_variations', 'restaurant_item_variations.id', '=', 'order_items.variation_id')
         ->whereHas('order', function($query) use($restaurant){
+            $query->select('*');
+            $query->select('type AS order_type');
             $query->where('restaurant_id', $restaurant->id);
             $query->where('status', Order::CONFIRM_PICKUP);
         })
-        ->item()
+        // ->item()
+        ->join('restaurant_items', function($query)
+        {
+            $query->on('restaurant_items.id', '=', 'order_items.restaurant_item_id');
+        })
+        ->where('restaurant_items.type', RestaurantItem::ITEM)
+        // ->where('restaurant_items.category_id', $cate_id)
         ->where(function($query)
         {
             $query->whereRaw("DATE(`order_items`.`created_at`) BETWEEN '2024-01-01' AND '2024-01-31'");
         })
-        ->groupBy(['order_items.restaurant_item_id', 'order_items.variation_id']);
-        echo common()->formatSql($items);die;
-        // ->get();
+        ->groupBy(['order_items.restaurant_item_id', 'order_items.variation_id'])
+        // echo common()->formatSql($items);die;
+        ->get();
+        // return $items->get();
     }
 
     /**
@@ -109,7 +124,7 @@ class AnalyticRepository extends BaseRepository
                     $result = DB::select(
                         "SELECT
                             categories.name,
-                            SUM(order_items.total) AS total_txn,
+                            SUM(order_items.total) AS total_order_txn,
                             SUM(orders.total) AS total_order_txn,
                             DATE(order_items.created_at) AS order_date
                         FROM categories
@@ -117,6 +132,7 @@ class AnalyticRepository extends BaseRepository
                         RIGHT JOIN order_items ON order_items.restaurant_item_id = restaurant_items.id
                         RIGHT JOIN orders ON orders.id = order_items.order_id
                         where restaurant_items.type = ".Item::ITEM."
+                        AND orders.status = ".Order::CONFIRM_PICKUP."
                         AND categories.restaurant_id = {$restaurant->id}
                         AND categories.id = {$category->id}
                         AND categories.deleted_at IS NULL
