@@ -10,11 +10,10 @@
         <div class="pd-20">
             <div class="item-list overview scroll-y">
                 <ul>
-                    <li><a href="#" class="active">General Overview</a></li>
+                    <li><a href="#" class="active product_items">General Overview</a></li>
                     @if ($categories->count())
                         @foreach ($categories as $category)
-                        {{-- {{ dump ($category)}} --}}
-                        <li><a href="#">{{ $category->children_parent->name }} - {{ $category->name }}</a></li>
+                        <li><a href="javascript::void()" class="product_items" data-category_id="{{ $category->id }}">{{ $category->children_parent->name }} - {{ $category->name }}</a></li>
                         @endforeach
                     @else
                         <div>No categories Found</div>
@@ -38,7 +37,9 @@
     </div>
     <div class="col-md-9 no-pd gold-border-left">
         <div class="d-flex mb-4 justify-content-between doubl-line gold-border align-items-center">
-            <h2 class="yellow pd-20">24th July - 24th Aug 2023</h2>
+            <h2 class="yellow pd-20">
+                {{-- 24th July - 24th Aug 2023 --}}
+            </h2>
             <div class="display-range pd-20">
                 <input type="text" name="dates" class="bor-btn w-300 text-center">
                 {{-- <button id="dateRangeBtn">Select Date Range</button> --}}
