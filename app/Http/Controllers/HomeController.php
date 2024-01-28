@@ -7,6 +7,7 @@ use App\Models\Day;
 use App\Models\Order;
 use App\Models\RestaurantTable;
 use App\Repositories\AnalyticRepository;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use DataTables;

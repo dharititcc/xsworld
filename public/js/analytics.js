@@ -97,6 +97,7 @@
                     $this.addClass('active');
                 }
 
+                context.bindChart();
                 context.table.ajax.reload();
             });
         },
@@ -106,7 +107,8 @@
         },
 
         bindChart: function(startDate, endDate) {
-            var context = this;
+            var context         = this,
+                categoryFilter  = $('.item-list.overview').find('li').find('a.active').data('category_id');
 
             context.getChart([]);
 
@@ -119,7 +121,7 @@
                 headers: {
                     'X-CSRF-TOKEN': jQuery('meta[name="csrf-token"]').attr('content'),
                 },
-                data: { 'is_featured': 'Test', 'id': 1, 'start_date': startDate, 'end_date': endDate },
+                data: { 'is_featured': 'Test', 'id': 1, 'start_date': startDate, 'end_date': endDate, category_id: categoryFilter },
                 success: function(res) {
                     // console.log(res);
                     context.getChart(res);
