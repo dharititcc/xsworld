@@ -439,18 +439,6 @@ class OrderRepository extends BaseRepository
 
         $order->refresh();
 
-        // dd($this->checkOrderCategoryType($order->order_items));
-        // if( $this->checkOrderCategoryType($order->order_items) )
-        // {
-        //     // update order category to 1
-        //     $order_category_type = 1;
-        // }
-        // else
-        // {
-        //     // update order category to 0
-        //     $order_category_type = 0;
-        // }
-
         $order_category_type = $this->checkOrderCategoryType($order->order_items);
 
         $order->loadMissing(['items']);
@@ -1100,7 +1088,7 @@ class OrderRepository extends BaseRepository
     public function reOrder(array $data): Order
     {
         $user                   = auth()->user();
-        $orderAgain             = $user->orders()->where('restaurant_id', $data['restaurant_id'])->where('type', Order::ORDER)->whereNotIn('status',[Order::CUSTOMER_CANCELED,Order::RESTAURANT_CANCELED,Order::RESTAURANT_TOXICATION,Order::DENY_ORDER,Order::CURRENTLY_BEING_PREPARED,Order::READYFORPICKUP,Order::COMPLETED])->orderByDesc('id')->first();
+        $orderAgain             = $user->orders()->where('restaurant_id', $data['restaurant_id'])->where('type', Order::ORDER)->whereIn('status',[Order::CONFIRM_PICKUP])->orderByDesc('id')->first();
 
         $resName = Restaurant::select('name')->where('id',$data['restaurant_id'])->first();
         if( !isset($orderAgain->id) )
@@ -1142,26 +1130,19 @@ class OrderRepository extends BaseRepository
 
         $newOrder->save();
 
-        if( $reOrderSplit->count() )
-        {
-            foreach( $reOrderSplit as $split )
-            {
-                $newSplit = new OrderSplit();
-
-                $newSplit->order_id = $newOrder->id;
-                $newSplit->is_food  = $split->is_food;
-                $newSplit->status   = OrderSplit::PENDING;
-
-                $newSplit->save();
-            }
-        }
+        $orderSplit = OrderSplit::create([
+            'order_id'  => $newOrder->id,
+            'is_food'   => $reOrderSplit[0]->is_food,
+            'status'    => OrderSplit::PENDING
+        ]);
 
         $reOrderItems->loadMissing(['addons','mixer']);
 
         // get order items and store into order items table
         foreach ($reOrderItems as  $item) {
-            // $item->offsetUnset('order_id');
-            $item->status = OrderItem::PENDNIG;
+            $item->offsetUnset('order_split_id');
+            $item->status           = OrderItem::PENDNIG;
+            $item->order_split_id   = $orderSplit->id;
             $newOrderItem = $newOrder->order_items()->create($item->toArray());
 
             // create addons
@@ -1171,7 +1152,8 @@ class OrderRepository extends BaseRepository
                     // clear old parent item id
                     $addon->offsetUnset('parent_item_id');
                     $addon->offsetUnset('order_id');
-                    $addon->order_id =  $newOrderItem->order_id;
+                    $addon->order_id        =  $newOrderItem->order_id;
+                    $addon->order_split_id  =  $orderSplit->id;
                     $newOrderItem->addons()->create($addon->toArray());
                 }
             }
@@ -1183,7 +1165,9 @@ class OrderRepository extends BaseRepository
                 // clear old parent item id
                 $item->mixer->offsetUnset('parent_item_id');
                 $item->mixer->offsetUnset('order_id');
-                $item->mixer->order_id =  $newOrderItem->order_id;
+                $item->mixer->offsetUnset('order_split_id');
+                $item->mixer->order_id          =  $newOrderItem->order_id;
+                $item->mixer->order_split_id    =  $orderSplit->id;
                 $newOrderItem->mixer()->create($item->mixer->toArray());
             }
         }

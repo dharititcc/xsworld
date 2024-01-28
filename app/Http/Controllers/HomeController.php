@@ -78,13 +78,13 @@ class HomeController extends Controller
      */
     public function analytics(Request $request)
     {
-        $restaurant = session('restaurant')->loadMissing(['main_categories', 'country']);
-        $categories = $restaurant->categories()->with(['children_parent'])->whereNotNull('parent_id')->get();
-        // dd($categories);
+        $restaurant     = session('restaurant')->loadMissing(['main_categories', 'country']);
+        $categories     = $restaurant->categories()->with(['children_parent'])->whereNotNull('parent_id')->get();
+        $input          = $request->all();
+
         if($request->ajax())
         {
-            $items = $this->repository->getAnalyticsTableData($restaurant);
-
+            $items = $this->repository->getAnalyticsTableData($restaurant , $input);
             return Datatables::of($items)
             ->make(true);
         }

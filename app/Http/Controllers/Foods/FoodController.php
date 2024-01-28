@@ -204,6 +204,22 @@ class FoodController extends Controller
         return RestaurantItem::whereRaw(DB::raw("LOWER(`name`) = '{$text}'"))->where('restaurant_id', $restaurant->id)->where('category_id', $request->get('category_id'))->count();
     }
 
+
+
+    /**
+     * Method checkUniqueDrink
+     *
+     * @param Request $request [explicite description]
+     * @param Restaurant $restaurant [explicite description]
+     *
+     * @return int
+     */
+    private function checkEditUniqueFood(Request  $request, Restaurant $restaurant)
+    {
+        $text = htmlentities(strtolower($request->name));
+        return RestaurantItem::whereRaw(DB::raw("LOWER(`name`) = '{$text}'"))->whereNot('id',$request->item_id)->where('restaurant_id', $restaurant->id)->where('category_id', $request->get('category_id'))->count();
+    }
+
     /**
      * Display the specified resource.
      *
@@ -215,6 +231,7 @@ class FoodController extends Controller
         $categories = RestaurantItem::query()->select('category_id')->where('restaurant_id', $food->restaurant_id)->where('type', RestaurantItem::ITEM)->where('name', $food->name)->groupBy('category_id')->pluck('category_id')->toArray();
         $restaurantVariation = RestaurantVariation::select('name','price')->where('restaurant_item_id',$food->id)->get()->toArray();
         $data = [
+            'id'            => $food->id,
             'name'          => $food->name,
             'price'         => $food->price,
             'categories'    => $categories,
@@ -287,6 +304,13 @@ class FoodController extends Controller
             'type_of_drink'     => $request->type_of_drink,
             'is_featured'       => $request->is_featured
         ];
+
+        // check if product exist
+
+        if( $this->checkEditUniqueFood($request, $restaurant) )
+        {
+            throw new GeneralException('The Product is already exist.');
+        }
 
         // update restaurant item
         $food->update($restaurantItem);

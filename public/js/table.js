@@ -127,6 +127,7 @@
                 data    = new FormData(form);
 
             XS.Common.btnProcessingStart(context.selectors.tableSubmitBtn);
+            $(".error").remove();
             $.ajax({
                 url:$(form).attr('action'),
                 type:'POST',
@@ -141,6 +142,24 @@
                     document.getElementById('addtableform').reset();
                     // location.reload(true);
                     XS.Common.handleSwalSuccess('Table has been submitted successfully.');
+                },
+                error: function(xhr)
+                {
+                    if( xhr.status == 403 )
+                    {
+                        var {error} = xhr.responseJSON;
+                        console.log(error.message);
+                        if(error.message == "Please enter unique value") {
+                            context.selectors.tableForm.find('#name').after(`<span class="error">${error.message}</span>`);
+                            context.selectors.tableForm.find('#code').after(`<span class="error">${error.message}</span>`);
+                        }
+                        if(error.message == "Please enter unique Table name") {
+                            context.selectors.tableForm.find('#name').after(`<span class="error">${error.message}</span>`);
+                        }
+                        if(error.message == "Please enter unique table code") {
+                            context.selectors.tableForm.find('#code').after(`<span class="error">${error.message}</span>`);
+                        }
+                    }
                 },
                 complete: function()
                 {

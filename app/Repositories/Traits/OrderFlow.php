@@ -418,7 +418,7 @@ trait OrderFlow
             }
         }
 
-        if( $isDrinkCategory === 1 && $isFoodCategory === 1 )
+        if( $isDrinkCategory == 1 && $isFoodCategory == 1 )
         {
             $isOrderCategoryType = 2;
         }
@@ -444,7 +444,7 @@ trait OrderFlow
     function placeOrder(array $data): bool
     {
         $card_id            = $data['card_id'] ?? null;
-        $credit_amount      = $data['credit_amount'] ? $data['credit_amount'] : null;
+        $credit_amount      = isset($data['credit_amount']) && $data['credit_amount'] != '' ? $data['credit_amount'] : 0;
         $amount             = $data['amount'] ? $data['amount'] : 0;
         $table_id           = $data['table_id'] ? $data['table_id'] : null;
         $order              = Order::with([
@@ -568,13 +568,22 @@ trait OrderFlow
                         $this->generatePDF($latest);
                     }
 
-                    $credit_amount = isset( $credit_amount ) ? $credit_amount : 0;
-                    if($latest->total <= $credit_amount)
+                    $creditAmountSplit = 0;
+                    if($order->total <= $credit_amount)
                     {
-                        $credit_amount -= $latest->total;
+                        $creditAmountSplit  = $order->total;
+                        $amount             = 0;
+                        $credit_amount     -= $creditAmountSplit;
                     }
+                    else if( $order->total > $credit_amount )
+                    {
+                        $creditAmountSplit  = $credit_amount;
+                        $amount             = $order->total - $creditAmountSplit;
+                        $credit_amount     -= $creditAmountSplit;
+                    }
+
                     // charge payment
-                    $this->getOrderPayment($latest, $user, $credit_amount, $amount, $card_id);
+                    $this->getOrderPayment($latest, $user, $creditAmountSplit, $amount, $card_id);
 
                     $getcusTbl = CustomerTable::where('user_id', $user->id)->where('restaurant_table_id', $table_id)->where('order_id', $latest->id)->first();
                     if($getcusTbl) {
@@ -636,12 +645,26 @@ trait OrderFlow
                 $updateArr = [
                     'user_id'               => $user->id,
                     'restaurant_id'         => $order->restaurant_id,
-                    'pickup_point_id'       => isset($order->order_split_drink->id) ? $pickup_point_id->id : null,
-                    'pickup_point_user_id'  => isset($order->order_split_drink->id) ? $pickup_point_id->user_id : null,
+                    'pickup_point_id'       => isset($order->order_split_drink->id) && isset( $pickup_point_id->id ) ? $pickup_point_id->id : null,
+                    'pickup_point_user_id'  => isset($order->order_split_drink->id) && isset( $pickup_point_id->id ) ? $pickup_point_id->user_id : null,
                     'restaurant_table_id'   => isset($table_id) ? $table_id : null,
                 ];
                 $order->update($updateArr);
-                $this->getOrderPayment($order, $user, $credit_amount, $amount, $card_id);
+
+                $creditAmountSplit = 0;
+                if($order->total <= $credit_amount)
+                {
+                    $creditAmountSplit  = $order->total;
+                    $amount             = 0;
+                    $credit_amount     -= $creditAmountSplit;
+                }
+                else if( $order->total > $credit_amount )
+                {
+                    $creditAmountSplit  = $credit_amount;
+                    $amount             = $order->total - $creditAmountSplit;
+                    $credit_amount     -= $creditAmountSplit;
+                }
+                $this->getOrderPayment($order, $user, $creditAmountSplit, $amount, $card_id);
             }
 
             $order->refresh();
@@ -717,20 +740,8 @@ trait OrderFlow
         $paymentArr                 = [];
         $userCreditAmountBalance    = $user->credit_amount;
         $credit_amount              = isset( $credit_amount ) ? $credit_amount : 0;
-        // payment logic
-        if($order->total <= $credit_amount)
-        {
-            $updateArr['credit_amount'] = $credit_amount;
-            $updateArr['type']          = Order::ORDER;
-            $updateArr['place_at']      = Carbon::now();
-            $remaingAmount = $userCreditAmountBalance - $credit_amount;
 
-            // update user's credit amount
-            $this->updateUserPoints($user, ['credit_amount' => $remaingAmount]);
-        }
-
-
-        if( $order->total != $credit_amount )
+        if( $amount > 0 )
         {
             $paymentArr = [
                 'amount'        => number_format($amount, 2) * 100,
@@ -743,20 +754,21 @@ trait OrderFlow
 
             $stripe         = new Stripe();
             $payment_data   = $stripe->createCharge($paymentArr);
-
-            $updateArr = [
-                'type'                  => Order::ORDER,
-                'card_id'               => $card_id,
-                'charge_id'             => $payment_data->id,
-                'credit_amount'         => $credit_amount,
-                'amount'                => $amount,
-                'place_at'              => Carbon::now(),
-            ];
-            $remaingAmount = $userCreditAmountBalance - $credit_amount;
-
-            // update user's credit amount
-            $this->updateUserPoints($user, ['credit_amount' => $remaingAmount]);
         }
+
+        $updateArr = [
+            'type'                  => Order::ORDER,
+            'card_id'               => $card_id,
+            'charge_id'             => $payment_data->id ?? null,
+            'credit_amount'         => $credit_amount,
+            'amount'                => $amount,
+            'place_at'              => Carbon::now(),
+        ];
+
+        $remaingAmount = $userCreditAmountBalance - $credit_amount;
+
+        // update user's credit amount
+        $this->updateUserPoints($user, ['credit_amount' => $remaingAmount]);
 
         $order->update($updateArr);
     }
