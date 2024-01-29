@@ -12,6 +12,7 @@ use App\Models\Restaurant;
 use App\Models\RestaurantItem;
 use App\Models\RestaurantPickupPoint;
 use App\Models\User;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -443,6 +444,7 @@ trait OrderFlow
      */
     function placeOrder(array $data): bool
     {
+        $orderIdArr           = [];
         $card_id            = $data['card_id'] ?? null;
         $credit_amount      = isset($data['credit_amount']) && $data['credit_amount'] != '' ? $data['credit_amount'] : 0;
         $amount             = $data['amount'] ? $data['amount'] : 0;
@@ -511,7 +513,6 @@ trait OrderFlow
 
                         $split->update(['order_id' => $order->id]);
                         $split->items()->update(['order_id' => $order->id]);
-
                         $order->refresh();
 
                         // update total of the order by items
@@ -527,7 +528,7 @@ trait OrderFlow
                         ])->find($order->id);
 
                         // Generate PDF
-                        $this->generatePDF($latest);
+                        $orderIdArr[] = $latest->id;
                     }
                     else
                     {
@@ -565,7 +566,7 @@ trait OrderFlow
                         ])->find($order->id);
 
                         // Generate PDF
-                        $this->generatePDF($latest);
+                        $orderIdArr[] = $latest->id;
                     }
 
                     $creditAmountSplit = 0;
@@ -581,6 +582,7 @@ trait OrderFlow
                         $amount             = $order->total - $creditAmountSplit;
                         $credit_amount     -= $creditAmountSplit;
                     }
+                    $latest->refresh();
 
                     // charge payment
                     $this->getOrderPayment($latest, $user, $creditAmountSplit, $amount, $card_id);
@@ -671,7 +673,7 @@ trait OrderFlow
             $order->loadMissing(['items']);
 
             // Generate PDF
-            $this->generatePDF($order);
+            $orderIdArr[] = $order->id;
 
             $getcusTbl = CustomerTable::where('user_id', $user->id)->where('restaurant_table_id', $table_id)->where('order_id', $order->id)->first();
             if($getcusTbl) {
@@ -721,6 +723,8 @@ trait OrderFlow
                 $this->notifyBars($order, $bartitle, $barmessage);
             }
         }
+        // Generate PDF
+        $this->generatePDF($orderIdArr);
         return true;
     }
 
@@ -925,22 +929,30 @@ trait OrderFlow
      *
      * @return mixed
      */
-    public function generatePDF(Order $order)
+    public function generatePDF(array $orderArr)
     {
-        $restaurant  = $order->restaurant->owners()->first();
-        $pdf        = app('dompdf.wrapper');
-        $pdf->loadView('pdf.index',compact('order','restaurant'));
-        $filename   = 'invoice_'.$order->id.'.pdf';
-        $content    = $pdf->output();
-        $file       = storage_path("app/public/order_pdf");
-        !is_dir($file) &&
-        mkdir($file, 0777, true);
-        $filePath = 'public/order_pdf/' . $filename;
+        foreach($orderArr as $order)
+        {
+            $pdfData  = Order::with(
+                [   'order_items',
+                    'restaurant',
+                    'restaurant.country',
+                    'restaurant.currency'
+                ])->find($order);
 
-        //Upload PDF to storage folder
-        Storage::put($filePath, $content);
-        $destinationPath = asset('storage/order_pdf/').'/'.$filename;
-
+            $restaurant = $pdfData->restaurant->owners()->first();
+            $pdf        = app('dompdf.wrapper');
+            $pdf->loadView('pdf.index',compact('pdfData','restaurant'));
+            $filename   = 'invoice_'.$order.'.pdf';
+            $content    = $pdf->output();
+            $file       = storage_path("app/public/order_pdf");
+            !is_dir($file) &&
+            mkdir($file, 0777, true);
+            $filePath = 'public/order_pdf/' . $filename;
+            //Upload PDF to storage folder
+            Storage::put($filePath, $content);
+            $destinationPath = asset('storage/order_pdf/').'/'.$filename;
+        }
         return true;
     }
 }
