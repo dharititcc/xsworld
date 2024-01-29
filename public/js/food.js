@@ -622,14 +622,18 @@
                 category[i] = $(context).val();
             });
 
-            if( jQuery('.product_type.active').data('product_type') == 1 )
+            if( jQuery('.product_type').find('active').data('product_type') == 1 )
             {
-                if( jQuery('input[name="drink_variation_name[]"]').length == 0 )
+                if( jQuery('.product_type.active').data('product_type') == 1 )
                 {
-                    XS.Common.handleSwalError('Please create atleast one variation.');
-                    return false;
+                    if( jQuery('input[name="drink_variation_name[]"]').length == 0 )
+                    {
+                        XS.Common.handleSwalError('Please create atleast one variation.');
+                        return false;
+                    }
                 }
             }
+
             $(".error").remove();
             XS.Common.btnProcessingStart(context.selectors.foodSubmitBtn);
 
