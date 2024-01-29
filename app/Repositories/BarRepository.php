@@ -13,6 +13,7 @@ use App\Repositories\Traits\XSNotifications;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 
 /**
  * Class BarRepository.
@@ -416,6 +417,9 @@ class BarRepository extends BaseRepository
 
         $points         = $order->total * 3;
         $totalPoints    = $order->user->points + round($points);
+
+        Log::debug('Order Total: '. $points);
+        Log::debug('User Points: '. $order->user->points);
 
         $this->insertCreditPoints($order->user, [
             'model_name'    => '\App\Models\Order',
