@@ -1220,17 +1220,9 @@ class OrderRepository extends BaseRepository
             {
                 // update order to completed
                 $order->update(['waiter_status' => Order::COMPLETED, 'status' => Order::CONFIRM_PICKUP]);
-                $points                     = $order->total * 3;
-                $update['points']           = $order->user->points + round($points);
-                $order->user->update($update);
-                $creditArr['user_id']       = $order->user->id;
-                $creditArr['order_id']      = $order->id;
-                $creditArr['credit_point']  = $order->total;
-                $creditArr['total']         = $update['points'];
-                CreditPointsHistory::create($creditArr);
             }
         }
-        $customerTblDel = CustomerTable::where('user_id' , $data['user_id'])->where('restaurant_table_id',$data['restaurant_table_id'])->delete();
+        $customerTblDel = CustomerTable::where('user_id' , $data['user_id'])->where('restaurant_table_id', $data['restaurant_table_id'])->delete();
         return $customerTblDel;
     }
 
