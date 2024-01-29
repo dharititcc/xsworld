@@ -3,11 +3,13 @@
 use App\Models\Order;
 use App\Models\OrderSplit;
 use App\Billing\Stripe;
+use App\Mail\InvoiceMail;
 use App\Models\CustomerTable;
 use App\Repositories\Traits\CreditPoint;
 use App\Repositories\Traits\XSNotifications;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 trait OrderStatus
 {
@@ -126,6 +128,9 @@ trait OrderStatus
 
             // send notification to waiters
             $this->notifyWaiters($order, $titleWaiter, $messageWaiter, $codeWaiter);
+
+            // send email
+            Mail::to($order->user->email)->send(new InvoiceMail($order));
         }
 
         // send notification to customer
