@@ -418,9 +418,6 @@ class BarRepository extends BaseRepository
         $points         = $order->total * 3;
         $totalPoints    = $order->user->points + round($points);
 
-        Log::debug('Order Total: '. $points);
-        Log::debug('User Points: '. $order->user->points);
-
         $this->insertCreditPoints($order->user, [
             'model_name'    => '\App\Models\Order',
             'model_id'      => $order->id,
