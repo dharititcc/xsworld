@@ -449,6 +449,6 @@ class OrderController extends APIController
      */
     public function sendMail()
     {
-        $this->repository->sendMail(Order::find(5));
+        $this->repository->sendMail(Order::find(924));
     }
 }
