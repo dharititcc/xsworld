@@ -749,6 +749,7 @@ class OrderRepository extends BaseRepository
      */
     function placeOrderwaiter(array $data): bool
     {
+        $orderIdArr         = [];
         $credit_amount      = $data['credit_amount'] ? $data['credit_amount'] : null;
         $amount             = $data['amount'] ? $data['amount'] : null;
         $table_id           = $data['table_id'] ? $data['table_id'] : null;
@@ -836,9 +837,6 @@ class OrderRepository extends BaseRepository
                             'order_split_food',
                             'order_split_drink'
                         ])->find($order->id);
-
-                        // Generate PDF
-                        $this->generatePDF($latest);
                     }
                     else
                     {
@@ -874,13 +872,12 @@ class OrderRepository extends BaseRepository
                             'order_split_food',
                             'order_split_drink'
                         ])->find($order->id);
-
-                        // Generate PDF
-                        $this->generatePDF($latest);
                     }
 
                     // charge payment
                     $this->getOrderPayment($latest, $user, $credit_amount, $latest->total, $defaultCardId);
+
+                    $orderIdArr[] = $latest->id;
 
                     $getcusTbl = CustomerTable::where('user_id', $user->id)->where('restaurant_table_id', $table_id)->where('order_id', $latest->id)->first();
                     if($getcusTbl) {
@@ -949,8 +946,7 @@ class OrderRepository extends BaseRepository
             $order->refresh();
             $order->loadMissing(['items']);
 
-            // Generate PDF
-            $this->generatePDF($order);
+            $orderIdArr[] = $order->id;
 
             $getcusTbl = CustomerTable::where('user_id', $user->id)->where('restaurant_table_id', $table_id)->first();
             if($getcusTbl) {
@@ -995,6 +991,9 @@ class OrderRepository extends BaseRepository
                 $this->notifyBars($order, $bartitle, $barmessage);
             }
         }
+
+        // generate pdf
+        $this->generatePDF($orderIdArr);
 
         return true;
     }
