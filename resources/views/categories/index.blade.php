@@ -126,13 +126,22 @@
                                 <div class="form-group mb-4">
                                     <select class="cat_name form-control vari2" >Category List
                                         @foreach ($categories as $category)
-                                            @if($i < $categories->count())
+                                            @if($category->name == "Food" && $category->name == "Drinks")
+                                            <?php //dd($category); ?>
+                                                @if($i < $categories->count())
+                                                    <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                                        <?php $i++; ?>
+                                                @else
+                                                    @break
+                                                @endif
+                                            @elseif ($category->name == "Food")
+                                            
                                                 <option value="{{ $category->id }}">{{ $category->name }}</option>
-                                                {{-- <option value="{{ $category->id }}" >Food </option>
-                                                <option value="{{ $category->id }}" >Drinks </option> --}}
-                                            <?php $i++; ?>
-                                            @else
-                                                @break
+                                                <!-- <option value="" >Drinks </option> -->
+                                            @elseif ($category->name == "Drinks")
+                                            <?php //dd($category); ?>
+                                                <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                                <option value="" >Food </option>
                                             @endif
                                         @endforeach
                                     </select>
@@ -145,8 +154,8 @@
                                     </select>
                                 </div>
                             @endif
-                            <div class="grey-brd-box custom-upload image_boxs">
-                                <input id="upload_img" type="file" class="files_image" name="image" accept="image/*" hidden />
+                            <div class="grey-brd-box custom-upload image_box">
+                                <input id="upload_img" type="file" class="files" name="image" accept="image/*" hidden />
                                 <label for="upload"><span> Add Category Feature Image (This can be changed).</span> <i
                                         class="icon-plus"></i></label>
                             </div>
@@ -202,7 +211,7 @@
             // XS.Category.init();
             var modal = $("#exampleModal");
 
-            XS.Common.fileReaderBindImage();
+            // XS.Common.fileReaderBindImage();
             XS.Common.fileReaderBind();
             // modal open pop up
             $('.category_model').on('click', function(e)
@@ -237,6 +246,7 @@
         });
 
     $('.add_category').on("click",function() {
+        XS.Common.fileReaderBind();
         var $this = $(this);
         var cat_id = $this.data('cat_id');
         $('select').on('change', function() {
@@ -255,7 +265,6 @@
 
                 var data        = new FormData(),
                     cat_name    = $( ".cat_name option:selected" ).text(),
-                    // cat_photo   = $('#upload_img'),
                     photo       = $('#upload').prop('files')[0];
 
                 data.append('name', cat_name);
@@ -278,14 +287,14 @@
                         $("#submitCatBtn").attr("disabled", false);
                         XS.Common.handleSwalSuccess('Category form has been submitted successfully');
                     },
-                    error: function(xhr)
-                    {
-                        if( xhr.status == 403 )
-                        {
-                            var {error} = xhr.responseJSON;
-                            $this.closest('#add_form_category').find('.cat_name').after(`<span class="error">${error.message}</span>`);
-                        }
-                    },
+                    // error: function(xhr)
+                    // {
+                    //     if( xhr.status == 403 )
+                    //     {
+                    //         var {error} = xhr.responseJSON;
+                    //         $this.closest('#add_form_category').find('.cat_name').after(`<span class="error">${error.message}</span>`);
+                    //     }
+                    // },
                     complete: function()
                     {
                         $('#submitCatBtn').html('Submit');
@@ -465,7 +474,7 @@
                                 </div>
                             `;
 
-                $(".image_boxs").children('.pip').remove();
+                $(".image_box").children('.pip').remove();
                 if( response.data.image!= "" )
                 {
                     $("#upload_img").after(image);
