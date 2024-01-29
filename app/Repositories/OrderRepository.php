@@ -1469,11 +1469,11 @@ class OrderRepository extends BaseRepository
         $auth_user->friend;
         $user_data          = User::find($data['user_id']);
         if($data['status'] == 1 ) {
-            $title              = "Your request has been accepted successfully.";
-            $message            = "Your request has been accepted successfully.";
+            $title              =  "Accepted Your friend request";
+            $message            =  $user_data->first_name . " Accepted your friend request";
         } else {
-            $title              = "Opps Sorry Your request has been decline.";
-            $message            = "Opps Sorry Your request has been decline.";
+            $title              = "decline your friend request .";
+            $message            =  $user_data->first_name . " decline your friend request";
         }
         $this->notifyCustomerSocial($user_data, $title, $message);
         return $auth_user;
@@ -1541,9 +1541,9 @@ class OrderRepository extends BaseRepository
         // $deductAmountToAuthUser = number_format($authUserCreditAmount - $amount, 2);
         $receiverUser->credit_amount = $addAmountToReceiver;
         $receiverUser->save();
-        $title              = "You received Gift credits";
-        $message            = "You received gift credits from " . $receiverUser->first_name . ". Enjoy your gift!";
-        $this->notifyCustomerSocial($receiverUser, $title, $message);
+        // $title              = "You received Gift credits";
+        // $message            = "You received gift credits from " . $receiverUser->first_name . ". Enjoy your gift!";
+        // $this->notifyCustomerSocial($receiverUser, $title, $message);
         // $auth_user->credit_amount    = $deductAmountToAuthUser;
         // $auth_user->save();
         return $auth_user;
@@ -1672,6 +1672,9 @@ class OrderRepository extends BaseRepository
             })
             ->first();
         
+        if($data['user_id'] == 0) {
+            throw new GeneralException('Please Enter valid user id you are pass 0 user id');
+        }
         if(!empty($checkUnFriendRequest))
         {
             $delete = FriendRequest::where('id', $checkUnFriendRequest->friendship_id)->delete();
