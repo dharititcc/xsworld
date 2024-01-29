@@ -1452,6 +1452,9 @@ class OrderRepository extends BaseRepository
         //     'friend_id' => $auth_user->id,
         // ]);
         $friends = $auth_user->friends;
+        $title              = "You received new Friend Request";
+        $message            = "You have received new Friend Request";
+        $this->notifyCustomerSocial($friend, $title, $message);
         return $friends;
     }
 
@@ -1472,6 +1475,15 @@ class OrderRepository extends BaseRepository
         }
         $FriendRequest = FriendRequest::where('user_id', $data['user_id'])->where('friend_id', $auth_user->id,)->update(['status' => $data['status']]);
         $auth_user->friend;
+        $user_data          = User::find($data['user_id']);
+        if($data['status'] == 1 ) {
+            $title              = "Your request has been accepted successfully.";
+            $message            = "Your request has been accepted successfully.";
+        } else {
+            $title              = "Opps Sorry Your request has been decline.";
+            $message            = "Opps Sorry Your request has been decline.";
+        }
+        $this->notifyCustomerSocial($user_data, $title, $message);
         return $auth_user;
     }
 
@@ -1537,6 +1549,9 @@ class OrderRepository extends BaseRepository
         // $deductAmountToAuthUser = number_format($authUserCreditAmount - $amount, 2);
         $receiverUser->credit_amount = $addAmountToReceiver;
         $receiverUser->save();
+        $title              = "You received Gift credits";
+        $message            = "You received gift credits from " . $receiverUser->first_name . ". Enjoy your gift!";
+        $this->notifyCustomerSocial($receiverUser, $title, $message);
         // $auth_user->credit_amount    = $deductAmountToAuthUser;
         // $auth_user->save();
         return $auth_user;
@@ -1668,6 +1683,9 @@ class OrderRepository extends BaseRepository
         if(!empty($checkUnFriendRequest))
         {
             $delete = FriendRequest::where('id', $checkUnFriendRequest->friendship_id)->delete();
+            $title              = $checkUnFriendRequest->first_name . "has unfriended you";
+            $message            = $checkUnFriendRequest->first_name . "has unfriended you successfully";
+            $this->notifyCustomerSocial($checkUnFriendRequest, $title, $message);
         }
         return $delete;
     }
