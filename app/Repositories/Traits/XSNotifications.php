@@ -159,7 +159,7 @@ trait XSNotifications
         if(!empty($customer_devices))
         {
             Log::debug("Customer Notification Testing:  - {$user->id}");
-            return sendNotification($title, $message, $customer_devices, $orderid);
+            return socialNotification($title, $message, $customer_devices);
         }
     }
 }
