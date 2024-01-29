@@ -16,9 +16,16 @@ class TableResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $status = isset($this->waiter_status_name) ? $this->waiter_status_name : CustomerTable::AWAITING_SERVICE_NAME;
+
+        if( $this->type == Order::CART )
+        {
+            $status = CustomerTable::AWAITING_SERVICE_NAME;
+        }
+
         return [
             'order_id'                  => isset($this->order_id) ? $this->order_id : 0,
-            'status'                    => isset($this->waiter_status_name) ? $this->waiter_status_name : $this->order_status,
+            'status'                    => $status,
             'status_no'                 => isset($this->waiter_status_name) ? (int) $this->waiter_status : CustomerTable::AWAITING_SERVICE,
             'table_no'                  => $this->restaurant_table->id ?? $this->restaurant_table_id,
             'table_name'                => $this->restaurant_table->code ?? '',
