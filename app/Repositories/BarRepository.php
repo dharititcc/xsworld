@@ -13,6 +13,7 @@ use App\Repositories\Traits\XSNotifications;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 
 /**
  * Class BarRepository.

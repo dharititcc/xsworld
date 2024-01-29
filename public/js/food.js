@@ -630,6 +630,7 @@
                     return false;
                 }
             }
+
             $(".error").remove();
             XS.Common.btnProcessingStart(context.selectors.foodSubmitBtn);
 

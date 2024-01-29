@@ -882,7 +882,7 @@ class OrderRepository extends BaseRepository
                     // charge payment
                     $this->getOrderPayment($latest, $user, $credit_amount, $latest->total, $defaultCardId);
 
-                    $getcusTbl = CustomerTable::where('user_id', $user->id)->where('restaurant_table_id', $table_id)->first();
+                    $getcusTbl = CustomerTable::where('user_id', $user->id)->where('restaurant_table_id', $table_id)->where('order_id', $latest->id)->first();
                     if($getcusTbl) {
                         // throw new GeneralException('Already table allocated');
                         // $customerTbl = 0;
@@ -1220,17 +1220,9 @@ class OrderRepository extends BaseRepository
             {
                 // update order to completed
                 $order->update(['waiter_status' => Order::COMPLETED, 'status' => Order::CONFIRM_PICKUP]);
-                $points                     = $order->total * 3;
-                $update['points']           = $order->user->points + round($points);
-                $order->user->update($update);
-                $creditArr['user_id']       = $order->user->id;
-                $creditArr['order_id']      = $order->id;
-                $creditArr['credit_point']  = $order->total;
-                $creditArr['total']         = $update['points'];
-                CreditPointsHistory::create($creditArr);
             }
         }
-        $customerTblDel = CustomerTable::where('user_id' , $data['user_id'])->where('restaurant_table_id',$data['restaurant_table_id'])->delete();
+        $customerTblDel = CustomerTable::where('user_id' , $data['user_id'])->where('restaurant_table_id', $data['restaurant_table_id'])->delete();
         return $customerTblDel;
     }
 

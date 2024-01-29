@@ -113,7 +113,14 @@ class AnalyticRepository extends BaseRepository
         $newData    = [];
 
         // get categories pluck
-        $categories = $restaurant->categories()->with(['children_parent'])->whereNotNull('parent_id')->get();
+        $query = $restaurant->categories()->with(['children_parent'])->whereNotNull('parent_id');
+
+        if( isset( $data['category_id'] ) && $data['category_id'] )
+        {
+            $query->where('id', $data['category_id']);
+        }
+        $categories = $query->get();
+
         // dd($categories);
         foreach( $categories as $kCat => $category )
         {
