@@ -438,6 +438,71 @@ if (! function_exists('waiterNotification')) {
     }
 }
 
+if (! function_exists('socialNotification')) {
+    /**
+     * Method socialNotification
+     *
+     * @param String $title [explicite description]
+     * @param String $message [explicite description]
+     * @param array $tokens [explicite description]
+     * @param int $orderid [explicite description]
+     * @param int $orderid [explicite description]
+     *
+     * @return mixed
+     */
+    function socialNotification(String $title, String $message, array $tokens)
+    {
+        if( !empty( $tokens ) )
+        {
+            Log::debug("Waiter Notification Testing:  - {$message}");
+            try {
+                $accesstoken = getenv("FCM_TOKEN");
+                $URL = 'https://fcm.googleapis.com/fcm/send';
+
+                $notification = [
+                    'title'                 => $title,
+                    'body'                  => $message,
+                    'message'               => $message,
+                    'icon'                  => 'myIcon',
+                    'sound'                 => 'mySound',
+                    'image'                 => '',
+                ];
+
+                // $newArray = array_merge($notification, ["click_action" => $code]);
+
+                $post_data = [
+                    'registration_ids'    => $tokens, //multple token array
+                    // 'to'                    => $tokens, //single token
+                    'notification'          => $notification,
+                    'data'                  => $notification
+                ];
+
+                $crl = curl_init();
+
+                $headr = array();
+                $headr[] = 'Content-type: application/json';
+                $headr[] = 'Authorization: Bearer ' . $accesstoken;
+                curl_setopt($crl, CURLOPT_SSL_VERIFYPEER, false);
+
+                curl_setopt($crl, CURLOPT_URL, $URL);
+                curl_setopt($crl, CURLOPT_HTTPHEADER, $headr);
+
+                curl_setopt($crl, CURLOPT_POST, true);
+                curl_setopt($crl, CURLOPT_POSTFIELDS, json_encode($post_data));
+                curl_setopt($crl, CURLOPT_RETURNTRANSFER, true);
+
+                $rest = curl_exec($crl);
+                // dd($rest);
+                Log::debug("Waiter Notification Log Helper:  - {$rest}");
+
+                return true;
+            } catch (Exception $e) {
+                throw new GeneralException($e->getMessage());
+            }
+        }
+    }
+}
+
 if (! function_exists('cate_name')) {
     function cate_name(int $cate_id)
     {
