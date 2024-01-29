@@ -1469,11 +1469,11 @@ class OrderRepository extends BaseRepository
         $auth_user->friend;
         $user_data          = User::find($data['user_id']);
         if($data['status'] == 1 ) {
-            $title              =  "Accepted Your friend request";
-            $message            =  $user_data->first_name . " Accepted your friend request";
+            $title              =  "Accepted your friend request";
+            $message            =  $user_data->first_name . "has Accepted your friend request";
         } else {
-            $title              = "decline your friend request .";
-            $message            =  $user_data->first_name . " declined your friend request";
+            $title              = "Decline your friend request";
+            $message            =  $user_data->first_name . " has declined your friend request";
         }
         $this->notifyCustomerSocial($user_data, $title, $message);
         return $auth_user;

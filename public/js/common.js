@@ -498,6 +498,47 @@ var XS_Admin = {}; // common variable used in all the files of the backend
             }
         },
 
+        fileReaderBindImage: function () {
+            if (window.File && window.FileList && window.FileReader) {
+                $(".files_image").on("change", function (e) {
+                    var clickedButton = this,
+                        files = e.target.files,
+                        filesLength = files.length;
+                        console.log(files);
+
+                    for (var i = 0; i < filesLength; i++) {
+                        var f = files[i],
+                            fileReader = new FileReader();
+
+                        fileReader.onload = (function (e) {
+                            var file = e.target,
+                                data = fileReader.result,
+                                thumbnail = `
+                                    <div class="pip">
+                                        <img class="imageThumb" src="${e.target.result}" title="${f.name}" />
+                                        <i class="icon-trash remove"></i>
+                                    </div>
+                                `;
+
+                            if (!data.match(/^data:image\//)) {
+                                XS.Common.handleSwalError('Please select image only.');
+                                return false;
+                            }
+
+                            $(thumbnail).insertAfter(clickedButton);
+                            $(".remove").click(function () {
+                                $(this).parent(".pip").remove();
+                            });
+                        });
+                        fileReader.readAsDataURL(f);
+                    }
+                });
+            } else {
+                // alert("Your browser doesn't support to File API")
+                XS.Common.handleSwalSuccessWithoutReload("Your browser doesn't support to File API.");
+            }
+        },
+
         randomId: function (length) {
             let result = '';
             const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';

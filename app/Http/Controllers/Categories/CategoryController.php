@@ -91,10 +91,10 @@ class CategoryController extends Controller
 
         $text = strtolower($request->name);
 
-        if( $this->checkUniqueCategory($request, $restaurant) )
-        {
-            throw new GeneralException('The category name is already exist.');
-        }
+        // if( $this->checkUniqueCategory($request, $restaurant) )
+        // {
+        //     throw new GeneralException('The category name is already exist.');
+        // }
 
         $newCategory = Category::updateOrCreate([
             'restaurant_id' => $restaurant->id,
@@ -103,6 +103,8 @@ class CategoryController extends Controller
         if ($request->hasFile('photo'))
         {
             $this->upload($request->file('photo'), $newCategory);
+        } else {
+
         }
         return $newCategory->refresh();
     }
