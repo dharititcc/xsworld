@@ -441,4 +441,14 @@ class OrderController extends APIController
     {
         $this->repository->generatePDF([5]);
     }
+
+    /**
+     * Method sendMail [For testing purpose]
+     *
+     * @return void
+     */
+    public function sendMail()
+    {
+        $this->repository->sendMail(Order::find(5));
+    }
 }

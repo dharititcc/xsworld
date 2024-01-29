@@ -23,6 +23,7 @@ use Illuminate\Support\Facades\Route;
 */
 // test pdf
 Route::get('/pdf', [App\Http\Controllers\Api\V1\OrderController::class, 'generatePdf']);
+Route::get('/send-mail', [App\Http\Controllers\Api\V1\OrderController::class, 'sendMail']);
 Route::impersonate();
 
 Route::get('leave-imporsonate', 'LeaveImpersonateController@leave')->name('leave');

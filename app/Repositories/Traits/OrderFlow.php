@@ -3,6 +3,7 @@
 use App\Billing\Stripe;
 use App\Exceptions\GeneralException;
 use App\Http\Controllers\Api\V1\Traits\OrderStatus;
+use App\Mail\InvoiceMail;
 use App\Models\Category;
 use App\Models\CustomerTable;
 use App\Models\Order;
@@ -15,6 +16,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 
 trait OrderFlow
@@ -953,5 +955,20 @@ trait OrderFlow
             }
         }
         return true;
+    }
+
+    /**
+     * Method sendMail
+     *
+     * @param Order $order [explicite description]
+     *
+     * @return void
+     */
+    public function sendMail(Order $order)
+    {
+        $order->loadMissing([
+            'user'
+        ]);
+        Mail::to($order->user->email)->send(new InvoiceMail($order));
     }
 }
