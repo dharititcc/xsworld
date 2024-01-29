@@ -21,6 +21,7 @@ class CustomerTable extends Model
     ];
 
     const AWAITING_SERVICE                = 19;
+    const AWAITING_SERVICE_NAME           = 'Awaiting Service';
 
     const ORDER_STATUS = [
         self::AWAITING_SERVICE                   => 'Awaiting Service',
