@@ -27,9 +27,9 @@
                 "width": "20%",
                 "bSortable": false,
                 render: function(data, type, row) {
-                    var total_price = parseInt(row.price) * parseInt(row.total_quantity ? row.total_quantity : 0);
-                    console.log(total_price);
-
+                    var total_price = parseInt(row.price) * parseInt(row.total_quantity ? row.variation_qty_sum : row.variation_qty_sum);
+                    // console.log(total_price);
+                    // console.log( parseInt(row.price) );
                     return `${row.order.restaurant.country.symbol}${total_price}`;
                 }
             },

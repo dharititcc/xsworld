@@ -3,6 +3,7 @@
 use App\Billing\Stripe;
 use App\Exceptions\GeneralException;
 use App\Http\Controllers\Api\V1\Traits\OrderStatus;
+use App\Mail\InvoiceMail;
 use App\Models\Category;
 use App\Models\CustomerTable;
 use App\Models\Order;
@@ -12,11 +13,10 @@ use App\Models\Restaurant;
 use App\Models\RestaurantItem;
 use App\Models\RestaurantPickupPoint;
 use App\Models\User;
-use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 
 trait OrderFlow
@@ -527,7 +527,6 @@ trait OrderFlow
                             'order_split_drink'
                         ])->find($order->id);
 
-                        // Generate PDF
                         $orderIdArr[] = $latest->id;
                     }
                     else
@@ -565,7 +564,6 @@ trait OrderFlow
                             'order_split_drink'
                         ])->find($order->id);
 
-                        // Generate PDF
                         $orderIdArr[] = $latest->id;
                     }
 
@@ -672,7 +670,6 @@ trait OrderFlow
             $order->refresh();
             $order->loadMissing(['items']);
 
-            // Generate PDF
             $orderIdArr[] = $order->id;
 
             $getcusTbl = CustomerTable::where('user_id', $user->id)->where('restaurant_table_id', $table_id)->where('order_id', $order->id)->first();
@@ -931,28 +928,47 @@ trait OrderFlow
      */
     public function generatePDF(array $orderArr)
     {
-        foreach($orderArr as $order)
+        if( !empty( $orderArr ) )
         {
-            $pdfData  = Order::with(
-                [   'order_items',
-                    'restaurant',
-                    'restaurant.country',
-                    'restaurant.currency'
-                ])->find($order);
+            foreach($orderArr as $order)
+            {
+                $pdfData  = Order::with(
+                    [   'order_items',
+                        'restaurant',
+                        'restaurant.country',
+                        'restaurant.currency'
+                    ])->find($order);
 
-            $restaurant = $pdfData->restaurant->owners()->first();
-            $pdf        = app('dompdf.wrapper');
-            $pdf->loadView('pdf.index',compact('pdfData','restaurant'));
-            $filename   = 'invoice_'.$order.'.pdf';
-            $content    = $pdf->output();
-            $file       = storage_path("app/public/order_pdf");
-            !is_dir($file) &&
-            mkdir($file, 0777, true);
-            $filePath = 'public/order_pdf/' . $filename;
-            //Upload PDF to storage folder
-            Storage::put($filePath, $content);
-            $destinationPath = asset('storage/order_pdf/').'/'.$filename;
+                $restaurant = $pdfData->restaurant->owners()->first();
+                $pdf        = app('dompdf.wrapper');
+                $customPaper = array(0,0,567.00,283.80);
+                $pdf->loadView('pdf.index',compact('pdfData','restaurant'))->setPaper($customPaper, 'landscape');
+                $filename   = 'invoice_'.$order.'.pdf';
+                $content    = $pdf->output();
+                $file       = storage_path("app/public/order_pdf");
+                !is_dir($file) &&
+                mkdir($file, 0777, true);
+                $filePath = 'public/order_pdf/' . $filename;
+                //Upload PDF to storage folder
+                Storage::put($filePath, $content);
+                $destinationPath = asset('storage/order_pdf/').'/'.$filename;
+            }
         }
         return true;
+    }
+
+    /**
+     * Method sendMail
+     *
+     * @param Order $order [explicite description]
+     *
+     * @return void
+     */
+    public function sendMail(Order $order)
+    {
+        $order->loadMissing([
+            'user'
+        ]);
+        Mail::to($order->user->email)->send(new InvoiceMail($order));
     }
 }
