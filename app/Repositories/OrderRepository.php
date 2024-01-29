@@ -224,7 +224,7 @@ class OrderRepository extends BaseRepository
      */
     function getRankBenifit(): array
     {
-        $user   = auth()->user();
+        $user       = auth()->user();
         $membership = $this->getMembership($user);
 
         $nextMembership = $this->nextMemberShipValue($membership);
@@ -348,13 +348,13 @@ class OrderRepository extends BaseRepository
         $previousQuarter    = get_previous_quarter();
         $currentQuarter     = get_current_quarter();
         // get previous quarter points
-        $previousQuarterOrders = $user->credit_points()->where(function ($query) use ($previousQuarter) {
+        $previousQuarterOrders = $user->credit_points()->where('type', 1)->where(function ($query) use ($previousQuarter) {
             $query->whereRaw(DB::raw("DATE(created_at) BETWEEN '{$previousQuarter['start_date']}' AND '{$previousQuarter['end_date']}'"));
         })
         ->get();
         // echo common()->formatSql($previousQuarterOrders);die;
         // get current quarter points
-        $currentQuarterOrders = $user->credit_points()->where(function ($query) use ($currentQuarter) {
+        $currentQuarterOrders = $user->credit_points()->where('type', 1)->where(function ($query) use ($currentQuarter) {
             $query->whereRaw(DB::raw("DATE(created_at) BETWEEN '{$currentQuarter['start_date']}' AND '{$currentQuarter['end_date']}'"));
         })
         ->get();
@@ -1261,7 +1261,7 @@ class OrderRepository extends BaseRepository
                                     WHEN friendship_status_tbl.friendship_status = 0 THEN 0
                                     WHEN friendship_status_tbl.friendship_status = 1 THEN 1
                                     WHEN friendship_status_tbl.friendship_status = 2 THEN 2
-                                    ELSE 
+                                    ELSE
                                     3
                                 END
                             ) AS friendship_status
@@ -1295,6 +1295,7 @@ class OrderRepository extends BaseRepository
                                 user_id
                             FROM credit_points_histories
                             WHERE DATE(created_at) BETWEEN '{$previousQuarter['start_date']}' AND '{$previousQuarter['end_date']}'
+                            AND type = 1
                             GROUP BY user_id
                         ) AS `previous_quarter`
                     "
@@ -1310,6 +1311,7 @@ class OrderRepository extends BaseRepository
                                 user_id
                             FROM credit_points_histories
                             WHERE DATE(created_at) BETWEEN '{$currentQuarter['start_date']}' AND '{$currentQuarter['end_date']}'
+                            AND type = 1
                             GROUP BY user_id
                         ) AS `current_quarter`
                     "
