@@ -431,4 +431,14 @@ class OrderController extends APIController
         $myFriendList   = $this->repository->unFriend($input);
         return $this->respondSuccess('Un friend successfully',$myFriendList);
     }
+
+    /**
+     * Method generatePdf [For testing purpose]
+     *
+     * @return void
+     */
+    public function generatePdf()
+    {
+        $this->repository->generatePDF([5]);
+    }
 }

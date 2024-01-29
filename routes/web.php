@@ -21,6 +21,8 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
+// test pdf
+Route::get('/pdf', [App\Http\Controllers\Api\V1\OrderController::class, 'generatePdf']);
 Route::impersonate();
 
 Route::get('leave-imporsonate', 'LeaveImpersonateController@leave')->name('leave');

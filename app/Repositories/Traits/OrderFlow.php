@@ -939,7 +939,8 @@ trait OrderFlow
 
                 $restaurant = $pdfData->restaurant->owners()->first();
                 $pdf        = app('dompdf.wrapper');
-                $pdf->loadView('pdf.index',compact('pdfData','restaurant'));
+                $customPaper = array(0,0,567.00,283.80);
+                $pdf->loadView('pdf.index',compact('pdfData','restaurant'))->setPaper($customPaper, 'landscape');
                 $filename   = 'invoice_'.$order.'.pdf';
                 $content    = $pdf->output();
                 $file       = storage_path("app/public/order_pdf");
