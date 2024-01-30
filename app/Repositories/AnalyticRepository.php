@@ -180,7 +180,7 @@ class AnalyticRepository extends BaseRepository
         $active_tbl          = RestaurantTable::where(['restaurant_id' => $id, 'status' =>RestaurantTable::ACTIVE])->count();
         $restaurant_table    = RestaurantTable::where('restaurant_id',$id)->pluck('id')->toArray();
         $occupied_tbl        = CustomerTable::whereIn('restaurant_table_id',$restaurant_table)
-                                        ->groupBy('waiter_id') ->select('id', DB::raw('count(*) as count'))
+                                        ->groupBy('restaurant_table_id') ->select('id', DB::raw('count(*) as count'))
                                         ->get();
         $keyInsights = [
             'total_tables'  => $total_tbl->count(),

@@ -3,6 +3,7 @@
 use App\Billing\Stripe;
 use App\Exceptions\GeneralException;
 use App\Http\Controllers\Api\V1\Traits\OrderStatus;
+use App\Mail\InvoiceMail;
 use App\Models\Category;
 use App\Models\CustomerTable;
 use App\Models\Order;
@@ -11,11 +12,13 @@ use App\Models\OrderSplit;
 use App\Models\Restaurant;
 use App\Models\RestaurantItem;
 use App\Models\RestaurantPickupPoint;
+use App\Models\RestaurantTable;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 
 trait OrderFlow
@@ -443,6 +446,7 @@ trait OrderFlow
      */
     function placeOrder(array $data): bool
     {
+        $orderIdArr           = [];
         $card_id            = $data['card_id'] ?? null;
         $credit_amount      = isset($data['credit_amount']) && $data['credit_amount'] != '' ? $data['credit_amount'] : 0;
         $amount             = $data['amount'] ? $data['amount'] : 0;
@@ -456,7 +460,22 @@ trait OrderFlow
         ])->findOrFail($data['order_id']);
         $user               = $order->user_id ? User::findOrFail($order->user_id) : auth()->user();
         $getcusTbl          = CustomerTable::where('user_id' , $user->id)->where('restaurant_table_id', $table_id)->where('order_id', $order->id)->first();
+        $isTableActive      = RestaurantTable::withTrashed()->where('id', $table_id)->first();
         $pickup_point_id    = '';
+
+        // check if qr is enable or not
+        if( isset($isTableActive->id) )
+        {
+            if( $isTableActive->deleted_at )
+            {
+                throw new GeneralException('You cannot place order as QR is deleted.');
+            }
+
+            if( $isTableActive->status == 0 )
+            {
+                throw new GeneralException('You cannot place order as QR is disabled.');
+            }
+        }
 
         if( isset( $getcusTbl->id ) )
         {
@@ -511,7 +530,6 @@ trait OrderFlow
 
                         $split->update(['order_id' => $order->id]);
                         $split->items()->update(['order_id' => $order->id]);
-
                         $order->refresh();
 
                         // update total of the order by items
@@ -526,8 +544,7 @@ trait OrderFlow
                             'order_split_drink'
                         ])->find($order->id);
 
-                        // Generate PDF
-                        $this->generatePDF($latest);
+                        $orderIdArr[] = $latest->id;
                     }
                     else
                     {
@@ -564,8 +581,7 @@ trait OrderFlow
                             'order_split_drink'
                         ])->find($order->id);
 
-                        // Generate PDF
-                        $this->generatePDF($latest);
+                        $orderIdArr[] = $latest->id;
                     }
 
                     $creditAmountSplit = 0;
@@ -581,9 +597,11 @@ trait OrderFlow
                         $amount             = $order->total - $creditAmountSplit;
                         $credit_amount     -= $creditAmountSplit;
                     }
+                    $latest->refresh();
 
                     // charge payment
                     $this->getOrderPayment($latest, $user, $creditAmountSplit, $amount, $card_id);
+                    $latest->refresh();
 
                     $getcusTbl = CustomerTable::where('user_id', $user->id)->where('restaurant_table_id', $table_id)->where('order_id', $latest->id)->first();
                     if($getcusTbl) {
@@ -597,25 +615,18 @@ trait OrderFlow
                         ]);
                     }
 
+                    // send notification to kitchens of the restaurant if order is food
+                    if( isset($latest->order_split_food->id) )
+                    {
+                        $kitchenTitle    = 'New order placed by customer';
+                        $kitchenMessage  = "Order is #{$latest->id} placed by customer";
+                        $this->notifyKitchens($latest, $kitchenTitle, $kitchenMessage);
+                    }
+
                     // send waiter notification if table is selected
                     if( isset( $table_id ) )
                     {
                         $this->sendWaiterNotification($latest, $user, $table_id);
-                    }
-
-                    // send notification to kitchens of the restaurant if order is food
-                    if( isset($latest->order_split_food->id) )
-                    {
-                        // debit payment
-                        if( $latest->charge_id )
-                        {
-                            $stripe                         = new Stripe();
-                            $payment_data                   = $stripe->captureCharge($latest->charge_id);
-                            $updateArr['transaction_id']    = $payment_data->balance_transaction;
-                        }
-                        $kitchenTitle    = 'New order placed by customer';
-                        $kitchenMessage  = "Order is #{$latest->id} placed by customer";
-                        $this->notifyKitchens($latest, $kitchenTitle, $kitchenMessage);
                     }
 
                     // customer notification
@@ -670,8 +681,7 @@ trait OrderFlow
             $order->refresh();
             $order->loadMissing(['items']);
 
-            // Generate PDF
-            $this->generatePDF($order);
+            $orderIdArr[] = $order->id;
 
             $getcusTbl = CustomerTable::where('user_id', $user->id)->where('restaurant_table_id', $table_id)->where('order_id', $order->id)->first();
             if($getcusTbl) {
@@ -691,16 +701,11 @@ trait OrderFlow
                 $this->sendWaiterNotification($order, $user, $table_id);
             }
 
+            $order->refresh();
+
             // send notification to kitchens of the restaurant if order is food
             if( isset($order->order_split_food->id) )
             {
-                // debit payment
-                if( $order->charge_id )
-                {
-                    $stripe                         = new Stripe();
-                    $payment_data                   = $stripe->captureCharge($order->charge_id);
-                    $updateArr['transaction_id']    = $payment_data->balance_transaction;
-                }
                 $kitchenTitle    = 'New order placed by customer';
                 $kitchenMessage  = "Order is #{$order->id} placed by customer";
                 $this->notifyKitchens($order, $kitchenTitle, $kitchenMessage);
@@ -721,7 +726,48 @@ trait OrderFlow
                 $this->notifyBars($order, $bartitle, $barmessage);
             }
         }
+        // Generate PDF
+        $this->generatePDF($orderIdArr);
+
+        // take payment
+        $this->captureKitchenCharge($orderIdArr);
+
         return true;
+    }
+
+    /**
+     * Method captureKitchenCharge
+     *
+     * @param array $orders [explicite description]
+     *
+     * @return void
+     */
+    public function captureKitchenCharge(array $orders)
+    {
+        if( !empty( $orders ) )
+        {
+            foreach( $orders as $order )
+            {
+                $order = Order::find($order);
+                $order->loadMissing([
+                    'restaurant',
+                    'order_split_food',
+                    'order_split_drink'
+                ]);
+
+                if( isset( $order->order_split_food->id ) )
+                {
+                    if( $order->charge_id )
+                    {
+                        $stripe                         = new Stripe();
+                        $payment_data                   = $stripe->captureCharge($order->charge_id);
+                        $transactionId                  = $payment_data->balance_transaction;
+
+                        $order->update(['transaction_id' => $transactionId]);
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -925,22 +971,49 @@ trait OrderFlow
      *
      * @return mixed
      */
-    public function generatePDF(Order $order)
+    public function generatePDF(array $orderArr)
     {
-        $restaurant  = $order->restaurant->owners()->first();
-        $pdf        = app('dompdf.wrapper');
-        $pdf->loadView('pdf.index',compact('order','restaurant'));
-        $filename   = 'invoice_'.$order->id.'.pdf';
-        $content    = $pdf->output();
-        $file       = storage_path("app/public/order_pdf");
-        !is_dir($file) &&
-        mkdir($file, 0777, true);
-        $filePath = 'public/order_pdf/' . $filename;
+        if( !empty( $orderArr ) )
+        {
+            foreach($orderArr as $order)
+            {
+                $pdfData  = Order::with(
+                    [   'order_items',
+                        'restaurant',
+                        'restaurant.country',
+                        'restaurant.currency'
+                    ])->find($order);
 
-        //Upload PDF to storage folder
-        Storage::put($filePath, $content);
-        $destinationPath = asset('storage/order_pdf/').'/'.$filename;
-
+                $restaurant = $pdfData->restaurant->owners()->first();
+                $pdf        = app('dompdf.wrapper');
+                $customPaper = array(0,0,567.00,283.80);
+                $pdf->loadView('pdf.index',compact('pdfData','restaurant'))->setPaper($customPaper, 'landscape');
+                $filename   = 'invoice_'.$order.'.pdf';
+                $content    = $pdf->output();
+                $file       = storage_path("app/public/order_pdf");
+                !is_dir($file) &&
+                mkdir($file, 0777, true);
+                $filePath = 'public/order_pdf/' . $filename;
+                //Upload PDF to storage folder
+                Storage::put($filePath, $content);
+                $destinationPath = asset('storage/order_pdf/').'/'.$filename;
+            }
+        }
         return true;
+    }
+
+    /**
+     * Method sendMail
+     *
+     * @param Order $order [explicite description]
+     *
+     * @return void
+     */
+    public function sendMail(Order $order)
+    {
+        $order->loadMissing([
+            'user'
+        ]);
+        Mail::to($order->user->email)->send(new InvoiceMail($order));
     }
 }

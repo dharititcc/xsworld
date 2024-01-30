@@ -79,7 +79,7 @@
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-md-4">
-                            <div class="tab-btn">
+                            <div class="tab-btn d-none">
                                 <a href="javascript:void(0)" class="bor-btn product_type active" data-product_type="0">Simple</a>
                                 <a href="javascript:void(0)" class="bor-btn product_type" data-product_type="1">Variable</a>
                             </div>

@@ -14,6 +14,7 @@ use App\Models\OrderSplit;
 use App\Models\Restaurant;
 use App\Models\RestaurantItem;
 use App\Models\RestaurantPickupPoint;
+use App\Models\RestaurantTable;
 use App\Models\RestaurantWaiter;
 use App\Models\User;
 use App\Models\UserPaymentMethod;
@@ -224,7 +225,7 @@ class OrderRepository extends BaseRepository
      */
     function getRankBenifit(): array
     {
-        $user   = auth()->user();
+        $user       = auth()->user();
         $membership = $this->getMembership($user);
 
         $nextMembership = $this->nextMemberShipValue($membership);
@@ -348,13 +349,13 @@ class OrderRepository extends BaseRepository
         $previousQuarter    = get_previous_quarter();
         $currentQuarter     = get_current_quarter();
         // get previous quarter points
-        $previousQuarterOrders = $user->credit_points()->where(function ($query) use ($previousQuarter) {
+        $previousQuarterOrders = $user->credit_points()->where('type', 1)->where(function ($query) use ($previousQuarter) {
             $query->whereRaw(DB::raw("DATE(created_at) BETWEEN '{$previousQuarter['start_date']}' AND '{$previousQuarter['end_date']}'"));
         })
         ->get();
         // echo common()->formatSql($previousQuarterOrders);die;
         // get current quarter points
-        $currentQuarterOrders = $user->credit_points()->where(function ($query) use ($currentQuarter) {
+        $currentQuarterOrders = $user->credit_points()->where('type', 1)->where(function ($query) use ($currentQuarter) {
             $query->whereRaw(DB::raw("DATE(created_at) BETWEEN '{$currentQuarter['start_date']}' AND '{$currentQuarter['end_date']}'"));
         })
         ->get();
@@ -749,6 +750,7 @@ class OrderRepository extends BaseRepository
      */
     function placeOrderwaiter(array $data): bool
     {
+        $orderIdArr         = [];
         $credit_amount      = $data['credit_amount'] ? $data['credit_amount'] : null;
         $amount             = $data['amount'] ? $data['amount'] : null;
         $table_id           = $data['table_id'] ? $data['table_id'] : null;
@@ -759,6 +761,7 @@ class OrderRepository extends BaseRepository
         $getCusCardId       = $stripe->fetchCustomer($stripe_customer_id);
         $defaultCardId      = $getCusCardId->default_source;
         $pickup_point_id    = $this->randomPickpickPoint($order);
+        $isTableActive      = RestaurantTable::withTrashed()->where('id', $table_id)->first();
 
         if(!isset( $defaultCardId ))
         {
@@ -773,6 +776,20 @@ class OrderRepository extends BaseRepository
             'restaurant',
             'restaurant.kitchens'
         ]);
+
+        // check if qr is enable or not
+        if( isset($isTableActive->id) )
+        {
+            if( $isTableActive->deleted_at )
+            {
+                throw new GeneralException('You cannot place order as QR is deleted.');
+            }
+
+            if( $isTableActive->status == 0 )
+            {
+                throw new GeneralException('You cannot place order as QR is disabled.');
+            }
+        }
 
         if( isset($order->order_split_food->id) )
         {
@@ -836,9 +853,6 @@ class OrderRepository extends BaseRepository
                             'order_split_food',
                             'order_split_drink'
                         ])->find($order->id);
-
-                        // Generate PDF
-                        $this->generatePDF($latest);
                     }
                     else
                     {
@@ -874,13 +888,12 @@ class OrderRepository extends BaseRepository
                             'order_split_food',
                             'order_split_drink'
                         ])->find($order->id);
-
-                        // Generate PDF
-                        $this->generatePDF($latest);
                     }
 
                     // charge payment
                     $this->getOrderPayment($latest, $user, $credit_amount, $latest->total, $defaultCardId);
+
+                    $orderIdArr[] = $latest->id;
 
                     $getcusTbl = CustomerTable::where('user_id', $user->id)->where('restaurant_table_id', $table_id)->where('order_id', $latest->id)->first();
                     if($getcusTbl) {
@@ -898,13 +911,6 @@ class OrderRepository extends BaseRepository
                     // send notification to kitchens of the restaurant if order is food
                     if( isset($latest->order_split_food->id) )
                     {
-                        // debit payment
-                        if( $latest->charge_id )
-                        {
-                            $stripe                         = new Stripe();
-                            $payment_data                   = $stripe->captureCharge($latest->charge_id);
-                            $updateArr['transaction_id']    = $payment_data->balance_transaction;
-                        }
                         $kitchenTitle    = 'New order placed by waiter';
                         $kitchenMessage  = "Order is #{$latest->id} placed by waiter";
                         $this->notifyKitchens($latest, $kitchenTitle, $kitchenMessage);
@@ -949,8 +955,7 @@ class OrderRepository extends BaseRepository
             $order->refresh();
             $order->loadMissing(['items']);
 
-            // Generate PDF
-            $this->generatePDF($order);
+            $orderIdArr[] = $order->id;
 
             $getcusTbl = CustomerTable::where('user_id', $user->id)->where('restaurant_table_id', $table_id)->first();
             if($getcusTbl) {
@@ -968,13 +973,6 @@ class OrderRepository extends BaseRepository
             // send notification to kitchens of the restaurant if order is food
             if( isset($order->order_split_food->id) )
             {
-                // debit payment
-                if( $order->charge_id )
-                {
-                    $stripe                         = new Stripe();
-                    $payment_data                   = $stripe->captureCharge($order->charge_id);
-                    $updateArr['transaction_id']    = $payment_data->balance_transaction;
-                }
                 $kitchenTitle    = 'New order placed by waiter';
                 $kitchenMessage  = "Order is #{$order->id} placed by waiter";
                 $this->notifyKitchens($order, $kitchenTitle, $kitchenMessage);
@@ -995,6 +993,12 @@ class OrderRepository extends BaseRepository
                 $this->notifyBars($order, $bartitle, $barmessage);
             }
         }
+
+        // generate pdf
+        $this->generatePDF($orderIdArr);
+
+        // take payment
+        $this->captureKitchenCharge($orderIdArr);
 
         return true;
     }
@@ -1261,7 +1265,7 @@ class OrderRepository extends BaseRepository
                                     WHEN friendship_status_tbl.friendship_status = 0 THEN 0
                                     WHEN friendship_status_tbl.friendship_status = 1 THEN 1
                                     WHEN friendship_status_tbl.friendship_status = 2 THEN 2
-                                    ELSE 
+                                    ELSE
                                     3
                                 END
                             ) AS friendship_status
@@ -1295,6 +1299,7 @@ class OrderRepository extends BaseRepository
                                 user_id
                             FROM credit_points_histories
                             WHERE DATE(created_at) BETWEEN '{$previousQuarter['start_date']}' AND '{$previousQuarter['end_date']}'
+                            AND type = 1
                             GROUP BY user_id
                         ) AS `previous_quarter`
                     "
@@ -1310,6 +1315,7 @@ class OrderRepository extends BaseRepository
                                 user_id
                             FROM credit_points_histories
                             WHERE DATE(created_at) BETWEEN '{$currentQuarter['start_date']}' AND '{$currentQuarter['end_date']}'
+                            AND type = 1
                             GROUP BY user_id
                         ) AS `current_quarter`
                     "
@@ -1444,6 +1450,9 @@ class OrderRepository extends BaseRepository
         //     'friend_id' => $auth_user->id,
         // ]);
         $friends = $auth_user->friends;
+        $title              = "You received new Friend Request";
+        $message            = "You have received new Friend Request from " . $auth_user->first_name;
+        $this->notifyCustomerSocial($friend, $title, $message);
         return $friends;
     }
 
@@ -1464,6 +1473,15 @@ class OrderRepository extends BaseRepository
         }
         $FriendRequest = FriendRequest::where('user_id', $data['user_id'])->where('friend_id', $auth_user->id,)->update(['status' => $data['status']]);
         $auth_user->friend;
+        $user_data          = User::find($data['user_id']);
+        if($data['status'] == 1 ) {
+            $title              =  "Accepted Your friend request";
+            $message            =  $user_data->first_name . " Accepted your friend request";
+        } else {
+            $title              = "decline your friend request .";
+            $message            =  $user_data->first_name . " declined your friend request";
+        }
+        $this->notifyCustomerSocial($user_data, $title, $message);
         return $auth_user;
     }
 
@@ -1529,6 +1547,9 @@ class OrderRepository extends BaseRepository
         // $deductAmountToAuthUser = number_format($authUserCreditAmount - $amount, 2);
         $receiverUser->credit_amount = $addAmountToReceiver;
         $receiverUser->save();
+        // $title              = "You received Gift credits";
+        // $message            = "You received gift credits from " . $receiverUser->first_name . ". Enjoy your gift!";
+        // $this->notifyCustomerSocial($receiverUser, $title, $message);
         // $auth_user->credit_amount    = $deductAmountToAuthUser;
         // $auth_user->save();
         return $auth_user;
@@ -1657,9 +1678,15 @@ class OrderRepository extends BaseRepository
             })
             ->first();
         
+        if($data['user_id'] == 0) {
+            throw new GeneralException('Please Enter valid user id you are pass 0 user id');
+        }
         if(!empty($checkUnFriendRequest))
         {
             $delete = FriendRequest::where('id', $checkUnFriendRequest->friendship_id)->delete();
+            $title              = $checkUnFriendRequest->first_name . " has unfriended you";
+            $message            = $checkUnFriendRequest->first_name . " has unfriended you";
+            $this->notifyCustomerSocial($checkUnFriendRequest, $title, $message);
         }
         return $delete;
     }

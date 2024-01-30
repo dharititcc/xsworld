@@ -296,13 +296,13 @@ class User extends Authenticatable
         $previousQuarter    = get_previous_quarter();
         $currentQuarter     = get_current_quarter();
         // get previous quarter points
-        $previousQuarterOrders = $this->credit_points()->where(function ($query) use ($previousQuarter) {
+        $previousQuarterOrders = $this->credit_points()->where('type', 1)->where(function ($query) use ($previousQuarter) {
             $query->whereRaw(DB::raw("DATE(created_at) BETWEEN '{$previousQuarter['start_date']}' AND '{$previousQuarter['end_date']}'"));
         })
         ->get();
         // echo common()->formatSql($previousQuarterOrders);die;
         // get current quarter points
-        $currentQuarterOrders = $this->credit_points()->where(function ($query) use ($currentQuarter) {
+        $currentQuarterOrders = $this->credit_points()->where('type', 1)->where(function ($query) use ($currentQuarter) {
             $query->whereRaw(DB::raw("DATE(created_at) BETWEEN '{$currentQuarter['start_date']}' AND '{$currentQuarter['end_date']}'"));
         })
         ->get();

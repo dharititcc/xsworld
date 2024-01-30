@@ -95,8 +95,6 @@
                 contentType: false,
                 dataType: 'json',
                 success: function(response) {
-                    console.log(response);
-
                     selectors.orderDetailView.closest('.view-odbox-outr').removeClass('blank');
                     selectors.orderDetailView.html(response.data);
                 },

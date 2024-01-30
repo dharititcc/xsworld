@@ -2,6 +2,7 @@
 
 use App\Exceptions\GeneralException;
 use App\Models\Order;
+use App\Models\User;
 use Illuminate\Support\Facades\Log;
 
 trait XSNotifications
@@ -136,6 +137,29 @@ trait XSNotifications
         {
             Log::debug("Bar Notification Testing:  - {$order->id}");
             $bar_notification   = sendNotification($title, $message, $bardevices, $order->id);
+        }
+    }
+
+
+    /**
+     * Method notifyCustomerSocial
+     *
+     * @param \App\Models\User $user [explicite description]
+     * @param string $title [explicite description]
+     *
+     * @return mixed|void
+     * @throws \App\Exceptions\GeneralException
+     */
+    public function notifyCustomerSocial(User $user, string $title, string $message)
+    {
+        // Customer Notify
+        $customer_devices   = $user->devices->count() ? $user->devices()->pluck('fcm_token')->unique()->toArray() : [];
+        $orderid            = $user->id;
+
+        if(!empty($customer_devices))
+        {
+            Log::debug("Customer Notification Testing:  - {$user->id}");
+            return socialNotification($title, $message, $customer_devices);
         }
     }
 }

@@ -102,15 +102,14 @@ class VenueController extends Controller
         $restaurant = session('restaurant');
         $address    = [];
 
-        // $address    = addressLatLong($request->street1 .  $request->city . $request->state);
-
+        $address    = addressLatLong($request->street1 .  $request->city . $request->state);
         $addressInfo    = [
             'name'          => $request->res_name,
             'street1'       => $request->street1,
             'street2'       => $request->street2,
             'state'         => $request->state,
-            // 'latitude'      => isset($request->latitude) ? $request->latitude : $address['latitude'],
-            // 'longitude'     => isset($request->longitude) ? $request->longitude : $address['longitude'],
+            'latitude'      => isset($request->latitude) ? $request->latitude : $address['latitude'],
+            'longitude'     => isset($request->longitude) ? $request->longitude : $address['longitude'],
             'postcode'      => $request->postcode,
             'city'          => $request->city,
             'specialisation'=> $request->specialisation,

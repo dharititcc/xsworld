@@ -25,6 +25,7 @@ class OrderController extends Controller
         ])
         ->where('restaurant_id', $restaurant->id)
         ->where('type', Order::ORDER)
+        ->whereNotIn('status', [Order::PENDNIG, Order::ACCEPTED, Order::COMPLETED, Order::DELAY_ORDER])
         ->orderBy('id','desc')
         ->paginate(15);
 
@@ -38,7 +39,7 @@ class OrderController extends Controller
     {
         $stripe     = new Stripe();
         $restaurant = session('restaurant')->loadMissing(['country']);
-        $card       = $order->card_details;
+        $card       = isset( $order->amount ) && $order->amount > 0 ? $order->card_details : null;
         $html       = view('order.partials.order-detail', ['order' => $order, 'restaurant' => $restaurant, 'card' => $card])->render();
 
         return response()->json([

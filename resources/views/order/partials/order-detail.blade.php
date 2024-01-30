@@ -43,35 +43,6 @@
             </tr>
             @endforeach
             @endif
-            {{-- <tr>
-                        <td>$25.00</td>
-                        <td><strong class="yellow">Pint of Sapporo</strong> </td>
-                        <td>2</td>
-                        <td><label class="cst-check"><input type="checkbox" value=""><span class="checkmark"></span></label></td>
-                    </tr>
-                    <tr>
-                        <td>$18.50</td>
-                        <td><strong class="yellow">Chicken Club Sandwich</strong><br>
-                            Chips +</td>
-                        <td>1</td>
-                        <td><label class="cst-check"><input type="checkbox" value=""><span class="checkmark"></span></label></td>
-                    </tr>
-                    <tr>
-                        <td>$28.50</td>
-                        <td><strong class="yellow">Chicken Parmigiana</strong><br>
-                            Chips -<br>
-                            Salad +</td>
-                        <td>1</td>
-                        <td><label class="cst-check"><input type="checkbox" value=""><span class="checkmark"></span></label></td>
-                    </tr>
-                    <tr>
-                        <td>$28.50</td>
-                        <td><strong class="yellow">Chicken Parmigiana</strong><br>
-                            Chips -<br>
-                            Salad +</td>
-                        <td>1</td>
-                        <td><label class="cst-check"><input type="checkbox" value=""><span class="checkmark"></span></label></td>
-                    </tr> --}}
         </table>
     </div>
 </div>
@@ -81,11 +52,19 @@
             <td>This order has been paid for.</td>
             <td>{{ $restaurant->country->symbol }}{{ $order->total }}</td>
         </tr>
+        @if (isset($card))
         <tr>
             <td><strong class="yellow">Paid with</strong><br> {{$card['brand']}} </td>
             <td>**** - **** - **** - {{$card['last4']}}<br>
                 {{$card['name']}}</td>
         </tr>
+        @endif
+        @if (isset($order->credit_amount) && $order->credit_amount > 0)
+        <tr>
+            <td><strong class="yellow">Paid with</strong><br> Credit Balance </td>
+            <td>{{ $restaurant->country->symbol }}{{$order->credit_amount}}</td>
+        </tr>
+        @endif
     </table>
 </div>
 <div class="payopt-box">
@@ -105,6 +84,7 @@
     </table>
 </div>
 <div class="payopt-box b-none">
+    @if (!in_array( $order->status, [\App\Models\Order::CUSTOMER_CANCELED, \App\Models\Order::DENY_ORDER]) || !in_array($order->waiter_status, [\App\Models\Order::CUSTOMER_CANCELED] ))
     <table width="100%" class="mb-4">
         <tr>
             <td>Order completion time: </td>
@@ -116,6 +96,7 @@
             <td>{{ $order->served_time }}</td>
         </tr>
     </table>
+    @endif
     {{--<a href="#" class="bor-btn d-block text-center view-order mb-3">Refund Select Items
         ($0.00)</a>
     <a href="#" class="bor-btn d-block text-center view-order">Discard Refund Request</a> --}}

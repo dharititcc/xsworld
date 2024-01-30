@@ -137,7 +137,7 @@
         <center id="top">
             <div class="logo"></div>
             <div class="info">
-                <h2>{{ $order->restaurant->name }}</h2>
+                <h2>{{ $pdfData->restaurant->name }}</h2>
             </div><!--End Info-->
         </center><!--End InvoiceTop-->
 
@@ -145,7 +145,7 @@
             <div class="info">
                 <h2>Contact Info</h2>
                 <p>
-                    Address : {{ $order->restaurant->address }} <br>
+                    Address : {{ $pdfData->restaurant->address }} <br>
                     Email : {{ $restaurant->email }}<br>
                     Phone : {{ $restaurant->phone }}<br>
                 </p>
@@ -169,7 +169,7 @@
                             <h2>Sub Total</h2>
                         </td>
                     </tr>
-                    @foreach ($order->order_items as $items)
+                    @foreach ($pdfData->order_items as $items)
                         <tr class="service">
                             <?php
                                 $total = $items->total;
@@ -205,10 +205,10 @@
                                 <p class="itemtext"> {{ $items->quantity }} </p>
                             </td>
                             <td class="tableitem">
-                                <p class="itemtext"> {{ $order->restaurant->country->symbol .number_format($total, 2) }} </p>
+                                <p class="itemtext"> {{ $pdfData->restaurant->country->symbol .number_format($total, 2) }} </p>
                             </td>
                             <td class="tableitem">
-                                <p class="itemtext"> {{ $order->restaurant->country->symbol .number_format($total, 2) }} </p>
+                                <p class="itemtext"> {{ $pdfData->restaurant->country->symbol .number_format($total, 2) }} </p>
                             </td>
                         </tr>
                     @endforeach
@@ -220,7 +220,7 @@
                             <h2>Total</h2>
                         </td>
                         <td class="payment">
-                            <h2>{{ $order->restaurant->country->symbol . $order->total }}</h2>
+                            <h2>{{ $pdfData->restaurant->country->symbol . $pdfData->total }}</h2>
                         </td>
                     </tr>
 
