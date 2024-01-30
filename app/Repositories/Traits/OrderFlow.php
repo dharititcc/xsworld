@@ -748,6 +748,7 @@ trait OrderFlow
         {
             foreach( $orders as $order )
             {
+                $order = Order::find($order);
                 $order->loadMissing([
                     'restaurant',
                     'order_split_food',
