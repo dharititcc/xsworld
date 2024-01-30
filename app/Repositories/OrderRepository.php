@@ -782,12 +782,12 @@ class OrderRepository extends BaseRepository
         {
             if( $isTableActive->deleted_at )
             {
-                throw new GeneralException('You cannot place order as qr is deleted.');
+                throw new GeneralException('You cannot place order as QR is deleted.');
             }
 
             if( $isTableActive->status == 0 )
             {
-                throw new GeneralException('You cannot place order as qr is disabled.');
+                throw new GeneralException('You cannot place order as QR is disabled.');
             }
         }
 

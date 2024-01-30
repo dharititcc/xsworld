@@ -17,6 +17,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 
@@ -467,12 +468,12 @@ trait OrderFlow
         {
             if( $isTableActive->deleted_at )
             {
-                throw new GeneralException('You cannot place order as qr is deleted.');
+                throw new GeneralException('You cannot place order as QR is deleted.');
             }
 
             if( $isTableActive->status == 0 )
             {
-                throw new GeneralException('You cannot place order as qr is disabled.');
+                throw new GeneralException('You cannot place order as QR is disabled.');
             }
         }
 
@@ -768,6 +769,9 @@ trait OrderFlow
                 'source'        => $card_id,
                 'description'   => $order->id
             ];
+
+            Log::debug('Order'. $order->id);
+            Log::debug('Payment Array: '.$paymentArr);
 
             $stripe         = new Stripe();
             $payment_data   = $stripe->createCharge($paymentArr);
