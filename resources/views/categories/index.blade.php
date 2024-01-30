@@ -167,13 +167,16 @@
 
                                                 <option value="{{ $category->id }}">{{ $category->name }}</option>
 
-                                                {{-- @if ($category->name == "Food")
-                                                    <option value="">Drinks</option>
-                                                @elseif ($category->name == "Drinks")
-                                                    <option value="">Food</option>
-                                                @endif --}}
+                                                
                                             @endif
                                         @endforeach
+
+                                        @if (!in_array('Food', $encounteredCategories))
+                                            <option value="">Food</option>
+                                        @endif
+                                        @if (!in_array('Drinks', $encounteredCategories))
+                                            <option value="">Drinks</option>
+                                        @endif
                                     </select>
                                 </div>
                             @else
@@ -360,7 +363,11 @@
         var $this = $(this);
         var getValue= $("input[name=categoryId]").val();
         $('select').on('change', function() {
-            getCategory(this.value);
+            if(this.value == "") {
+                $(".image_box").children('.pip').remove();
+            } else {
+                getCategory(this.value);
+            }
         });
         
         getCategory(getValue);
@@ -577,11 +584,11 @@
             type: "GET",
             success: function(response) {
                 var defaultImage = @json(asset('img/logo.png')); // Default image path
-                var imageSrc = response.data.image ? response.data.image : '#';
+                // var imageSrc = response.data.image ? response.data.image : '#';
 
                 var image = `
                                 <div class="pip">
-                                    <img class="imageThumbs" src="${imageSrc}" alt="${response.data.name}"/>
+                                    <img class="imageThumbs" src="${ response.data.image!="" ? response.data.image : '#'}" alt="${response.data.name}"/>
                                     <i class="icon-trash remove " id="category_img_remove"></i>
                                 </div>
                             `;
