@@ -716,6 +716,7 @@ trait OrderFlow
             if( isset($order->order_split_food->id) )
             {
                 // debit payment
+                Log::debug("Charge : ". $order->charge_id);
                 if( $order->charge_id )
                 {
                     $stripe                         = new Stripe();
