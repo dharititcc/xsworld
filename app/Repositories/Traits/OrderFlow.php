@@ -770,7 +770,7 @@ trait OrderFlow
                 'description'   => $order->id
             ];
 
-            Log::debug('Order', $order->id);
+            Log::debug('Order'. $order->id);
             Log::debug('Payment Array: '.$paymentArr);
 
             $stripe         = new Stripe();
