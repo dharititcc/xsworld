@@ -38,7 +38,7 @@ class OrderController extends Controller
     {
         $stripe     = new Stripe();
         $restaurant = session('restaurant')->loadMissing(['country']);
-        $card       = $order->card_details;
+        $card       = isset( $order->amount ) && $order->amount > 0 ? $order->card_details : null;
         $html       = view('order.partials.order-detail', ['order' => $order, 'restaurant' => $restaurant, 'card' => $card])->render();
 
         return response()->json([
