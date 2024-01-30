@@ -618,15 +618,6 @@ trait OrderFlow
                     // send notification to kitchens of the restaurant if order is food
                     if( isset($latest->order_split_food->id) )
                     {
-                        // debit payment
-                        if( $latest->charge_id )
-                        {
-                            $stripe                         = new Stripe();
-                            $payment_data                   = $stripe->captureCharge($latest->charge_id);
-                            $transactionId                  = $payment_data->balance_transaction;
-
-                            $latest->update(['transaction_id' => $transactionId]);
-                        }
                         $kitchenTitle    = 'New order placed by customer';
                         $kitchenMessage  = "Order is #{$latest->id} placed by customer";
                         $this->notifyKitchens($latest, $kitchenTitle, $kitchenMessage);
@@ -715,16 +706,6 @@ trait OrderFlow
             // send notification to kitchens of the restaurant if order is food
             if( isset($order->order_split_food->id) )
             {
-                // debit payment
-                Log::debug("Charge : ". $order->charge_id);
-                if( $order->charge_id )
-                {
-                    $stripe                         = new Stripe();
-                    $payment_data                   = $stripe->captureCharge($order->charge_id);
-                    $transactionId                  = $payment_data->balance_transaction;
-
-                    $order->update(['transaction_id' => $transactionId]);
-                }
                 $kitchenTitle    = 'New order placed by customer';
                 $kitchenMessage  = "Order is #{$order->id} placed by customer";
                 $this->notifyKitchens($order, $kitchenTitle, $kitchenMessage);
@@ -747,7 +728,45 @@ trait OrderFlow
         }
         // Generate PDF
         $this->generatePDF($orderIdArr);
+
+        // take payment
+        $this->captureKitchenCharge($orderIdArr);
+
         return true;
+    }
+
+    /**
+     * Method captureKitchenCharge
+     *
+     * @param array $orders [explicite description]
+     *
+     * @return void
+     */
+    public function captureKitchenCharge(array $orders)
+    {
+        if( !empty( $orders ) )
+        {
+            foreach( $orders as $order )
+            {
+                $order->loadMissing([
+                    'restaurant',
+                    'order_split_food',
+                    'order_split_drink'
+                ]);
+
+                if( isset( $order->order_split_food->id ) )
+                {
+                    if( $order->charge_id )
+                    {
+                        $stripe                         = new Stripe();
+                        $payment_data                   = $stripe->captureCharge($order->charge_id);
+                        $transactionId                  = $payment_data->balance_transaction;
+
+                        $order->update(['transaction_id' => $transactionId]);
+                    }
+                }
+            }
+        }
     }
 
     /**

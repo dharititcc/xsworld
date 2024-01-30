@@ -911,13 +911,6 @@ class OrderRepository extends BaseRepository
                     // send notification to kitchens of the restaurant if order is food
                     if( isset($latest->order_split_food->id) )
                     {
-                        // debit payment
-                        if( $latest->charge_id )
-                        {
-                            $stripe                         = new Stripe();
-                            $payment_data                   = $stripe->captureCharge($latest->charge_id);
-                            $updateArr['transaction_id']    = $payment_data->balance_transaction;
-                        }
                         $kitchenTitle    = 'New order placed by waiter';
                         $kitchenMessage  = "Order is #{$latest->id} placed by waiter";
                         $this->notifyKitchens($latest, $kitchenTitle, $kitchenMessage);
@@ -980,13 +973,6 @@ class OrderRepository extends BaseRepository
             // send notification to kitchens of the restaurant if order is food
             if( isset($order->order_split_food->id) )
             {
-                // debit payment
-                if( $order->charge_id )
-                {
-                    $stripe                         = new Stripe();
-                    $payment_data                   = $stripe->captureCharge($order->charge_id);
-                    $updateArr['transaction_id']    = $payment_data->balance_transaction;
-                }
                 $kitchenTitle    = 'New order placed by waiter';
                 $kitchenMessage  = "Order is #{$order->id} placed by waiter";
                 $this->notifyKitchens($order, $kitchenTitle, $kitchenMessage);
