@@ -12,6 +12,7 @@ use App\Models\OrderSplit;
 use App\Models\Restaurant;
 use App\Models\RestaurantItem;
 use App\Models\RestaurantPickupPoint;
+use App\Models\RestaurantTable;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Contracts\Database\Eloquent\Builder;
@@ -458,7 +459,22 @@ trait OrderFlow
         ])->findOrFail($data['order_id']);
         $user               = $order->user_id ? User::findOrFail($order->user_id) : auth()->user();
         $getcusTbl          = CustomerTable::where('user_id' , $user->id)->where('restaurant_table_id', $table_id)->where('order_id', $order->id)->first();
+        $isTableActive      = RestaurantTable::withTrashed()->where('id', $table_id)->first();
         $pickup_point_id    = '';
+
+        // check if qr is enable or not
+        if( isset($isTableActive->id) )
+        {
+            if( $isTableActive->deleted_at )
+            {
+                throw new GeneralException('You cannot place order as qr is deleted.');
+            }
+
+            if( $isTableActive->status == 0 )
+            {
+                throw new GeneralException('You cannot place order as qr is disabled.');
+            }
+        }
 
         if( isset( $getcusTbl->id ) )
         {

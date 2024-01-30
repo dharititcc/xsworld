@@ -14,6 +14,7 @@ use App\Models\OrderSplit;
 use App\Models\Restaurant;
 use App\Models\RestaurantItem;
 use App\Models\RestaurantPickupPoint;
+use App\Models\RestaurantTable;
 use App\Models\RestaurantWaiter;
 use App\Models\User;
 use App\Models\UserPaymentMethod;
@@ -760,6 +761,7 @@ class OrderRepository extends BaseRepository
         $getCusCardId       = $stripe->fetchCustomer($stripe_customer_id);
         $defaultCardId      = $getCusCardId->default_source;
         $pickup_point_id    = $this->randomPickpickPoint($order);
+        $isTableActive      = RestaurantTable::withTrashed()->where('id', $table_id)->first();
 
         if(!isset( $defaultCardId ))
         {
@@ -774,6 +776,20 @@ class OrderRepository extends BaseRepository
             'restaurant',
             'restaurant.kitchens'
         ]);
+
+        // check if qr is enable or not
+        if( isset($isTableActive->id) )
+        {
+            if( $isTableActive->deleted_at )
+            {
+                throw new GeneralException('You cannot place order as qr is deleted.');
+            }
+
+            if( $isTableActive->status == 0 )
+            {
+                throw new GeneralException('You cannot place order as qr is disabled.');
+            }
+        }
 
         if( isset($order->order_split_food->id) )
         {
