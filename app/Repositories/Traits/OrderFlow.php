@@ -771,7 +771,7 @@ trait OrderFlow
             ];
 
             Log::debug('Order'. $order->id);
-            Log::debug('Payment Array: '.$paymentArr);
+            Log::debug('Payment Array: '.json_encode($paymentArr));
 
             $stripe         = new Stripe();
             $payment_data   = $stripe->createCharge($paymentArr);
