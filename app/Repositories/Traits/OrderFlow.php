@@ -12,10 +12,12 @@ use App\Models\OrderSplit;
 use App\Models\Restaurant;
 use App\Models\RestaurantItem;
 use App\Models\RestaurantPickupPoint;
+use App\Models\RestaurantTable;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 
@@ -458,7 +460,22 @@ trait OrderFlow
         ])->findOrFail($data['order_id']);
         $user               = $order->user_id ? User::findOrFail($order->user_id) : auth()->user();
         $getcusTbl          = CustomerTable::where('user_id' , $user->id)->where('restaurant_table_id', $table_id)->where('order_id', $order->id)->first();
+        $isTableActive      = RestaurantTable::withTrashed()->where('id', $table_id)->first();
         $pickup_point_id    = '';
+
+        // check if qr is enable or not
+        if( isset($isTableActive->id) )
+        {
+            if( $isTableActive->deleted_at )
+            {
+                throw new GeneralException('You cannot place order as QR is deleted.');
+            }
+
+            if( $isTableActive->status == 0 )
+            {
+                throw new GeneralException('You cannot place order as QR is disabled.');
+            }
+        }
 
         if( isset( $getcusTbl->id ) )
         {
@@ -584,6 +601,7 @@ trait OrderFlow
 
                     // charge payment
                     $this->getOrderPayment($latest, $user, $creditAmountSplit, $amount, $card_id);
+                    $latest->refresh();
 
                     $getcusTbl = CustomerTable::where('user_id', $user->id)->where('restaurant_table_id', $table_id)->where('order_id', $latest->id)->first();
                     if($getcusTbl) {
@@ -597,25 +615,18 @@ trait OrderFlow
                         ]);
                     }
 
+                    // send notification to kitchens of the restaurant if order is food
+                    if( isset($latest->order_split_food->id) )
+                    {
+                        $kitchenTitle    = 'New order placed by customer';
+                        $kitchenMessage  = "Order is #{$latest->id} placed by customer";
+                        $this->notifyKitchens($latest, $kitchenTitle, $kitchenMessage);
+                    }
+
                     // send waiter notification if table is selected
                     if( isset( $table_id ) )
                     {
                         $this->sendWaiterNotification($latest, $user, $table_id);
-                    }
-
-                    // send notification to kitchens of the restaurant if order is food
-                    if( isset($latest->order_split_food->id) )
-                    {
-                        // debit payment
-                        if( $latest->charge_id )
-                        {
-                            $stripe                         = new Stripe();
-                            $payment_data                   = $stripe->captureCharge($latest->charge_id);
-                            $updateArr['transaction_id']    = $payment_data->balance_transaction;
-                        }
-                        $kitchenTitle    = 'New order placed by customer';
-                        $kitchenMessage  = "Order is #{$latest->id} placed by customer";
-                        $this->notifyKitchens($latest, $kitchenTitle, $kitchenMessage);
                     }
 
                     // customer notification
@@ -690,16 +701,11 @@ trait OrderFlow
                 $this->sendWaiterNotification($order, $user, $table_id);
             }
 
+            $order->refresh();
+
             // send notification to kitchens of the restaurant if order is food
             if( isset($order->order_split_food->id) )
             {
-                // debit payment
-                if( $order->charge_id )
-                {
-                    $stripe                         = new Stripe();
-                    $payment_data                   = $stripe->captureCharge($order->charge_id);
-                    $updateArr['transaction_id']    = $payment_data->balance_transaction;
-                }
                 $kitchenTitle    = 'New order placed by customer';
                 $kitchenMessage  = "Order is #{$order->id} placed by customer";
                 $this->notifyKitchens($order, $kitchenTitle, $kitchenMessage);
@@ -722,7 +728,46 @@ trait OrderFlow
         }
         // Generate PDF
         $this->generatePDF($orderIdArr);
+
+        // take payment
+        $this->captureKitchenCharge($orderIdArr);
+
         return true;
+    }
+
+    /**
+     * Method captureKitchenCharge
+     *
+     * @param array $orders [explicite description]
+     *
+     * @return void
+     */
+    public function captureKitchenCharge(array $orders)
+    {
+        if( !empty( $orders ) )
+        {
+            foreach( $orders as $order )
+            {
+                $order = Order::find($order);
+                $order->loadMissing([
+                    'restaurant',
+                    'order_split_food',
+                    'order_split_drink'
+                ]);
+
+                if( isset( $order->order_split_food->id ) )
+                {
+                    if( $order->charge_id )
+                    {
+                        $stripe                         = new Stripe();
+                        $payment_data                   = $stripe->captureCharge($order->charge_id);
+                        $transactionId                  = $payment_data->balance_transaction;
+
+                        $order->update(['transaction_id' => $transactionId]);
+                    }
+                }
+            }
+        }
     }
 
     /**

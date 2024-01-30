@@ -427,7 +427,7 @@ class Order extends Model
         $completion_time = '';
         if($this->completion_date)
         {
-            $completion_time   = Carbon::createFromFormat('Y-m-d H:i:s',$this->completion_date)->format('H:i');
+            $completion_time   = Carbon::createFromFormat('Y-m-d H:i:s',$this->completion_date)->format('g:i A');
         }
         return $completion_time;
     }

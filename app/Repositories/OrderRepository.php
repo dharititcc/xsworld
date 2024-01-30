@@ -14,6 +14,7 @@ use App\Models\OrderSplit;
 use App\Models\Restaurant;
 use App\Models\RestaurantItem;
 use App\Models\RestaurantPickupPoint;
+use App\Models\RestaurantTable;
 use App\Models\RestaurantWaiter;
 use App\Models\User;
 use App\Models\UserPaymentMethod;
@@ -760,6 +761,7 @@ class OrderRepository extends BaseRepository
         $getCusCardId       = $stripe->fetchCustomer($stripe_customer_id);
         $defaultCardId      = $getCusCardId->default_source;
         $pickup_point_id    = $this->randomPickpickPoint($order);
+        $isTableActive      = RestaurantTable::withTrashed()->where('id', $table_id)->first();
 
         if(!isset( $defaultCardId ))
         {
@@ -774,6 +776,20 @@ class OrderRepository extends BaseRepository
             'restaurant',
             'restaurant.kitchens'
         ]);
+
+        // check if qr is enable or not
+        if( isset($isTableActive->id) )
+        {
+            if( $isTableActive->deleted_at )
+            {
+                throw new GeneralException('You cannot place order as QR is deleted.');
+            }
+
+            if( $isTableActive->status == 0 )
+            {
+                throw new GeneralException('You cannot place order as QR is disabled.');
+            }
+        }
 
         if( isset($order->order_split_food->id) )
         {
@@ -895,13 +911,6 @@ class OrderRepository extends BaseRepository
                     // send notification to kitchens of the restaurant if order is food
                     if( isset($latest->order_split_food->id) )
                     {
-                        // debit payment
-                        if( $latest->charge_id )
-                        {
-                            $stripe                         = new Stripe();
-                            $payment_data                   = $stripe->captureCharge($latest->charge_id);
-                            $updateArr['transaction_id']    = $payment_data->balance_transaction;
-                        }
                         $kitchenTitle    = 'New order placed by waiter';
                         $kitchenMessage  = "Order is #{$latest->id} placed by waiter";
                         $this->notifyKitchens($latest, $kitchenTitle, $kitchenMessage);
@@ -964,13 +973,6 @@ class OrderRepository extends BaseRepository
             // send notification to kitchens of the restaurant if order is food
             if( isset($order->order_split_food->id) )
             {
-                // debit payment
-                if( $order->charge_id )
-                {
-                    $stripe                         = new Stripe();
-                    $payment_data                   = $stripe->captureCharge($order->charge_id);
-                    $updateArr['transaction_id']    = $payment_data->balance_transaction;
-                }
                 $kitchenTitle    = 'New order placed by waiter';
                 $kitchenMessage  = "Order is #{$order->id} placed by waiter";
                 $this->notifyKitchens($order, $kitchenTitle, $kitchenMessage);
@@ -994,6 +996,9 @@ class OrderRepository extends BaseRepository
 
         // generate pdf
         $this->generatePDF($orderIdArr);
+
+        // take payment
+        $this->captureKitchenCharge($orderIdArr);
 
         return true;
     }

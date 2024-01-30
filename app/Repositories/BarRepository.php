@@ -441,6 +441,9 @@ class BarRepository extends BaseRepository
             $waiterMessage                    = "Your Order #".$order->id." is pick up from the ".$order->restaurant->name;
             $this->notifyWaiters($order, $waiterTitle, $waiterMessage, Order::WAITER_CONFIRM_COLLECTION);
         }
+
+        // send email
+        Mail::to($order->user->email)->send(new InvoiceMail($order));
     }
 
     /**
@@ -491,9 +494,6 @@ class BarRepository extends BaseRepository
             $waiterMessage                    = "Your Order #".$order->id." is completed by ".$order->restaurant->name;
             $this->notifyWaiters($order, $waiterTitle, $waiterMessage, Order::WAITER_READY_FOR_COLLECTION);
         }
-
-        // send email
-        Mail::to($order->user->email)->send(new InvoiceMail($order));
     }
 
     /**
