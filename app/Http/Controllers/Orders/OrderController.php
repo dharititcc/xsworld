@@ -25,6 +25,7 @@ class OrderController extends Controller
         ])
         ->where('restaurant_id', $restaurant->id)
         ->where('type', Order::ORDER)
+        ->whereNotIn('status', [Order::PENDNIG])
         ->orderBy('id','desc')
         ->paginate(15);
 
