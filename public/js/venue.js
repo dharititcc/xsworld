@@ -170,8 +170,14 @@
                         // location.reload();
                         XS.Common.handleSwalSuccess('Venue Updated successfully.');
                     },
-                    error:function(request, status, error) {
-                        console.log('Error');
+                    error:function(jqXHR) {
+                        if( jqXHR.status === 403 )
+                        {
+                            const {error}   = jqXHR.responseJSON;
+                            const {message} = error;
+
+                            XS.Common.handleSwalError(message, true);
+                        }
                     },
                 })
             });
