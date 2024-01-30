@@ -6,6 +6,10 @@
 
         selectors: {
             categoryModal:         jQuery('.add_category'),
+            categoryModalShow:     jQuery('#cat_modal'),
+            submitButton:          jQuery('#submitCatBtn'),
+
+
            
         },
 
@@ -25,7 +29,7 @@
 
         closeCategoryModal: function()
         {
-
+            
         },
 
         addCategoryFormValidation: function()

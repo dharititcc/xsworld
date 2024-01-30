@@ -220,4 +220,14 @@ class CategoryController extends Controller
             'original_name' => $profileImage
         ]);
     }
+
+    public function deleteImage(Request $request)
+    {
+        $destinationPath = public_path(DIRECTORY_SEPARATOR.'storage'.DIRECTORY_SEPARATOR.'categories');
+        $category = Category::where('id', $request->id)->first();
+        // unlink(storage_path('app/public/categories/'.$destinationPath));
+        // unlink($destinationPath,$category->attachment->stored_name);
+        $category->attachment()->delete();
+        return true;
+    }
 }

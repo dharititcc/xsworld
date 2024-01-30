@@ -73,6 +73,7 @@ Route::group(['prefix' => 'restaurants', 'as' => 'restaurants.', 'middleware' =>
         Route::resource('categories', 'CategoryController');
         Route::post('categories/multidelete', 'CategoryController@deleteCategories')->name('delete/categories');
         Route::post('categoryName', 'CategoryController@categoryName')->name('categoryName');
+        Route::post('deleteImage', 'CategoryController@deleteImage')->name('deleteImage');
     });
     Route::group(['namespace' => 'Drinks'], function()
     {
