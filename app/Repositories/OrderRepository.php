@@ -997,6 +997,9 @@ class OrderRepository extends BaseRepository
         // generate pdf
         $this->generatePDF($orderIdArr);
 
+        // take payment
+        $this->captureKitchenCharge($orderIdArr);
+
         return true;
     }
 
