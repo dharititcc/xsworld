@@ -764,7 +764,7 @@ trait OrderFlow
                 'amount'        => number_format($amount, 2) * 100,
                 'currency'      => $order->restaurant->currency->code,
                 'customer'      => $user->stripe_customer_id,
-                'capture'       => false,
+                'capture'       => isset($order->order_split_drink->id) ? false : true,
                 'source'        => $card_id,
                 'description'   => $order->id
             ];
