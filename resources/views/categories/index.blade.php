@@ -587,7 +587,11 @@
                             `;
 
                 $(".image_box").children('.pip').remove();
-                $("#image").after(image);
+                if( response.data.image!= "" )
+                {
+                    $("#image").after(image);
+                }
+                
                 $(".remove").click(function() {
                     $(this).parent(".pip").remove();
                 });
