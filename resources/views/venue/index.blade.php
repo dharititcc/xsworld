@@ -59,14 +59,7 @@
                                         <input type="text" class="form-control vari1" name="state" id="state" value="{{$restaurant->state}}" placeholder="State" disabled>
                                     </div>
                                     <div class="form-group">
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <input type="text" class="form-control vari1" name="postcode" id="postcode" value="{{$restaurant->postcode}}" placeholder="Postcode" disabled>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <input type="text" class="form-control vari1" name="phone" id="phone" value="{{$restaurant->phone}}" placeholder="Phone" disabled>
-                                            </div>
-                                        </div>
+                                        <input type="text" class="form-control vari1" name="postcode" id="postcode" value="{{$restaurant->postcode}}" placeholder="Postcode" disabled>
                                     </div>
                                     <div class="form-group">
                                         <textarea class="form-control vari1" name="specialisation" id="specialisation" value="" placeholder="specialisation" disabled>{{$restaurant->specialisation}}</textarea>
