@@ -2,6 +2,7 @@
 
 use App\Billing\Stripe;
 use App\Exceptions\GeneralException;
+use App\Mail\InvoiceMail;
 use App\Models\CustomerTable;
 use App\Models\Order;
 use App\Models\OrderItem;
@@ -14,6 +15,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 /**
  * Class BarRepository.
@@ -489,6 +491,9 @@ class BarRepository extends BaseRepository
             $waiterMessage                    = "Your Order #".$order->id." is completed by ".$order->restaurant->name;
             $this->notifyWaiters($order, $waiterTitle, $waiterMessage, Order::WAITER_READY_FOR_COLLECTION);
         }
+
+        // send email
+        Mail::to($order->user->email)->send(new InvoiceMail($order));
     }
 
     /**
