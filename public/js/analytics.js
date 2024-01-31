@@ -27,10 +27,8 @@
                 "width": "20%",
                 "bSortable": false,
                 render: function(data, type, row) {
-                    var total_price = parseInt(row.price) * parseInt(row.total_quantity ? row.variation_qty_sum : row.variation_qty_sum);
-                    // console.log(total_price);
-                    // console.log( parseInt(row.price) );
-                    return `${row.order.restaurant.country.symbol}${total_price}`;
+                    var price = parseInt(row.price) * parseFloat(row.variation_qty_sum);
+                    return `${row.order.restaurant.country.symbol}${price.toFixed(2)}`;
                 }
             },
             {
@@ -40,11 +38,12 @@
                 "bSortable": false,
                 render: function(data, type, row) {
                     if (row.variation_id) {
-                        var cal = parseInt(row.variation_count) * parseInt(row.variation_qty_sum);
-                        return `${cal} Units Sold`;
+                        // var cal = parseInt(row.variation_count) * parseInt(row.variation_qty_sum);
+                        return `${row.variation_qty_sum} Units Sold`;
                     } else {
-                        // var cal = parseInt(row.total_item ? row.total_item : 0) * parseInt(row.total_quantity ? row.total_quantity : 0)
-                        return `${row.total_quantity} Units Sold`;
+                        var cal = parseInt(row.total_item ? row.total_item : 0) * parseInt(row.total_quantity ? row.total_quantity : 0)
+                        console.log(cal);
+                        return `${cal} Units Sold`;
                     }
                 }
             }
@@ -66,10 +65,15 @@
             context.filterChart();
 
             // Analytics range picker
-            $('input[name="dates"]').daterangepicker({ maxDate: 0 }).on('apply.daterangepicker', function(e, picker) {
+            $('input[name="dates"]').daterangepicker({ 
+                startDate: moment().startOf('month'),
+                endDate: moment().endOf('month'),
+            }).on('apply.daterangepicker', function(e, picker) {
                 var startDate = picker.startDate.format('DD-MM-YYYY');
                 var endDate = picker.endDate.format('DD-MM-YYYY');
                 context.bindChart(startDate, endDate);
+                // context.makeDatatable(startDate , endDate);
+                context.table.ajax.reload();
             });
 
             context.categoryFilter();
@@ -220,8 +224,10 @@
                     url: moduleConfig.getAccessibles,
                     type: 'get',
                     data: function(data) {
-                        var categoryFilter = $('.item-list.overview').find('li').find('a.active').data('category_id');
-                        data.category = categoryFilter === undefined ? 0 : categoryFilter
+                        var categoryFilter  = $('.item-list.overview').find('li').find('a.active').data('category_id');
+                        data.category       = categoryFilter === undefined ? 0 : categoryFilter
+                        data.start_date      = startDate;
+                        data.end_date        = endDate;
                     },
                 },
                 columns: context.tableColumns,
