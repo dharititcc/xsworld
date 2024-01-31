@@ -37,7 +37,7 @@
                 "width": "25%",
                 "bSortable": false,
                 render: function(data, type, row) {
-                    if (row.variation_id) {
+                    if (row.total_quantity == null) {
                         // var cal = parseInt(row.variation_count) * parseInt(row.variation_qty_sum);
                         return `${row.variation_qty_sum} Units Sold`;
                     } else {
