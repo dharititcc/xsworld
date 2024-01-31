@@ -105,8 +105,8 @@ class AnalyticRepository extends BaseRepository
     {
         $restaurant->loadMissing(['sub_categories']);
 
-        $startDate  = isset($data['start_date']) ? Carbon::parse($data['start_date'])->format('Y-m-d') : Carbon::now()->startOfMonth()->toDateString();
-        $endDate    = isset($data['end_date']) ? Carbon::parse($data['end_date'])->format('Y-m-d') : Carbon::now()->endOfMonth()->toDateString();
+        $startDate  = isset($data['start_date']) ? $data['start_date'] : Carbon::now()->startOfMonth()->toDateString();
+        $endDate    = isset($data['end_date']) ? $data['end_date'] : Carbon::now()->endOfMonth()->toDateString();
 
         $dates      = get_dates_period($startDate, $endDate);
         $newDates   = array_map(function($date)
