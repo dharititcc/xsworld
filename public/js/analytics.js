@@ -71,7 +71,7 @@
             }).on('apply.daterangepicker', function(e, picker) {
                 var startDate = picker.startDate.format('DD-MM-YYYY');
                 var endDate = picker.endDate.format('DD-MM-YYYY');
-                context.bindChart(startDate, endDate);
+                context.bindChart();
                 // context.makeDatatable(startDate , endDate);
                 context.table.ajax.reload();
             });
@@ -110,12 +110,18 @@
             context = this;
         },
 
-        bindChart: function(startDate, endDate) {
+        bindChart: function() {
             var context         = this,
-                categoryFilter  = $('.item-list.overview').find('li').find('a.active').data('category_id');
+                categoryFilter  = $('.item-list.overview').find('li').find('a.active').data('category_id'),
+                picker          = jQuery('input[name="dates"]'),
+                dateVal         = picker.val(),
+                dateArr         = dateVal.split('-'),
+                startDate       = dateArr[0],
+                endDate         = dateArr[1],
+                start_date      = dateVal != '' ? startDate : '',
+                end_date        = dateVal != '' ? endDate : '';
 
             context.getChart([]);
-
             XS.Common.showLoader(jQuery('#mygraph'));
 
             jQuery.ajax({
@@ -125,7 +131,7 @@
                 headers: {
                     'X-CSRF-TOKEN': jQuery('meta[name="csrf-token"]').attr('content'),
                 },
-                data: { 'is_featured': 'Test', 'id': 1, 'start_date': startDate, 'end_date': endDate, category_id: categoryFilter },
+                data: { 'start_date': start_date, 'end_date': end_date, category_id: categoryFilter },
                 success: function(res) {
                     // console.log(res);
                     context.getChart(res);
