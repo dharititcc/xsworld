@@ -1475,11 +1475,11 @@ class OrderRepository extends BaseRepository
         $auth_user->friend;
         $user_data          = User::find($data['user_id']);
         if($data['status'] == 1 ) {
-            $title              =  "Accepted Your friend request";
-            $message            =  $user_data->first_name . " Accepted your friend request";
+            $title              =  "Accepted your friend request";
+            $message            =  $auth_user->first_name . "has Accepted your friend request";
         } else {
-            $title              = "decline your friend request .";
-            $message            =  $user_data->first_name . " declined your friend request";
+            $title              = "Decline your friend request";
+            $message            =  $auth_user->first_name . " has declined your friend request";
         }
         $this->notifyCustomerSocial($user_data, $title, $message);
         return $auth_user;
@@ -1684,8 +1684,8 @@ class OrderRepository extends BaseRepository
         if(!empty($checkUnFriendRequest))
         {
             $delete = FriendRequest::where('id', $checkUnFriendRequest->friendship_id)->delete();
-            $title              = $checkUnFriendRequest->first_name . " has unfriended you";
-            $message            = $checkUnFriendRequest->first_name . " has unfriended you";
+            $title              = $auth_user->first_name . " has unfriended you";
+            $message            = $auth_user->first_name . " has unfriended you";
             $this->notifyCustomerSocial($checkUnFriendRequest, $title, $message);
         }
         return $delete;

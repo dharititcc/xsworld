@@ -32,6 +32,7 @@
                                 {{-- <a  onclick="return deleteConform('Are you sure?')" href="#"><i class="icon-trash"></i></a> --}}
                                 <figure onClick="updateCategory({{ $child->id }})" data-child_id="{{ $child->id }}" data-type="Edit" data-parent_id="{{ $category->id }}" data-parent="{{ $category->name }}" class="category_model"><img src="{{ $child->image != '' ? $child->image : asset('img/logo.png') }}"
                                         alt="{{ $child->name }}">
+
                                     <figcaption><span> {{ $child->name }}</span></figcaption>
                                 </figure>
                             </div>
@@ -113,21 +114,85 @@
                 <div class="modal-body">
                     <form name="addcategory" id="add_form_category" method="post" action="javascript:void(0)" enctype="multipart/form-data">
                         @csrf
+                            
                         <div style="min-height: 300px;">
                             <div class="form-group mb-4">
                                 <div class="list-catg">
                                 </div>
                             </div>
-                            <div class="form-group mb-4">
-                                <select class="cat_name form-control vari2" >Category List
-                                    <option value="">Food </option>
-                                    <option value="">Drinks </option>
-                                </select>
-                            </div>
+                            @if ($categories->count() > 0 )
+                            <?php //dd($categories); ?>
+                            <input type="hidden" id="" name="categoryId" value="{{$categories[0]->id}}" data-category_id="{{ $categories[0]->id }}">
+                                <?php $i= 0;?>
+                                <div class="form-group mb-4">
+                                    <?php //dd($categories); ?>
+                                    <select class="cat_name form-control vari2" >Category List
+                                        {{-- @foreach ($categories as $category)
+                                            @if($category->name == "Food" && $category->name == "Drinks")
+                                                @if($i < $categories->count())
+                                                    <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                                        <?php //$i++; ?>
+                                                @else
+                                                    @break
+                                                @endif
+                                            @endif
+                                            @if ($category->name == "Food" && $category->name != "Drinks")
+                                            
+                                                <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                                @if($category->name != "Drinks" )
+                                                    <option value="" >Drinks </option>
+                                                @endif
+                                            @endif
+                                            @if ($category->name == "Drinks" && $category->name != "Food")
+                                                <?php //dd($category); ?>
+                                                <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                                
+
+                                                @if($category->name != "Food" )
+                                                    <option value="" >Food </option>
+                                                @endif
+                                            
+                                            @endif
+                                        @endforeach --}}
+
+                                        @php
+                                            $encounteredCategories = [];
+                                        @endphp
+
+                                        @foreach ($categories as $category)
+                                            @if (!in_array($category->name, $encounteredCategories))
+                                                @php
+                                                    array_push($encounteredCategories, $category->name);
+                                                @endphp
+
+                                                <option value="{{ $category->id }}">{{ $category->name }}</option>
+
+                                                
+                                            @endif
+                                        @endforeach
+
+                                        @if (!in_array('Food', $encounteredCategories))
+                                            <option value="">Food</option>
+                                        @endif
+                                        @if (!in_array('Drinks', $encounteredCategories))
+                                            <option value="">Drinks</option>
+                                        @endif
+                                    </select>
+                                </div>
+                            @else
+                                <div class="form-group mb-4">
+                                    <select class="cat_name form-control vari2" >Category List
+                                        <option value="" >Food </option>
+                                        <option value="" >Drinks </option>
+                                    </select>
+                                </div>
+                            @endif
                             <div class="grey-brd-box custom-upload image_box">
-                                <input id="upload" type="file" class="parent_category" name="image" accept="image/*" hidden />
-                                <label for="upload"><span> Add Category Feature Image (This can be changed).</span> <i
-                                        class="icon-plus"></i></label>
+                               
+                                <input type="file" name="image" id="image" accept="image/*" hidden="" >
+                                <label for="image"><span> Add Category Feature Image (This can be changed).</span>
+                                    <i class="icon-plus"></i>
+                                </label>
                             </div>
                         </div>
                         <button class="bor-btn w-100 font-26 mt-4" id="submitCatBtn" type="submit">Save</button>
@@ -176,8 +241,59 @@
             'getCategory': "{!! route('restaurants.categories.show', ':ID') !!}",
             'updateCategory': "{!! route('restaurants.categories.update', ':ID') !!}",
             'categoryName': "{!! route('restaurants.categoryName') !!}",
+            'deleteImage': "{!! route('restaurants.deleteImage') !!}",
         };
-        $(document).ready(function() {
+        $(document).ready(function(e) {
+
+            const imageInput = $("#image");
+
+            imageInput.change(function (e) {
+                const file = this.files[0];
+
+                if (file) {
+                    const reader = new FileReader();
+
+                        var clickedButton = this,
+                        files = e.target.files,
+                        filesLength = files.length;
+                        console.log(clickedButton);
+
+                        for (var i = 0; i < filesLength; i++) {
+                            var f = files[i],
+                                fileReader = new FileReader();
+
+                            fileReader.onload = (function (e) {
+                                var file = e.target,
+                                    data = fileReader.result,
+                                    thumbnail = `
+                                        <div class="pip">
+                                            <img class="imageThumb" src="${e.target.result}" title="${f.name}" />
+                                            <i class="icon-trash remove" id="category_img_remove"></i>
+                                        </div>
+                                    `;
+
+                                if (!data.match(/^data:image\//)) {
+                                    XS.Common.handleSwalError('Please select image only.');
+                                    return false;
+                                }
+
+                                $(thumbnail).insertAfter(clickedButton);
+                                $(".remove").click(function () {
+                                    $(this).parent(".pip").remove();
+                                });
+                            });
+                            fileReader.readAsDataURL(f);
+                        }
+                }
+            });
+
+
+            //onchange 
+
+            $('select').on('change', function() {
+               var getValue = $("input[name=categoryId]").val(this.value);
+            });
+
             var modal = $("#exampleModal");
 
             XS.Common.fileReaderBind();
@@ -212,26 +328,63 @@
                 $alertas.find('.error').remove();
             });
         });
+        
+    $(document).on('click', '#category_img_remove', function()
+    {
+        getValue= $("input[name=categoryId]").val();
+        $.ajax({
+            url: moduleConfig.deleteImage,
+            type: "POST",
+            data: {'id': getValue},
+            headers: {
+                'X-CSRF-TOKEN': jQuery('meta[name="csrf-token"]').attr('content')
+            },
+            success: function(response)
+            {
+                console.log(response);
+                $("#cat_modal").modal('show');
+            },
+            // error: function(xhr)
+            // {
+            //     if( xhr.status == 403 )
+            //     {
+            //         var {error} = xhr.responseJSON;
+            //         $this.closest('#add_form_category').find('.cat_name').after(`<span class="error">${error.message}</span>`);
+            //     }
+            // },
+            complete: function()
+            {
+                $('#submitCatBtn').html('Submit');
+            }
+        });
+    }); 
 
     $('.add_category').on("click",function() {
+        var $this = $(this);
+        var getValue= $("input[name=categoryId]").val();
+        $('select').on('change', function() {
+            if(this.value == "") {
+                $(".image_box").children('.pip').remove();
+            } else {
+                getCategory(this.value);
+            }
+        });
+        
+        getCategory(getValue);
         $('#cat_modal').modal('show');
     });
 
     $('#submitCatBtn').on("click", function() {
         var $this = $(this);
-        $.ajaxSetup({
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    }
-                });
+       
 
-                $('#submitBtn').html('Please Wait...');
-                $("#submitBtn").attr("disabled", true);
+                $('#submitCatBtn').html('Please Wait...');
+                $("#submitCatBtn").attr("disabled", true);
 
-                var data    = new FormData(),
-                cat_name    = $( ".cat_name option:selected" ).text();
-                cat_photo   = $('#upload')[0];
-                photo   = cat_photo.files[0];
+                var data        = new FormData(),
+                    cat_name    = $( ".cat_name option:selected" ).text(),
+                    photo       = $('#image').prop('files')[0];
+                    console.log(data);
 
                 data.append('name', cat_name);
                 data.append('photo', photo);
@@ -243,23 +396,27 @@
                     data: data,
                     processData: false,
                     contentType: false,
+                    headers: {
+                        'X-CSRF-TOKEN': jQuery('meta[name="csrf-token"]').attr('content')
+                    },
                     success: function(response)
                     {
+                        console.log(response);
                         $("#cat_modal").modal('hide');
+                        $("#submitCatBtn").attr("disabled", false);
                         XS.Common.handleSwalSuccess('Category form has been submitted successfully');
                     },
-                    error: function(xhr)
-                    {
-                        if( xhr.status == 403 )
-                        {
-                            var {error} = xhr.responseJSON;
-                            $this.closest('#add_form_category').find('.cat_name').after(`<span class="error">${error.message}</span>`);
-                        }
-                    },
+                    // error: function(xhr)
+                    // {
+                    //     if( xhr.status == 403 )
+                    //     {
+                    //         var {error} = xhr.responseJSON;
+                    //         $this.closest('#add_form_category').find('.cat_name').after(`<span class="error">${error.message}</span>`);
+                    //     }
+                    // },
                     complete: function()
                     {
-                        $('#submitBtn').html('Submit');
-                        $("#submitBtn").attr("disabled", false);
+                        $('#submitCatBtn').html('Submit');
                     }
                 });
     });
@@ -420,9 +577,36 @@
 
     function getCategory(id)
     {
-        $('#category_id').val(id);
-        $('#exampleModal').data('crudetype', 1);
+        // $('#category_id').val(id);
         $('.model_title').html('Add ');
+        $.ajax({
+            url: moduleConfig.getCategory.replace(':ID', id),
+            type: "GET",
+            success: function(response) {
+                var defaultImage = @json(asset('img/logo.png')); // Default image path
+                // var imageSrc = response.data.image ? response.data.image : '#';
+
+                var image = `
+                                <div class="pip">
+                                    <img class="imageThumbs" src="${ response.data.image!="" ? response.data.image : '#'}" alt="${response.data.name}"/>
+                                    <i class="icon-trash remove " id="category_img_remove"></i>
+                                </div>
+                            `;
+
+                $(".image_box").children('.pip').remove();
+                if( response.data.image!= "" )
+                {
+                    $("#image").after(image);
+                }
+                
+                $(".remove").click(function() {
+                    $(this).parent(".pip").remove();
+                });
+                $('#exampleModal').data('crudetype', 1);
+            },
+            error: function(data) {}
+        });
+        
     }
 
     function updateCategory(id)
@@ -433,7 +617,7 @@
             url: moduleConfig.getCategory.replace(':ID', id),
             type: "GET",
             success: function(response) {
-                console.log(response);
+                // console.log(response);
                 $("input[name=name]").val(response.data.name);
                 // $("input[name=file]").val(response.data.image);
                 var image = `

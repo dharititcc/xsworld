@@ -114,8 +114,8 @@
                                             </div>
 
                                                 <div class="rvnote mb-4">{{$orderReview->comment}} </div>
-                                                <div class="ord-time">Order Time - {{ \Carbon\Carbon::parse($orderReview->order->created_at)->format('H:i') }}
-                                                </div>
+                                                {{-- <div class="ord-time">Order Time - {{ \Carbon\Carbon::parse($orderReview->order->created_at)->format('H:i') }}
+                                                </div> --}}
                                         </div>
                                     @endforeach
                                 @else

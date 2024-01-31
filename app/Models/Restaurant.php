@@ -252,7 +252,7 @@ class Restaurant extends Model
         {
             $rating = 5;
         }
-        return $rating;
+        return round($rating, 1);
     }
 
     /**

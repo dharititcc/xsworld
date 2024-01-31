@@ -91,10 +91,10 @@ class CategoryController extends Controller
 
         $text = strtolower($request->name);
 
-        if( $this->checkUniqueCategory($request, $restaurant) )
-        {
-            throw new GeneralException('The category name is already exist.');
-        }
+        // if( $this->checkUniqueCategory($request, $restaurant) )
+        // {
+        //     throw new GeneralException('The category name is already exist.');
+        // }
 
         $newCategory = Category::updateOrCreate([
             'restaurant_id' => $restaurant->id,
@@ -103,6 +103,8 @@ class CategoryController extends Controller
         if ($request->hasFile('photo'))
         {
             $this->upload($request->file('photo'), $newCategory);
+        } else {
+
         }
         return $newCategory->refresh();
     }
@@ -217,5 +219,15 @@ class CategoryController extends Controller
             'stored_name'   => $profileImage,
             'original_name' => $profileImage
         ]);
+    }
+
+    public function deleteImage(Request $request)
+    {
+        $destinationPath = public_path(DIRECTORY_SEPARATOR.'storage'.DIRECTORY_SEPARATOR.'categories');
+        $category = Category::where('id', $request->id)->first();
+        // unlink(storage_path('app/public/categories/'.$destinationPath));
+        // unlink($destinationPath,$category->attachment->stored_name);
+        $category->attachment()->delete();
+        return true;
     }
 }
