@@ -149,11 +149,11 @@
                     type: 'line',
                     backgroundColor: 'transparent'
                 },
-                navigation: {
-                    buttonOptions: {
-                        enabled: false
-                    }
-                },
+                // navigation: {
+                //     buttonOptions: {
+                //         enabled: false
+                //     }
+                // },
                 title: {
                     text: ''
                 },
