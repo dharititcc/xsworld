@@ -32,6 +32,9 @@ class AnalyticRepository extends BaseRepository
      */
     public function getAnalyticsTableData(Restaurant $restaurant , Array $data)
     {
+        $startDate  = isset($data['start_date']) ? Carbon::parse($data['start_date'])->format('Y-m-d') : Carbon::now()->startOfMonth()->toDateString();
+        $endDate    = isset($data['end_date']) ? Carbon::parse($data['end_date'])->format('Y-m-d') : Carbon::now()->endOfMonth()->toDateString();
+
         $query = OrderItem::select([
             'order_items.*',
             'restaurant_item_variations.name AS variation_name',
@@ -72,9 +75,9 @@ class AnalyticRepository extends BaseRepository
         })
         ->where('restaurant_items.type', RestaurantItem::ITEM)
         // ->where('restaurant_items.category_id', $cate_id)
-        ->where(function($query)
+        ->where(function($query) use($startDate, $endDate)
         {
-            $query->whereRaw("DATE(`order_items`.`created_at`) BETWEEN '2024-01-01' AND '2024-01-31'");
+            $query->whereRaw("DATE(`order_items`.`created_at`) BETWEEN '{$startDate}' AND '{$endDate}'");
         });
 
         if( isset($data['category']) && $data['category'] )
@@ -102,8 +105,8 @@ class AnalyticRepository extends BaseRepository
     {
         $restaurant->loadMissing(['sub_categories']);
 
-        $startDate  = isset($data['start_date']) ? $data['start_date'] : Carbon::now()->startOfMonth()->toDateString();
-        $endDate    = isset($data['end_date']) ? $data['end_date'] : Carbon::now()->endOfMonth()->toDateString();
+        $startDate  = isset($data['start_date']) ? Carbon::parse($data['start_date'])->format('Y-m-d') : Carbon::now()->startOfMonth()->toDateString();
+        $endDate    = isset($data['end_date']) ? Carbon::parse($data['end_date'])->format('Y-m-d') : Carbon::now()->endOfMonth()->toDateString();
 
         $dates      = get_dates_period($startDate, $endDate);
         $newDates   = array_map(function($date)
@@ -134,7 +137,7 @@ class AnalyticRepository extends BaseRepository
                     $result = DB::select(
                         "SELECT
                             categories.name,
-                            SUM(order_items.total) AS total_order_txn,
+                            SUM(order_items.total) AS total_order_item_txn,
                             SUM(orders.total) AS total_order_txn,
                             DATE(order_items.created_at) AS order_date
                         FROM categories
@@ -154,7 +157,7 @@ class AnalyticRepository extends BaseRepository
                     {
                         if( isset( $newData[$kCat]['name'] ) && $newData[$kCat]['name'] == $category->name )
                         {
-                            $total[] = (float) $result[0]->total_order_txn;
+                            $total[] = (float) $result[0]->total_order_item_txn;
                         }
                     }
                     else
