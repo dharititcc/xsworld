@@ -32,8 +32,8 @@ class AnalyticRepository extends BaseRepository
      */
     public function getAnalyticsTableData(Restaurant $restaurant , Array $data)
     {
-        $startDate  = isset($data['start_date']) ? date('Y-m-d',$data['start_date']) : Carbon::now()->startOfMonth()->toDateString();
-        $endDate    = isset($data['end_date']) ? date('Y-m-d',$data['end_date']) : Carbon::now()->endOfMonth()->toDateString();
+        $startDate  = isset($data['start_date']) ? Carbon::parse($data['start_date'])->format('Y-m-d') : Carbon::now()->startOfMonth()->toDateString();
+        $endDate    = isset($data['end_date']) ? Carbon::parse($data['end_date'])->format('Y-m-d') : Carbon::now()->endOfMonth()->toDateString();
 
         $query = OrderItem::select([
             'order_items.*',

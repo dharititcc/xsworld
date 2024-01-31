@@ -65,7 +65,7 @@
             context.filterChart();
 
             // Analytics range picker
-            $('input[name="dates"]').daterangepicker({ 
+            $('input[name="dates"]').daterangepicker({
                 startDate: moment().startOf('month'),
                 endDate: moment().endOf('month'),
             }).on('apply.daterangepicker', function(e, picker) {
@@ -224,10 +224,16 @@
                     url: moduleConfig.getAccessibles,
                     type: 'get',
                     data: function(data) {
-                        var categoryFilter  = $('.item-list.overview').find('li').find('a.active').data('category_id');
+                        var categoryFilter  = $('.item-list.overview').find('li').find('a.active').data('category_id'),
+                            picker          = jQuery('input[name="dates"]'),
+                            dateVal         = picker.val(),
+                            dateArr         = dateVal.split('-'),
+                            startDate       = dateArr[0],
+                            endDate         = dateArr[1];
+
                         data.category       = categoryFilter === undefined ? 0 : categoryFilter
-                        data.start_date      = startDate;
-                        data.end_date        = endDate;
+                        data.start_date      = dateVal != '' ? startDate : '';
+                        data.end_date        = dateVal != '' ? endDate : '';
                     },
                 },
                 columns: context.tableColumns,
