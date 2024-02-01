@@ -27,7 +27,7 @@
                 "width": "20%",
                 "bSortable": false,
                 render: function(data, type, row) {
-                    var price = parseInt(row.price) * parseFloat(row.variation_qty_sum);
+                    var price = parseFloat(row.price) * parseFloat(row.variation_qty_sum);
                     return `${row.order.restaurant.country.symbol}${price.toFixed(2)}`;
                 }
             },
@@ -211,12 +211,14 @@
             context.table   = context.selectors.drinkTable.DataTable({
                 processing: true,
                 serverSide: true,
-                searching: false,
+                searching: true,
                 scrollCollapse: true,
                 scrollY: '500px',
                 order: [
                     [0, 'asc']
                 ],
+                lengthMenu: [ [10, 25, 50, -1], [10, 25, 50, "All"] ],
+                dom: 'Blfrtip',
                 ajax: {
                     url: moduleConfig.getAccessibles,
                     type: 'get',
@@ -234,7 +236,10 @@
                 columns: context.tableColumns,
                 drawCallback: function(settings) {
                     context.selectors.drinkTable.find('tbody tr').find('td:first').addClass('dt-center');
-                }
+                },
+                buttons: [
+                    'copy', 'csv', 'excel', 'pdf', 'print'
+                ]
             });
         },
 
