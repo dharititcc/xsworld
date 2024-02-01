@@ -10,7 +10,7 @@
                 }
             },
             {
-                "data": "type", // can be null or undefined ->type
+                "data": "restaurant_item_variations.name", // can be null or undefined ->type
                 "width": "20%",
                 "defaultContent": "",
                 render: function(data, type, row) {
@@ -26,6 +26,7 @@
                 "defaultContent": "",
                 "width": "20%",
                 "bSortable": false,
+                'searchable': false,
                 render: function(data, type, row) {
                     var price = parseFloat(row.price) * parseFloat(row.variation_qty_sum);
                     return `${row.order.restaurant.country.symbol}${price.toFixed(2)}`;
@@ -36,6 +37,7 @@
                 "defaultContent": "",
                 "width": "25%",
                 "bSortable": false,
+                'searchable': false,
                 render: function(data, type, row) {
                     if (row.total_quantity == null) {
                         // var cal = parseInt(row.variation_count) * parseInt(row.variation_qty_sum);
@@ -238,7 +240,7 @@
                     context.selectors.drinkTable.find('tbody tr').find('td:first').addClass('dt-center');
                 },
                 buttons: [
-                    'copy', 'csv', 'excel', 'pdf', 'print'
+                    'csv', 'excel'
                 ]
             });
         },
