@@ -146,6 +146,7 @@ class AnalyticRepository extends BaseRepository
                         RIGHT JOIN orders ON orders.id = order_items.order_id
                         where restaurant_items.type = ".Item::ITEM."
                         AND orders.status = ".Order::CONFIRM_PICKUP."
+                        AND orders.deleted_at IS NULL
                         AND categories.restaurant_id = {$restaurant->id}
                         AND categories.id = {$category->id}
                         AND categories.deleted_at IS NULL
