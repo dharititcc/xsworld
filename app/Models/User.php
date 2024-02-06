@@ -488,4 +488,14 @@ class User extends Authenticatable
         //accept request
         return $this->belongsToMany(User::class,'friendships','friend_id','user_id')->where('status', 1)->withTimestamps();
     }
+
+    /**
+     * Get the user_otp associated with the User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function user_otp(): HasOne
+    {
+        return $this->hasOne(UserOtps::class, 'user_id', 'id');
+    }
 }

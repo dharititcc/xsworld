@@ -577,6 +577,25 @@ class AuthController extends APIController
     }
 
     /**
+     * Method sendLoginOtp
+     *
+     * @param SendOtpRequest $request [explicite description]
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function sendLoginOtp(SendOtpRequest $request)
+    {
+        $data = $request->validated();
+
+        $this->repository->sendLoginOtp($data);
+
+        return $this->respond([
+            'status'    =>  true,
+            'message'   =>  'OTP has been sent successfully',
+        ]);
+    }
+
+    /**
      * Method VerifyOtp
      *
      * @param Request $request [explicite description]

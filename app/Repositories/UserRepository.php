@@ -8,6 +8,7 @@ use App\Mail\PurchaseGiftCard;
 use App\Models\User;
 use App\Models\UserDevices;
 use App\Models\UserGiftCard;
+use App\Models\UserOtps;
 use App\Models\UserReferrals;
 use App\Models\UsersVerifyMobile;
 use App\Repositories\BaseRepository;
@@ -590,6 +591,48 @@ class UserRepository extends BaseRepository
             // Send OTP to User
             $send_otp   = sendTwilioCustomerSms($mobile_no,$otp);
             return $data['user_id'];
+        }
+
+        throw new GeneralException('User not found.');
+    }
+
+    /**
+     * Method sendLoginOtp
+     *
+     * @param array $input [explicite description]
+     *
+     * @return \App\Models\UserOtps
+     *
+     * @throws \App\Exceptions\GeneralException
+     */
+    public function sendLoginOtp(array $input): UserOtps
+    {
+        $user = User::where(['country_code' => $input['country_code'], 'phone' => $input['mobile_no'] ])->first();
+
+        if(isset($user->id))
+        {
+            $n        = 6;
+            $otp      = generateNumericOTP($n);
+
+            // check if any otp record for this user exist
+            if( isset($user->user_otp->id) )
+            {
+                $user->user_otp()->delete();
+            }
+
+            $mobile_no  = $input['country_code'].$input['mobile_no'];
+
+            // Send OTP to User
+            sendTwilioCustomerSms($mobile_no, $otp);
+
+            // insert login otp for that user
+            $userOtp = $user->user_otp()->create([
+                'otp'           => $otp,
+                'country_code'  => $input['country_code'],
+                'mobile'        => $input['mobile_no']
+            ]);
+
+            return $userOtp;
         }
 
         throw new GeneralException('User not found.');
