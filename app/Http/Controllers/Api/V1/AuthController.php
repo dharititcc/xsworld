@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Api\V1\Traits\Authenticate;
+use App\Http\Requests\DeviceTokenRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\SendOtpRequest;
@@ -592,6 +593,26 @@ class AuthController extends APIController
         return $this->respond([
             'status'    =>  true,
             'message'   =>  'OTP has been sent successfully',
+        ]);
+    }
+
+    /**
+     * Method attachDeviceToken
+     *
+     * @param DeviceTokenRequest $request [explicite description]
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function attachDeviceToken(DeviceTokenRequest $request)
+    {
+        $user = auth()->user();
+        $data = $request->validated();
+
+        $this->repository->storeDevice($user, $data);
+
+        return $this->respond([
+            'status'    =>  true,
+            'message'   =>  'FCM Token stored successfully.',
         ]);
     }
 
