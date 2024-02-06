@@ -607,35 +607,35 @@ class UserRepository extends BaseRepository
      */
     public function sendLoginOtp(array $input): UserOtps
     {
-        $user = User::where(['country_code' => $input['country_code'], 'phone' => $input['mobile_no'] ])->first();
+        $otp = UserOtps::where(['country_code' => $input['country_code'], 'mobile' => $input['mobile_no'] ])->first();
 
-        if(isset($user->id))
+        if(isset($otp->id))
         {
-            $n        = 6;
-            $otp      = generateNumericOTP($n);
+            // delete otp
+            $otp->delete();
+        }
 
-            // check if any otp record for this user exist
-            if( isset($user->user_otp->id) )
-            {
-                $user->user_otp()->delete();
-            }
+        $n        = 6;
+        $otp      = generateNumericOTP($n);
 
-            $mobile_no  = $input['country_code'].$input['mobile_no'];
+        $mobile_no  = $input['country_code'].$input['mobile_no'];
 
-            // Send OTP to User
-            sendTwilioCustomerSms($mobile_no, $otp);
+        // Send OTP to User
+        sendTwilioCustomerSms($mobile_no, $otp);
 
-            // insert login otp for that user
-            $userOtp = $user->user_otp()->create([
-                'otp'           => $otp,
-                'country_code'  => $input['country_code'],
-                'mobile'        => $input['mobile_no']
-            ]);
+        // insert login otp for that user
+        $userOtp = UserOtps::create([
+            'otp'           => $otp,
+            'country_code'  => $input['country_code'],
+            'mobile'        => $input['mobile_no']
+        ]);
 
+        if( isset( $userOtp->id ) )
+        {
             return $userOtp;
         }
 
-        throw new GeneralException('User not found.');
+        throw new GeneralException('Failed to store otp.');
     }
 
     /**
