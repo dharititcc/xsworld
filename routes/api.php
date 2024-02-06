@@ -44,6 +44,8 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'v1', 'as' => 'api.v1.'], fun
     Route::group(['prefix' => 'auth', 'middleware' => 'auth:api'], function ()
     {   // {api/v1/auth/verify-otp}
         Route::post('verify-otp', 'AuthController@VerifyOtp')->name('auth.VerifyOtp');
+        // {api/v1/auth/attach-device}
+        Route::post('attach-device', 'AuthController@attachDeviceToken')->name('auth.attach-device');
         // {api/v1/auth/logout}
         Route::post('logout', 'AuthController@logout')->name('auth.logout');
     });
