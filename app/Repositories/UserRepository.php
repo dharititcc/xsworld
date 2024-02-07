@@ -678,7 +678,15 @@ class UserRepository extends BaseRepository
 
     }
 
-    public function VerifyOtpSms(array $input): mixed
+    /**
+     * Method VerifyOtpSms
+     *
+     * @param array $input [explicite description]
+     *
+     * @return \App\Models\User
+     * @throws \App\Exceptions\GeneralException
+     */
+    public function VerifyOtpSms(array $input): User
     {
         // Check if the provided OTP and mobile number exist in the UserOtps table
         $userOtp = UserOtps::where('mobile', $input['mobile_no'])
@@ -686,35 +694,32 @@ class UserRepository extends BaseRepository
             ->orderByDesc('id')
             ->first();
 
-        if (!$userOtp) {
-            $existingUser = User::where('phone', $input['mobile_no'])->first();
-
-            if (!$existingUser) {
-
-                $user = User::create([
-                    'phone' => $input['mobile_no'],
-                    'country_code' => $input['country_code'],
-                ]);
-
-                return [
-                    'user' => $user,
-                    'existing_user' => 0
-                ];
-            } else {
-                throw new GeneralException('Invalid OTP.');
-            }
+        if( !isset( $userOtp->id ) )
+        {
+            throw new GeneralException('Invalid otp.');
         }
-        else{
-            $user = User::find($userOtp->user_id);
-            if ($user) {
-                $token = $user->createToken('xs_world')->plainTextToken;
-                return [
-                    'token' => $token,
-                    'user' => $user,
-                    'existing_user' => 1
-                ];
-            }
+
+        // delete old otp request once verified
+        $userOtp->delete();
+
+        // check if user exist with same mobile no.
+        $existingUser = User::where('phone', $input['mobile_no'])->first();
+
+        if( !isset( $existingUser->id ) )
+        {
+            // create new user record
+            $user = User::create([
+                'phone'         => $input['mobile_no'],
+                'country_code'  => $input['country_code'],
+            ]);
         }
+        else
+        {
+            // existing user
+            $user = $existingUser;
+        }
+
+        return $user;
     }
 
     /**
