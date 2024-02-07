@@ -712,6 +712,31 @@ class UserRepository extends BaseRepository
                 'phone'         => $input['mobile_no'],
                 'country_code'  => $input['country_code'],
             ]);
+
+            // generate qr code based on new user
+            //Create Folder & give permission
+            $path = storage_path("app/public/customer_qr");
+            !is_dir($path) &&
+                mkdir($path, 0777, true);
+            $qr_url = URL::current();
+            $qr_code_image = QrCode::size(500)
+                ->format('png')
+                ->backgroundColor(139,149,255,0)
+                ->generate($qr_url . '?user_id='.$user->id, public_path("storage/customer_qr/qrcode_$user->id.png"));
+
+
+            $imageName = "qrcode_$user->id.png";
+            // User::where('id',$user->id)->update(['cus_qr_code_img' => $imageName]);
+            $user->cus_qr_code_img = $imageName;
+
+            $stripe                     = new Stripe();
+            $user['referral_code']      = referralCode();
+            // $user->update($str);
+
+            $user->cus_qr_code_img = $imageName;
+            $user->referral_code   = referralCode();
+
+            $user->save();
         }
         else
         {
