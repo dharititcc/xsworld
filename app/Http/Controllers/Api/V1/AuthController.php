@@ -8,6 +8,7 @@ use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\SendOtpRequest;
 use App\Http\Requests\SocialRequest;
+use App\Http\Requests\VerifyOtpRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use App\Repositories\UserRepository;
@@ -639,33 +640,31 @@ class AuthController extends APIController
 
     }
 
-    public function VerifyOtpSms(Request $request) : JsonResponse
+    /**
+     * Method VerifyOtpSms
+     *
+     * @param \App\Http\Requests\VerifyOtpRequest $request [explicite description]
+     *
+     * @return JsonResponse
+     */
+    public function VerifyOtpSms(VerifyOtpRequest $request) : JsonResponse
     {
-        $input  = $request->all();
-        $userDetail    = $this->repository->VerifyOtpSms($input);
-        if( isset($userDetail) )
+        $input          = $request->all();
+        $user           = $this->repository->VerifyOtpSms($input);
+        $token          = $user->createToken('xs_world')->plainTextToken;
+        $existingUser   = 0;
+
+        if( $user->first_name != '' && $user->email != '' && $user->birth_date != '' )
         {
-            if($userDetail['existing_user'] == 1)
-            {
-                return $this->respond([
-                    'status'    =>  true,
-                    'message'   =>  'OTP has been verified successfully',
-                    'token'  => $userDetail['token'],
-                    'existing_user' =>$userDetail['existing_user'],
-                    'item' => $userDetail['user'],
-                ]);
-            }
-            else{
-                return $this->respond([
-                    'status'    =>  true,
-                    'message'=>'User Created Successfully',
-                    'token'  => $userDetail['user']->createToken('xs_world')->plainTextToken,
-                    'existing_user' =>$userDetail['existing_user'],
-                    'item' => $userDetail['user'],
-                ]);
-            }
+            $existingUser   = 1;
         }
-        return $this->respondWithError('Invalid Registration data.');
+
+        return $this->respond([
+            'status'        => true,
+            'message'       => 'OTP verified successfully.',
+            'token'         => $token,
+            'existing_user' => $existingUser
+        ]);
     }
 
     /**
