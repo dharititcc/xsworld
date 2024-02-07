@@ -678,6 +678,35 @@ class UserRepository extends BaseRepository
 
     }
 
+    public function VerifyOtpSms(array $input): mixed
+    {
+        $userOtp = UserOtps::where('mobile', $input['mobile_no'])
+            ->where('otp', $input['otp'])
+            ->orderByDesc('id')
+            ->first();
+        if (!$userOtp) {
+            $user = User::create([
+                'phone' => $input['mobile_no'],
+                'country_code' => $input['country_code'],
+            ]);
+
+            return [
+                'user' => $user,
+                'existing_user' => 0
+            ];
+        }
+        // $user = User::find($userOtp->user_id)->toarray();
+        $user = User::find($userOtp->user_id);
+        if ($user) {
+            $token = $user->createToken('xs_world')->plainTextToken;
+            return [
+                'token' => $token,
+                'user' => $user,
+                'existing_user' => 1
+            ];
+        }
+    }
+
     /**
      * Method purchaseGiftCard
      *

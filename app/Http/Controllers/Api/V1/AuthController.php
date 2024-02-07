@@ -639,6 +639,35 @@ class AuthController extends APIController
 
     }
 
+    public function VerifyOtpSms(Request $request) : JsonResponse
+    {
+        $input  = $request->all();
+        $userDetail    = $this->repository->VerifyOtpSms($input);
+        if( isset($userDetail) )
+        {
+            if($userDetail['existing_user'] == 1)
+            {
+                return $this->respond([
+                    'status'    =>  true,
+                    'message'   =>  'OTP has been verified successfully',
+                    'token'  => $userDetail['token'],
+                    'existing_user' =>$userDetail['existing_user'],
+                    'item' => $userDetail['user'],
+                ]);
+            }
+            else{
+                return $this->respond([
+                    'status'    =>  true,
+                    'message'=>'User Created Successfully',
+                    'token'  => $userDetail['user']->createToken('xs_world')->plainTextToken,
+                    'existing_user' =>$userDetail['existing_user'],
+                    'item' => $userDetail['user'],
+                ]);
+            }
+        }
+        return $this->respondWithError('Invalid Registration data.');
+    }
+
     /**
      * Method resendLink
      *
