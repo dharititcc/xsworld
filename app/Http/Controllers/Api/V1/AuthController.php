@@ -8,6 +8,7 @@ use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\SendOtpRequest;
 use App\Http\Requests\SocialRequest;
+use App\Http\Requests\VerifyOtpRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use App\Repositories\UserRepository;
@@ -637,6 +638,33 @@ class AuthController extends APIController
         }
         return $this->respondWithError('Invalid Registration data.');
 
+    }
+
+    /**
+     * Method VerifyOtpSms
+     *
+     * @param \App\Http\Requests\VerifyOtpRequest $request [explicite description]
+     *
+     * @return JsonResponse
+     */
+    public function VerifyOtpSms(VerifyOtpRequest $request) : JsonResponse
+    {
+        $input          = $request->all();
+        $user           = $this->repository->VerifyOtpSms($input);
+        $token          = $user->createToken('xs_world')->plainTextToken;
+        $existingUser   = 0;
+
+        if( $user->first_name != '' && $user->email != '' && $user->birth_date != '' )
+        {
+            $existingUser   = 1;
+        }
+
+        return $this->respond([
+            'status'        => true,
+            'message'       => 'OTP verified successfully.',
+            'token'         => $token,
+            'existing_user' => $existingUser
+        ]);
     }
 
     /**

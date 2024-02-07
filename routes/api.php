@@ -33,6 +33,8 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'v1', 'as' => 'api.v1.'], fun
         Route::post('send-otp', 'AuthController@sendOtp')->name('auth.sendOtp');
         // {api/v1/auth/send-login-otp}
         Route::post('send-login-otp', 'AuthController@sendLoginOtp')->name('auth.send-login-otp')->middleware('throttle:60,1');
+        // {api/v1/auth/verify-otp-sms}
+        Route::post('verify-otp-sms', 'AuthController@VerifyOtpSms')->name('auth.VerifyOtpSms');
         // {api/v1/auth/resend-link}
         Route::post('resend-link', 'AuthController@resendLink')->name('auth.resendLink');
         // {api/v1/users/password/reset}

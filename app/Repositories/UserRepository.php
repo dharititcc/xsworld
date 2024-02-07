@@ -679,6 +679,50 @@ class UserRepository extends BaseRepository
     }
 
     /**
+     * Method VerifyOtpSms
+     *
+     * @param array $input [explicite description]
+     *
+     * @return \App\Models\User
+     * @throws \App\Exceptions\GeneralException
+     */
+    public function VerifyOtpSms(array $input): User
+    {
+        // Check if the provided OTP and mobile number exist in the UserOtps table
+        $userOtp = UserOtps::where('mobile', $input['mobile_no'])
+            ->where('otp', $input['otp'])
+            ->orderByDesc('id')
+            ->first();
+
+        if( !isset( $userOtp->id ) )
+        {
+            throw new GeneralException('Invalid otp.');
+        }
+
+        // delete old otp request once verified
+        $userOtp->delete();
+
+        // check if user exist with same mobile no.
+        $existingUser = User::where('phone', $input['mobile_no'])->first();
+
+        if( !isset( $existingUser->id ) )
+        {
+            // create new user record
+            $user = User::create([
+                'phone'         => $input['mobile_no'],
+                'country_code'  => $input['country_code'],
+            ]);
+        }
+        else
+        {
+            // existing user
+            $user = $existingUser;
+        }
+
+        return $user;
+    }
+
+    /**
      * Method purchaseGiftCard
      *
      * @param array $data [explicite description]

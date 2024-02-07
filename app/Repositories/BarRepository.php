@@ -323,18 +323,17 @@ class BarRepository extends BaseRepository
         $totalCreditAmount = $userCreditAmountBalance + $refundCreditAmount;
         // update user's credit amount
         $this->updateUserPoints($order->user, ['credit_amount' => $totalCreditAmount]);
-        $title                      = $order->restaurant->name. " is denied your order";
-        $message                    = "Your Order #".$order->id." is denied by ".$order->restaurant->name;
+        $title                      = $order->restaurant->name. " has denied your order";
+        $message                    = "Your Order #".$order->id." has been denied by ".$order->restaurant->name;
         $this->notifyCustomer($order, $title, $message);
-
         // send notifications to waiter if order is placed from table
         if( isset($order->restaurant_table_id) )
         {
             // delete customer table
             CustomerTable::where('user_id' , $order->user_id)->where('restaurant_table_id', $order->restaurant_table_id)->where('order_id', $order->id)->delete();
 
-            $waiterTitle                      = $order->restaurant->name. " is denied your order";
-            $waiterMessage                    = "Your Order #".$order->id." is denied by ".$order->restaurant->name;
+            $waiterTitle                      = $order->restaurant->name. " has denied your order";
+            $waiterMessage                    = "Your Order #".$order->id." has been denied by ".$order->restaurant->name;
             $this->notifyWaiters($order, $waiterTitle, $waiterMessage, Order::WAITER_CANCEL_ORDER);
         }
     }
