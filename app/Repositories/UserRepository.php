@@ -615,7 +615,7 @@ class UserRepository extends BaseRepository
             $otp->delete();
         }
 
-        $n        = 6;
+        $n        = 4;
         $otp      = generateNumericOTP($n);
 
         $mobile_no  = $input['country_code'].$input['mobile_no'];
