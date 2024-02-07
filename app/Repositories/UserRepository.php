@@ -47,6 +47,19 @@ class UserRepository extends BaseRepository
         // upload profile image
         $this->upload($data, $user);
 
+        if( !isset($user->stripe_customer_id) )
+        {
+            // create stripe customer
+            $stripeCustomerData         = [
+                'name' => $user->full_name,
+                'phone'=> $user->phone,
+                'email'=> $data['email']
+            ];
+            $stripe                     = new Stripe();
+            $customer                   = $stripe->createCustomer($stripeCustomerData);
+            $data['stripe_customer_id'] = $customer->id;
+        }
+
         return $user->update($data);
     }
 
