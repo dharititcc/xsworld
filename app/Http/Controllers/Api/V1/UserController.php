@@ -10,6 +10,7 @@ use App\Http\Requests\UpdateProfileRequest;
 use App\Http\Requests\ChangePasswordRequest;
 use App\Http\Requests\DeleteCardRequest;
 use App\Http\Requests\FetchCardRequest;
+use App\Http\Requests\ProfileRequest;
 use App\Http\Requests\PurchaseGiftCardRequest;
 use App\Http\Requests\UserFavouriteItemsRequest;
 use App\Http\Resources\SpinWinningResource;
@@ -343,6 +344,31 @@ class UserController extends APIController
         }
 
         throw new GeneralException('Profile is failed to update.');
+    }
+
+    /**
+     * Method storeUserData
+     *
+     * @param ProfileRequest $request [explicite description]
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function storeUserData(ProfileRequest $request): JsonResponse
+    {
+        $user       = auth()->user();
+        $data       = $request->validated();
+        $fullName   = explode(' ', $data['full_name']);
+
+        $profileData = [
+            'first_name'    => $fullName[0],
+            'last_name'     => $fullName[1],
+            'birth_date'    => $data['birth_date'],
+            'email'         => $data['email'],
+        ];
+
+        $this->repository->update($profileData, $user);
+
+        return $this->respondSuccess('Profile data stored successfully.', new UserResource($user));
     }
 
     public function resetPassword(Request $request)

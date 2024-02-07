@@ -123,6 +123,8 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'v1', 'as' => 'api.v1.'], fun
     {
         // {api/v1/users/get-profile}
         Route::post('update-profile', 'UserController@updateProfile')->name('user.update-profile');
+        // {api/v1/users/get-profile}
+        Route::post('store-profile', 'UserController@storeUserData')->name('user.store-profile');
         // {api/v1/users/change-password}
         Route::patch('change-password', 'UserController@changePassword')->name('user.change-password');
         // {api/v1/users/get-profile}
