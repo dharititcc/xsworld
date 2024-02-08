@@ -47,6 +47,23 @@ class UserRepository extends BaseRepository
         // upload profile image
         $this->upload($data, $user);
 
+        if( $user->first_name == '' && $user->email == '' && $user->birth_date == '' )
+        {
+            // insert credit point histories table
+            $arrCreditPoint = [
+                'model_name' => '\App\Models\User',
+                'model_id'   => $user->id,
+                'points'     => User::SIGN_UP_POINTS,
+                'type'       => 1
+            ];
+
+            $this->insertCreditPoints($user, $arrCreditPoint);
+
+            $data['points'] = User::SIGN_UP_POINTS;
+        }
+
+        $updateSuccess = $user->update($data);
+
         if( !isset($user->stripe_customer_id) )
         {
             // create stripe customer
@@ -60,7 +77,7 @@ class UserRepository extends BaseRepository
             $data['stripe_customer_id'] = $customer->id;
         }
 
-        return $user->update($data);
+        return $updateSuccess;
     }
 
     /**
@@ -722,12 +739,13 @@ class UserRepository extends BaseRepository
         {
             // create new user record
             $user = User::create([
-                'phone'         => $input['mobile_no'],
-                'country_code'  => $input['country_code'],
+                'phone'             => $input['mobile_no'],
+                'country_code'      => $input['country_code'],
+                'is_mobile_verify'  => 1,
             ]);
 
             // generate qr code based on new user
-            //Create Folder & give permission
+            // Create Folder & give permission
             $path = storage_path("app/public/customer_qr");
             !is_dir($path) &&
                 mkdir($path, 0777, true);
@@ -738,16 +756,9 @@ class UserRepository extends BaseRepository
                 ->generate($qr_url . '?user_id='.$user->id, public_path("storage/customer_qr/qrcode_$user->id.png"));
 
 
-            $imageName = "qrcode_$user->id.png";
-            // User::where('id',$user->id)->update(['cus_qr_code_img' => $imageName]);
-            $user->cus_qr_code_img = $imageName;
-
-            $stripe                     = new Stripe();
-            $user['referral_code']      = referralCode();
-            // $user->update($str);
-
-            $user->cus_qr_code_img = $imageName;
-            $user->referral_code   = referralCode();
+            $imageName              = "qrcode_$user->id.png";
+            $user->cus_qr_code_img  = $imageName;
+            $user->referral_code    = referralCode();
 
             $user->save();
         }

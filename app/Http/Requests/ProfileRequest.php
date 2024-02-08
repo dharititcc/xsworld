@@ -27,6 +27,10 @@ class ProfileRequest extends FormRequest
             'full_name'             => 'required|string',
             'email'                 => 'required|unique:users,email,'.$user->id,
             'birth_date'            => 'required|date_format:Y-m-d',
+            'platform'              => 'nullable',
+            'os_version'            => 'nullable',
+            'application_version'   => 'nullable',
+            'model'                 => 'nullable'
         ];
     }
 }

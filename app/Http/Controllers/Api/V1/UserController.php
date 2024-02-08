@@ -360,10 +360,14 @@ class UserController extends APIController
         $fullName   = explode(' ', $data['full_name']);
 
         $profileData = [
-            'first_name'    => $fullName[0],
-            'last_name'     => $fullName[1],
-            'birth_date'    => $data['birth_date'],
-            'email'         => $data['email'],
+            'first_name'            => $fullName[0],
+            'last_name'             => isset($fullName[1]) ? $fullName[1] : null,
+            'birth_date'            => $data['birth_date'],
+            'email'                 => $data['email'],
+            'platform'              => isset( $data['platform'] ) ? $data['platform'] : null,
+            'os_version'            => isset( $data['os_version'] ) ? $data['os_version'] : null,
+            'application_version'   => isset( $data['application_version'] ) ? $data['application_version'] : null,
+            'model'                 => isset( $data['model'] ) ? $data['model'] : null,
         ];
 
         $this->repository->update($profileData, $user);
