@@ -5,6 +5,7 @@ use App\Events\GiftCardEvent;
 use App\Events\RegisterEvent;
 use App\Exceptions\GeneralException;
 use App\Mail\PurchaseGiftCard;
+use App\Models\Country;
 use App\Models\User;
 use App\Models\UserDevices;
 use App\Models\UserGiftCard;
@@ -732,6 +733,8 @@ class UserRepository extends BaseRepository
         // delete old otp request once verified
         $userOtp->delete();
 
+        $country = Country::where('country_code', $input['country_code'])->first();
+
         // check if user exist with same mobile no.
         $existingUser = User::where('phone', $input['mobile_no'])->first();
 
@@ -742,6 +745,7 @@ class UserRepository extends BaseRepository
                 'phone'             => $input['mobile_no'],
                 'country_code'      => $input['country_code'],
                 'is_mobile_verify'  => 1,
+                'country_id'        => $country->id,
             ]);
 
             // generate qr code based on new user
@@ -764,6 +768,12 @@ class UserRepository extends BaseRepository
         }
         else
         {
+            // check country updated or not
+            if( !isset( $existingUser->country_id ) )
+            {
+                $existingUser->update(['country_id' => $country->id]);
+            }
+
             // existing user
             $user = $existingUser;
         }
