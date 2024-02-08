@@ -46,6 +46,9 @@ class RestaurantTableController extends Controller
             {
                 return $restaurant->action_buttons;
             })
+            ->orderColumn('country', function ($query, $order) {
+                $query->orderBy('restaurants.country_id', $order);
+            })
             ->make(true);
     }
 }
