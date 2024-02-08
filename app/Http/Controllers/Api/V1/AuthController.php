@@ -663,7 +663,8 @@ class AuthController extends APIController
             'status'        => true,
             'message'       => 'OTP verified successfully.',
             'token'         => $token,
-            'existing_user' => $existingUser
+            'existing_user' => $existingUser,
+            'item'          => new UserResource($user)
         ]);
     }
 

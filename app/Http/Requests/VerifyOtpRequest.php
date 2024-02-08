@@ -25,6 +25,7 @@ class VerifyOtpRequest extends FormRequest
             'mobile_no'     => 'required',
             'country_code'  => 'required',
             'otp'           => 'required|numeric',
+            'referral_code' => 'nullable'
         ];
     }
 }
