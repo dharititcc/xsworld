@@ -394,6 +394,7 @@ class RestaurantRepository extends BaseRepository
         {
             $query =  $query->where('restaurants.name', 'LIKE', '%'.$search.'%');
         }
+        $query->leftJoin('countries', 'restaurants.country_id', '=', 'countries.id');
 
         return $query;
     }

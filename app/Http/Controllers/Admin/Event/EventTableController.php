@@ -48,8 +48,8 @@ class EventTableController extends Controller
                 return $restaurant->action_buttons;
             })
             ->orderColumn('country', function ($query, $order) {
-                $query->orderBy('restaurants.country_id', $order);
-            })
+                $query->orderBy('countries.name', $order);
+            }) 
             ->make(true);
     }
 }
