@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Billing\Stripe;
 use App\Exceptions\GeneralException;
 use App\Http\Resources\UserResource;
 use App\Repositories\UserRepository;
@@ -424,6 +425,26 @@ class UserController extends APIController
         }
 
         throw new GeneralException('There is no card found');
+    }
+
+    /**
+     * Method generateCardToken
+     *
+     * @param Request $request [explicite description]
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function generateCardToken(Request $request)
+    {
+        $user  = auth()->user();
+        $input = $request->all();
+        $input['name'] = $user->name;
+
+        $stripe = new Stripe();
+
+        $token  = $stripe->createToken($input);
+
+        dd($token);
     }
 
     /**
