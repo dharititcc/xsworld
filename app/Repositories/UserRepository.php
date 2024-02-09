@@ -63,7 +63,7 @@ class UserRepository extends BaseRepository
             $data['points'] = User::SIGN_UP_POINTS;
         }
 
-        if( !isset($user->stripe_customer_id) )
+        if( access()->isCustomer() && !isset($user->stripe_customer_id) )
         {
             // create stripe customer
             $stripeCustomerData         = [
