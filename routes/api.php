@@ -139,6 +139,8 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'v1', 'as' => 'api.v1.'], fun
         Route::post('attach-card', 'UserController@attachCard')->name('user.attach-card');
         // {api/v1/users/mark-default-card}
         Route::post('mark-default-card', 'UserController@markdefaultcard')->name('user.mark-default-card');
+        // {api/v1/users/generate-card-token}
+        Route::post('generate-card-token', 'UserController@generateCardToken')->name('user.generate-card-token');
     });
 
     Route::group(['prefix' => 'countries'], function ()

@@ -1476,7 +1476,7 @@ class OrderRepository extends BaseRepository
         $user_data          = User::find($data['user_id']);
         if($data['status'] == 1 ) {
             $title              =  "Accepted your friend request";
-            $message            =  $auth_user->first_name . "has Accepted your friend request";
+            $message            =  $auth_user->first_name . " has Accepted your friend request";
         } else {
             $title              = "Decline your friend request";
             $message            =  $auth_user->first_name . " has declined your friend request";
