@@ -666,7 +666,7 @@ class UserRepository extends BaseRepository
             return $userOtp;
         }
 
-        throw new GeneralException('Failed to store otp.');
+        throw new GeneralException('Failed to store OTP.');
     }
 
     /**
@@ -705,8 +705,7 @@ class UserRepository extends BaseRepository
             $user->update($str);
             return $users;
         }
-        throw new GeneralException('OTP is invalid.');
-
+        throw new GeneralException('Invalid OTP');
     }
 
     /**
@@ -727,7 +726,7 @@ class UserRepository extends BaseRepository
 
         if( !isset( $userOtp->id ) )
         {
-            throw new GeneralException('Invalid otp.');
+            throw new GeneralException('Invalid OTP');
         }
 
         // delete old otp request once verified
