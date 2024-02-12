@@ -1,7 +1,9 @@
 /node_modules
 /public/hot
-/public/customer_qr/*.*
-/public/images/*.*
+/public/customer_qr
+/public/images
+/public/storage
+/public/order_pdf
 /vendor
 .env
 .env.backup
