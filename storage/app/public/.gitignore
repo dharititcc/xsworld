@@ -1,1 +1,10 @@
+/categories/*
+/customer_qr/*
+/items/*
+/mixers/*
+/order_pdf/*
+/pickup_point/*
+/pickup_points/*
+/profile/*
+/restaurants/*
 !.gitignore
