@@ -1,9 +1,7 @@
 /node_modules
 /public/hot
-/public/storage
 /public/customer_qr/*.*
 /public/images/*.*
-/storage/*.key
 /vendor
 .env
 .env.backup
@@ -13,6 +11,7 @@ Homestead.yaml
 npm-debug.log
 yarn-error.log
 /.vscode/*.*
-/storage/framework/sessions
 /docker/*
 docker-compose.yaml
+/storage/*.key
+/storage/framework/sessions
