@@ -15,15 +15,3 @@ yarn-error.log
 docker-compose.yaml
 /storage/*.key
 /storage/framework/sessions
-/storage/logs/*.*
-/storage/app/public/categories/*.*
-/storage/app/public/customer_qr/*.*
-/storage/app/public/items/*.*
-/storage/app/public/mixers/*.*
-/storage/app/public/order_pdf/*.*
-/storage/app/public/pickup_point/*.*
-/storage/app/public/pickup_points/*.*
-/storage/app/public/profile/*.*
-/storage/app/public/restaurants/*.*
-/storage/app/public/restaurant/*.*
-/storage/app/public/images/*.*
