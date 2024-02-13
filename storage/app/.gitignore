@@ -1,1 +1,10 @@
+!public/categories/.gitignore
+!public/customer_qr/.gitignore
+!public/items/.gitignore
+!public/mixers/.gitignore
+!public/order_pdf/.gitignore
+!public/pickup_point/.gitignore
+!public/pickup_points/.gitignore
+!public/profile/.gitignore
+!public/restaurants/.gitignore
 !.gitignore
