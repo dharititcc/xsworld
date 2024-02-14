@@ -86,7 +86,7 @@ class MixerController extends Controller
         $category   = $request->get('category');
 
         $request->validate([
-            'price' => 'required|numeric|between:0.1,9999999999.99'
+            'price' => 'required|numeric|between:0,9999999999.99'
         ],[
             'price.between' => "Please Enter valid price"
         ]);
@@ -160,7 +160,7 @@ class MixerController extends Controller
         $category   = $request->get('category');
 
         $request->validate([
-            'price' => 'required|numeric|between:0.1,9999999999.99'
+            'price' => 'required|numeric|between:0,9999999999.99'
         ],[
             'price.between' => "Please Enter valid price"
         ]);
