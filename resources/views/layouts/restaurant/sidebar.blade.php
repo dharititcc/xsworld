@@ -1,5 +1,5 @@
 <div id="sidebar-wrapper">
-    <div class="sidebar-header"><label> {{ session('restaurant')->name }}</label> <a href="javascript:void(0);" class="setting"> <i class="icon-settings-thin"></i></a></div>
+    <div class="sidebar-header"><label> {{ session('restaurant')->name }}</label></div>
     <div class="sidebar-title"><button type="button" id="sidebarToggle1"><i class="icon-left"></i></button> <img src="{{ asset('img/xsworld.png') }}" alt="" class="logo"></div>
     <figure><img src="{{ session('restaurant')->image }}" alt="{{ session('restaurant')->name }}"></figure>
     <div class="list-group">
@@ -10,9 +10,9 @@
         <a href="{{ route('restaurants.foods.index') }}" class="{{ Route::is('restaurants.foods.*') ? 'active' : '' }}">Foods List</a>
         <a href="{{ route('restaurants.mixers.index') }}" class="{{ Route::is('restaurants.mixers.*') ? 'active' : '' }}">Mixer Management</a>
         <a href="{{ route('restaurants.addons.index') }}" class="{{ Route::is('restaurants.addons.*') ? 'active' : '' }}">Addons Management</a>
+        <a href="{{route('restaurants.pickup.index')}}" class="{{ Route::is('restaurants.pickup.*') ? 'active' : '' }}">Pick-up Zones</a>
         <a href="{{ route('restaurants.waiter.index') }}" class="{{ Route::is('restaurants.waiter.*') ? 'active' : '' }}">Account Manager</a>
         <a href="{{ route('analytics') }}" class="{{ Route::is('analytics') ? 'active' : '' }}">Analytics</a>
-        <a href="{{route('restaurants.pickup.index')}}" class="{{ Route::is('restaurants.pickup.*') ? 'active' : '' }}">Pick-up Zones</a>
         <a href="{{ route('restaurants.table.index') }}" class="{{ Route::is('restaurants.table.*') ? 'active' : '' }}">Table Management</a>
         <a href="{{ route('restaurants.venue.index') }}" class="{{ Route::is('restaurants.venue.*') ? 'active' : '' }}">Bar Management</a>
         <a href="{{ route('restaurants.orders.index') }}" class="{{ Route::is('restaurants.orders.*') ? 'active' : '' }}">Order History</a>
