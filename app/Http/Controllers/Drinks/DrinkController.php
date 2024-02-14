@@ -121,7 +121,7 @@ class DrinkController extends Controller
         if( $request->is_variable == 0 )
         {
             $request->validate([
-                'price' => 'required|numeric|between:0.1,9999999999.99'
+                'price' => 'required|numeric|between:0.01,9999999999.99'
             ],[
                 'price.between' => "Please enter a valid price format (e.g., 100.50)"
             ]);
@@ -257,7 +257,7 @@ class DrinkController extends Controller
         if( $request->is_variable == 0 )
         {
             $request->validate([
-                'price' => 'required|numeric|between:0.1,9999999999.99'
+                'price' => 'required|numeric|between:0.01,9999999999.99'
             ],[
                 'price.between' => "Please enter a valid price format (e.g., 100.50)"
             ]);
