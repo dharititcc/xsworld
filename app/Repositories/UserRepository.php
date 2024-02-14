@@ -581,6 +581,17 @@ class UserRepository extends BaseRepository
     {
         if( isset($input['fcm_token']) )
         {
+            $user->loadMissing(['devices']);
+
+            // check if device limit > 4 in the db
+            if( $user->devices->count() > 4 )
+            {
+                // delete old fcm token
+                $fcmToken = $user->devices()->orderBy('id', 'asc')->first();
+
+                $fcmToken->delete();
+            }
+
             // inser device entry
             return $user->devices()->create(['fcm_token' => $input['fcm_token']]);
         }
