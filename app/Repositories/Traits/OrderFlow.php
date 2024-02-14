@@ -477,10 +477,10 @@ trait OrderFlow
             }
         }
 
-        if( isset( $getcusTbl->id ) )
-        {
-            throw new GeneralException('Already table allocated to this Customer');
-        }
+        // if( isset( $getcusTbl->id ) )
+        // {
+        //     throw new GeneralException('Already table allocated to this Customer');
+        // }
 
         if( isset($order->order_split_food->id) )
         {
