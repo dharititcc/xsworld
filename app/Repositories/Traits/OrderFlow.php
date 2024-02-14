@@ -477,10 +477,10 @@ trait OrderFlow
             }
         }
 
-        if( isset( $getcusTbl->id ) )
-        {
-            throw new GeneralException('Already table allocated to this Customer');
-        }
+        // if( isset( $getcusTbl->id ) )
+        // {
+        //     throw new GeneralException('Already table allocated to this Customer');
+        // }
 
         if( isset($order->order_split_food->id) )
         {
@@ -603,17 +603,17 @@ trait OrderFlow
                     $this->getOrderPayment($latest, $user, $creditAmountSplit, $amount, $card_id);
                     $latest->refresh();
 
-                    $getcusTbl = CustomerTable::where('user_id', $user->id)->where('restaurant_table_id', $table_id)->where('order_id', $latest->id)->first();
-                    if($getcusTbl) {
-                        throw new GeneralException('Already table allocated');
-                        $customerTbl = 0;
-                    } else {
+                    // $getcusTbl = CustomerTable::where('user_id', $user->id)->where('restaurant_table_id', $table_id)->where('order_id', $latest->id)->first();
+                    // if($getcusTbl) {
+                    //     throw new GeneralException('Already table allocated');
+                    //     $customerTbl = 0;
+                    // } else {
                         $customerTbl = CustomerTable::updateOrCreate([
                             'restaurant_table_id'   => $table_id,
                             'user_id'               => $user->id,
                             'order_id'              => $latest->id,
                         ]);
-                    }
+                    // }
 
                     // send notification to kitchens of the restaurant if order is food
                     if( isset($latest->order_split_food->id) )
@@ -683,17 +683,17 @@ trait OrderFlow
 
             $orderIdArr[] = $order->id;
 
-            $getcusTbl = CustomerTable::where('user_id', $user->id)->where('restaurant_table_id', $table_id)->where('order_id', $order->id)->first();
-            if($getcusTbl) {
-                throw new GeneralException('Already table allocated');
-                $customerTbl = 0;
-            } else {
+            // $getcusTbl = CustomerTable::where('user_id', $user->id)->where('restaurant_table_id', $table_id)->where('order_id', $order->id)->first();
+            // if($getcusTbl) {
+            //     throw new GeneralException('Already table allocated');
+            //     $customerTbl = 0;
+            // } else {
                 $customerTbl = CustomerTable::updateOrCreate([
                     'restaurant_table_id'   => $table_id,
                     'user_id'               => $user->id,
                     'order_id'              => $order->id,
                 ]);
-            }
+            // }
 
             // send notification to waiter if table order
             if( isset( $table_id ) )
