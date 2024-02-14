@@ -84,11 +84,11 @@ class AddonsController extends Controller
     {
         $restaurant = session('restaurant')->loadMissing(['main_categories', 'main_categories.children']);
         $category   = $request->get('category');
-        // $request->validate([
-        //     'price' => 'required|numeric|between:0.1,9999999999.99'
-        // ],[
-        //     'price.between' => "Please Enter valid price"
-        // ]);
+        $request->validate([
+            'price' => 'required|numeric|between:0,9999999999.99'
+        ],[
+            'price.between' => "Please Enter valid price"
+        ]);
         foreach ($category as $key => $value)
         {
             $restaurantitem                       = new RestaurantItem();
@@ -149,11 +149,11 @@ class AddonsController extends Controller
     {
         $restaurant     = session('restaurant')->loadMissing(['main_categories', 'main_categories.children']);
         $category       = $request->get('category');
-        // $request->validate([
-        //     'price' => 'required|numeric|between:0.1,9999999999.99'
-        // ],[
-        //     'price.between' => "Please Enter valid price"
-        // ]);
+        $request->validate([
+            'price' => 'required|numeric|between:0,9999999999.99'
+        ],[
+            'price.between' => "Please Enter valid price"
+        ]);
         // get old addons list
         $oldCategories  = RestaurantItem::where(['restaurant_id'=>$addon->restaurant_id,'type' => RestaurantItem::ADDON])
                             ->where('name',$addon->name)->pluck('category_id')->toArray();

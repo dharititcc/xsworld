@@ -85,11 +85,11 @@ class MixerController extends Controller
         $restaurant = session('restaurant')->loadMissing(['main_categories', 'main_categories.children']);
         $category   = $request->get('category');
 
-        // $request->validate([
-        //     'price' => 'required|numeric|between:0.1,9999999999.99'
-        // ],[
-        //     'price.between' => "Please Enter valid price"
-        // ]);
+        $request->validate([
+            'price' => 'required|numeric|between:0,9999999999.99'
+        ],[
+            'price.between' => "Please Enter valid price"
+        ]);
 
         foreach ($category as $key => $value)
         {
@@ -159,11 +159,11 @@ class MixerController extends Controller
         $restaurant = session('restaurant')->loadMissing(['main_categories', 'main_categories.children']);
         $category   = $request->get('category');
 
-        // $request->validate([
-        //     'price' => 'required|numeric|between:0.1,9999999999.99'
-        // ],[
-        //     'price.between' => "Please Enter valid price"
-        // ]);
+        $request->validate([
+            'price' => 'required|numeric|between:0,9999999999.99'
+        ],[
+            'price.between' => "Please Enter valid price"
+        ]);
         // get old mixers list
         $oldCategories = RestaurantItem::where('restaurant_id', $mixer->restaurant_id)->where('type', RestaurantItem::MIXER)->where('name', $mixer->name)->get();
         foreach($oldCategories as $del_cal_item)
