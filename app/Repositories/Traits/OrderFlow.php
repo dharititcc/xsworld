@@ -603,17 +603,17 @@ trait OrderFlow
                     $this->getOrderPayment($latest, $user, $creditAmountSplit, $amount, $card_id);
                     $latest->refresh();
 
-                    $getcusTbl = CustomerTable::where('user_id', $user->id)->where('restaurant_table_id', $table_id)->where('order_id', $latest->id)->first();
-                    if($getcusTbl) {
-                        throw new GeneralException('Already table allocated');
-                        $customerTbl = 0;
-                    } else {
+                    // $getcusTbl = CustomerTable::where('user_id', $user->id)->where('restaurant_table_id', $table_id)->where('order_id', $latest->id)->first();
+                    // if($getcusTbl) {
+                    //     throw new GeneralException('Already table allocated');
+                    //     $customerTbl = 0;
+                    // } else {
                         $customerTbl = CustomerTable::updateOrCreate([
                             'restaurant_table_id'   => $table_id,
                             'user_id'               => $user->id,
                             'order_id'              => $latest->id,
                         ]);
-                    }
+                    // }
 
                     // send notification to kitchens of the restaurant if order is food
                     if( isset($latest->order_split_food->id) )
