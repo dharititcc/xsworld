@@ -127,7 +127,7 @@ class FoodController extends Controller
         if( $request->is_variable == 0 )
         {
             $request->validate([
-                'price' => 'required|numeric|between:0.1,9999999999.99'
+                'price' => 'required|numeric|between:0.01,9999999999.99'
             ],[
                 'price.between' => "Please Enter valid price"
             ]);
@@ -276,7 +276,7 @@ class FoodController extends Controller
 
         $request->validate([
             // 'name' => 'regex:/^[a-zA-Z\s]+$/u',
-            'price' => 'required|numeric|between:0.1,9999999999.99'
+            'price' => 'required|numeric|between:0.01,9999999999.99'
         ],[
             // 'name.regex' => "Only allow letters and spaces",
             'price.between' => "Please Enter valid price"
