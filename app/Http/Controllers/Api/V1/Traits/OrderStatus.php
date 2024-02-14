@@ -5,6 +5,7 @@ use App\Models\OrderSplit;
 use App\Billing\Stripe;
 use App\Mail\InvoiceMail;
 use App\Models\CustomerTable;
+use App\Models\User;
 use App\Repositories\Traits\CreditPoint;
 use App\Repositories\Traits\XSNotifications;
 use Carbon\Carbon;
