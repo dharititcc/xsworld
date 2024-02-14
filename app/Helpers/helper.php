@@ -2,6 +2,7 @@
 
 use App\Exceptions\GeneralException;
 use App\Models\Category;
+use App\Models\User;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Illuminate\Database\Eloquent\Model;
@@ -371,6 +372,73 @@ if (! function_exists('sendNotification')) {
 
     }
 }
+if (! function_exists('sendCustomerNotification')) {
+    /**
+     * Method sendNotification
+     *
+     * @param String $title [explicite description]
+     * @param String $message [explicite description]
+     * @param array $tokens [explicite description]
+     * @param int $orderid [explicite description]
+     * @param string $type [Type of notification e.g. order, social, card]
+     *
+     * @return mixed
+     */
+    function sendCustomerNotification(String $title, String $message, array $tokens, int $orderid = 0, $type = User::NOTIFICATION_ORDER)
+    {
+        if( !empty( $tokens ) )
+        {
+            try {
+                $accesstoken = getenv("FCM_TOKEN");
+                $URL = 'https://fcm.googleapis.com/fcm/send';
+
+                $notification = [
+                    'title'                 =>  $title,
+                    'body'                  =>  $message,
+                    'message'               =>  $message,
+                    'icon'                  =>  'myIcon',
+                    'sound'                 => 'mySound',
+                    // 'notification_type'  => $type,
+                    'image'                 =>'',
+                    'order_id'              => $orderid,
+                    'type'                  => $type
+                    // "click_action"          => (string)$orderid
+                ];
+
+                $newArray = array_merge($notification, ["click_action" => (string)$orderid]);
+
+                $post_data = [
+                    'registration_ids'    => $tokens, //multple token array
+                    // 'to'                    => $tokens, //single token
+                    'notification'          => $notification,
+                    'data'                  => $newArray
+                ];
+
+                $crl = curl_init();
+
+                $headr = array();
+                $headr[] = 'Content-type: application/json';
+                $headr[] = 'Authorization: Bearer ' . $accesstoken;
+                curl_setopt($crl, CURLOPT_SSL_VERIFYPEER, false);
+
+                curl_setopt($crl, CURLOPT_URL, $URL);
+                curl_setopt($crl, CURLOPT_HTTPHEADER, $headr);
+
+                curl_setopt($crl, CURLOPT_POST, true);
+                curl_setopt($crl, CURLOPT_POSTFIELDS, json_encode($post_data));
+                curl_setopt($crl, CURLOPT_RETURNTRANSFER, true);
+
+                $rest = curl_exec($crl);
+                // dd($rest);
+                Log::debug("Notification Testing Helper Log:  - {$rest}");
+                return true;
+            } catch (Exception $e) {
+                throw new GeneralException($e->getMessage());
+            }
+        }
+
+    }
+}
 
 if (! function_exists('waiterNotification')) {
     /**
@@ -466,6 +534,7 @@ if (! function_exists('socialNotification')) {
                     'icon'                  => 'myIcon',
                     'sound'                 => 'mySound',
                     'image'                 => '',
+                    'type'                  => User::NOTIFICATION_SOCIAL,
                 ];
 
                 // $newArray = array_merge($notification, ["click_action" => $code]);
