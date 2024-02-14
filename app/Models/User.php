@@ -39,6 +39,10 @@ class User extends Authenticatable
 
     const SIGN_UP_POINTS    = 30;
 
+    const NOTIFICATION_ORDER    = 'order';
+    const NOTIFICATION_SOCIAL   = 'social';
+    const NOTIFICATION_CARD     = 'card';
+
     /**
      * The attributes that are mass assignable.
      *

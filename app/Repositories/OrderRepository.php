@@ -1488,22 +1488,6 @@ class OrderRepository extends BaseRepository
     public function pendingFriendReq(array $data)
     {
         $auth_user = auth()->user();
-        // incoming friend request which is pending
-        // if($data['request'] === 1) {
-        //     //my-new req show approve btn req get
-        //     $FriendRequest =  $auth_user->pending_friends;//FriendRequest::where('friend_id',$auth_user->id)->where('status' , 0);
-        // } else {
-        //     //my-new req show sent btn  req sent
-        //    $FriendRequest =  FriendRequest::where('user_id',$auth_user->id)->where('status' , 0);
-        // }
-        // $FriendRequest = $FriendRequest->get();
-        // // FriendRequest::where('user_id', $data['user_id'])->where('friend_id', $data['user_id'])
-        // //SELECT * FROM `friend_requests` where ( user_id = 3 OR friend_id = 3) AND ( user_id = 18 OR friend_id = 18 );
-        // // $FriendRequest = FriendRequest::create([
-        // //     'user_id'   => $data['user_id'],
-        // //     'friend_id' => $auth_user->id,
-        // // ]);
-
         if( $data['request'] === 1 )
         {
             $FriendRequest =  $auth_user->pending_friends;
@@ -1525,13 +1509,13 @@ class OrderRepository extends BaseRepository
         $stripe_customer_id     = $auth_user->stripe_customer_id;
         $stripe                 = new Stripe();
         $customer_cards         = $stripe->fetchCards($stripe_customer_id)->toArray();
-        
+
         if(empty($customer_cards['data'])) {
             throw new GeneralException('Please Add Card details');
         }
         $getCusCardId   = $stripe->fetchCustomer($stripe_customer_id);
         $defaultCardId  = $getCusCardId->default_source;
-        
+
         $paymentArr = [
             'amount'        => number_format($amount, 2) * 100,
             // 'currency'      => $auth_user->orders->restaurant->currency->code,
@@ -1540,18 +1524,11 @@ class OrderRepository extends BaseRepository
             'source'        => $defaultCardId,
             'description'   => "Gift Credit Send to ". $data['user_id']
         ];
-        
+
         $payment_data   = $stripe->createCharge($paymentArr);
 
         $addAmountToReceiver    = number_format($receiverCreditAmount + $amount, 2);
-        // $deductAmountToAuthUser = number_format($authUserCreditAmount - $amount, 2);
         $receiverUser->credit_amount = $addAmountToReceiver;
-        $receiverUser->save();
-        // $title              = "You received Gift credits";
-        // $message            = "You received gift credits from " . $receiverUser->first_name . ". Enjoy your gift!";
-        // $this->notifyCustomerSocial($receiverUser, $title, $message);
-        // $auth_user->credit_amount    = $deductAmountToAuthUser;
-        // $auth_user->save();
         return $auth_user;
     }
 

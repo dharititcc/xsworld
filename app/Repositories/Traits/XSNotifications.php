@@ -58,11 +58,11 @@ trait XSNotifications
     /**
      * Method notifyCustomer
      *
-     * @param \App\Models\Order $order [explicite description]
+     * @param Order $order [explicite description]
      * @param string $title [explicite description]
+     * @param string $message [explicite description]
      *
      * @return mixed|void
-     * @throws \App\Exceptions\GeneralException
      */
     public function notifyCustomer(Order $order, string $title, string $message)
     {
@@ -73,7 +73,7 @@ trait XSNotifications
         if(!empty($customer_devices))
         {
             Log::debug("Customer Notification Testing:  - {$order->id}");
-            return sendNotification($title, $message, $customer_devices, $orderid);
+            return sendCustomerNotification($title, $message, $customer_devices, $orderid);
         }
     }
 
@@ -144,11 +144,11 @@ trait XSNotifications
     /**
      * Method notifyCustomerSocial
      *
-     * @param \App\Models\User $user [explicite description]
+     * @param User $user [explicite description]
      * @param string $title [explicite description]
+     * @param string $message [explicite description]
      *
      * @return mixed|void
-     * @throws \App\Exceptions\GeneralException
      */
     public function notifyCustomerSocial(User $user, string $title, string $message)
     {
