@@ -683,17 +683,17 @@ trait OrderFlow
 
             $orderIdArr[] = $order->id;
 
-            $getcusTbl = CustomerTable::where('user_id', $user->id)->where('restaurant_table_id', $table_id)->where('order_id', $order->id)->first();
-            if($getcusTbl) {
-                throw new GeneralException('Already table allocated');
-                $customerTbl = 0;
-            } else {
+            // $getcusTbl = CustomerTable::where('user_id', $user->id)->where('restaurant_table_id', $table_id)->where('order_id', $order->id)->first();
+            // if($getcusTbl) {
+            //     throw new GeneralException('Already table allocated');
+            //     $customerTbl = 0;
+            // } else {
                 $customerTbl = CustomerTable::updateOrCreate([
                     'restaurant_table_id'   => $table_id,
                     'user_id'               => $user->id,
                     'order_id'              => $order->id,
                 ]);
-            }
+            // }
 
             // send notification to waiter if table order
             if( isset( $table_id ) )
