@@ -70,11 +70,12 @@ trait XSNotifications
         // Customer Notify
         $customer_devices   = $order->user->devices->count() ? $order->user->devices()->pluck('fcm_token')->unique()->toArray() : [];
         $orderid            = $order->id;
+        $type               = isset( $type ) ? $type : User::NOTIFICATION_ORDER;
 
         if(!empty($customer_devices))
         {
             Log::debug("Customer Notification Testing:  - {$order->id}");
-            return sendCustomerNotification($title, $message, $customer_devices, $orderid);
+            return sendCustomerNotification($title, $message, $customer_devices, $orderid, $type);
         }
     }
 
