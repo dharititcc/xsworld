@@ -765,7 +765,9 @@ class OrderRepository extends BaseRepository
 
         if(!isset( $defaultCardId ))
         {
-            throw new GeneralException('Please ask customer to Add Card details');
+            // send notification to customer for card
+            $this->notifyCustomer($order, 'Please add credit card', 'You need to add credit card', User::NOTIFICATION_CARD);
+            throw new GeneralException('Please retry after some time as we have notify customer for the payment details');
         }
 
         // load missing order items

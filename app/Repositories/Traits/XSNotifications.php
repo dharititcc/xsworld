@@ -61,10 +61,11 @@ trait XSNotifications
      * @param Order $order [explicite description]
      * @param string $title [explicite description]
      * @param string $message [explicite description]
+     * @param string|null $type [explicite description]
      *
      * @return mixed|void
      */
-    public function notifyCustomer(Order $order, string $title, string $message)
+    public function notifyCustomer(Order $order, string $title, string $message, $type = null)
     {
         // Customer Notify
         $customer_devices   = $order->user->devices->count() ? $order->user->devices()->pluck('fcm_token')->unique()->toArray() : [];
