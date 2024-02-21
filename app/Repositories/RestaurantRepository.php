@@ -184,6 +184,28 @@ class RestaurantRepository extends BaseRepository
     }
 
     /**
+     * Method getSingleItem
+     *
+     * @param array $data [explicite description]
+     *
+     * @return RestaurantItem
+     */
+    public function getSingleItem(array $data): RestaurantItem
+    {
+        $query = RestaurantItem::availableItem($data['is_available'])->with(
+            [
+                'category',
+                'restaurant',
+                'restaurant.country',
+            ]
+        )
+        ->where('id', $data['item_id'] )
+        ->where('type', RestaurantItem::ITEM);
+
+        return $query->first();
+    }
+
+    /**
      * Method getRestaurantItemsFeatured
      *
      * @param array $data [explicite description]

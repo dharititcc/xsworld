@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Requests\RestaurantItemsRequest;
+use App\Http\Requests\SingleItemRequest;
 use App\Http\Resources\RestaurantItemsResource;
 use App\Http\Resources\RestaurantItemTypesResources;
 use App\Repositories\RestaurantRepository;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Arr;
 
 class RestaurantItemController extends APIController
@@ -103,5 +105,21 @@ class RestaurantItemController extends APIController
         }
 
         return $this->respondWithError('Restaurant Items not found.');
+    }
+
+    /**
+     * Method getItem
+     *
+     * @param SingleItemRequest $request [explicite description]
+     *
+     * @return JsonResponse
+     */
+    public function getItem(SingleItemRequest $request)
+    {
+        $data                   = $request->validated();
+        $data['is_available']   = 1;
+        $restaurantsitem        = $this->repository->getSingleItem($data);
+
+        return $this->respondSuccess('Restaurant Items Found.', new RestaurantItemsResource($restaurantsitem));
     }
 }

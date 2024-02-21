@@ -10,7 +10,9 @@ use App\Models\Country;
 use App\Models\Currency;
 use App\Models\Restaurant;
 use App\Models\User;
+use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class RestaurantController extends Controller
@@ -31,11 +33,6 @@ class RestaurantController extends Controller
         //
     }
 
-    public function addressLatLong()
-    {
-        
-    }
-
     /**
      * Store a newly created resource in storage.
      */
@@ -52,16 +49,6 @@ class RestaurantController extends Controller
                 throw new GeneralException('Please Select Proper Country');
             }
         }
-        // else {
-        //     $latitude           = $request->latitude;
-        //     $longitude          = $request->longitude;
-        //     $formatted_latlng   = trim($latitude).','.trim($longitude);
-        //     $address = addressLatLong(null, 1,$formatted_latlng);
-        // }
-        // if($country_name->name != $address['country'])
-        // {
-        //     throw new GeneralException('Please Select Proper Country');
-        // }
 
         $addressInfo    = [
             'name'          => $request->name,
@@ -80,23 +67,35 @@ class RestaurantController extends Controller
             'end_date'      => isset($request->end_date) ? $request->end_date : null,
             'specialisation'=> $request->description,
         ];
-        $restaurant = Restaurant::create($addressInfo);
-        $restaurant->refresh();
-        if ($request->hasFile('image'))
+
+        try
         {
-            $this->upload($request->file('image'), $restaurant);
+            DB::beginTransaction();
+            $restaurant = Restaurant::create($addressInfo);
+            $restaurant->refresh();
+            if ($request->hasFile('image'))
+            {
+                $this->upload($request->file('image'), $restaurant);
+            }
+            $ownerInfo      = [
+                'first_name'    => $request->first_name,
+                'last_name'     => $request->last_name,
+                'email'         => $request->email,
+                'password'      => Hash::make($request->password),
+                'phone'         => $request->phone,
+                'user_type'     => User::RESTAURANT_OWNER,
+            ];
+            $user = User::create($ownerInfo);
+            $restaurant->owners()->attach($user->id);
+
+            DB::commit();
+            return $restaurant->refresh();
         }
-        $ownerInfo      = [
-            'first_name'    => $request->first_name,
-            'last_name'     => $request->last_name,
-            'email'         => $request->email,
-            'password'      => Hash::make($request->password),
-            'phone'         => $request->phone,
-            'user_type'     => User::RESTAURANT_OWNER,
-        ];
-        $user = User::create($ownerInfo);
-        $restaurant->owners()->attach($user->id);
-        return $restaurant->refresh();
+        catch(Exception $e)
+        {
+            DB::rollBack();
+            throw new GeneralException('Something went wrong. Please try again later.');
+        }
     }
 
 
