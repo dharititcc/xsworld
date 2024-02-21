@@ -66,6 +66,8 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'v1', 'as' => 'api.v1.'], fun
         Route::post('/restaurants/item-search-by-name', 'RestaurantController@itemSearchByName')->name('restaurant.item-search-by-name');
         // vanue item list{api/v1/restaurants/items}
         Route::post('/restaurants/items', 'RestaurantItemController@index')->name('restaurant.items.index');
+        // vanue item list{api/v1/restaurants/item}
+        Route::post('/restaurants/item', 'RestaurantItemController@getItem')->name('restaurant.items.single');
         // {api/v1/users/addtocart}
         Route::post('/addtocart', 'OrderController@addToCart')->name('addtocart');
         // {api/v1/users/viewcart}
