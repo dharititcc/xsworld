@@ -56,6 +56,38 @@ trait OrderFlow
     }
 
     /**
+     * Method updateItem
+     *
+     * @param array $data [explicite description]
+     *
+     * @return mixed
+     * @throws \App\Exceptions\GeneralException
+     */
+    public function updateItem(array $data)
+    {
+        $user       = isset( $data['order']['user_id'] ) ? User::findOrFail($data['user_id']) : auth()->user();
+        $order      = isset( $data['order'] ) ? $data['order'] : [];
+        $orderItem  = isset( $data['order_item'] ) ? [$data['order_item']] : [];
+
+        $user->loadMissing(['latest_cart', 'latest_cart.restaurant']);
+
+        $latestCart = $user->latest_cart;
+
+        if( isset( $latestCart->id ) && ($latestCart->restaurant->id ==  $order['restaurant_id']) )
+        {
+            // check restaurant id available in the cart
+            return $this->checkSameRestaurantOrder($user, $latestCart, $orderItem);
+        }
+        else
+        {
+            // new order
+            return $this->createOrder($user, $order, $orderItem);
+        }
+
+        throw new GeneralException('Order request is invalid.');
+    }
+
+    /**
      * Method checkSameRestaurantOrder
      *
      * @param User $user [explicite description]
