@@ -767,6 +767,141 @@ trait OrderFlow
         return true;
     }
 
+    // place order new changes
+    function newPlaceOrder(array $data): bool
+    {
+        $orderIdArr = [];
+        $card_id = $data['card_id'] ?? null;
+        $credit_amount = isset($data['credit_amount']) && $data['credit_amount'] != '' ? $data['credit_amount'] : 0;
+        $amount = $data['amount'] ? $data['amount'] : 0;
+        $table_id = isset($data['table_id']) && $data['table_id'] ? $data['table_id'] : null;
+        $pickup_point_id    = $data['pickup_point_id'] ?? null;
+        $order = Order::with([
+            'restaurant',
+            'restaurant.kitchens',
+            'order_splits',
+            'order_split_food',
+            'order_split_drink'
+        ])->findOrFail($data['order_id']);
+        $user = $order->user_id ? User::findOrFail($order->user_id) : auth()->user();
+        // $pickup_point_id = '';
+
+        // check if qr is enable or not
+        $isTableActive = RestaurantTable::withTrashed()->where('id', $table_id)->first();
+        if (isset($isTableActive->id)) {
+            if ($isTableActive->deleted_at) {
+                throw new GeneralException('You cannot place order as QR is deleted.');
+            }
+            if ($isTableActive->status == 0) {
+                throw new GeneralException('You cannot place order as QR is disabled.');
+            }
+        }
+
+        // check if order is of category type both or single(food/drink)
+        if ($order->order_category_type == Order::BOTH || $order->order_category_type == Order::FOOD || $order->order_category_type == Order::DRINK) {
+            // If order includes both food and drink, or only food/drink
+            // $pickup_point_id = $this->randomPickpickPoint($order);
+            if(!empty($pickup_point_id))
+            {
+                $pickup_point_id = RestaurantPickupPoint::where('id',$pickup_point_id)->first();
+            }
+
+            foreach ($order->order_splits as $key => $split) {
+                $latest = null;
+                $split->loadMissing(['items']);
+
+                $orderArr = [
+                    'user_id'               => $user->id,
+                    'order_category_type'   => $order->order_category_type,
+                    'restaurant_id'         => $order->restaurant_id,
+                    'pickup_point_id'       => $pickup_point_id ? $pickup_point_id->id : null,
+                    'pickup_point_user_id'  => $pickup_point_id ? $pickup_point_id->user_id : null,
+                    'restaurant_table_id'   => isset($table_id) ? $table_id : null,
+                    'status'                => Order::PENDNIG,
+                    'waiter_status'         => Order::CURRENTLY_BEING_PREPARED,
+                    'currency_id'           => $order->restaurant->currency_id,
+                    'place_at'              => Carbon::now(),
+                ];
+
+                if ($key === 0) {
+                    $order->update($orderArr);
+                } else {
+                    $order = Order::create($orderArr);
+                }
+                
+                // Update split and items
+                $split->update(['order_id' => $order->id]);
+                $split->items()->update(['order_id' => $order->id]);
+                
+                // Update total of the order by items
+                $order->loadMissing(['items']);
+                $order->update(['total' => $split->all_items->sum('total')]);
+               
+
+                $latest = Order::with([
+                    'restaurant',
+                    'restaurant.kitchens',
+                    'order_splits',
+                    'order_split_food',
+                    'order_split_drink'
+                ])->find($order->id);
+
+                $orderIdArr[] = $latest->id;
+                // Charge payment
+                $creditAmountSplit = min($order->total, $credit_amount);
+                $amount = $order->total - $creditAmountSplit;
+                $credit_amount -= $creditAmountSplit;
+                $latest->refresh();
+                $this->getOrderPayment($latest, $user, $creditAmountSplit, $amount, $card_id);
+        
+                // Update or create customer table
+                CustomerTable::updateOrCreate([
+                    'restaurant_table_id'   => $table_id,
+                    'user_id'               => $user->id,
+                    'order_id'              => $latest->id,
+                ]);
+
+                // Send notifications
+                $this->sendNotifications($latest, $table_id);
+            }
+        }
+
+        // Generate PDF
+        $this->generatePDF($orderIdArr);
+
+        // Take payment
+        $this->captureKitchenCharge($orderIdArr);
+
+        return true;
+    }
+
+    function sendNotifications($order, $table_id) {
+        // send notification to kitchens of the restaurant if order is food
+        if (isset($order->order_split_food->id)) {
+            $kitchenTitle = 'New order placed by customer';
+            $kitchenMessage = "Order is #{$order->id} placed by customer";
+            $this->notifyKitchens($order, $kitchenTitle, $kitchenMessage);
+        }
+
+        // send waiter notification if table is selected
+        if (isset($table_id)) {
+            $this->sendWaiterNotification($order, $order->user, $table_id);
+        }
+
+        // customer notification
+        $text = $order->restaurant->name . ' is processing your order';
+        $title = $text;
+        $message = "Your Order is #" . $order->id . " placed";
+        $this->notifyCustomer($order, $title, $message);
+
+        // send notification to bar of the restaurant if order is drink
+        if (isset($order->order_split_drink->id)) {
+            $bartitle = "Order is placed by Customer";
+            $barmessage = "Order is #" . $order->id . " placed by customer";
+            $this->notifyBars($order, $bartitle, $barmessage);
+        }
+    }
+
     /**
      * Method captureKitchenCharge
      *
