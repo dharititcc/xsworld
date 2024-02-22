@@ -145,6 +145,20 @@ class OrderController extends APIController
     }
 
     /**
+     * Method updateOrderItem
+     *
+     * @param Request $request [explicite description]
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function updateOrderItem(Request $request)
+    {
+        $order = $this->repository->updateItem($request->all());
+
+        return $this->respondSuccess('Cart data found', new OrderResource($order));
+    }
+
+    /**
      * Method viewCart
      *
      * @return \Illuminate\Http\JsonResponse
