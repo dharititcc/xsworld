@@ -1,14 +1,15 @@
 <?php
 
-use App\Exceptions\GeneralException;
-use App\Models\Category;
-use App\Models\User;
 use Carbon\Carbon;
-use Carbon\CarbonPeriod;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Str;
+use App\Models\User;
 use Twilio\Rest\Client;
+use App\Models\Category;
+use Carbon\CarbonPeriod;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Log;
+use App\Exceptions\GeneralException;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Database\Eloquent\Model;
 
 /**
  * Henerate UUID.
@@ -249,28 +250,84 @@ if (! function_exists('sendTwilioCustomerSms')) {
      *
      * @return void
      */
-    function sendTwilioCustomerSms($mobile_no,$otp)
+    function sendTwilioCustomerSms($mobile_no, $otp)
     {
         try {
-            $token          = env("TWILIO_AUTH_TOKEN");
-            $twilio_sid     = env("TWILIO_ACCOUNT_SID");
-            $twilio_number  = env("TWILIO_PHONE_NUMBER");
-            $send_sms       = new Client($twilio_sid, $token);
+            $token              = env("TWILIO_AUTH_TOKEN");
+            $twilio_sid         = env("TWILIO_ACCOUNT_SID");
+            $twilio_subaccount_sid = env("TWILIO_SUBACCOUNT_SID");
+            $twilio_number      = env("TWILIO_PHONE_NUMBER");
+    
+            // Twilio API endpoint
+            $url = "https://api.twilio.com/2010-04-01/Accounts/{$twilio_sid}/Messages.json";
+    
+            // Data to be sent in the POST request
+            $data = [
+                'To'   => $mobile_no,
+                'From' => $twilio_number,
+                'Body' => 'Your One Time Password for verify account ' . $otp
+            ];
+    
+            // Initialize cURL session
+            $ch = curl_init($url);
+    
+            // Set cURL options
+            curl_setopt($ch, CURLOPT_POST, true);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+            curl_setopt($ch, CURLOPT_USERPWD, "$twilio_subaccount_sid:$token"); // Use subaccount SID
+            curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
+    
+            // Execute cURL request
+            $response = curl_exec($ch);
 
-            $data = $send_sms->messages->create(
-                // Where to send a text message (your cell phone?)
-                $mobile_no,
-                array(
-                    'from' => $twilio_number,
-                    'body' => 'Your One Time Password for verify account '.$otp
-                ),
-                );
-            return 'send sms successfully';
+            // Close cURL session
+            curl_close($ch);
+    
+            // Check if request was successful
+            if ($response === false) {
+                throw new Exception("Failed to send SMS: " . curl_error($ch));
+            }
+    
+            // Parse response
+            $responseData = json_decode($response, true);
+
+            // Check if Twilio returned an error
+            if (isset($responseData['code'])) {
+                throw new Exception("Twilio error: " . $responseData['message']);
+            }
+    
+            // SMS sent successfully
+            return 'SMS sent successfully';
         } catch (Exception $e) {
-            // return $this->respondWithError($e->getMessage());
             throw new GeneralException($e->getMessage());
         }
     }
+    
+
+    // function sendTwilioCustomerSms($mobile_no, $otp)
+    // {
+    //     try {
+    //         $token          = env("TWILIO_AUTH_TOKEN");
+    //         $twilio_sid     = env("TWILIO_ACCOUNT_SID");
+    //         $twilio_number  = env("TWILIO_PHONE_NUMBER");
+    //         $send_sms       = new Client($twilio_sid, $token);
+
+    //         $data = $send_sms->messages->create(
+    //             // Where to send a text message (your cell phone?)
+    //             $mobile_no,
+    //             array(
+    //                 'from' => $twilio_number,
+    //                 'body' => 'Your One Time Password for verify account '.$otp
+    //             ),
+    //             );
+    //         return 'send sms successfully';
+    //     } catch (Exception $e) {
+    //         // return $this->respondWithError($e->getMessage());
+    //         throw new GeneralException($e->getMessage());
+    //     }
+    // }
+
 }
 
 if (! function_exists('generateNumericOTP')) {
