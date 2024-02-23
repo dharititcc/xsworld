@@ -404,7 +404,8 @@ class UserRepository extends BaseRepository
      *
      * @return array
      */
-    function fetchCard(array $data) : array
+    // function fetchCard(array $data) : array
+    function fetchCard() : array
     {
         $user           = auth()->user();
         $stripe         = new Stripe();
@@ -658,9 +659,8 @@ class UserRepository extends BaseRepository
         }
 
         $n        = 4;
-        // $otp      = 9999;
+        // $otp      = 9999;//generateNumericOTP($n);
         $otp = generateNumericOTP($n);
-
         $mobile_no  = $input['country_code'].$input['mobile_no'];
 
         // Send OTP to User

@@ -1,241 +1,241 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Order Detail</title>
-    <style>
-        @media print {
-            .page-break {
-                display: block;
-                page-break-before: always;
-            }
+    <style type="text/css">
+        @font-face {
+            font-family: 'ABC Diatype';
+            src: url("{{ asset('fonts/abc-diatype-regular-webfont.woff') }}") format('woff');
+            src: url("{{ asset('fonts/abc-diatype-bold-webfont.woff2') }}") format('woff');
+            src: url("{{ asset('fonts/abc-diatype-regular-webfont.woff') }}") format('woff');
+            src: url("{{ asset('fonts/abc-diatype-regular-webfont.woff2') }}") format('woff');
         }
 
-        body {
-            font-family: Calibri;
+        table,
+        tr,
+        tr td {
+            width: 100%;
+            border-collapse: collapse;
+            /* font-family: 'ABC Diatype', sans-serif; */
+
         }
 
-        table {
-            font-family: Calibri;
+        .td-border {
+            border-bottom: 1px solid rgba(15, 14, 14, 0.5);
         }
 
-        #invoice-POS {
-            box-shadow: 0 0 1in -0.25in rgba(0, 0, 0, 0.5);
-            padding: 2mm;
-            margin: 0 auto;
-            width: 44mm;
-            background: #FFF;
+        .td-top-border {
+            border-top: 1px solid rgba(15, 14, 14, 0.5);
         }
 
-        #invoice-POS ::selection {
-            background: #EAC36C;
-            color: #000;
+        tr td {
+            padding: 15px;
+            width: 100%;
+            /* font-family: 'ABC Diatype', sans-serif; */
         }
 
-        #invoice-POS ::moz-selection {
-            background: #EAC36C;
-            color: #000;
+        tr td.lf-padding {
+            padding: 15px 0;
         }
 
-        #invoice-POS h1 {
-            font-size: 1.5em;
-            color: #222;
-        }
-
-        #invoice-POS h2 {
-            font-size: .9em;
-        }
-
-        #invoice-POS h3 {
-            font-size: 1.2em;
-            font-weight: 300;
-            line-height: 2em;
-        }
-
-        #invoice-POS p {
-            font-size: .7em;
-            color: #666;
-            line-height: 1.2em;
-        }
-
-        #invoice-POS #top,
-        #invoice-POS #mid,
-        #invoice-POS #bot {
-            /* Targets all id with 'col-' */
-            border-bottom: 1px solid #EEE;
-        }
-
-        #invoice-POS #top {
-            min-height: 100px;
-        }
-
-        #invoice-POS #mid {
-            min-height: 80px;
-        }
-
-        #invoice-POS #bot {
-            min-height: 50px;
-        }
-
-        #invoice-POS #top .logo {
-            height: 60px;
-            width: 60px;
-            background: url(http://michaeltruong.ca/images/logo1.png) no-repeat;
-            background-size: 60px 60px;
-        }
-
-        #invoice-POS .info {
-            display: block;
-            margin-left: 0;
-        }
-
-        #invoice-POS .title {
-            float: right;
-        }
-
-        #invoice-POS .title p {
+        tr td:last-child {
             text-align: right;
         }
 
-        #invoice-POS table {
-            width: 100%;
-            border-collapse: collapse;
+        .product-name {
+            padding: 0 0 16px;
         }
 
-        #invoice-POS .tabletitle {
-            font-size: .5em;
-            background: #EEE;
+
+        h1 {
+            font-size: 26px;
+            font-weight: 700;
         }
 
-        #invoice-POS .service {
-            border-bottom: 1px solid #EEE;
+        h2 {
+            font-size: 20px;
+            font-weight: 500;
+            color: #0F0E0E;
         }
 
-        #invoice-POS .item {
-            width: 24mm;
+        h2.order-name {
+            font-size: 20px;
+            font-weight: 400;
+            color: #0F0E0E;
         }
 
-        #invoice-POS .itemtext {
-            font-size: .5em;
-        }
-
-        #invoice-POS #legalcopy {
-            margin-top: 5mm;
-        }
-
-        @media print {
-            #printPageButton {
-                display: none;
-            }
+        h3 {
+            font-size: 18px;
+            font-weight: 700;
         }
     </style>
+
 </head>
+<?php
+$todayDate = date('F j, Y');
+date_default_timezone_set('Asia/Dubai');
+$dateTime = date('m/d/y g:iA');
+foreach ($cardDetails as $cardData) {
+    $cardBrand = $cardData->brand;
+    $lastDigit = $cardData->last4;
+}
+?>
 
-<body translate="no">
-    <div id="invoice-POS">
-        <center id="top">
-            <div class="logo"></div>
-            <div class="info">
-                <h2>{{ $pdfData->restaurant->name }}</h2>
-            </div><!--End Info-->
-        </center><!--End InvoiceTop-->
+<body class="home-wrap">
+    <div class="main">
+        <table class="table ">
+            <tbody>
+                <tr>
+                    <td class="td-border lf-padding" style="font-family: 'ABC Diatype', sans-serif;" colspan="6"><img width="119" height="28" src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('XSWorld.png'))) }}" alt="XS World Logo"></td>
+                    <td class="td-border" style="font-family: 'ABC Diatype', sans-serif;">&nbsp;</td>
+                    <td class="td-border lf-padding" style="font-family: 'ABC Diatype', sans-serif;">{{ $todayDate }}</td>
+                </tr>
 
-        <div id="mid">
-            <div class="info">
-                <h2>Contact Info</h2>
-                <p>
-                    Address : {{ $pdfData->restaurant->address }} <br>
-                    Email : {{ $restaurant->email }}<br>
-                    Phone : {{ $restaurant->phone }}<br>
-                </p>
-            </div>
-        </div><!--End Invoice Mid-->
+                <tr>
+                    <td colspan="8" class="lf-padding" style="padding-top: 0; padding-bottom: 0;">
+                        <h2 class="order-name" style="text-align: left; font-size: 24px; font-weight: 400; color: #0F0E0E;">Thanks for Ordering, {{ $restaurant->first_name }}</h2>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="8" class="lf-padding" style="text-align: left; padding-top: 0; padding-bottom: 0; font-family: 'ABC Diatype', sans-serif;">
+                        <div style="font-family: 'ABC Diatype', sans-serif;"> Here's your receipt for ordering with, <span style="font-family: 'ABC Diatype', sans-serif;">{{ $pdfData->restaurant->name }}</span></div>
+                    </td>
+                </tr><br />
+                @php
+                $taxAmount = 0;
+                $taxAmount = $pdfData->total * 0.05;
+                $totalAmount = $pdfData->total + $taxAmount + 50.59;
+                $counter = 1;
+                @endphp
+                <tr>
+                    <td class="td-border lf-padding" style="font-family: 'ABC Diatype', sans-serif;" colspan="7"><strong style="font-size: 18px;font-weight:700; font-family: 'ABC Diatype', sans-serif;">Total</strong></td>
+                    <td class="td-border lf-padding" style="font-family: 'ABC Diatype', sans-serif;"><strong style="font-size: 18px;font-weight:700; font-family: 'ABC Diatype', sans-serif;">{{ $pdfData->restaurant->country->symbol . number_format($totalAmount, 2) }}</strong></td>
+                </tr>
 
-        <div id="bots">
-            <div id="table">
-                <table>
-                    <tr class="tabletitle">
-                        <td class="item">
-                            <h2>Item</h2>
-                        </td>
-                        <td class="Hours">
-                            <h2>Qty</h2>
-                        </td>
-                        <td class="Hours">
-                            <h2>Price</h2>
-                        </td>
-                        <td class="Rate">
-                            <h2>Sub Total</h2>
-                        </td>
-                    </tr>
-                    @foreach ($pdfData->order_items as $items)
-                        <tr class="service">
-                            <?php
-                                $total = $items->total;
+                @foreach ($pdfData->order_items as $items)
+                <tr class="product-tr">
+                    <?php
+                    $total = $items->total;
 
-                                if( isset($items->mixer->id) )
-                                {
-                                    $total += $items->mixer->total;
-                                }
+                    if (isset($items->mixer->id)) {
+                        $total += $items->mixer->total;
+                    }
 
-                                if( $items->addons->count() )
-                                {
-                                    $total += $items->addons->sum('total');
-                                }
-                            ?>
-                            <td class="tableitem">
-                                <p class="itemtext">
-                                    {{ $items->restaurant_item->name }}
-                                    @if ( isset($items->variation->id) )
-                                        - ({{ $items->variation->name }})
-                                    @endif<br>
-                                    @if (isset($items->mixer->id))
-                                        {{ $items->mixer->restaurant_item->name }}<br>
-                                    @endif
+                    if ($items->addons->count()) {
+                        $total += $items->addons->sum('total');
+                    }
+                    ?>
+                    <td colspan="7" style="width: 100%;padding:16px 0 0; font-family: 'ABC Diatype', sans-serif;">
+                        <p style="padding:1px 4px;margin: 0 6px 16px 0;white-space: nowrap; font-size:12px; border: 1px solid #000;display: inline-block; vertical-align: middle; font-family: 'ABC Diatype', sans-serif;"> {{$counter}}</p>
+                        <p style="margin: 0 0 16px  ;white-space: nowrap; font-size:14px; display: inline-block; vertical-align: middle; font-family: 'ABC Diatype', sans-serif;">{{ $items->restaurant_item->name }}
+                            @if ( isset($items->variation->id) )
+                            - ({{ $items->variation->name }})
+                            @endif
+                        </p>
 
-                                    @if ($items->addons->count())
-                                        @foreach ($items->addons as $addon)
-                                            {{ $addon->restaurant_item->name }}<br/>
-                                        @endforeach
-                                    @endif
-                                </p>
-                            </td>
-                            <td class="tableitem">
-                                <p class="itemtext"> {{ $items->quantity }} </p>
-                            </td>
-                            <td class="tableitem">
-                                <p class="itemtext"> {{ $pdfData->restaurant->country->symbol .number_format($total, 2) }} </p>
-                            </td>
-                            <td class="tableitem">
-                                <p class="itemtext"> {{ $pdfData->restaurant->country->symbol .number_format($total, 2) }} </p>
-                            </td>
-                        </tr>
-                    @endforeach
+                        @if (isset($items->mixer->id))
 
-                    <tr class="tabletitle">
-                        <td></td>
-                        <td></td>
-                        <td class="Rate">
-                            <h2>Total</h2>
-                        </td>
-                        <td class="payment">
-                            <h2>{{ $pdfData->restaurant->country->symbol . $pdfData->total }}</h2>
-                        </td>
-                    </tr>
+                        <p style="margin:  0 0 16px 28px;white-space: nowrap;font-size:14px; font-family: 'ABC Diatype', sans-serif;">{{ $items->mixer->restaurant_item->name }}&nbsp;{{$pdfData->restaurant->country->symbol.$items->mixer->restaurant_item->price}}</p>
+                        @endif
 
-                </table>
-            </div><!--End Table-->
+                        @if ($items->addons->count())
+                        @foreach ($items->addons as $addon)
 
-            <div id="legalcopy">
-                <p class="legal"><strong>Thank you for your business!</strong> Payment is expected within 31 days;
-                    please
-                    process this invoice within that time. There will be a 5% interest charge per month on late
-                    invoices.
-                </p>
-            </div>
-        </div><!--End InvoiceBot-->
-        {{-- <button id="printPageButton" onclick="window.print()">Print</button> --}}
-    </div><!--End Invoice-->
+                        <p style="margin: 0 0 16px 28px;white-space: nowrap;font-size:14px; font-family: 'ABC Diatype', sans-serif;">{{ $addon->restaurant_item->name }}&nbsp;{{$pdfData->restaurant->country->symbol.$addon->restaurant_item->price}}</p>
+                        @endforeach
+                        @endif
+                    </td>
+                    <td class="lf-padding" style="font-family: 'ABC Diatype', sans-serif; display: flex; align-items: baseline;">{{ $pdfData->restaurant->country->symbol . number_format($total, 2) }}</td>
+                </tr>
+                @php
+                $counter++;
+                @endphp
+                @endforeach
+
+                <tr>
+                    <td class="td-top-border lf-padding" colspan="7" style="width: 100%; padding-bottom: 10px;font-size: 14px; font-weight: 700; font-family: 'ABC Diatype', sans-serif;"><strong>Subtotal</strong></td>
+                    <td class="td-top-border lf-padding" style="padding-bottom: 10px; font-weight: 700; font-family: 'ABC Diatype', sans-serif;">{{ $pdfData->restaurant->country->symbol . number_format($pdfData->total, 2) }}</td>
+                </tr>
+
+                <tr>
+                    <td class="lf-padding" colspan="7" style="width: 100%; padding-top: 0px; padding-bottom: 10px; font-family: 'ABC Diatype', sans-serif;">
+                        <div style="font-family: 'ABC Diatype', sans-serif;">Plateform Fee</div>
+                    </td>
+                    <td class="lf-padding" style="padding-top: 0px; padding-bottom: 10px; font-family: 'ABC Diatype', sans-serif;">
+                        <div style="font-family: 'ABC Diatype', sans-serif;">$50.59</div>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="td-border lf-padding" colspan="7" style="width: 100%; padding-top: 0; font-family: 'ABC Diatype', sans-serif;">
+                        <div style="font-family: 'ABC Diatype', sans-serif;">Taxes (5%)</div>
+                    </td>
+                    <td class="td-border lf-padding" style="padding-top: 0; font-family: 'ABC Diatype', sans-serif;">
+                        <div style="font-family: 'ABC Diatype', sans-serif;">{{ $pdfData->restaurant->country->symbol . number_format($taxAmount, 2) }}</div>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="td-border lf-padding" colspan="7" style="width: 100%; padding: 50px 0px; font-family: 'ABC Diatype', sans-serif;">
+                        <div class="card_info" style="font-family: 'ABC Diatype', sans-serif;">
+                            <div class="card_img" style="display: inline-block; vertical-align: middle; margin-right: 20px; font-family: 'ABC Diatype', sans-serif;">
+                                @if($cardBrand == "Visa")
+                                <img src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('ic-visa.png'))) }}">
+                                @elseif($cardBrand == "Master")
+                                <img src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('master-card.png'))) }}">
+                                @elseif($cardBrand == "American Express")
+                                <img src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('american_express.png'))) }}">
+                                @elseif($cardBrand == "Discover")
+                                <img src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('discover.png'))) }}">
+                                @elseif($cardBrand == "Jcb")
+                                <img src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('jcb.png'))) }}">
+                                @elseif($cardBrand == "Unionpay")
+                                <img src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('unionpay.png'))) }}">
+                                @endif
+                            </div>
+                            <div class="title_wrapper" style="display: inline-block; vertical-align: middle; font-family: 'ABC Diatype', sans-serif;">
+                                <h3 style="font-size: 14px; margin: 0; font-family: 'ABC Diatype', sans-serif;">Paid via Credit/ Debit Card ****{{$lastDigit}}</h3>
+                                <h3 style="font-size: 14px; margin: 0; font-family: 'ABC Diatype', sans-serif;">{{$dateTime}}</h3>
+                            </div>
+                        </div>
+
+                    </td>
+
+                    <td class="td-border lf-padding" style="width: 100%;">
+                        <div style="font-size: 16px;font-weight:700; font-family: 'ABC Diatype', sans-serif;"><strong style="font-family: 'ABC Diatype', sans-serif;">
+                                {{ $pdfData->restaurant->country->symbol . number_format($totalAmount, 2) }}
+                            </strong></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="8" style="width: 100%; text-align: left; padding-top: 30px; padding-bottom: 10px; font-family: 'ABC Diatype', sans-serif;">
+                        <div style="font-family: 'ABC Diatype', sans-serif;">Your ordered from {{ strtoupper($pdfData->restaurant->name) }}</div>
+                    </td>
+                    <!-- <td></td> -->
+
+                </tr>
+                <tr>
+                    <td colspan="7" style="width: 100%; padding-top: 0; padding-bottom: 10px; font-family: 'ABC Diatype', sans-serif;">
+                        <div style="font-family: 'ABC Diatype', sans-serif;"><strong>Picked up from</strong> </div>
+                    </td>
+                    <td style="font-family: 'ABC Diatype', sans-serif;"></td>
+
+                </tr>
+                <tr>
+                    <td colspan="7" style="width: 100%; padding-top: 0; padding-bottom: 0; font-family: 'ABC Diatype', sans-serif;">
+                        <div style="font-family: 'ABC Diatype', sans-serif;">{{ $pdfData->restaurant->address }}</div>
+                    </td>
+                    <td style="font-family: 'ABC Diatype', sans-serif;"></td>
+
+                </tr>
+
+            </tbody>
+        </table>
+    </div>
+
 </body>
+
 </html>

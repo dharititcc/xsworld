@@ -1,25 +1,27 @@
 <?php namespace App\Repositories\Traits;
 
-use App\Billing\Stripe;
-use App\Exceptions\GeneralException;
-use App\Http\Controllers\Api\V1\Traits\OrderStatus;
-use App\Mail\InvoiceMail;
-use App\Models\Category;
-use App\Models\CustomerTable;
+use Carbon\Carbon;
+use App\Models\User;
 use App\Models\Order;
+use App\Billing\Stripe;
+use App\Models\Category;
+use App\Mail\InvoiceMail;
 use App\Models\OrderItem;
 use App\Models\OrderSplit;
 use App\Models\Restaurant;
+use App\Models\CustomerTable;
 use App\Models\RestaurantItem;
-use App\Models\RestaurantPickupPoint;
 use App\Models\RestaurantTable;
-use App\Models\User;
-use Carbon\Carbon;
-use Illuminate\Contracts\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Log;
+use App\Exceptions\GeneralException;
+use App\Repositories\UserRepository;
 use Illuminate\Support\Facades\Mail;
+use App\Models\RestaurantPickupPoint;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Database\Eloquent\Collection;
+use App\Http\Controllers\Api\V1\UserController;
+use App\Http\Controllers\Api\V1\Traits\OrderStatus;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 
 trait OrderFlow
 {
@@ -1139,6 +1141,12 @@ trait OrderFlow
      */
     public function generatePDF(array $orderArr)
     {
+        $userRepository = new UserRepository(); // Assuming you have UserRepository class
+        $userController = new UserController($userRepository);
+        $fetchCard = $userController->fetchCard();
+        $creditCardDetails = $fetchCard->getData();
+        $cardDetails = $creditCardDetails->item;
+        
         if( !empty( $orderArr ) )
         {
             foreach($orderArr as $order)
@@ -1152,8 +1160,8 @@ trait OrderFlow
 
                 $restaurant = $pdfData->restaurant->owners()->first();
                 $pdf        = app('dompdf.wrapper');
-                $customPaper = array(0,0,567.00,283.80);
-                $pdf->loadView('pdf.index',compact('pdfData','restaurant'))->setPaper($customPaper, 'landscape');
+                $customPaper = array(0,0,595.00,842.00);
+                $pdf->loadView('pdf.index',compact('pdfData','restaurant','cardDetails'))->setPaper($customPaper);
                 $filename   = 'invoice_'.$order.'.pdf';
                 $content    = $pdf->output();
                 $file       = storage_path("app/public/order_pdf");
