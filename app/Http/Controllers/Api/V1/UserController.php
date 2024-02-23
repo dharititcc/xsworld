@@ -389,9 +389,11 @@ class UserController extends APIController
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function fetchCard(FetchCardRequest $request)
+    // public function fetchCard(FetchCardRequest $request)
+    public function fetchCard()
     {
-       $card_data = $this->repository->fetchCard($request->validated());
+    //    $card_data = $this->repository->fetchCard($request->validated());
+       $card_data = $this->repository->fetchCard();
 
        if(!empty($card_data))
        {
