@@ -83,10 +83,10 @@
                     @csrf
                     <div style="min-height: 300px;">
                         <div class="form-group mb-4">
-                            <input type="text" name="name" id="name" class="form-control vari2" placeholder="Table Name *">
+                            <input type="text" pattern="^\d*[a-zA-Z][a-zA-Z0-9]*$" title="Alphanumerics allowed with atleast 1 letter"  name="name" id="name" class="form-control vari2" placeholder="Table Name *">
                         </div>
                         <div class="form-group">
-                            <input type="text" name="code" id="code" class="form-control vari2" placeholder="Table Code *">
+                            <input type="text" pattern="\d{1,3}" title="Upto 3 digits" name="code" id="code" class="form-control vari2" placeholder="Table Code *">
                             <span id="Errorcode"></span>
                         </div>
                     </div>
