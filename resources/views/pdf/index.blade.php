@@ -194,6 +194,12 @@ foreach ($cardDetails as $cardData) {
                                 <img src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('jcb.png'))) }}">
                                 @elseif($cardBrand == "Unionpay")
                                 <img src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('unionpay.png'))) }}">
+                                @elseif($cardBrand == "Cartes Bancaires")
+                                <img src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('cb.png'))) }}">
+                                @elseif($cardBrand == "Interac")
+                                <img src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('inter.png'))) }}">
+                                @elseif($cardBrand == "Diners")
+                                <img src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('diner.png'))) }}">
                                 @endif
                             </div>
                             <div class="title_wrapper" style="display: inline-block; vertical-align: middle; font-family: 'ABC Diatype', sans-serif;">
