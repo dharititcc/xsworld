@@ -647,7 +647,7 @@ class BarRepository extends BaseRepository
         $refund_data                = $stripe->refundCreate($refundArr);
         $updateArr['refunded_id']   = $refund_data->id;
         $title      = "Your money has been refunded successfully.";
-        $message    = "Refund Id is ".$refund_data->id;
+        $message    = "Order Id is #".$order->id."and Refund Id is ".$refund_data->id;
         $order->update($updateArr);
         $order->user->notify(new RefundNotification($order, $refund_data->id));  
         $this->notifyCustomer($order, $title, $message);

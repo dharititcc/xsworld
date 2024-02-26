@@ -526,7 +526,7 @@ class OrderRepository extends BaseRepository
                 // update customer table update
                 CustomerTable::where('user_id', $order->user->id)->where('order_id', $order->id)->delete();
                 $title      = "Your money has been refunded successfully.";
-                $message    = "Refund Id is ".$refund_data->id;
+                $message    = "Order Id is #".$order->id."and Refund Id is ".$refund_data->id;
 
                 if( isset( $order->restaurant_table_id ) )
                 {
