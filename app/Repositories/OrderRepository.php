@@ -1,39 +1,40 @@
 <?php namespace App\Repositories;
 
-use App\Billing\Stripe;
-use App\Exceptions\GeneralException;
-use App\Http\Controllers\Api\V1\Traits\OrderStatus;
-use App\Models\Category;
-use App\Models\CreditPointsHistory;
-use App\Models\CustomerTable;
-use App\Models\FriendRequest;
+use Stripe\Token;
+use Carbon\Carbon;
+use Stripe\Source;
+use App\Models\User;
+use Barryvdh\DomPDF;
 use App\Models\Order;
+use App\Billing\Stripe;
+use App\Models\Category;
 use App\Models\OrderItem;
-use App\Models\OrderReview;
 use App\Models\OrderSplit;
 use App\Models\Restaurant;
+use App\Models\OrderReview;
+use Illuminate\Support\Arr;
+use App\Models\CustomerTable;
+use App\Models\FriendRequest;
 use App\Models\RestaurantItem;
-use App\Models\RestaurantPickupPoint;
+use OpenApi\Annotations\Items;
 use App\Models\RestaurantTable;
 use App\Models\RestaurantWaiter;
-use App\Models\User;
 use App\Models\UserPaymentMethod;
-use App\Repositories\BaseRepository;
-use App\Repositories\Traits\CreditPoint;
-use App\Repositories\Traits\OrderFlow;
-use App\Repositories\Traits\XSNotifications;
-use Barryvdh\DomPDF;
-use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
-use OpenApi\Annotations\Items;
-use Stripe\Source;
-use Stripe\Token;
+use App\Models\CreditPointsHistory;
+use App\Exceptions\GeneralException;
+use App\Repositories\BaseRepository;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
+use App\Models\RestaurantPickupPoint;
+use App\Repositories\Traits\OrderFlow;
+use Illuminate\Support\Facades\Storage;
+use App\Repositories\Traits\CreditPoint;
+use App\Notifications\RefundNotification;
+use Illuminate\Database\Eloquent\Builder;
+use App\Repositories\Traits\XSNotifications;
+use App\Http\Controllers\Api\V1\Traits\OrderStatus;
 
 /**
  * Class OrderRepository.
@@ -511,6 +512,7 @@ class OrderRepository extends BaseRepository
                     ];
                     $refund_data                = $stripe->refundCreate($refundArr);
                     $updateArr['refunded_id']   = $refund_data->id;
+                    $order->user->notify(new RefundNotification($order, $refund_data));
                 }
                 $updateArr['cancel_date']   = Carbon::now();
                 $updateArr['status']        = Order::CUSTOMER_CANCELED;
