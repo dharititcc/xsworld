@@ -1,21 +1,22 @@
 <?php namespace App\Repositories;
 
-use App\Billing\Stripe;
-use App\Exceptions\GeneralException;
-use App\Mail\InvoiceMail;
-use App\Models\CustomerTable;
+use Carbon\Carbon;
+use App\Models\User;
 use App\Models\Order;
+use App\Billing\Stripe;
+use App\Mail\InvoiceMail;
 use App\Models\OrderItem;
 use App\Models\OrderSplit;
-use App\Models\User;
-use App\Repositories\BaseRepository;
-use App\Repositories\Traits\CreditPoint;
-use App\Repositories\Traits\XSNotifications;
-use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Builder;
+use App\Models\CustomerTable;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
+use App\Exceptions\GeneralException;
+use App\Repositories\BaseRepository;
 use Illuminate\Support\Facades\Mail;
+use App\Repositories\Traits\CreditPoint;
+use App\Notifications\RefundNotification;
+use Illuminate\Database\Eloquent\Builder;
+use App\Repositories\Traits\XSNotifications;
 
 /**
  * Class BarRepository.
@@ -645,8 +646,11 @@ class BarRepository extends BaseRepository
         ];
         $refund_data                = $stripe->refundCreate($refundArr);
         $updateArr['refunded_id']   = $refund_data->id;
+        $title      = "Your money has been refunded successfully.";
+        $message    = "Refund Id is ".$refund_data->id;
         $order->update($updateArr);
-
+        $order->user->notify(new RefundNotification($order, $refund_data->id));  
+        $this->notifyCustomer($order, $title, $message);
         return $order;
     }
 

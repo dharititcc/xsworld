@@ -1,16 +1,17 @@
 <?php namespace App\Http\Controllers\Api\V1\Traits;
 
+use Carbon\Carbon;
+use App\Models\User;
 use App\Models\Order;
-use App\Models\OrderSplit;
 use App\Billing\Stripe;
 use App\Mail\InvoiceMail;
-use App\Models\CustomerTable;
-use App\Models\User;
-use App\Repositories\Traits\CreditPoint;
-use App\Repositories\Traits\XSNotifications;
-use Carbon\Carbon;
+use App\Models\OrderSplit;
 use Illuminate\Http\Request;
+use App\Models\CustomerTable;
 use Illuminate\Support\Facades\Mail;
+use App\Repositories\Traits\CreditPoint;
+use App\Notifications\RefundNotification;
+use App\Repositories\Traits\XSNotifications;
 
 trait OrderStatus
 {
@@ -23,12 +24,11 @@ trait OrderStatus
      * @return Order
      */
     public function statusChange(Request $request): Order
-    {
+    { 
         $order      = isset($request->order_id) ? Order::with(['order_split_drink', 'order_split_food'])->find($request->order_id) : null;
         $status     = $request->status;
         $title      = "Kitchen confirm order";
         $message    = "Your Order is #".$order->id." Ready for pickup";
-
         if($status == OrderSplit::READYFORPICKUP)
         {
             if( $order->order_split_food->update(['status' => OrderSplit::READYFORPICKUP]) )
@@ -155,7 +155,11 @@ trait OrderStatus
         ];
         $refund_data                = $stripe->refundCreate($refundArr);
         $updateArr['refunded_id']   = $refund_data->id;
+        $title      = "Your money has been refunded successfully.";
+        $message    = "Refund Id is ".$refund_data->id;
         $order->update($updateArr);
+        $order->user->notify(new RefundNotification($order, $refund_data->id));
+        $this->notifyCustomer($order, $title, $message);
 
         return $order;
     }

@@ -512,7 +512,6 @@ class OrderRepository extends BaseRepository
                     ];
                     $refund_data                = $stripe->refundCreate($refundArr);
                     $updateArr['refunded_id']   = $refund_data->id;
-                    $order->user->notify(new RefundNotification($order, $refund_data));
                 }
                 $updateArr['cancel_date']   = Carbon::now();
                 $updateArr['status']        = Order::CUSTOMER_CANCELED;
@@ -526,6 +525,8 @@ class OrderRepository extends BaseRepository
                 // deallocate table
                 // update customer table update
                 CustomerTable::where('user_id', $order->user->id)->where('order_id', $order->id)->delete();
+                $title      = "Your money has been refunded successfully.";
+                $message    = "Refund Id is ".$refund_data->id;
 
                 if( isset( $order->restaurant_table_id ) )
                 {
@@ -548,6 +549,8 @@ class OrderRepository extends BaseRepository
                     $barmessage         = "Order #".$order->id." is cancelled by customer";
                     $this->notifyBars($order, $bartitle, $barmessage);
                 }
+                $order->user->notify(new RefundNotification($order, $refund_data->id));
+                $this->notifyCustomer($order, $title, $message);
             }
         }
 
