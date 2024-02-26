@@ -659,11 +659,12 @@ class UserRepository extends BaseRepository
         }
 
         $n        = 4;
-        $otp      = 9999;//generateNumericOTP($n);
+        // $otp      = 9999;//generateNumericOTP($n);
+        $otp = generateNumericOTP($n);
         $mobile_no  = $input['country_code'].$input['mobile_no'];
 
         // Send OTP to User
-        // sendTwilioCustomerSms($mobile_no, $otp);
+        sendTwilioCustomerSms($mobile_no, $otp);
 
         // insert login otp for that user
         $userOtp = UserOtps::create([
