@@ -36,7 +36,8 @@ class OrderListResource extends JsonResource
             'currency'                  => $this->restaurant->currency->code,
             'symbol'                    => $this->restaurant->country->symbol,
             'rated'                     => $this->reviews->count(),
-            'items_count'               => $this->order_items->count()
+            'items_count'               => $this->order_items->count(),
+            'restaurant_image'          => $this->restaurant->image,
         ];
     }
 }
