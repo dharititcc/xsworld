@@ -34,24 +34,27 @@ trait XSNotifications
             {
                 foreach( $waiters as $waiter )
                 {
-                    $WaiterDevicesTokensArr = $waiter->user->devices->pluck('fcm_token')->unique()->toArray();
+                    $WaiterDevicesTokensArr = $waiter->user->devices->sortByDesc('id')->pluck('fcm_token')->unique()->toArray();
 
                     if( !empty( $WaiterDevicesTokensArr ) )
                     {
                         foreach( $WaiterDevicesTokensArr as $token )
                         {
                             $waiterDevices[] = $token;
+
+                            Log::debug("Waiter Notification Testing:  - {$order->id}");
+                            waiterNotification($title, $message, [$token], $code , $order->id);
                         }
                     }
                 }
             }
 
-            if( !empty( $waiterDevices ) )
-            {
-                // $orderid    = $order->id;
-                Log::debug("Waiter Notification Testing:  - {$order->id}");
-                return waiterNotification($title, $message, $waiterDevices, $code , $order->id);
-            }
+            // if( !empty( $waiterDevices ) )
+            // {
+            //     // $orderid    = $order->id;
+            //     Log::debug("Waiter Notification Testing:  - {$order->id}");
+            //     return waiterNotification($title, $message, $waiterDevices, $code , $order->id);
+            // }
         }
     }
 
@@ -68,14 +71,17 @@ trait XSNotifications
     public function notifyCustomer(Order $order, string $title, string $message, $type = null)
     {
         // Customer Notify
-        $customer_devices   = $order->user->devices->count() ? $order->user->devices()->pluck('fcm_token')->unique()->toArray() : [];
+        $customer_devices   = $order->user->devices->count() ? $order->user->devices()->orderBy('id', 'desc')->pluck('fcm_token')->unique()->toArray() : [];
         $orderid            = $order->id;
         $type               = isset( $type ) ? $type : User::NOTIFICATION_ORDER;
 
         if(!empty($customer_devices))
         {
-            Log::debug("Customer Notification Testing:  - {$order->id}");
-            return sendCustomerNotification($title, $message, $customer_devices, $orderid, $type);
+            foreach( $customer_devices as $token )
+            {
+                Log::debug("Customer Notification Testing:  - {$order->id}");
+                sendCustomerNotification($title, $message, [$token], $orderid, $type);
+            }
         }
     }
 
@@ -97,25 +103,30 @@ trait XSNotifications
         {
             foreach( $kitchens as $kitchen )
             {
-                $kitchenDevicesTokensArr = $kitchen->user->devices->pluck('fcm_token')->unique()->toArray();
+                $kitchenDevicesTokensArr = $kitchen->user->devices->sortByDesc('id')->pluck('fcm_token')->unique()->toArray();
                 // $waiterDevices = array_merge($waiterDevices, );
                 if( !empty( $kitchenDevicesTokensArr ) )
                 {
                     foreach( $kitchenDevicesTokensArr as $token )
                     {
                         $kitchenDevices[] = $token;
+
+                        $kitchenTitle    = $title;
+                        $kitchenMessage  = $message;
+                        Log::debug("Kitchen Notification Testing:  - {$order->id}");
+                        sendNotification($kitchenTitle, $kitchenMessage, [$token], $order->id);
                     }
                 }
             }
         }
 
-        if( !empty( $kitchenDevices ) )
-        {
-            $kitchenTitle    = $title;
-            $kitchenMessage  = $message;
-            Log::debug("Kitchen Notification Testing:  - {$order->id}");
-            sendNotification($kitchenTitle, $kitchenMessage, $kitchenDevices, $order->id);
-        }
+        // if( !empty( $kitchenDevices ) )
+        // {
+        //     $kitchenTitle    = $title;
+        //     $kitchenMessage  = $message;
+        //     Log::debug("Kitchen Notification Testing:  - {$order->id}");
+        //     sendNotification($kitchenTitle, $kitchenMessage, $kitchenDevices, $order->id);
+        // }
     }
 
     /**
@@ -132,13 +143,16 @@ trait XSNotifications
         $bardevices     = [];
         if(isset($order->pickup_point_user_id))
         {
-            $bardevices = $order->pickup_point_user->devices()->pluck('fcm_token')->unique()->toArray();
+            $bardevices = $order->pickup_point_user->devices()->orderBy('id', 'desc')->pluck('fcm_token')->unique()->toArray();
         }
 
         if(!empty( $bardevices ))
         {
-            Log::debug("Bar Notification Testing:  - {$order->id}");
-            $bar_notification   = sendNotification($title, $message, $bardevices, $order->id);
+            foreach( $bardevices as $token )
+            {
+                Log::debug("Bar Notification Testing:  - {$order->id}");
+                $bar_notification   = sendNotification($title, $message, [$token], $order->id);
+            }
         }
     }
 
@@ -155,13 +169,15 @@ trait XSNotifications
     public function notifyCustomerSocial(User $user, string $title, string $message)
     {
         // Customer Notify
-        $customer_devices   = $user->devices->count() ? $user->devices()->pluck('fcm_token')->unique()->toArray() : [];
-        $orderid            = $user->id;
+        $customer_devices   = $user->devices->count() ? $user->devices()->orderBy('id', 'desc')->pluck('fcm_token')->unique()->toArray() : [];
 
         if(!empty($customer_devices))
         {
-            Log::debug("Customer Notification Testing:  - {$user->id}");
-            return socialNotification($title, $message, $customer_devices);
+            foreach( $customer_devices as $token )
+            {
+                Log::debug("Customer Notification Testing:  - {$user->id}");
+                socialNotification($title, $message, [$token]);
+            }
         }
     }
 }
