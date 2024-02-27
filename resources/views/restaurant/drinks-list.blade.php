@@ -126,11 +126,11 @@
                                 <div class="form-group full-w-form">
                                     <div class="row">
                                         <div class="col-md-3"><input type="text" name="country_of_origin" id="country_of_origin" class="form-control vari1"
-                                                placeholder="Country of Origin *"></div>
+                                                placeholder="Country of Origin"></div>
                                         <div class="col-md-4"><input type="text" name="year_of_production" id="year_of_production" class="form-control vari1"
-                                                placeholder="Year of Production *"></div>
+                                                placeholder="Year of Production"></div>
                                         <div class="col-md-5"><input type="text" name="type_of_drink" id="type_of_drink" class="form-control vari1"
-                                                placeholder="Type of Drink (Spirit/Wines) *"></div>
+                                                placeholder="Type of Drink (Spirit/Wines)"></div>
                                     </div>
                                 </div>
 
