@@ -121,6 +121,8 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'v1', 'as' => 'api.v1.'], fun
         Route::post('/share-referral', 'UserController@shareReferral')->name('shareReferral');
         // {api/v1/re-order}
         Route::post('/re-order', 'OrderController@reOrder')->name('reOrder');
+        // {api/v1/new-re-order}
+        Route::post('/new-re-order', 'OrderController@newReOrder')->name('newReOrder');
         Route::get('/spin-status', 'UserController@getSpinResult')->name('user.spin');
         Route::post('/spin/store', 'UserController@storeSpin')->name('user.spin.store');
         Route::get('/my-winning', 'UserController@myWinning')->name('user.spin.index');
