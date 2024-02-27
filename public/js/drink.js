@@ -620,15 +620,15 @@
                     ingredients: {
                         required: true,
                     },
-                    country_of_origin: {
-                        required: true,
-                    },
-                    type_of_drink: {
-                        required: true,
-                    },
-                    year_of_production: {
-                        required: true,
-                    },
+                    // country_of_origin: {
+                    //     required: true,
+                    // },
+                    // type_of_drink: {
+                    //     required: true,
+                    // },
+                    // year_of_production: {
+                    //     required: true,
+                    // },
                     message: {
                         required: true
                     },
@@ -687,15 +687,15 @@
                     ingredients: {
                         required: true,
                     },
-                    country_of_origin: {
-                        required: true,
-                    },
-                    type_of_drink: {
-                        required: true,
-                    },
-                    year_of_production: {
-                        required: true,
-                    },
+                    // country_of_origin: {
+                    //     required: true,
+                    // },
+                    // type_of_drink: {
+                    //     required: true,
+                    // },
+                    // year_of_production: {
+                    //     required: true,
+                    // },
                     image: {
                         required: true,
                         accept: "image/*",
