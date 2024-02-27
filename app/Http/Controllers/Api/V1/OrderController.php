@@ -309,6 +309,23 @@ class OrderController extends APIController
     }
 
     /**
+     * Method currentOrderNew
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function currentOrderNew()
+    {
+        $currentOrders  = $this->repository->getCurrentOrders();
+
+        if($currentOrders->count())
+        {
+            return $this->respondSuccess('order data found', OrderResource::collection($currentOrders));
+        }
+
+        return $this->respondWithError('Your current order is empty.');
+    }
+
+    /**
      * Method orderUpdate
      *
      * @param CustomerOrderRequest $request [explicite description]

@@ -75,6 +75,7 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'v1', 'as' => 'api.v1.'], fun
         // {api/v1/users/viewcart}
         Route::post('/viewcart', 'OrderController@viewCart')->name('viewcart');
         Route::get('/current-order', 'OrderController@currentOrder')->name('order.current-order');
+        Route::get('/current-orders', 'OrderController@currentOrderNew')->name('order.current-orders');
         Route::get('/show/{order}', 'OrderController@show')->name('order.show');
         Route::get('/print-order/{order}', 'OrderController@printOrder')->name('order.print');
         // {api/v1/users/orderhistory}
