@@ -1197,6 +1197,109 @@ class OrderRepository extends BaseRepository
         return $newOrder;
     }
 
+    public function newReOrder(array $data): Order
+    {
+        $user                   = auth()->user();
+        $orderAgain             = $user->orders()->where('restaurant_id', $data['restaurant_id'])->where('id',$data['order_id'])->where('type', Order::ORDER)->whereIn('status',[Order::CONFIRM_PICKUP])->first();
+        $resName = Restaurant::select('name')->where('id',$data['restaurant_id'])->first();
+        if( !isset($orderAgain->id) )
+        {
+            throw new GeneralException('You have not placed order yet from ' . $resName['name']);
+        }
+
+        $user->loadMissing(['latest_cart', 'latest_cart.restaurant']);
+
+        $latestCart = $user->latest_cart;
+
+        if( isset( $latestCart->id ) )
+        {
+            // check restaurant id available in the cart
+            $latestCart->delete();
+        }
+
+        $reOrder                        = $orderAgain;
+        $reOrderItems                   = $reOrder->order_items;
+        $reOrderSplit                   = $reOrder->order_splits;
+        $newOrder                       = $reOrder->replicate();
+        $newOrder->type                 = Order::CART;
+        $newOrder->status               = Order::PENDNIG;
+        $newOrder->credit_amount        = 0.00;
+        $newOrder->order_category_type  = $reOrder->order_category_type;
+        $newOrder->transaction_id       = null;
+        $newOrder->card_id              = null;
+        $newOrder->charge_id            = null;
+        $newOrder->apply_time           = null;
+        $newOrder->last_delayed_time    = null;
+        $newOrder->remaining_date       = null;
+        $newOrder->accepted_date        = null;
+        $newOrder->waiter_id            = null;
+        $newOrder->served_date          = null;
+        $newOrder->completion_date      = null;
+        $newOrder->restaurant_table_id  = null;
+        $newOrder->created_at           = Carbon::now();
+        $newOrder->updated_at           = Carbon::now();
+
+        $newOrder->save();
+
+        if(isset($reOrderSplit))
+        {
+            $orderSplit = OrderSplit::create([
+                'order_id'  => $newOrder->id,
+                'is_food'   => $reOrderSplit[0]->is_food,
+                'status'    => OrderSplit::PENDING
+            ]);
+        }
+
+        $reOrderItems->loadMissing(['addons','mixer']);
+
+        // get order items and store into order items table
+        foreach ($reOrderItems as  $item) {
+            $item->offsetUnset('order_split_id');
+            $item->status           = OrderItem::PENDNIG;
+            $item->order_split_id   = $orderSplit->id;
+            $newOrderItem = $newOrder->order_items()->create($item->toArray());
+
+            // create addons
+            if($item->addons->count()) {
+                foreach( $item->addons as $addon )
+                {
+                    // clear old parent item id
+                    $addon->offsetUnset('parent_item_id');
+                    $addon->offsetUnset('order_id');
+                    $addon->order_id        =  $newOrderItem->order_id;
+                    $addon->order_split_id  =  $orderSplit->id;
+                    $newOrderItem->addons()->create($addon->toArray());
+                }
+            }
+
+            // create mixer
+            if( isset( $item->mixer->id ) )
+            {
+                // create mixer for specific item
+                // clear old parent item id
+                $item->mixer->offsetUnset('parent_item_id');
+                $item->mixer->offsetUnset('order_id');
+                $item->mixer->offsetUnset('order_split_id');
+                $item->mixer->order_id          =  $newOrderItem->order_id;
+                $item->mixer->order_split_id    =  $orderSplit->id;
+                $newOrderItem->mixer()->create($item->mixer->toArray());
+            }
+        }
+
+        $newOrder->refresh();
+
+        $newOrder->loadMissing(
+            [
+                'order_items',
+                'order_items.addons',
+                'order_items.mixer',
+                'restaurant_table',
+                'restaurant'
+            ]
+        );
+        return $newOrder;
+    }
+
     public function customerTable(array $data)
     {
         $getcusTbl = CustomerTable::where('user_id' , $data['user_id'])->where('restaurant_table_id', $data['restaurant_table_id'])->first();
