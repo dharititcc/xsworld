@@ -120,6 +120,45 @@ class OrderRepository extends BaseRepository
     }
 
     /**
+     * Method getCurrentOrders
+     *
+     * @return mixed
+     */
+    public function getCurrentOrders()
+    {
+        $user        = auth()->user();
+
+        $user->loadMissing(
+            [
+                'latest_order',
+                'orders',
+            ]
+        );
+
+        return $user
+        ->orders()
+        ->whereIn('status', [Order::ACCEPTED, Order::DELAY_ORDER, Order::PENDNIG, Order::COMPLETED])
+        ->with([
+            'reviews',
+            'order_items',
+            'order_items.mixer',
+            'order_items.addons',
+            'order_items.variation',
+            'order_items.restaurant_item',
+            'order_items.restaurant_item.restaurant',
+            'order_items.restaurant_item.restaurant.currency',
+            'order_items.restaurant_item.restaurant.country',
+            'user',
+            'restaurant_pickup_point',
+            'restaurant_pickup_point.attachment',
+            'pickup_point_user',
+            'restaurant',
+            'restaurant.restaurant_pickup_points',
+            'restaurant.restaurant_pickup_points.attachment'
+        ])->orderBy('id', 'desc')->get();
+    }
+
+    /**
      * Method getOrderdata
      *
      * @param array $data [explicite description]
