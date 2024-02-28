@@ -3,10 +3,27 @@
 namespace App\Http\Controllers\Admin\Customer;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
+use App\Repositories\UserRepository;
 use Illuminate\Http\Request;
 
 class CustomerController extends Controller
 {
+    /** @var \App\Repositories\UserRepository $repository*/
+    protected $repository;
+
+    /**
+     * Method __construct
+     *
+     * @param \App\Repositories\UserRepository $repository [explicite description]
+     *
+     * @return void
+     */
+    public function __construct(UserRepository $repository)
+    {
+        $this->repository = $repository;
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -57,9 +74,19 @@ class CustomerController extends Controller
 
     /**
      * Remove the specified resource from storage.
+     *
+     * @param string $user_id [explicite description]
+     *
+     * @return \Illuminate\Http\Response|\Illuminate\Contracts\Routing\ResponseFactory
      */
-    public function destroy(string $id)
+    public function destroy(string $user_id)
     {
-        //
+        $user = User::findOrFail($user_id);
+
+        $this->repository->deleteUserPermanently($user);
+
+        return response()->json([
+            'success' => 'Customer deleted successfully!'
+        ]);
     }
 }

@@ -502,4 +502,29 @@ class User extends Authenticatable
     {
         return $this->hasOne(UserOtps::class, 'user_id', 'id');
     }
+
+    /**
+     * Get Action Buttons Attribute
+     *
+     * @return string
+     */
+    public function getActionButtonsAttribute()
+    {
+        $buttons = '<div class="action-box">
+            ' . $this->getDeleteButtonAttribute('btn btn-danger btn-sm') . '
+            </div>';
+
+        return $buttons;
+    }
+
+    /**
+     * Get Delete Button Attribute
+     *
+     * @param string $class
+     * @return string
+     */
+    public function getDeleteButtonAttribute($class = '')
+    {
+        return '<a href="javascript:void(0);" class="act-btn res-delete" data-id="'.$this->id.'"><i class="icon-trash"></i></a>';
+    }
 }

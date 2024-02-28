@@ -17,7 +17,7 @@
         {
             "data": "full_name", // can be null or undefined
             "defaultContent": "",
-            "width": "5%",
+            "width": "30%",
             render: function (data, type, row) {
                 return row.full_name
             }
@@ -30,6 +30,12 @@
         {
             "data": "phone", // can be null or undefined
             "width": "30%",
+            "defaultContent": ""
+        },
+        {
+            "data": "actions", // can be null or undefined
+            "width": "10%",
+            "sortable": false,
             "defaultContent": ""
         }],
 
@@ -90,6 +96,40 @@
                 {
                     context.selectors.customerTable.find('tbody tr').find('td:first');
                 }
+            }).on('click', '.res-delete', function(){
+                var $this = jQuery(this),
+                    userId= $this.data('id');
+
+                swal({
+                    title: `Are you sure you want to delete this Records?`,
+                    // text: "It will gone forevert",
+                    icon: "warning",
+                    buttons: true,
+                    dangerMode: true,
+                })
+                .then((willDelete) => {
+                    if (willDelete)
+                    {
+                        $.ajax(
+                        {
+                            url: moduleConfig.deleteCustomer.replace(':ID', userId),
+                            type: 'DELETE',
+                            headers: {
+                                'X-CSRF-TOKEN': jQuery('meta[name="csrf-token"]').attr('content')
+                            },
+                            success: function (response){
+                                XS.Common.handleSwalSuccess(response.success);
+                            },
+                            error: function(jqXHR, exception)
+                            {
+                                const {error}   = jqXHR.responseJSON;
+                                const {message} = error;
+
+                                XS.Common.handleSwalError(message, true);
+                            }
+                        });
+                    }
+                });
             });
         },
     }

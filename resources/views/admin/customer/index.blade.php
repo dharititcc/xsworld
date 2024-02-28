@@ -16,6 +16,7 @@
                     <th>Name</th>
                     <th>Email</th>
                     <th>Phone</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -30,7 +31,8 @@
 <script src="{{ asset('js/admin/customer.js') }}"></script>
 <script type="text/javascript">
     var moduleConfig = {
-        tableAjax: "{!! route('admin.customer.table') !!}"
+        tableAjax:          "{!! route('admin.customer.table') !!}",
+        deleteCustomer:     "{!! route('admin.customer.destroy',':ID') !!}",
     };
 
     $(document).ready(function() {
