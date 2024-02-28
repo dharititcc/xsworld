@@ -205,6 +205,7 @@ Route::middleware(['admin'])->group(function()
         {
             Route::resource('/customer', 'CustomerController');
             Route::post('/get', 'CustomerTableController')->name('customer.table');
+            Route::delete('customer/{user_id}', 'CustomerController@destroy')->name('admin.customer.destroy');
         });
 
         Route::group(['namespace' => 'Event', 'prefix' => 'event'], function()
