@@ -6,6 +6,8 @@ use App\Events\RegisterEvent;
 use App\Exceptions\GeneralException;
 use App\Mail\PurchaseGiftCard;
 use App\Models\Country;
+use App\Models\CustomerTable;
+use App\Models\FriendRequest;
 use App\Models\User;
 use App\Models\UserDevices;
 use App\Models\UserGiftCard;
@@ -584,13 +586,24 @@ class UserRepository extends BaseRepository
         {
             $user->loadMissing(['devices']);
 
-            // check if device limit > 4 in the db
-            if( $user->devices->count() > 4 )
-            {
-                // delete old fcm token
-                $fcmToken = $user->devices()->orderBy('id', 'asc')->first();
+            // check same device id exist in the user devices table
+            $countExistDevices = $user->devices()->where('fcm_token', $input['fcm_token'])->first();
 
-                $fcmToken->delete();
+            if( isset($countExistDevices->id) )
+            {
+                // skip insertion process
+                return $countExistDevices;
+            }
+            else
+            {
+                // check if device limit > 4 in the db
+                if( $user->devices->count() > 4 )
+                {
+                    // delete old fcm token
+                    $fcmToken = $user->devices()->orderBy('id', 'asc')->first();
+
+                    $fcmToken->delete();
+                }
             }
 
             // inser device entry
@@ -659,12 +672,12 @@ class UserRepository extends BaseRepository
         }
 
         $n        = 4;
-        // $otp      = 9999;//generateNumericOTP($n);
-        $otp = generateNumericOTP($n);
+        $otp      = 9999;//generateNumericOTP($n);
+        // $otp = generateNumericOTP($n);
         $mobile_no  = $input['country_code'].$input['mobile_no'];
 
         // Send OTP to User
-        sendTwilioCustomerSms($mobile_no, $otp);
+        // sendTwilioCustomerSms($mobile_no, $otp);
 
         // insert login otp for that user
         $userOtp = UserOtps::create([
@@ -942,5 +955,80 @@ class UserRepository extends BaseRepository
     {
         $user = auth()->user();
         return $this->spinWheel($user, $type);
+    }
+
+    /**
+     * Method deleteUserPermanently
+     *
+     * @param User $user [explicite description]
+     *
+     * @return bool
+     * @throws \App\Exceptions\GeneralException
+     */
+    public function deleteUserPermanently(User $user): bool
+    {
+        try
+        {
+            // delete user_otps table data
+            UserOtps::where('mobile', $user->phone)->delete();
+
+            // delete user devices
+            $user->devices()->delete();
+
+            // delete payment_methods
+            $user->payment_methods()->forcedelete();
+
+            // delete favourite_items
+            $user->favourite_items()->delete();
+
+            // delete customer_tables
+            CustomerTable::where('user_id' , $user->id)->forcedelete();
+
+            // delete orders where type ORDER
+            $user->orders()->forcedelete();
+
+            // delete orders where type CART
+            $user->orders()->forcedelete();
+
+            // delete credit_point_histories
+            $user->credit_points()->delete();
+
+            // delete spins
+            $user->spins()->delete();
+
+            // delete gift_cards
+            UserGiftCard::where(function($query) use($user)
+            {
+                $query->where('user_id', $user->id);
+                $query->orWhere('from_user', $user->id);
+                $query->orWhere('to_user', $user->id);
+                $query->orWhere('verify_user_id', $user->id);
+            })->delete();
+
+            // delete user_refferrals
+            UserReferrals::where(function($query) use($user)
+            {
+                $query->where('from_user_id', $user->id);
+                $query->orWhere('to_user_id', $user->id);
+            })->delete();
+
+            // delete friendships
+            FriendRequest::where(function($query) use($user)
+            {
+                $query->where('user_id', $user->id);
+                $query->orWhere('friend_id', $user->id);
+            })->delete();
+
+            // delete all personal access tokens
+            $user->tokens()->delete();
+
+            // delete user
+            return $user->delete();
+
+        }
+        catch (\Exception $e)
+        {
+            throw new GeneralException($e->getMessage());
+        }
     }
 }

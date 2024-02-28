@@ -50,6 +50,9 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'v1', 'as' => 'api.v1.'], fun
         Route::post('attach-device', 'AuthController@attachDeviceToken')->name('auth.attach-device');
         // {api/v1/auth/logout}
         Route::post('logout', 'AuthController@logout')->name('auth.logout');
+
+        // {api/v1/auth/delete-user}
+        Route::post('delete-user', 'AuthController@deleteUser')->name('auth.user.delete');
     });
 
     Route::group(['middleware' => 'auth:api'], function ()
