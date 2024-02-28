@@ -685,4 +685,20 @@ class AuthController extends APIController
             'message'   =>  'Verification link has been sent to the email.',
         ]);
     }
+
+    /**
+     * Method deleteUser
+     *
+     * @param Request $request [explicite description]
+     *
+     * @return JsonResponse
+     */
+    public function deleteUser(Request $request)
+    {
+        $user = auth()->user();
+
+        $this->repository->deleteUserPermanently($user);
+
+        return $this->respondSuccess('User deleted successfully.');
+    }
 }
