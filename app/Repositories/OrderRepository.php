@@ -588,6 +588,7 @@ class OrderRepository extends BaseRepository
                     $barmessage         = "Order #".$order->id." is cancelled by customer";
                     $this->notifyBars($order, $bartitle, $barmessage);
                 }
+                $order->with('restaurant.country');
                 $order->user->notify(new RefundNotification($order, $refund_data->id));
                 $this->notifyCustomer($order, $title, $message);
             }
