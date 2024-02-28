@@ -988,7 +988,7 @@ class UserRepository extends BaseRepository
             $user->orders()->forcedelete();
 
             // delete orders where type CART
-            $user->orders()->forcedelete();
+            $user->carts()->forcedelete();
 
             // delete credit_point_histories
             $user->credit_points()->delete();
