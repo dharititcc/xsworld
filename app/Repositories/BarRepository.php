@@ -17,6 +17,7 @@ use App\Repositories\Traits\CreditPoint;
 use App\Notifications\RefundNotification;
 use Illuminate\Database\Eloquent\Builder;
 use App\Repositories\Traits\XSNotifications;
+use App\Http\Controllers\Api\V1\UserController;
 
 /**
  * Class BarRepository.
@@ -268,7 +269,6 @@ class BarRepository extends BaseRepository
                     $this->notifyWaiters($order, $waiterTitle, $waiterMessage, Order::WAITER_CANCEL_ORDER);
                 }
             }
-
             if($status == OrderSplit::CONFIRM_PICKUP)
             {
                 $this->updateBarConfirmPickup($order, $status, $user_tokens);
@@ -400,6 +400,12 @@ class BarRepository extends BaseRepository
      */
     public function updateBarConfirmPickup(Order $order, int $status, array $user_tokens)
     {
+        $userRepository = new UserRepository(); // Assuming you have UserRepository class
+        $userController = new UserController($userRepository);
+        $fetchCard = $userController->fetchCard();
+        $creditCardDetails = $fetchCard->getData();
+        $cardDetails = $creditCardDetails->item;
+
         $updateArr = [
             'served_date'   => Carbon::now(),
             'status'        => Order::CONFIRM_PICKUP
@@ -443,7 +449,7 @@ class BarRepository extends BaseRepository
         }
 
         // send email
-        Mail::to($order->user->email)->send(new InvoiceMail($order));
+        Mail::to($order->user->email)->send(new InvoiceMail($order,$cardDetails));
     }
 
     /**

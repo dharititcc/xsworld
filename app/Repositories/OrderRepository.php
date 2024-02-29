@@ -1249,7 +1249,9 @@ class OrderRepository extends BaseRepository
     public function newReOrder(array $data): Order
     {
         $user                   = auth()->user();
-        $orderAgain             = $user->orders()->where('restaurant_id', $data['restaurant_id'])->where('id',$data['order_id'])->where('type', Order::ORDER)->whereIn('status',[Order::CONFIRM_PICKUP])->first();
+        // $orderAgain             = $user->orders()->where('restaurant_id', $data['restaurant_id'])->where('id',$data['order_id'])->where('type', Order::ORDER)->whereIn('status',[Order::CONFIRM_PICKUP])->first();
+        $orderAgain             = $user->orders()->where('restaurant_id', $data['restaurant_id'])->where('id',$data['order_id'])->first();
+       
         $resName = Restaurant::select('name')->where('id',$data['restaurant_id'])->first();
         if( !isset($orderAgain->id) )
         {
@@ -1289,9 +1291,9 @@ class OrderRepository extends BaseRepository
         $newOrder->updated_at           = Carbon::now();
 
         $newOrder->save();
-
-        if(isset($reOrderSplit))
-        {
+        
+        if(isset($reOrderSplit[0]))
+        { 
             $orderSplit = OrderSplit::create([
                 'order_id'  => $newOrder->id,
                 'is_food'   => $reOrderSplit[0]->is_food,
