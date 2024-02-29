@@ -26,15 +26,17 @@ class CustomerRepository extends BaseRepository
                 'users.phone'
             ])->where('user_type', User::CUSTOMER);
 
-        if($active)
-        {
-            $query->onlyTrashed();
-        }
         if($search)
         {
-            $query =  $query->where('users.first_name' , 'LIKE', '%'.$search.'%')
-                            ->orWhere('users.last_name', 'LIKE', '%'.$search.'%');
+            $query =  $query->where(function($query) use($search)
+            {
+                $query->where('users.first_name' , 'LIKE', '%'.$search.'%')
+                            ->orWhere('users.last_name', 'LIKE', '%'.$search.'%')
+                            ->orWhere('users.email', 'LIKE', '%'.$search.'%')
+                            ->orWhere('users.phone', 'LIKE', '%'.$search.'%');
+            });
         }
+
         return $query;
     }
 }
