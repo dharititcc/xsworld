@@ -464,8 +464,17 @@ class OrderRepository extends BaseRepository
     function deleteItem(array $data): Order
     {
         $order_item_id  = $data['order_item_id'] ? $data['order_item_id'] : null;
-        $orderItem      = OrderItem::with(['addons','mixer', 'order'])->findOrFail($order_item_id);
+        $orderItem      = OrderItem::with(['addons','mixer', 'order', 'order_split'])->findOrFail($order_item_id);
         $order          = $orderItem->order;
+        $orderSplit     = $orderItem->order_split;
+
+        // check order split item count
+        $checkOrderSplitItemCount = OrderItem::where('order_split_id', $orderSplit->id)->count();
+
+        if( $checkOrderSplitItemCount === 1 )   // only item then delete order split row other wise not need to delete
+        {
+            $orderSplit->delete();
+        }
 
         if($orderItem->parent_item_id == null)
         {
