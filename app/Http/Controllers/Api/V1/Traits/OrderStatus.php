@@ -8,10 +8,12 @@ use App\Mail\InvoiceMail;
 use App\Models\OrderSplit;
 use Illuminate\Http\Request;
 use App\Models\CustomerTable;
+use App\Repositories\UserRepository;
 use Illuminate\Support\Facades\Mail;
 use App\Repositories\Traits\CreditPoint;
 use App\Notifications\RefundNotification;
 use App\Repositories\Traits\XSNotifications;
+use App\Http\Controllers\Api\V1\UserController;
 
 trait OrderStatus
 {
@@ -25,6 +27,12 @@ trait OrderStatus
      */
     public function statusChange(Request $request): Order
     { 
+        $userRepository = new UserRepository(); // Assuming you have UserRepository class
+        $userController = new UserController($userRepository);
+        $fetchCard = $userController->fetchCard();
+        $creditCardDetails = $fetchCard->getData();
+        $cardDetails = $creditCardDetails->item;
+        
         $order      = isset($request->order_id) ? Order::with(['order_split_drink', 'order_split_food'])->find($request->order_id) : null;
         $status     = $request->status;
         $title      = "Kitchen confirm order";
@@ -131,7 +139,7 @@ trait OrderStatus
             $this->notifyWaiters($order, $titleWaiter, $messageWaiter, $codeWaiter);
 
             // send email
-            Mail::to($order->user->email)->send(new InvoiceMail($order));
+            Mail::to($order->user->email)->send(new InvoiceMail($order,$cardDetails));
         }
 
         // send notification to customer
