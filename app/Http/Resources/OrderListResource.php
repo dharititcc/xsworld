@@ -32,6 +32,7 @@ class OrderListResource extends JsonResource
             'created_date'              => Carbon::parse($this->created_at)->toDateTimeString(),
             'progress'                  => $this->progress ?? 0,
             'remaining_time'            => $this->remainingtime,
+            'place_at'                  => $this->place_at ?? '',
             'remaining_date'            => isset($this->remaining_date) ? $this->remaining_date : '',
             'currency'                  => $this->restaurant->currency->code,
             'symbol'                    => $this->restaurant->country->symbol,
