@@ -958,7 +958,7 @@ trait OrderFlow
         if( $amount > 0 )
         {
             $paymentArr = [
-                'amount'        => number_format($amount, 2) * 100,
+                'amount'        => $amount * 100,
                 'currency'      => $order->restaurant->currency->code,
                 'customer'      => $user->stripe_customer_id,
                 'capture'       => false,
