@@ -27,7 +27,7 @@ class SocialRequest extends FormRequest
     {
         $rules = [
             'first_name'            => 'required|string',
-            'last_name'             => 'required|string',
+            // 'last_name'             => 'required|string',
             'phone'                 => 'required|unique:users,phone',
             'birth_date'            => 'required|date_format:Y-m-d',
             'platform'              => 'required',
