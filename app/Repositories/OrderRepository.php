@@ -1666,7 +1666,7 @@ class OrderRepository extends BaseRepository
         $receiverUser = User::find($data['user_id']);
         $receiverCreditAmount   = $receiverUser->credit_amount;
         $authUserCreditAmount   = $auth_user->credit_amount;
-        $amount                 = $data['amount'];
+        $amount                 = (float) $data['amount'];
         $stripe_customer_id     = $auth_user->stripe_customer_id;
         $stripe                 = new Stripe();
         $customer_cards         = $stripe->fetchCards($stripe_customer_id)->toArray();
@@ -1678,7 +1678,7 @@ class OrderRepository extends BaseRepository
         $defaultCardId  = $getCusCardId->default_source;
 
         $paymentArr = [
-            'amount'        => number_format($amount, 2) * 100,
+            'amount'        => $amount * 100,
             // 'currency'      => $auth_user->orders->restaurant->currency->code,
             'currency'      => 'aud',
             'customer'      => $auth_user->stripe_customer_id,
@@ -1688,7 +1688,7 @@ class OrderRepository extends BaseRepository
 
         $payment_data   = $stripe->createCharge($paymentArr);
 
-        $addAmountToReceiver    = number_format($receiverCreditAmount + $amount, 2);
+        $addAmountToReceiver    = $receiverCreditAmount + $amount;
         $receiverUser->credit_amount = $addAmountToReceiver;
         $receiverUser->save();
         return $auth_user;
