@@ -449,7 +449,7 @@ class BarRepository extends BaseRepository
         }
 
         // send email
-        Mail::to($order->user->email)->send(new InvoiceMail($order,$cardDetails));
+        // Mail::to($order->user->email)->send(new InvoiceMail($order,$cardDetails));
     }
 
     /**
