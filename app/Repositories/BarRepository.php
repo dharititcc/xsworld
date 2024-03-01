@@ -400,11 +400,11 @@ class BarRepository extends BaseRepository
      */
     public function updateBarConfirmPickup(Order $order, int $status, array $user_tokens)
     {
-        $userRepository = new UserRepository(); // Assuming you have UserRepository class
-        $userController = new UserController($userRepository);
-        $fetchCard = $userController->fetchCard();
-        $creditCardDetails = $fetchCard->getData();
-        $cardDetails = $creditCardDetails->item;
+        // $userRepository = new UserRepository(); // Assuming you have UserRepository class
+        // $userController = new UserController($userRepository);
+        // $fetchCard = $userController->fetchCard();
+        // $creditCardDetails = $fetchCard->getData();
+        // $cardDetails = $creditCardDetails->item;
 
         $updateArr = [
             'served_date'   => Carbon::now(),
@@ -449,7 +449,7 @@ class BarRepository extends BaseRepository
         }
 
         // send email
-        Mail::to($order->user->email)->send(new InvoiceMail($order,$cardDetails));
+        Mail::to($order->user->email)->send(new InvoiceMail($order));
     }
 
     /**
