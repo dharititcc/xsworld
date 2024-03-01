@@ -17,7 +17,7 @@ class InvoiceMail extends Mailable
      * @var $order
      */
     protected $order;
-    protected $cardDetails;
+    // protected $cardDetails;
 
     /** @var $title */
     protected $title;
@@ -25,10 +25,10 @@ class InvoiceMail extends Mailable
     /**
      * Create a new message instance.
      */
-    public function __construct(Order $order,$cardDetails)
+    public function __construct(Order $order)
     {
         $this->order     = $order;
-        $this->cardDetails     = $cardDetails;
+        // $this->cardDetails     = $cardDetails;
         $this->title     = env('APP_NAME').' : Invoice for order #'.$order->id;
     }
 
@@ -46,7 +46,7 @@ class InvoiceMail extends Mailable
             ->markdown('emails.invoice', [
                 'name'  => $this->order->user->name,
                 'order' => $this->order,
-                'cardDetails' =>  $this->cardDetails
+                // 'cardDetails' =>  $this->cardDetails
             ])
             ->attach(storage_path("app/public/order_pdf/{$filename}"), ['mime' => 'application/pdf']);
     }

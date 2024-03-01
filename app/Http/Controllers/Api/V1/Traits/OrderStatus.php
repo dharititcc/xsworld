@@ -27,11 +27,11 @@ trait OrderStatus
      */
     public function statusChange(Request $request): Order
     { 
-        $userRepository = new UserRepository(); // Assuming you have UserRepository class
-        $userController = new UserController($userRepository);
-        $fetchCard = $userController->fetchCard();
-        $creditCardDetails = $fetchCard->getData();
-        $cardDetails = $creditCardDetails->item;
+        // $userRepository = new UserRepository(); // Assuming you have UserRepository class
+        // $userController = new UserController($userRepository);
+        // $fetchCard = $userController->fetchCard();
+        // $creditCardDetails = $fetchCard->getData();
+        // $cardDetails = $creditCardDetails->item;
         
         $order      = isset($request->order_id) ? Order::with(['order_split_drink', 'order_split_food'])->find($request->order_id) : null;
         $status     = $request->status;
@@ -139,7 +139,7 @@ trait OrderStatus
             $this->notifyWaiters($order, $titleWaiter, $messageWaiter, $codeWaiter);
 
             // send email
-            Mail::to($order->user->email)->send(new InvoiceMail($order,$cardDetails));
+            Mail::to($order->user->email)->send(new InvoiceMail($order));
         }
 
         // send notification to customer
