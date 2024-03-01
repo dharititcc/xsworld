@@ -1690,6 +1690,7 @@ class OrderRepository extends BaseRepository
 
         $addAmountToReceiver    = number_format($receiverCreditAmount + $amount, 2);
         $receiverUser->credit_amount = $addAmountToReceiver;
+        $receiverUser->save();
         return $auth_user;
     }
 
