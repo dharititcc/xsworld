@@ -823,13 +823,13 @@ class UserRepository extends BaseRepository
             $stripe         = new Stripe();
             $customer       = $stripe->fetchCustomer($user->stripe_customer_id);
             $default_card   = $customer->default_source;
-            $amount         = floatval(number_format($data['amount'],2));
+            $amount         = (float) $data['amount'];
 
             if($default_card)
             {
                 $paymentArr = [
                     'amount'        => $amount  * 100,
-                    'currency'      => 'AUD',
+                    'currency'      => $user->country->code,
                     'customer'      => $user->stripe_customer_id,
                     'source'        => $default_card,
                     'description'   => 'Gift Card Purchase '. $data['name']
