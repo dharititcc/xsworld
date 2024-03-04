@@ -10,10 +10,9 @@
 <body class="home-wrap" style="margin: 0; padding: 0; font-family: Arial, sans-serif;">
 
     <div class="main" style="max-width: 1600px; margin: 40px auto; position:relative;">
-        <img src="{{ asset('vector_bg.png')}}" alt="vector bg" style="height: 100%; width: 100%;position: absolute;top: 13rem;left: 50%;transform: translateX(-50%);height: 255px;width: 519px;z-index: 0; ">
-        <table class="table" style="width: 100%; border-collapse: collapse; text-align: center;z-index: 1;
-    position: relative;">
-            <tbody>
+        
+        <table class="table" style="width: 100%; border-collapse: collapse; text-align: center;">
+            <tbody style="z-index: 1;position: relative;">
                 <tr>
                     <td colspan="12" style="text-align: left;"><img class="logo-img" width="119" height="28" src="{{ asset('XSWorld.png') }}" style="object-fit: contain; padding-left: 20px;" alt="XS World Logo"></td>
                     <td></td>
@@ -25,9 +24,14 @@
                     </td>
                     <td></td>
                 </tr>
+                <!-- <tr style="position: absolute;top: 9rem;left: 50%;transform: translateX(-50%);height: 255px;width: 519px;z-index: -1;">
+                    <td>
+                    <img src="{{ asset('vector_bg.png')}}" alt="vector bg" style="height: 100%; width: 100%;">
+                    </td>
+                </tr> -->
 
                 <tr>
-                    <td colspan="12" style="display: flex; justify-content: center; align-items: center; width: 100%;">
+                    <td colspan="12" style="display: flex; justify-content: center; align-items: center; width: 100%;background: url('vector_bg.png');background-repeat: no-repeat;background-size: contain;background-position: 52% 100%;">
                         <div class="boxone" style="border-radius: 12px; border: 0.25px solid  #805711; background: linear-gradient(0deg, rgba(0, 0, 0, 0.80) 0%, rgba(0, 0, 0, 0.80) 100%), linear-gradient(180deg, rgba(255, 255, 255, 0.12) 0%, rgba(254, 243, 179, 0.12) 100%); box-shadow: 0px 0px 17.2px -3px rgba(204, 178, 96, 0.28); backdrop-filter: blur(22px); height: 169px; margin: 50px auto 0; max-width: 308px; padding: 9px; color: #fff; width: 100%;">
                             <div style="display: flex;justify-content: space-between;align-items: center;">
                                 <div style="width: 50%;text-align: left;"><img src="{{ asset('xsworld_gift.png') }}" alt="XS World gift"></div>
