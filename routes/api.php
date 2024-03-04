@@ -108,6 +108,7 @@ Route::group(['namespace' => 'Api\V1', 'prefix' => 'v1', 'as' => 'api.v1.'], fun
 
         Route::post('/gift-credit-send', 'OrderController@giftCredits')->name('giftCredits');
         Route::get('/friendship-list', 'OrderController@friendShip')->name('friendShip');
+        Route::post('/search-friends', 'OrderController@searchFriends')->name('friendShip.search');
         Route::post('/get-user-profile', 'OrderController@userProfile')->name('userProfile');
         Route::post('/un-friend', 'OrderController@unFriend')->name('unFriend');
 

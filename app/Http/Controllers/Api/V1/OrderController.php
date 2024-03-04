@@ -483,6 +483,30 @@ class OrderController extends APIController
     }
 
     /**
+     * Method searchFriends
+     *
+     * @param Request $request [explicite description]
+     *
+     * @return \Illuminate\Http\JsonResponse
+     * @throws \App\Exceptions\GeneralException
+     */
+    public function searchFriends(Request $request)
+    {
+        if( !isset($request->search_text) ||  $request->search_text == '')
+        {
+            throw new GeneralException('Search text field is required');
+        }
+
+        $myFriendList   = $this->repository->myFriendList();
+        if($myFriendList->count())
+        {
+            return $this->respondSuccess('Friends found', MyFriendsResource::collection($myFriendList));
+        }
+
+        throw new GeneralException("You don't have any friends");
+    }
+
+    /**
      * Method generatePdf [For testing purpose]
      *
      * @return void

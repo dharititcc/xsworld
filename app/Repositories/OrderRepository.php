@@ -1793,6 +1793,51 @@ class OrderRepository extends BaseRepository
         return $sql;
     }
 
+    /**
+     * Method friendSearch
+     *
+     * @param string $keyword [explicite description]
+     *
+     * @return Collection
+     */
+    public function friendSearch(string $keyword): Collection
+    {
+        $user = auth()->user();
+
+        $sql = User::select([
+            'users.*',
+            'friendship_status_tbl.friendship_status AS fr'
+        ])
+        ->join(DB::raw
+        (
+            "(SELECT
+                status AS friendship_status,
+                user_id,
+                friend_id
+            FROM friendships
+            WHERE (
+                user_id = {$user->id}
+                OR friend_id = {$user->id}
+            ))  AS `friendship_status_tbl`
+            "
+        ), function($join)
+        {
+            $join->on('users.id', '=', 'friendship_status_tbl.user_id');
+            $join->orOn('users.id', '=', 'friendship_status_tbl.friend_id');
+        })
+        ->where('users.id', '!=', $user->id)
+        ->where('friendship_status_tbl.friendship_status', 1)
+        ->where(function($query) use($keyword)
+        {
+            $query->whereRaw(DB::raw("CONCAT_WS(' ', users.first_name, users.last_name) like ?", ["%{$keyword}%"]));
+            $query->orWhere('users.email', 'like', '%'.$keyword.'%');
+            $query->orWhere('users.phone', 'like', '%'.$keyword.'%');
+        })
+        ->get();
+
+        return $sql;
+    }
+
     public function unFriend(array $data)
     {
         $auth_user = auth()->user();
