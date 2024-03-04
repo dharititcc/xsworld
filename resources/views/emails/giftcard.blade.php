@@ -31,7 +31,7 @@
                 </tr> -->
 
                 <tr>
-                    <td colspan="12" style="display: flex; justify-content: center; align-items: center; width: 100%;background: url('vector_bg.png');background-repeat: no-repeat;background-size: contain;background-position: 52% 100%;">
+                    <td colspan="12" style="display: flex; justify-content: center; align-items: center; width: 100%;background: url('{{ asset('vector_bg.png') }}');background-repeat: no-repeat;background-size: contain;background-position: 52% 100%;">
                         <div class="boxone" style="border-radius: 12px; border: 0.25px solid  #805711; background: linear-gradient(0deg, rgba(0, 0, 0, 0.80) 0%, rgba(0, 0, 0, 0.80) 100%), linear-gradient(180deg, rgba(255, 255, 255, 0.12) 0%, rgba(254, 243, 179, 0.12) 100%); box-shadow: 0px 0px 17.2px -3px rgba(204, 178, 96, 0.28); backdrop-filter: blur(22px); height: 169px; margin: 50px auto 0; max-width: 308px; padding: 9px; color: #fff; width: 100%;">
                             <div style="display: flex;justify-content: space-between;align-items: center;">
                                 <div style="width: 50%;text-align: left;"><img src="{{ asset('xsworld_gift.png') }}" alt="XS World gift"></div>

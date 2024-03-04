@@ -27,12 +27,6 @@ trait OrderStatus
      */
     public function statusChange(Request $request): Order
     { 
-        // $userRepository = new UserRepository(); // Assuming you have UserRepository class
-        // $userController = new UserController($userRepository);
-        // $fetchCard = $userController->fetchCard();
-        // $creditCardDetails = $fetchCard->getData();
-        // $cardDetails = $creditCardDetails->item;
-        
         $order      = isset($request->order_id) ? Order::with(['order_split_drink', 'order_split_food'])->find($request->order_id) : null;
         $status     = $request->status;
         $title      = "Kitchen confirm order";
@@ -103,18 +97,23 @@ trait OrderStatus
         }
         else if( $status == OrderSplit::KITCHEN_CONFIRM )
         {
-            if( $order->order_split_food->update(['status' => OrderSplit::KITCHEN_CONFIRM]) )
+            $stripe         = new Stripe();
+            $cardDetails = $stripe->fetchCards($order->user->stripe_customer_id);
+            if(!empty($order->order_split_food))
             {
-                $order->update([
-                    'served_date'   => Carbon::now()
-                ]);
-                if( isset( $order->restaurant_table_id ) )
+                if( $order->order_split_food->update(['status' => OrderSplit::KITCHEN_CONFIRM]) )
                 {
-                    // update waiter status to Ready for collection
-                    $order->update(['waiter_status' => Order::CURRENTLY_BEING_SERVED, 'status' => Order::CONFIRM_PICKUP]);
+                    $order->update([
+                        'served_date'   => Carbon::now()
+                    ]);
+                    if( isset( $order->restaurant_table_id ) )
+                    {
+                        // update waiter status to Ready for collection
+                        $order->update(['waiter_status' => Order::CURRENTLY_BEING_SERVED, 'status' => Order::CONFIRM_PICKUP]);
+                    }
                 }
             }
-
+            
             $points         = $order->total * 3;
             $totalPoints    = $order->user->points + round($points);
 
@@ -139,7 +138,7 @@ trait OrderStatus
             $this->notifyWaiters($order, $titleWaiter, $messageWaiter, $codeWaiter);
 
             // send email
-            Mail::to($order->user->email)->send(new InvoiceMail($order));
+            Mail::to($order->user->email)->send(new InvoiceMail($order,$cardDetails));
         }
 
         // send notification to customer
