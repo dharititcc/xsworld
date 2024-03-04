@@ -1829,7 +1829,7 @@ class OrderRepository extends BaseRepository
         ->where('friendship_status_tbl.friendship_status', 1)
         ->where(function($query) use($keyword)
         {
-            $query->whereRaw(DB::raw("CONCAT_WS(' ', users.first_name, users.last_name) like ?", ["%{$keyword}%"]));
+            $query->whereRaw(DB::raw("CONCAT_WS(' ', users.first_name, users.last_name) like '%".$keyword."%'"));
             $query->orWhere('users.email', 'like', '%'.$keyword.'%');
             $query->orWhere('users.phone', 'like', '%'.$keyword.'%');
         })
