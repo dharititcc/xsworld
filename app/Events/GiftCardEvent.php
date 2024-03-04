@@ -18,12 +18,14 @@ class GiftCardEvent
      * @var \App\Models\UserGiftCard
      */
     public $usergiftcard;
+    public $senderName;
 
     /**
      * Create a new event instance.
      */
-    public function __construct($usergiftcard)
+    public function __construct($usergiftcard,$senderName)
     {
         $this->usergiftcard = $usergiftcard;
+        $this->senderName = $senderName;
     }
 }

@@ -23,13 +23,15 @@ class GiftCardMail extends Mailable
 
     /** @var $title */
     protected $title;
+    protected $senderName;
 
     /**
      * Create a new message instance.
      */
-    public function __construct(UserGiftCard $usergiftcard)
+    public function __construct(UserGiftCard $usergiftcard, $senderName)
     {
         $this->usergiftcard     = $usergiftcard;
+        $this->senderName = $senderName;
         $this->title            = env('APP_NAME').' : Gift Card Mail';
     }
 
@@ -45,7 +47,9 @@ class GiftCardMail extends Mailable
             ->subject($this->title)
             ->markdown('emails.giftcard', [
                 'code'  => $this->usergiftcard->code,
-                'name'  => $this->usergiftcard->name
+                'name'  => $this->usergiftcard->name,
+                'amount'  => $this->usergiftcard->amount,
+                'senderName'  => $this->senderName,
             ]);
     }
 }

@@ -842,15 +842,15 @@ class UserRepository extends BaseRepository
                     'name'              => $data['name'],
                     'from_user'         => $user->email,
                     'to_user'           => $data['to_user'],
-                    'amount'            => $data['amount'],
+                    'amount'            => $user->country->symbol.$data['amount'],
                     'code'              => $code,
                     'status'            => UserGiftCard::PENDING,
                     'transaction_id'    => $payment_data->balance_transaction
                 ];
-
+                $senderName = $user->first_name; 
                 $savegiftcard   = UserGiftCard::create($giftcardArr);
-                event(new GiftCardEvent($savegiftcard));
-
+                event(new GiftCardEvent($savegiftcard,$senderName));
+                // event(new GiftCardEvent($savegiftcard));
                 return $savegiftcard;
             }
             throw new GeneralException('Please add Card');

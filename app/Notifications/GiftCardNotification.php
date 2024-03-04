@@ -16,9 +16,11 @@ class GiftCardNotification extends Notification
     /**
      * Create a new notification instance.
      */
-    public function __construct()
+    protected $senderName;
+
+    public function __construct($senderName)
     {
-        //
+        $this->senderName = $senderName;
     }
 
     /**
@@ -39,7 +41,8 @@ class GiftCardNotification extends Notification
      */
     public function toMail(object $notifiable)
     {
-        return new GiftCardMail($notifiable);
+        // return new GiftCardMail($notifiable);
+        return (new GiftCardMail($notifiable, $this->senderName));
     }
 
     /**

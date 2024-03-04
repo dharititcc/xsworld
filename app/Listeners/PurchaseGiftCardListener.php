@@ -22,6 +22,8 @@ class PurchaseGiftCardListener
      */
     public function handle(GiftCardEvent $event)
     {
-        $event->usergiftcard->notify(new GiftCardNotification($event->usergiftcard));
+        $senderName = $event->senderName;
+        $event->usergiftcard->notify(new GiftCardNotification($senderName));
+        // $event->usergiftcard->notify(new GiftCardNotification($event->usergiftcard));
     }
 }
