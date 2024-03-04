@@ -400,11 +400,8 @@ class BarRepository extends BaseRepository
      */
     public function updateBarConfirmPickup(Order $order, int $status, array $user_tokens)
     {
-        // $userRepository = new UserRepository(); // Assuming you have UserRepository class
-        // $userController = new UserController($userRepository);
-        // $fetchCard = $userController->fetchCard();
-        // $creditCardDetails = $fetchCard->getData();
-        // $cardDetails = $creditCardDetails->item;
+        $stripe         = new Stripe();
+        $cardDetails = $stripe->fetchCards($order->user->stripe_customer_id);
 
         $updateArr = [
             'served_date'   => Carbon::now(),
@@ -412,15 +409,18 @@ class BarRepository extends BaseRepository
         ];
 
         // update order split status for drink to completed
-        if( $order->order_split_drink->update(['status' => $status]) ) // order split table status to completed
+        if(!empty($order->order_split_drink) )
         {
-            if( isset( $order->restaurant_table_id ) && !$order->order_split_food )
+            if( $order->order_split_drink->update(['status' => $status]) ) // order split table status to completed
             {
-                // update waiter status to Ready for collection
-                $updateArr['waiter_status'] = Order::CURRENTLY_BEING_SERVED;
+                if( isset( $order->restaurant_table_id ) && !$order->order_split_food )
+                {
+                    // update waiter status to Ready for collection
+                    $updateArr['waiter_status'] = Order::CURRENTLY_BEING_SERVED;
+                }
             }
         }
-
+       
         $order->update($updateArr);
 
         $points         = $order->total * 3;
@@ -447,9 +447,8 @@ class BarRepository extends BaseRepository
             $waiterMessage                    = "Your Order #".$order->id." is pick up from the ".$order->restaurant->name;
             $this->notifyWaiters($order, $waiterTitle, $waiterMessage, Order::WAITER_CONFIRM_COLLECTION);
         }
-
         // send email
-        Mail::to($order->user->email)->send(new InvoiceMail($order));
+        Mail::to($order->user->email)->send(new InvoiceMail($order,$cardDetails));
     }
 
     /**

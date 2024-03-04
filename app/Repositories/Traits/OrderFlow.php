@@ -1188,6 +1188,9 @@ trait OrderFlow
         $order->loadMissing([
             'user'
         ]);
-        Mail::to($order->user->email)->send(new InvoiceMail($order));
+
+        $stripe         = new Stripe();
+        $cardDetails = $stripe->fetchCards($order->user->stripe_customer_id);
+        Mail::to($order->user->email)->send(new InvoiceMail($order,$cardDetails));
     }
 }
