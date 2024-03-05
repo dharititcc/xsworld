@@ -74,10 +74,18 @@ $todayDate = date('F j, Y');
 date_default_timezone_set('Asia/Dubai');
 $dateTime = date('m/d/y g:iA');
 $filename       = 'invoice_' . $order->id . '.pdf';
+$cardBrand = '';
+$lastDigit = '';
+
 foreach ($cardDetails as $cardData) {
-    $cardBrand = $cardData->brand;
-    $lastDigit = $cardData->last4;
+    if (!empty($cardData->brand)) {
+        $cardBrand = $cardData->brand;
+    }
+    if (!empty($cardData->last4)) {
+        $lastDigit = $cardData->last4;
+    }
 }
+
 $taxAmount = 0;
 $taxAmount = $order->amount * 0.05;
 $totalAmount = $order->amount + $taxAmount + 50.59;
@@ -85,11 +93,11 @@ $totalAmount = $order->amount + $taxAmount + 50.59;
 
 <body class="home-wrap">
     <div class="main">
-        <div class="bg-img">
+        <!-- <div class="bg-img">
             <img src="{{ asset('Vector.png') }}" />
-        </div>
+        </div> -->
         <table class="table">
-            <tbody>
+            <tbody style="background: url('Vector.png');background-repeat: no-repeat;background-size: 100% 38%;padding: 20px 80px;display: block;">
                 <tr>
                     <td colspan="5"><img width="119" height="28" src="{{ asset('XSWorld.png') }}" alt="XS World Logo"></td>
                     <td colspan="2">
@@ -102,61 +110,61 @@ $totalAmount = $order->amount + $taxAmount + 50.59;
 
                 <tr>
                     <td colspan="2">
-                        <h2>Thanks for ordering, {{$order->user->first_name}}</h2>
+                        <h2 style="color: #000;font-size: 20px;font-style: normal;font-weight: 700;line-height: normal;">Thanks for ordering, {{$order->user->first_name}}</h2>
                     </td>
                     <td colspan="5"></td>
                 </tr>
 
                 <tr>
                     <td colspan="2">
-                        <p style="font-size: 16px; font-weight: 400;margin: 0;">Here’s your receipt for ordering with {{$order->restaurant->name}}</p>
+                        <p style="font-size: 16px; font-weight: 400;margin: 0;color: #000;">Here’s your receipt for ordering with {{$order->restaurant->name}}</p>
                     </td>
                     <td colspan="5"></td>
                 </tr>
                 <tr>
                     <td colspan="5"></td>
                     <td colspan="2">
-                        <div><img style="width: 100%;height:auto;" src="{{ asset('cocktail.png') }}" alt=""></div>
+                        <div><img style="max-width: 150px;width: 150px;height: 150px;" src="{{ asset('cocktail.png') }}" alt=""></div>
                     </td>
                 </tr>
 
                 <tr>
                     <td class="td-border" colspan="6"><strong>
-                            <h1>Total</h1>
+                            <h1 style="color: #000;font-size: 30px;font-style: normal;font-weight: 700;line-height: normal;">Total</h1>
                         </strong></td>
                     <td class="td-border"><strong>
-                            <h1>{{$order->restaurant->country->symbol}}{{$totalAmount}} </h1>
+                            <h1 style="color: #000;text-align: right;font-size: 30px;font-style: normal;font-weight: 700;line-height: normal;">{{$order->restaurant->country->symbol}}{{$totalAmount}} </h1>
                         </strong></td>
                 </tr>
 
                 <tr>
                     <td class="td-border" colspan="6">
-                        <p style="font-size: 16px; font-weight: 700;margin: 0 0 16px;">Payments</p>
+                        <p style="font-size: 16px; font-weight: 700;margin: 0 0 16px; color:'#000';">Payments</p>
                         <div style="display: flex;gap:20px;">
 
                             @if($cardBrand == "Visa")
-                            <img src=" {{ asset('ic-visa.png')}}">
+                            <img src=" {{ asset('ic-visa.png')}}" style="width: 44px; object-fit: cover;">
                             @elseif($cardBrand == "Master")
-                            <img src=" {{ asset('master-card.png')}}">
+                            <img src=" {{ asset('master-card.png')}}" style="width: 44px; object-fit: cover;">
                             @elseif($cardBrand == "American Express")
-                            <img src=" {{ asset('american_express.png')}}">
+                            <img src=" {{ asset('american_express.png')}}" style="width: 44px; object-fit: cover;">
                             @elseif($cardBrand == "Discover")
-                            <img src=" {{ asset('discover.png')}}">
+                            <img src=" {{ asset('discover.png')}}" style="width: 44px; object-fit: cover;">
                             @elseif($cardBrand == "Jcb")
-                            <img src=" {{ asset('jcb.png')}}">
+                            <img src=" {{ asset('jcb.png')}}" style="width: 44px; object-fit: cover;">
                             @elseif($cardBrand == "Unionpay")
-                            <img src=" {{ asset('unionpay.png')}}">
+                            <img src=" {{ asset('unionpay.png')}}" style="width: 44px; object-fit: cover;">
                             @elseif($cardBrand == "Cartes Bancaires")
-                            <img src=" {{ asset('cb.png')}}">
+                            <img src=" {{ asset('cb.png')}}" style="width: 44px; object-fit: cover;">
                             @elseif($cardBrand == "Interac")
-                            <img src=" {{ asset('inter.png')}}">
+                            <img src=" {{ asset('inter.png')}}" style="width: 44px; object-fit: cover;">
                             @elseif($cardBrand == "Diners")
-                            <img src=" {{ asset('diner.png')}}">
+                            <img src=" {{ asset('diner.png')}}" style="width: 44px; object-fit: cover;">
                             @endif
 
-                            <div>
-                                <h3>Paid via Credit/ Debit Card ****{{$lastDigit}}</h3>
-                                <h3>{{$dateTime}}</h3>
+                            <div style="padding-left: 20px;">
+                                <h3 style="color:#0F0E0E; font-size: 14px;">Paid via Credit/ Debit Card ****{{$lastDigit}}</h3>
+                                <h3 style="color: #0F0E0E;font-size: 14px;">{{$dateTime}}</h3>
                             </div>
                         </div>
                     </td>
@@ -167,8 +175,8 @@ $totalAmount = $order->amount + $taxAmount + 50.59;
                 <tr>
 
                     <td colspan="7" align="center" style="text-align: center;">
-                        <p style="font-size: 14px; padding: 6px 12px; font-weight: 400; background-color: #FCF5E6; margin: 0;display:inline-block; ">
-                            To view your full receipt <a target="_blank" rel="noopener noreferrer" href="{{ asset('/storage/order_pdf/' . $filename) }}" download="{{ $filename }}" style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative; color: #3869d4;">download this PDF</a>
+                        <p style="font-size: 14px; padding: 6px 12px; font-weight: 400; background-color: #FCF5E6; margin: 0;display:inline-block; color:'#000';">
+                            To view your full receipt <a target="_blank" rel="noopener noreferrer" href="{{ asset('/storage/order_pdf/' . $filename) }}" download="{{ $filename }}" style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative; color:'#000'">download this PDF</a>
                         </p>
                     </td>
 
@@ -182,7 +190,7 @@ $totalAmount = $order->amount + $taxAmount + 50.59;
                 </tr>
                 <tr>
                     <td colspan="6">
-                        <p style="font-size: 14px; font-weight: 400;margin: 0;">Picked up from</p>
+                        <p style="font-size: 14px; font-weight: 400;margin: 0;color:'#000'">Picked up from</p>
                     </td>
                     <td></td>
 
