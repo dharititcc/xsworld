@@ -1796,11 +1796,11 @@ class OrderRepository extends BaseRepository
     /**
      * Method friendSearch
      *
-     * @param string $keyword [explicite description]
+     * @param array $data [explicite description]
      *
      * @return Collection
      */
-    public function friendSearch(string $keyword): Collection
+    public function friendSearch(array $data): Collection
     {
         $user = auth()->user();
 
@@ -1826,16 +1826,19 @@ class OrderRepository extends BaseRepository
             $join->orOn('users.id', '=', 'friendship_status_tbl.friend_id');
         })
         ->where('users.id', '!=', $user->id)
-        ->where('friendship_status_tbl.friendship_status', 1)
-        ->where(function($query) use($keyword)
-        {
-            $query->whereRaw(DB::raw("CONCAT_WS(' ', users.first_name, users.last_name) like '%".$keyword."%'"));
-            $query->orWhere('users.email', 'like', '%'.$keyword.'%');
-            $query->orWhere('users.phone', 'like', '%'.$keyword.'%');
-        })
-        ->get();
+        ->where('friendship_status_tbl.friendship_status', 1);
 
-        return $sql;
+        if( isset( $data['search_text'] ) && $data['search_text'] != '' )
+        {
+            $sql->where(function($query) use($data)
+            {
+                $query->whereRaw(DB::raw("CONCAT_WS(' ', users.first_name, users.last_name) like '%".$data['search_text']."%'"));
+                $query->orWhere('users.email', 'like', '%'.$data['search_text'].'%');
+                $query->orWhere('users.phone', 'like', '%'.$data['search_text'].'%');
+            });
+        }
+
+        return $sql->get();
     }
 
     public function unFriend(array $data)

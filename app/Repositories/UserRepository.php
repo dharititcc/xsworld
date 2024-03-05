@@ -657,12 +657,13 @@ class UserRepository extends BaseRepository
      *
      * @param array $input [explicite description]
      *
-     * @return \App\Models\UserOtps
+     * @return int
      *
      * @throws \App\Exceptions\GeneralException
      */
-    public function sendLoginOtp(array $input): UserOtps
+    public function sendLoginOtp(array $input): int
     {
+        $existingUser = 1;
         $otp = UserOtps::where(['country_code' => $input['country_code'], 'mobile' => $input['mobile_no'] ])->first();
 
         if(isset($otp->id))
@@ -688,7 +689,26 @@ class UserRepository extends BaseRepository
 
         if( isset( $userOtp->id ) )
         {
-            return $userOtp;
+            // check exist mobile no
+            $user = User::where('phone', $userOtp->mobile)->first();
+
+            if( isset( $user->id ) )
+            {
+                if( $user->first_name != '' && $user->email != '' && $user->birth_date != '' )
+                {
+                    $existingUser   = 1;
+                }
+                else
+                {
+                    $existingUser   = 0;
+                }
+            }
+            else
+            {
+                $existingUser   = 0;
+            }
+
+            return $existingUser;
         }
 
         throw new GeneralException('Failed to store OTP.');

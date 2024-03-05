@@ -589,11 +589,12 @@ class AuthController extends APIController
     {
         $data = $request->validated();
 
-        $this->repository->sendLoginOtp($data);
+        $existUser = $this->repository->sendLoginOtp($data);
 
         return $this->respond([
-            'status'    =>  true,
-            'message'   =>  'OTP has been sent successfully',
+            'status'        =>  true,
+            'existing_user' =>  $existUser,
+            'message'       =>  'OTP has been sent successfully',
         ]);
     }
 
