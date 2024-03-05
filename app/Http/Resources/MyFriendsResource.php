@@ -19,6 +19,7 @@ class MyFriendsResource extends JsonResource
             'first_name'            => $this->first_name,
             'last_name'             => $this->last_name,
             'email'                 => $this->email,
+            'phone'                 => $this->phone,
             'username'              => $this->username,
             'profile_img'           => $this->image,
             'membership'            => $this->membership['membership'],
@@ -26,7 +27,6 @@ class MyFriendsResource extends JsonResource
             'credit_amount'         => (float) $this->credit_amount ?? 0,
             'points'                => $this->points ?? 0,
             'friendship'            => $this->fr,
-            // 'myfriend'              => isset($this->friends) ? $this->friends : [],
             'member_id'             => $this->id,
         ];
     }

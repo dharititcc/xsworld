@@ -492,12 +492,7 @@ class OrderController extends APIController
      */
     public function searchFriends(Request $request)
     {
-        if( !isset($request->search_text) ||  $request->search_text == '')
-        {
-            throw new GeneralException('Search text field is required');
-        }
-
-        $myFriendList   = $this->repository->friendSearch($request->search_text);
+        $myFriendList   = $this->repository->friendSearch($request->all());
         if($myFriendList->count())
         {
             return $this->respondSuccess('Friends found', MyFriendsResource::collection($myFriendList));
