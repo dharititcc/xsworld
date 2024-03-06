@@ -98,7 +98,7 @@ $totalAmount = $order->amount + $taxAmount + 50.59;
         </div> -->
         <table class="table">
             <!-- <tbody style="background: url('{{ asset('Vector.png') }}');background-repeat: no-repeat;background-size: 100% 38%;padding: 20px 80px;display: block;"> -->
-            <tbody style="background: url('{{ asset('Vector.png') }}') no-repeat center center / cover; padding: 20px 80px; display: block;">
+            <tbody style="background: url('{{ asset('Vector.png') }}') no-repeat center top / cover; padding: 20px 80px; display: block; background-position: top; background-size: 100% 41%;">
 
                 <tr>
                     <td colspan="5"><img width="119" height="28" src="{{ asset('XSWorld.png') }}" alt="XS World Logo"></td>
@@ -126,7 +126,7 @@ $totalAmount = $order->amount + $taxAmount + 50.59;
                 <tr>
                     <td colspan="5"></td>
                     <td colspan="2">
-                        <div><img style="max-width: 150px;width: 150px;height: 150px;" src="{{ asset('cocktail.png') }}" alt=""></div>
+                        <div><img style="max-width: 150px;width: 150px;height: 150px; margin-right: -26px;" src="{{ asset('cocktail.png') }}" alt=""></div>
                     </td>
                 </tr>
 
@@ -141,7 +141,7 @@ $totalAmount = $order->amount + $taxAmount + 50.59;
 
                 <tr>
                     <td class="td-border" colspan="6">
-                        <p style="font-size: 16px; font-weight: 700;margin: 0 0 16px; color:'#000';">Payments</p>
+                        <p style="font-size: 16px; font-weight: 700;margin: 0 0 16px; color: #000;">Payments</p>
                         <div style="display: flex;gap:20px;">
 
                             @if($cardBrand == "Visa")
@@ -171,14 +171,14 @@ $totalAmount = $order->amount + $taxAmount + 50.59;
                         </div>
                     </td>
                     <td class="td-border">
-                        <p style="font-size: 16px; font-weight: 700;margin: 0;text-align: right;">{{$order->restaurant->country->symbol}}{{$totalAmount}}</p>
+                        <p style="font-size: 16px; font-weight: 700;margin: 0;text-align: right; color: #000;">{{$order->restaurant->country->symbol}}{{$totalAmount}}</p>
                     </td>
                 </tr>
                 <tr>
 
                     <td colspan="7" align="center" style="text-align: center;">
-                        <p style="font-size: 14px; padding: 6px 12px; font-weight: 400; background-color: #FCF5E6; margin: 0;display:inline-block; color:'#000';">
-                            To view your full receipt <a target="_blank" rel="noopener noreferrer" href="{{ asset('/storage/order_pdf/' . $filename) }}" download="{{ $filename }}" style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative; color:'#000'">download this PDF</a>
+                        <p style="font-size: 14px; padding: 6px 12px; font-weight: 400; background-color: #FCF5E6; margin: 0;display:inline-block; color:#000;">
+                            To view your full receipt <a target="_blank" rel="noopener noreferrer" href="{{ asset('/storage/order_pdf/' . $filename) }}" download="{{ $filename }}" style="box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'; position: relative; color:#000">download this PDF</a>
                         </p>
                     </td>
 
