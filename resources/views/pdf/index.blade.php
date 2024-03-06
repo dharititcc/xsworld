@@ -82,6 +82,7 @@ foreach ($cardDetails as $cardData) {
     $cardBrand = $cardData->brand;
     $lastDigit = $cardData->last4;
 }
+$currencySymbol= $pdfData->restaurant->country->symbol;
 ?>
 
 <body class="home-wrap">
@@ -112,7 +113,7 @@ foreach ($cardDetails as $cardData) {
                 @endphp
                 <tr>
                     <td class="td-border lf-padding" style="font-family: 'ABC Diatype', sans-serif;" colspan="7"><strong style="font-size: 18px;font-weight:700; font-family: 'ABC Diatype', sans-serif;">Total</strong></td>
-                    <td class="td-border lf-padding" style="font-family: 'ABC Diatype', sans-serif;"><strong style="font-size: 18px;font-weight:700; font-family: 'ABC Diatype', sans-serif;">{{ $pdfData->restaurant->country->symbol . number_format($totalAmount, 2) }}</strong></td>
+                    <td class="td-border lf-padding" style="font-family: 'ABC Diatype', sans-serif;"><strong style="font-size: 18px;font-weight:700; font-family: DejaVu Sans, sans-serif;">{{ $currencySymbol }}{{ number_format($totalAmount, 2) }}</strong></td>
                 </tr>
 
                 @foreach ($pdfData->order_items as $items)
@@ -138,17 +139,17 @@ foreach ($cardDetails as $cardData) {
 
                         @if (isset($items->mixer->id))
 
-                        <p style="margin:  0 0 16px 28px;white-space: nowrap;font-size:14px; font-family: 'ABC Diatype', sans-serif;">{{ $items->mixer->restaurant_item->name }}&nbsp;{{$pdfData->restaurant->country->symbol.$items->mixer->restaurant_item->price}}</p>
+                        <p style="margin:  0 0 16px 28px;white-space: nowrap;font-size:14px; font-family: DejaVu Sans, sans-serif;">{{ $items->mixer->restaurant_item->name }}&nbsp;{{$currencySymbol }}{{ $items->mixer->restaurant_item->price}}</p>
                         @endif
 
                         @if ($items->addons->count())
                         @foreach ($items->addons as $addon)
 
-                        <p style="margin: 0 0 16px 28px;white-space: nowrap;font-size:14px; font-family: 'ABC Diatype', sans-serif;">{{ $addon->restaurant_item->name }}&nbsp;{{$pdfData->restaurant->country->symbol.$addon->restaurant_item->price}}</p>
+                        <p style="margin: 0 0 16px 28px;white-space: nowrap;font-size:14px; font-family: DejaVu Sans, sans-serif;">{{ $addon->restaurant_item->name }}&nbsp;{{$currencySymbol }}{{ $addon->restaurant_item->price}}</p>
                         @endforeach
                         @endif
                     </td>
-                    <td class="lf-padding" style="font-family: 'ABC Diatype', sans-serif; display: flex; align-items: baseline;">{{ $pdfData->restaurant->country->symbol . number_format($total, 2) }}</td>
+                    <td class="lf-padding" style="font-family: DejaVu Sans, sans-serif; display: flex; align-items: baseline;">{{ $currencySymbol }}{{ number_format($total, 2) }}</td>
                 </tr>
                 @php
                 $counter++;
@@ -157,7 +158,7 @@ foreach ($cardDetails as $cardData) {
 
                 <tr>
                     <td class="td-top-border lf-padding" colspan="7" style="width: 100%; padding-bottom: 10px;font-size: 14px; font-weight: 700; font-family: 'ABC Diatype', sans-serif;"><strong>Subtotal</strong></td>
-                    <td class="td-top-border lf-padding" style="padding-bottom: 10px; font-weight: 700; font-family: 'ABC Diatype', sans-serif;">{{ $pdfData->restaurant->country->symbol . number_format($pdfData->total, 2) }}</td>
+                    <td class="td-top-border lf-padding" style="padding-bottom: 10px; font-weight: 700; font-family: DejaVu Sans, sans-serif;">{{ $currencySymbol }}{{ number_format($pdfData->total, 2) }}</td>
                 </tr>
 
                 <tr>
@@ -165,7 +166,7 @@ foreach ($cardDetails as $cardData) {
                         <div style="font-family: 'ABC Diatype', sans-serif;">Plateform Fee</div>
                     </td>
                     <td class="lf-padding" style="padding-top: 0px; padding-bottom: 10px; font-family: 'ABC Diatype', sans-serif;">
-                        <div style="font-family: 'ABC Diatype', sans-serif;">$50.59</div>
+                        <div style="font-family: DejaVu Sans, sans-serif;">{{$currencySymbol}}50.59</div>
                     </td>
                 </tr>
 
@@ -174,7 +175,7 @@ foreach ($cardDetails as $cardData) {
                         <div style="font-family: 'ABC Diatype', sans-serif;">Taxes (5%)</div>
                     </td>
                     <td class="td-border lf-padding" style="padding-top: 0; font-family: 'ABC Diatype', sans-serif;">
-                        <div style="font-family: 'ABC Diatype', sans-serif;">{{ $pdfData->restaurant->country->symbol . number_format($taxAmount, 2) }}</div>
+                        <div style="font-family: DejaVu Sans, sans-serif;">{{ $currencySymbol }}{{ number_format($taxAmount, 2) }}</div>
                     </td>
                 </tr>
 
@@ -211,8 +212,8 @@ foreach ($cardDetails as $cardData) {
                     </td>
 
                     <td class="td-border lf-padding" style="width: 100%;">
-                        <div style="font-size: 16px;font-weight:700; font-family: 'ABC Diatype', sans-serif;"><strong style="font-family: 'ABC Diatype', sans-serif;">
-                                {{ $pdfData->restaurant->country->symbol . number_format($totalAmount, 2) }}
+                        <div style="font-size: 16px;font-weight:700; font-family: DejaVu Sans, sans-serif;"><strong style="font-family: DejaVu Sans, sans-serif;">
+                                {{ $currencySymbol }}{{ number_format($totalAmount, 2) }}
                             </strong></div>
                     </td>
                 </tr>
