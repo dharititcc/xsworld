@@ -97,13 +97,15 @@ $totalAmount = $order->amount + $taxAmount + 50.59;
             <img src="{{ asset('Vector.png') }}" />
         </div> -->
         <table class="table">
-            <tbody style="background: url('Vector.png');background-repeat: no-repeat;background-size: 100% 38%;padding: 20px 80px;display: block;">
+            <!-- <tbody style="background: url('{{ asset('Vector.png') }}');background-repeat: no-repeat;background-size: 100% 38%;padding: 20px 80px;display: block;"> -->
+            <tbody style="background: url('{{ asset('Vector.png') }}') no-repeat center center / cover; padding: 20px 80px; display: block;">
+
                 <tr>
                     <td colspan="5"><img width="119" height="28" src="{{ asset('XSWorld.png') }}" alt="XS World Logo"></td>
                     <td colspan="2">
                         <div>
-                            <p style="white-space: nowrap;margin:0 0 8px;font-size: 14px;">Total <b>{{$order->restaurant->country->symbol}}{{$totalAmount}}</b></p>
-                            <p style="white-space: nowrap;margin:0;font-size: 14px;">{{$todayDate}}</p>
+                            <p style="white-space: nowrap;margin:0 0 8px;font-size: 14px;text-align: right;">Total <b>{{$order->restaurant->country->symbol}}{{$totalAmount}}</b></p>
+                            <p style="white-space: nowrap;margin:0;font-size: 14px;text-align: right;">{{$todayDate}}</p>
                         </div>
                     </td>
                 </tr>
@@ -169,7 +171,7 @@ $totalAmount = $order->amount + $taxAmount + 50.59;
                         </div>
                     </td>
                     <td class="td-border">
-                        <p style="font-size: 16px; font-weight: 700;margin: 0;">{{$order->restaurant->country->symbol}}{{$totalAmount}}</p>
+                        <p style="font-size: 16px; font-weight: 700;margin: 0;text-align: right;">{{$order->restaurant->country->symbol}}{{$totalAmount}}</p>
                     </td>
                 </tr>
                 <tr>
